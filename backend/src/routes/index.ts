@@ -6,6 +6,8 @@ import menuCategoryRoutes from './menu-category.routes';
 import menuItemRoutes from './menu-item.routes';
 import menuVariantRoutes from './menu-variant.routes';
 import menuAddonRoutes from './menu-addon.routes';
+import orderRoutes from './order.routes';
+import paymentRoutes from './payment.routes';
 
 const router = Router();
 
@@ -16,6 +18,8 @@ router.use('/menu/categories', menuCategoryRoutes);
 router.use('/menu/items', menuItemRoutes);
 router.use('/menu/variants', menuVariantRoutes);
 router.use('/menu/addons', menuAddonRoutes);
+router.use('/orders', orderRoutes);
+router.use('/payments', paymentRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
