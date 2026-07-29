@@ -2,12 +2,20 @@ import { Router } from 'express';
 import authRoutes from './auth.routes';
 import restaurantRoutes from './restaurant.routes';
 import branchRoutes from './branch.routes';
+import menuCategoryRoutes from './menu-category.routes';
+import menuItemRoutes from './menu-item.routes';
+import menuVariantRoutes from './menu-variant.routes';
+import menuAddonRoutes from './menu-addon.routes';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/restaurants', restaurantRoutes);
 router.use('/branches', branchRoutes);
+router.use('/menu/categories', menuCategoryRoutes);
+router.use('/menu/items', menuItemRoutes);
+router.use('/menu/variants', menuVariantRoutes);
+router.use('/menu/addons', menuAddonRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
