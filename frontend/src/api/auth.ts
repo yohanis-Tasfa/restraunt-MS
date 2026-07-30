@@ -1,19 +1,8 @@
-import { api } from './client';
+import apiClient from './client';
 
 export interface LoginCredentials {
   email: string;
   password: string;
-}
-
-export interface RegisterData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  roleId: string;
-  restaurantId: string;
-  branchId?: string;
 }
 
 export interface AuthResponse {
@@ -41,18 +30,15 @@ export interface AuthResponse {
 }
 
 export const authApi = {
-  login: (credentials: LoginCredentials) =>
-    api.post<AuthResponse>('/auth/login', credentials),
-
-  register: (data: RegisterData) =>
-    api.post<AuthResponse>('/auth/register', data),
-
-  logout: () =>
-    api.post('/auth/logout'),
-
-  refreshToken: (refreshToken: string) =>
-    api.post<{ accessToken: string }>('/auth/refresh', { refreshToken }),
-
-  getCurrentUser: () =>
-    api.get<AuthResponse['user']>('/auth/me'),
+  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    const response = await apiClient.post('/auth/login', credentials);
+    return response.data; // ApiResponse wraps data in { data: {...} }
+  },
+  
+  logout: () => apiClient.post('/auth/logout'),
+  
+  me: async () => {
+    const response = await apiClient.get('/auth/me');
+    return response.data;
+  },
 };
