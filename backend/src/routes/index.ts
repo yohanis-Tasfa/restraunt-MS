@@ -13,6 +13,8 @@ import reservationRoutes from './reservation.routes';
 import inventoryRoutes from './inventory.routes';
 import supplierRoutes from './supplier.routes';
 import purchaseOrderRoutes from './purchase-order.routes';
+import customerRoutes from './customer.routes';
+import userRoutes from './user.routes';
 
 const router = Router();
 
@@ -30,6 +32,8 @@ router.use('/reservations', reservationRoutes);
 router.use('/inventory', inventoryRoutes);
 router.use('/suppliers', supplierRoutes);
 router.use('/purchase-orders', purchaseOrderRoutes);
+router.use('/customers', customerRoutes);
+router.use('/users', userRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
