@@ -24,19 +24,19 @@ export const tablesApi = {
     if (branchId) params.append('branchId', branchId);
     
     const response = await apiClient.get(`/tables?${params.toString()}`);
-    return response.data;
+    return response.data.data?.tables || response.data.data || [];
   },
 
   // Get single table
   getTable: async (id: string): Promise<Table> => {
     const response = await apiClient.get(`/tables/${id}`);
-    return response.data;
+    return response.data.data;
   },
 
   // Update table status
   updateTableStatus: async (id: string, status: TableStatus): Promise<Table> => {
     const response = await apiClient.patch(`/tables/${id}/status`, { status });
-    return response.data;
+    return response.data.data;
   },
 
   // Get available tables
@@ -46,6 +46,6 @@ export const tablesApi = {
     params.append('status', TableStatus.AVAILABLE);
     
     const response = await apiClient.get(`/tables?${params.toString()}`);
-    return response.data;
+    return response.data.data?.tables || response.data.data || [];
   },
 };

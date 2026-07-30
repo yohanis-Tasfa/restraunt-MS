@@ -27,6 +27,7 @@ interface AuthStore {
   
   setAuth: (user: User, token: string) => void;
   clearAuth: () => void;
+  logout: () => void;
   hasRole: (roles: string[]) => boolean;
 }
 
@@ -46,6 +47,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     set({ user: null, token: null, isAuthenticated: false });
+  },
+  
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    set({ user: null, token: null, isAuthenticated: false });
+    window.location.href = '/login';
   },
   
   hasRole: (roles) => {

@@ -43,7 +43,7 @@ export const menuApi = {
     const params = new URLSearchParams();
     if (restaurantId) params.append('restaurantId', restaurantId);
     const response = await apiClient.get(`/menu-categories?${params.toString()}`);
-    return response.data;
+    return response.data.data?.categories || response.data.data || [];
   },
 
   // Menu Items
@@ -60,23 +60,23 @@ export const menuApi = {
     if (filters?.isAvailable !== undefined) params.append('isAvailable', String(filters.isAvailable));
     
     const response = await apiClient.get(`/menu-items?${params.toString()}`);
-    return response.data;
+    return response.data.data?.menuItems || response.data.data || [];
   },
 
   getMenuItem: async (id: string): Promise<MenuItem> => {
     const response = await apiClient.get(`/menu-items/${id}`);
-    return response.data;
+    return response.data.data;
   },
 
   // Variants
   getVariants: async (menuItemId: string): Promise<MenuVariant[]> => {
     const response = await apiClient.get(`/menu-variants?menuItemId=${menuItemId}`);
-    return response.data;
+    return response.data.data?.variants || response.data.data || [];
   },
 
   // Addons
   getAddons: async (menuItemId: string): Promise<MenuAddon[]> => {
     const response = await apiClient.get(`/menu-addons?menuItemId=${menuItemId}`);
-    return response.data;
+    return response.data.data?.addons || response.data.data || [];
   },
 };

@@ -78,7 +78,7 @@ export const ordersApi = {
   // Create order
   createOrder: async (data: CreateOrderData): Promise<Order> => {
     const response = await apiClient.post('/orders', data);
-    return response.data;
+    return response.data.data;
   },
 
   // Get orders with filters
@@ -97,24 +97,25 @@ export const ordersApi = {
     if (filters?.endDate) params.append('endDate', filters.endDate);
     
     const response = await apiClient.get(`/orders?${params.toString()}`);
-    return response.data;
+    // Backend returns { success, data: { orders, total, page, limit }, message }
+    return response.data.data?.orders || response.data.data || [];
   },
 
   // Get single order
   getOrder: async (id: string): Promise<Order> => {
     const response = await apiClient.get(`/orders/${id}`);
-    return response.data;
+    return response.data.data;
   },
 
   // Update order status
   updateOrderStatus: async (id: string, status: OrderStatus): Promise<Order> => {
     const response = await apiClient.patch(`/orders/${id}/status`, { status });
-    return response.data;
+    return response.data.data;
   },
 
   // Cancel order
   cancelOrder: async (id: string, reason?: string): Promise<Order> => {
     const response = await apiClient.patch(`/orders/${id}/cancel`, { reason });
-    return response.data;
+    return response.data.data;
   },
 };
