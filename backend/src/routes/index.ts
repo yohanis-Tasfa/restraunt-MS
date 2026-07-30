@@ -15,6 +15,8 @@ import supplierRoutes from './supplier.routes';
 import purchaseOrderRoutes from './purchase-order.routes';
 import customerRoutes from './customer.routes';
 import userRoutes from './user.routes';
+import reportRoutes from './report.routes';
+import settingRoutes from './setting.routes';
 
 const router = Router();
 
@@ -34,6 +36,8 @@ router.use('/suppliers', supplierRoutes);
 router.use('/purchase-orders', purchaseOrderRoutes);
 router.use('/customers', customerRoutes);
 router.use('/users', userRoutes);
+router.use('/reports', reportRoutes);
+router.use('/settings', settingRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
