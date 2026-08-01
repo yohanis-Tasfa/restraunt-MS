@@ -12,8 +12,9 @@ export enum OrderStatus {
 
 export enum OrderType {
   DINE_IN = 'DINE_IN',
-  TAKEOUT = 'TAKEOUT',
+  TAKEAWAY = 'TAKEAWAY',
   DELIVERY = 'DELIVERY',
+  ONLINE = 'ONLINE',
 }
 
 export interface OrderItem {
@@ -21,17 +22,12 @@ export interface OrderItem {
   menuItemId: string;
   menuItem?: any;
   quantity: number;
-  unitPrice: number;
-  variantId?: string;
-  variant?: any;
-  addons?: Array<{
-    addonId: string;
-    addon?: any;
-    quantity: number;
-    price: number;
-  }>;
-  specialInstructions?: string;
+  price: number;
+  notes?: string;
+  status?: string;
   subtotal: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Order {
@@ -39,38 +35,47 @@ export interface Order {
   orderNumber: string;
   type: OrderType;
   status: OrderStatus;
+  branchId: string;
+  branch?: any;
   tableId?: string;
   table?: any;
   customerId?: string;
   customer?: any;
+  createdById: string;
+  createdBy?: any;
   items: OrderItem[];
+  _count?: {
+    items: number;
+    payments: number;
+  };
   subtotal: number;
   tax: number;
+  vat: number;
+  serviceCharge: number;
   discount: number;
   total: number;
   notes?: string;
+  specialInstructions?: string;
+  paymentStatus: string;
+  paymentMethod?: string;
   createdAt: string;
   updatedAt: string;
+  completedAt?: string;
 }
 
 export interface CreateOrderData {
   type: OrderType;
+  branchId: string;
   tableId?: string;
   customerId?: string;
-  branchId: string;
   items: Array<{
     menuItemId: string;
     quantity: number;
-    unitPrice: number;
-    variantId?: string;
-    addons?: Array<{
-      addonId: string;
-      quantity: number;
-      price: number;
-    }>;
-    specialInstructions?: string;
+    price?: number;
+    notes?: string;
   }>;
   notes?: string;
+  specialInstructions?: string;
   discount?: number;
 }
 
@@ -78,7 +83,7 @@ export const ordersApi = {
   // Create order
   createOrder: async (data: CreateOrderData): Promise<Order> => {
     const response = await apiClient.post('/orders', data);
-    return response.data.data;
+    return response.data;
   },
 
   // Get orders with filters
@@ -88,34 +93,40 @@ export const ordersApi = {
     type?: OrderType;
     startDate?: string;
     endDate?: string;
-  }): Promise<Order[]> => {
+    page?: number;
+    limit?: number;
+  }): Promise<{ data: Order[]; pagination: any }> => {
     const params = new URLSearchParams();
     if (filters?.branchId) params.append('branchId', filters.branchId);
     if (filters?.status) params.append('status', filters.status);
     if (filters?.type) params.append('type', filters.type);
     if (filters?.startDate) params.append('startDate', filters.startDate);
     if (filters?.endDate) params.append('endDate', filters.endDate);
+    if (filters?.page) params.append('page', filters.page.toString());
+    if (filters?.limit) params.append('limit', filters.limit.toString());
     
     const response = await apiClient.get(`/orders?${params.toString()}`);
-    // Backend returns { success, data: { orders, total, page, limit }, message }
-    return response.data.data?.orders || response.data.data || [];
+    // Backend: { statusCode, data: { data: orders, pagination }, message, success }
+    // Interceptor returns: { data: { data: orders, pagination }, message, success }
+    // So we access response.data to get { data: orders, pagination }
+    return response.data || { data: [], pagination: {} };
   },
 
   // Get single order
   getOrder: async (id: string): Promise<Order> => {
     const response = await apiClient.get(`/orders/${id}`);
-    return response.data.data;
+    return response.data;
   },
 
   // Update order status
   updateOrderStatus: async (id: string, status: OrderStatus): Promise<Order> => {
     const response = await apiClient.patch(`/orders/${id}/status`, { status });
-    return response.data.data;
+    return response.data;
   },
 
   // Cancel order
   cancelOrder: async (id: string, reason?: string): Promise<Order> => {
-    const response = await apiClient.patch(`/orders/${id}/cancel`, { reason });
-    return response.data.data;
+    const response = await apiClient.post(`/orders/${id}/cancel`, { reason });
+    return response.data;
   },
 };

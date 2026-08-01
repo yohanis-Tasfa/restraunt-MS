@@ -90,6 +90,19 @@ export class OrderService {
             lastName: true,
           },
         },
+        items: {
+          select: {
+            id: true,
+            quantity: true,
+            menuItem: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          take: 3, // Only get first 3 items for performance
+        },
         _count: {
           select: {
             items: true,

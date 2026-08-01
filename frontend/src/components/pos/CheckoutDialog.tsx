@@ -35,11 +35,13 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
   const [orderNumber, setOrderNumber] = useState<string>('');
 
   // Fetch available tables
-  const { data: tables = [] } = useQuery({
+  const { data: tablesData } = useQuery({
     queryKey: ['tables', user?.branch?.id],
     queryFn: () => tablesApi.getAvailableTables(user?.branch?.id),
     enabled: open && !!user?.branch?.id && orderType === OrderType.DINE_IN,
   });
+
+  const tables = tablesData || [];
 
   // Create order mutation
   const createOrderMutation = useMutation({
@@ -68,14 +70,8 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
       items: items.map((item) => ({
         menuItemId: item.menuItemId,
         quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        variantId: item.variantId,
-        addons: item.addons.map((addon) => ({
-          addonId: addon.addonId,
-          quantity: addon.quantity,
-          price: addon.price,
-        })),
-        specialInstructions: item.specialInstructions,
+        price: item.unitPrice,
+        notes: item.specialInstructions,
       })),
     };
 
@@ -143,7 +139,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
           <div>
             <label className="text-sm font-semibold text-gray-700 mb-2 block">Order Type</label>
             <div className="grid grid-cols-3 gap-2">
-              {[OrderType.DINE_IN, OrderType.TAKEOUT, OrderType.DELIVERY].map((type) => (
+              {[OrderType.DINE_IN, OrderType.TAKEAWAY, OrderType.DELIVERY].map((type) => (
                 <button
                   key={type}
                   onClick={() => setOrderType(type)}
@@ -170,7 +166,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
                 <SelectContent>
                   {tables.map((table: any) => (
                     <SelectItem key={table.id} value={table.id}>
-                      Table {table.tableNumber} (Capacity: {table.capacity})
+                      Table {table.number} (Capacity: {table.capacity})
                     </SelectItem>
                   ))}
                 </SelectContent>
