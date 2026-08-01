@@ -41,17 +41,17 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const overviewItems: NavItem[] = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { label: 'POS', icon: ShoppingCart, path: '/pos', roles: ['Super Admin', 'Admin', 'Manager', 'Cashier'] },
-    { label: 'Orders', icon: ListOrdered, path: '/orders', badge: 12 },
-    { label: 'Kitchen', icon: ChefHat, path: '/kitchen', badge: 6, roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
+    { label: 'Orders', icon: ListOrdered, path: '/orders' },
+    { label: 'Kitchen', icon: ChefHat, path: '/kitchen', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
   ];
 
   // Operations Section Items
   const operationsItems: NavItem[] = [
     { label: 'Tables', icon: Store, path: '/tables' },
-    { label: 'Reservations', icon: ClipboardList, path: '/reservations', badge: 4 },
+    { label: 'Reservations', icon: ClipboardList, path: '/reservations' },
     { label: 'Menu', icon: UtensilsCrossed, path: '/menu', roles: ['Super Admin', 'Admin', 'Manager'] },
     { label: 'Recipes', icon: Beef, path: '/recipes', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
-    { label: 'Inventory', icon: Package, path: '/inventory', badge: 1, roles: ['Super Admin', 'Admin', 'Manager', 'Inventory Manager'] },
+    { label: 'Inventory', icon: Package, path: '/inventory', roles: ['Super Admin', 'Admin', 'Manager', 'Inventory Manager'] },
   ];
 
   const isActive = (path: string) => location.pathname === path;
