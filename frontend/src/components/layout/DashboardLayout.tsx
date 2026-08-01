@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Sidebar from './Sidebar';
-import { Search, Bell, Plus, Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Bell, Plus, Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 
 interface DashboardLayoutProps {
@@ -22,9 +22,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
         <header className="bg-white border-b border-gray-200 h-14">
-          <div className="flex items-center h-full px-4 gap-4">
-            {/* Left Section: Toggle, Branch, Search */}
-            <div className="flex items-center gap-3 flex-1">
+          <div className="flex items-center justify-between h-full px-4 gap-4">
+            {/* Left Section: Toggle & Branch */}
+            <div className="flex items-center gap-3">
               {/* Desktop/Tablet Sidebar Collapse Toggle */}
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -46,21 +46,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Menu className="w-5 h-5 text-gray-600" />
               </button>
 
-              {/* Branch Selector */}
+              {/* Branch Selector - Only branch name */}
               <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                <span className="text-sm font-medium text-gray-700">Branch:</span>
                 <span className="text-sm text-gray-900 font-semibold">Bole Main</span>
                 <ChevronDown className="w-4 h-4 text-gray-500" />
-              </div>
-
-              {/* Search Bar */}
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search orders, menu, customers..."
-                  className="w-full pl-10 pr-4 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
-                />
               </div>
             </div>
 

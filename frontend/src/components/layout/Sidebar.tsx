@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import logo from '../../assets/image.png';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -90,26 +91,31 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
           // Mobile: slide in/out
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           // Desktop/Tablet: collapse to icon-only
-          isCollapsed ? 'lg:w-20' : 'w-64'
+          isCollapsed ? 'lg:w-16' : 'w-56'
         )}
       >
-        {/* Logo */}
+        {/* Logo - Horizontal layout with text on right */}
         <div className={cn(
-          'p-4 border-b border-gray-200 flex items-center',
+          'p-3 border-b border-gray-200 flex items-center',
           isCollapsed ? 'lg:justify-center' : 'justify-between'
         )}>
           <div className={cn(
             'flex items-center gap-3',
             isCollapsed && 'lg:gap-0'
           )}>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold">
-              HR
-            </div>
+            <img 
+              src={logo} 
+              alt="Yoni Restaurant Logo" 
+              className={cn(
+                "rounded-lg object-cover flex-shrink-0",
+                isCollapsed ? "w-10 h-10" : "w-12 h-12"
+              )}
+            />
             {!isCollapsed && (
-              <div className="lg:block">
-                <h1 className="font-bold text-gray-900">Habesha RMS</h1>
+              <div>
+                <h1 className="font-bold text-gray-900 text-sm">Yoni Restaurant</h1>
                 <p className="text-xs text-gray-500">
-                  {user?.branch?.name || 'Bole Main'}
+                  {user?.branch?.name || 'Main Branch'}
                 </p>
               </div>
             )}
@@ -120,7 +126,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
               onClick={onClose}
               className="lg:hidden p-1 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-gray-600" />
+              <X className="w-4 h-4 text-gray-600" />
             </button>
           )}
         </div>
