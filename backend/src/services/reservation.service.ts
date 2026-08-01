@@ -4,7 +4,8 @@ import prisma from '../config/database';
 interface CreateReservationData {
   customerId: string;
   branchId: string;
-  tableId?: string;
+  tableId?: string; // Deprecated: for backward compatibility
+  tableIds?: string[]; // New: support multiple tables
   reservationDate: Date;
   guests: number;
   notes?: string;
@@ -86,6 +87,17 @@ export class ReservationService {
             capacity: true,
           },
         },
+        reservationTables: {
+          include: {
+            table: {
+              select: {
+                id: true,
+                number: true,
+                capacity: true,
+              },
+            },
+          },
+        },
       },
       orderBy: { reservationDate: 'desc' },
     });
@@ -138,6 +150,18 @@ export class ReservationService {
             status: true,
           },
         },
+        reservationTables: {
+          include: {
+            table: {
+              select: {
+                id: true,
+                number: true,
+                capacity: true,
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -167,40 +191,39 @@ export class ReservationService {
       throw new ApiError(404, 'Branch not found');
     }
 
-    // Validate table if provided
-    if (data.tableId) {
-      const table = await prisma.table.findUnique({
-        where: { id: data.tableId },
+    // Handle both single tableId and multiple tableIds
+    const tableIds = data.tableIds || (data.tableId ? [data.tableId] : []);
+
+    // Validate tables if provided
+    if (tableIds.length > 0) {
+      const tables = await prisma.table.findMany({
+        where: { id: { in: tableIds } },
       });
 
-      if (!table) {
-        throw new ApiError(404, 'Table not found');
+      if (tables.length !== tableIds.length) {
+        throw new ApiError(404, 'One or more tables not found');
       }
 
-      if (table.branchId !== data.branchId) {
-        throw new ApiError(400, 'Table does not belong to this branch');
+      // Validate all tables belong to the branch
+      const invalidTables = tables.filter(t => t.branchId !== data.branchId);
+      if (invalidTables.length > 0) {
+        throw new ApiError(400, 'One or more tables do not belong to this branch');
       }
 
-      // Check table capacity
-      if (data.guests > table.capacity) {
-        throw new ApiError(
-          400,
-          `Table ${table.number} has capacity of ${table.capacity}, but ${data.guests} guests requested`
+      // Check for conflicting reservations on any of the tables
+      for (const table of tables) {
+        const conflict = await this.checkConflict(
+          table.id,
+          data.reservationDate,
+          data.reservationDate
         );
-      }
 
-      // Check for conflicting reservations
-      const conflict = await this.checkConflict(
-        data.tableId,
-        data.reservationDate,
-        data.reservationDate
-      );
-
-      if (conflict) {
-        throw new ApiError(
-          400,
-          `Table ${table.number} is already reserved for ${new Date(data.reservationDate).toLocaleString()}`
-        );
+        if (conflict) {
+          throw new ApiError(
+            400,
+            `Table ${table.number} is already reserved for ${new Date(data.reservationDate).toLocaleString()}`
+          );
+        }
       }
     }
 
@@ -209,15 +232,21 @@ export class ReservationService {
       throw new ApiError(400, 'Reservation date must be in the future');
     }
 
+    // Create reservation with multiple tables
     const reservation = await prisma.reservation.create({
       data: {
         customerId: data.customerId,
         branchId: data.branchId,
-        tableId: data.tableId,
+        tableId: tableIds[0] || null, // Keep first table for backward compatibility
         reservationDate: new Date(data.reservationDate),
         guests: data.guests,
         notes: data.notes,
         status: 'PENDING',
+        reservationTables: {
+          create: tableIds.map(tableId => ({
+            tableId,
+          })),
+        },
       },
       include: {
         customer: {
@@ -241,13 +270,24 @@ export class ReservationService {
             capacity: true,
           },
         },
+        reservationTables: {
+          include: {
+            table: {
+              select: {
+                id: true,
+                number: true,
+                capacity: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    // Update table status if table assigned
-    if (data.tableId) {
-      await prisma.table.update({
-        where: { id: data.tableId },
+    // Update status of all assigned tables to RESERVED
+    if (tableIds.length > 0) {
+      await prisma.table.updateMany({
+        where: { id: { in: tableIds } },
         data: { status: 'RESERVED' },
       });
     }
@@ -363,6 +403,13 @@ export class ReservationService {
   async updateStatus(id: string, status: string) {
     const reservation = await prisma.reservation.findUnique({
       where: { id },
+      include: {
+        reservationTables: {
+          select: {
+            tableId: true,
+          },
+        },
+      },
     });
 
     if (!reservation) {
@@ -379,11 +426,18 @@ export class ReservationService {
       data: { status },
     });
 
-    // Update table status based on reservation status
-    if (reservation.tableId) {
+    // Get all table IDs for this reservation
+    const tableIds = reservation.reservationTables.map(rt => rt.tableId);
+    if (tableIds.length === 0 && reservation.tableId) {
+      // Fallback to old single-table format
+      tableIds.push(reservation.tableId);
+    }
+
+    // Update status of all tables based on reservation status
+    if (tableIds.length > 0) {
       let tableStatus: 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING' = 'AVAILABLE';
 
-      if (status === 'CONFIRMED') {
+      if (status === 'CONFIRMED' || status === 'PENDING') {
         tableStatus = 'RESERVED';
       } else if (status === 'SEATED') {
         tableStatus = 'OCCUPIED';
@@ -391,8 +445,8 @@ export class ReservationService {
         tableStatus = 'AVAILABLE';
       }
 
-      await prisma.table.update({
-        where: { id: reservation.tableId },
+      await prisma.table.updateMany({
+        where: { id: { in: tableIds } },
         data: { status: tableStatus },
       });
     }
@@ -403,6 +457,13 @@ export class ReservationService {
   async cancel(id: string, reason?: string) {
     const reservation = await prisma.reservation.findUnique({
       where: { id },
+      include: {
+        reservationTables: {
+          select: {
+            tableId: true,
+          },
+        },
+      },
     });
 
     if (!reservation) {
@@ -425,15 +486,59 @@ export class ReservationService {
       },
     });
 
-    // Free up table
-    if (reservation.tableId) {
-      await prisma.table.update({
-        where: { id: reservation.tableId },
+    // Get all table IDs for this reservation and free them up
+    const tableIds = reservation.reservationTables.map(rt => rt.tableId);
+    if (tableIds.length === 0 && reservation.tableId) {
+      // Fallback to old single-table format
+      tableIds.push(reservation.tableId);
+    }
+
+    if (tableIds.length > 0) {
+      await prisma.table.updateMany({
+        where: { id: { in: tableIds } },
         data: { status: 'AVAILABLE' },
       });
     }
 
     return cancelled;
+  }
+
+  async delete(id: string) {
+    const reservation = await prisma.reservation.findUnique({
+      where: { id },
+      include: {
+        reservationTables: {
+          select: {
+            tableId: true,
+          },
+        },
+      },
+    });
+
+    if (!reservation) {
+      throw new ApiError(404, 'Reservation not found');
+    }
+
+    // Get all table IDs to free them up
+    const tableIds = reservation.reservationTables.map(rt => rt.tableId);
+    if (tableIds.length === 0 && reservation.tableId) {
+      tableIds.push(reservation.tableId);
+    }
+
+    // Delete the reservation (cascades to reservationTables automatically)
+    await prisma.reservation.delete({
+      where: { id },
+    });
+
+    // Free up all tables
+    if (tableIds.length > 0) {
+      await prisma.table.updateMany({
+        where: { id: { in: tableIds } },
+        data: { status: 'AVAILABLE' },
+      });
+    }
+
+    return { message: 'Reservation deleted successfully' };
   }
 
   async getUpcoming(branchId: string, days: number = 7) {

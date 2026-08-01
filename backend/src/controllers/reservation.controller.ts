@@ -35,7 +35,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const { customerId, branchId, tableId, reservationDate, guests, notes } = req.body;
+  const { customerId, branchId, tableId, tableIds, reservationDate, guests, notes } = req.body;
 
   if (!customerId || !branchId || !reservationDate || !guests) {
     throw new ApiError(400, 'CustomerId, branchId, reservationDate, and guests are required');
@@ -44,7 +44,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const reservation = await reservationService.create({
     customerId,
     branchId,
-    tableId,
+    tableId, // Keep for backward compatibility
+    tableIds, // New: array of table IDs
     reservationDate: new Date(reservationDate),
     guests: parseInt(guests),
     notes,
@@ -92,6 +93,16 @@ export const cancel = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json(
     new ApiResponse(200, reservation, 'Reservation cancelled successfully')
+  );
+});
+
+export const deleteReservation = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await reservationService.delete(id);
+
+  res.status(200).json(
+    new ApiResponse(200, result, result.message)
   );
 });
 

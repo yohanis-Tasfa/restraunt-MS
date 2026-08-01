@@ -28,4 +28,7 @@ router.patch('/:id/status', authorize('reservations.create'), reservationControl
 // Cancel reservation (Manager+)
 router.post('/:id/cancel', authorize('reservations.create'), reservationController.cancel);
 
+// Delete reservation (Manager+)
+router.delete('/:id', authorize('reservations.create'), reservationController.deleteReservation);
+
 export default router;
