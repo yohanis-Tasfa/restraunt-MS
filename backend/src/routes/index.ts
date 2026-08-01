@@ -17,6 +17,7 @@ import customerRoutes from './customer.routes';
 import userRoutes from './user.routes';
 import reportRoutes from './report.routes';
 import settingRoutes from './setting.routes';
+import uploadRoutes from './upload.routes';
 
 const router = Router();
 
@@ -38,6 +39,7 @@ router.use('/customers', customerRoutes);
 router.use('/users', userRoutes);
 router.use('/reports', reportRoutes);
 router.use('/settings', settingRoutes);
+router.use('/upload', uploadRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

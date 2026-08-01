@@ -1,5 +1,6 @@
 import { ApiError } from '../utils/ApiError';
 import prisma from '../config/database';
+import { deleteImageFromCloudinary } from '../config/cloudinary';
 
 interface CreateMenuItemData {
   name: string;
@@ -244,6 +245,19 @@ export class MenuItemService {
       }
     }
 
+    // Delete old image from Cloudinary if a new image is being set
+    if (data.image && existing.image && data.image !== existing.image) {
+      if (existing.image.includes('cloudinary.com')) {
+        try {
+          await deleteImageFromCloudinary(existing.image);
+          console.log('Old image deleted from Cloudinary:', existing.image);
+        } catch (error) {
+          console.error('Failed to delete old image from Cloudinary:', error);
+          // Continue with update even if Cloudinary delete fails
+        }
+      }
+    }
+
     const item = await prisma.menuItem.update({
       where: { id },
       data,
@@ -310,6 +324,17 @@ export class MenuItemService {
         400,
         'Cannot delete menu item with order history. Mark as unavailable instead.'
       );
+    }
+
+    // Delete image from Cloudinary if it exists
+    if (existing.image && existing.image.includes('cloudinary.com')) {
+      try {
+        await deleteImageFromCloudinary(existing.image);
+        console.log('Image deleted from Cloudinary:', existing.image);
+      } catch (error) {
+        console.error('Failed to delete image from Cloudinary:', error);
+        // Continue with deletion even if Cloudinary delete fails
+      }
     }
 
     // Delete related records first

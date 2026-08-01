@@ -62,7 +62,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     nutritionInfo,
   } = req.body;
 
+  console.log('Creating menu item with data:', {
+    name,
+    categoryId,
+    price,
+    hasImage: !!image,
+  });
+
   if (!name || !categoryId || price === undefined) {
+    console.error('Validation failed:', { name, categoryId, price });
     throw new ApiError(400, 'Name, categoryId, and price are required');
   }
 

@@ -21,15 +21,14 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const message = error.response?.data?.message || error.message || 'An error occurred';
-    
+    // Only handle 401 auth errors globally
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
-    } else {
-      toast.error(message);
+      toast.error('Session expired. Please login again.');
     }
+    // Don't show generic error toast - let mutations handle it
     
     return Promise.reject(error);
   }
