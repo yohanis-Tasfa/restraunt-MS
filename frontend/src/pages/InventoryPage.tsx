@@ -40,14 +40,22 @@ export default function InventoryPage() {
 
   const { data: lowStockItems } = useQuery({
     queryKey: ['inventory-low-stock', user?.branch?.id],
-    queryFn: () => inventoryApi.getLowStock(user?.branch?.id),
-    enabled: !!user?.branch?.id && view === 'all',
+    queryFn: async () => {
+      const data = await inventoryApi.getLowStock(user?.branch?.id);
+      console.log('Low stock items response:', data);
+      return data;
+    },
+    enabled: !!user?.branch?.id,
   });
 
   const { data: expiringItems } = useQuery({
     queryKey: ['inventory-expiring', user?.branch?.id],
-    queryFn: () => inventoryApi.getExpiring(user?.branch?.id, 7),
-    enabled: !!user?.branch?.id && view === 'all',
+    queryFn: async () => {
+      const data = await inventoryApi.getExpiring(user?.branch?.id, 7);
+      console.log('Expiring items response:', data);
+      return data;
+    },
+    enabled: !!user?.branch?.id,
   });
 
   const items = inventoryData?.items || [];
@@ -58,6 +66,8 @@ export default function InventoryPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Inventory item created');
       setIsAddModalOpen(false);
     },
@@ -69,6 +79,8 @@ export default function InventoryPage() {
       inventoryApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Inventory item updated');
       setIsEditModalOpen(false);
       setSelectedItem(null);
@@ -80,6 +92,8 @@ export default function InventoryPage() {
     mutationFn: inventoryApi.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Inventory item deleted');
     },
     onError: () => toast.error('Failed to delete item'),
@@ -89,6 +103,8 @@ export default function InventoryPage() {
     mutationFn: inventoryApi.addMovement,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Stock movement recorded');
       setIsMovementModalOpen(false);
       setSelectedItem(null);
@@ -133,7 +149,7 @@ export default function InventoryPage() {
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+          className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
         >
           <Plus className="w-5 h-5" />
           Add Item
@@ -158,7 +174,9 @@ export default function InventoryPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Low Stock</p>
-              <p className="text-2xl font-bold text-red-600">{lowStockItems?.length || 0}</p>
+              <p className="text-2xl font-bold text-red-600">
+                {Array.isArray(lowStockItems) ? lowStockItems.length : 0}
+              </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-red-600" />
@@ -170,7 +188,9 @@ export default function InventoryPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Expiring Soon</p>
-              <p className="text-2xl font-bold text-yellow-600">{expiringItems?.length || 0}</p>
+              <p className="text-2xl font-bold text-yellow-600">
+                {Array.isArray(expiringItems) ? expiringItems.length : 0}
+              </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
               <Calendar className="w-6 h-6 text-yellow-600" />
@@ -200,7 +220,7 @@ export default function InventoryPage() {
               onClick={() => setView('all')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 view === 'all'
-                  ? 'bg-orange-500 text-white'
+                  ? 'bg-green-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -210,7 +230,7 @@ export default function InventoryPage() {
               onClick={() => setView('low-stock')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 view === 'low-stock'
-                  ? 'bg-red-500 text-white'
+                  ? 'bg-green-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -221,7 +241,7 @@ export default function InventoryPage() {
               onClick={() => setView('expiring')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 view === 'expiring'
-                  ? 'bg-yellow-500 text-white'
+                  ? 'bg-green-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -267,7 +287,7 @@ export default function InventoryPage() {
             <p className="text-gray-500 mb-6">Start by adding your first inventory item</p>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600"
             >
               <Plus className="w-5 h-5" />
               Add First Item
@@ -333,13 +353,11 @@ export default function InventoryPage() {
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900">{item.quantity}</span>
-                          <span className="text-sm text-gray-500">/ {item.minQuantity} min</span>
-                        </div>
-                        {item.maxQuantity && (
-                          <div className="text-xs text-gray-400">max: {item.maxQuantity}</div>
-                        )}
+                        <span className={`text-2xl font-bold ${
+                          item.quantity <= item.minQuantity ? 'text-red-600' : 'text-gray-900'
+                        }`}>
+                          {item.quantity}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {item.unit}
@@ -365,7 +383,7 @@ export default function InventoryPage() {
                               setSelectedItem(item);
                               setIsMovementModalOpen(true);
                             }}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            className="p-2 text-white bg-green-500 hover:bg-green-600 rounded-lg"
                             title="Record Movement"
                           >
                             <ArrowUpDown className="w-4 h-4" />
@@ -375,14 +393,14 @@ export default function InventoryPage() {
                               setSelectedItem(item);
                               setIsEditModalOpen(true);
                             }}
-                            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                            className="p-2 text-white bg-green-500 hover:bg-green-600 rounded-lg"
                             title="Edit"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(item)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                            className="p-2 text-white bg-red-500 hover:bg-red-600 rounded-lg"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -643,7 +661,7 @@ function ItemModal({ isOpen, onClose, item, onSubmit, categories }: ItemModalPro
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+              className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
             >
               {item ? 'Update Item' : 'Add Item'}
             </button>
@@ -770,7 +788,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+              className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
             >
               Record Movement
             </button>
