@@ -234,6 +234,7 @@ model MenuItem {
   isSpicy         Boolean      @default(false)
   allergens       String[]
   nutritionInfo   Json?
+  displayOrder    Int          @default(0)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   
@@ -243,6 +244,7 @@ model MenuItem {
   recipeItems     RecipeItem[]
   
   @@index([categoryId])
+  @@index([displayOrder])
   @@map("menu_items")
 }
 

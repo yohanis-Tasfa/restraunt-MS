@@ -10,7 +10,9 @@ import {
   Copy, 
   Eye, 
   EyeOff,
-  X
+  X,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { menuApi } from '../api/menu';
 import type { 
@@ -31,6 +33,8 @@ export default function MenuManagementPage() {
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [isCreatingCategories, setIsCreatingCategories] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [isBulkMode, setIsBulkMode] = useState(false);
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
 
@@ -97,6 +101,23 @@ export default function MenuManagementPage() {
     },
     onError: () => {
       toast.error('Failed to delete menu item');
+    },
+  });
+
+  const duplicateMutation = useMutation({
+    mutationFn: (item: MenuItem) => {
+      const { id, category, variants, addons, ...duplicateData } = item;
+      return menuApi.createMenuItem({
+        ...duplicateData,
+        name: `${item.name} (Copy)`,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+      toast.success('Menu item duplicated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to duplicate menu item');
     },
   });
 
@@ -252,6 +273,143 @@ export default function MenuManagementPage() {
     }
   };
 
+  const handleDuplicate = (item: MenuItem) => {
+    duplicateMutation.mutate(item);
+  };
+
+  // Bulk actions
+  const toggleSelectItem = (id: string) => {
+    const newSelected = new Set(selectedItems);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedItems(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedItems.size === filteredItems.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(filteredItems.map(item => item.id)));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedItems.size === 0) {
+      toast.error('No items selected');
+      return;
+    }
+    if (window.confirm(`Delete ${selectedItems.size} selected items?`)) {
+      Promise.all(
+        Array.from(selectedItems).map(id => menuApi.deleteMenuItem(id))
+      ).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+        toast.success(`${selectedItems.size} items deleted`);
+        setSelectedItems(new Set());
+        setIsBulkMode(false);
+      }).catch(() => {
+        toast.error('Failed to delete some items');
+      });
+    }
+  };
+
+  const handleBulkAvailability = (isAvailable: boolean) => {
+    if (selectedItems.size === 0) {
+      toast.error('No items selected');
+      return;
+    }
+    Promise.all(
+      Array.from(selectedItems).map(id => 
+        menuApi.toggleMenuItemAvailability(id, isAvailable)
+      )
+    ).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+      toast.success(`${selectedItems.size} items updated`);
+      setSelectedItems(new Set());
+      setIsBulkMode(false);
+    }).catch(() => {
+      toast.error('Failed to update some items');
+    });
+  };
+
+  const handleBulkCategoryChange = (categoryId: string) => {
+    if (selectedItems.size === 0) {
+      toast.error('No items selected');
+      return;
+    }
+    Promise.all(
+      Array.from(selectedItems).map(id => 
+        menuApi.updateMenuItem(id, { categoryId })
+      )
+    ).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+      toast.success(`${selectedItems.size} items moved`);
+      setSelectedItems(new Set());
+      setIsBulkMode(false);
+    }).catch(() => {
+      toast.error('Failed to move some items');
+    });
+  };
+
+  const handleMoveItem = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    if (targetIndex < 0 || targetIndex >= filteredItems.length) return;
+    
+    const currentItem = filteredItems[index];
+    const targetItem = filteredItems[targetIndex];
+    
+    // Check if items have duplicate or missing displayOrder
+    const hasDuplicates = filteredItems.some((item, idx) => {
+      const otherItems = filteredItems.slice(0, idx);
+      return otherItems.some(other => other.displayOrder === item.displayOrder);
+    });
+    
+    if (hasDuplicates || !currentItem.displayOrder || !targetItem.displayOrder) {
+      console.log('Fixing displayOrder for all items (sequentially)...');
+      try {
+        // Re-assign displayOrder sequentially to avoid race conditions
+        for (let i = 0; i < filteredItems.length; i++) {
+          await menuApi.updateMenuItem(filteredItems[i].id, { displayOrder: i + 1 });
+        }
+        await queryClient.refetchQueries({ queryKey: ['menuItems', user?.restaurant.id, selectedCategory] });
+        toast.success('Order fixed. Please try again.');
+        return;
+      } catch (error) {
+        console.error('Failed to fix order:', error);
+        toast.error('Failed to fix order');
+        return;
+      }
+    }
+    
+    // Now swap - use actual displayOrder values
+    const currentOrder = currentItem.displayOrder;
+    const targetOrder = targetItem.displayOrder;
+    
+    console.log('Swapping:', {
+      current: { id: currentItem.id, name: currentItem.name, oldOrder: currentOrder, newOrder: targetOrder },
+      target: { id: targetItem.id, name: targetItem.name, oldOrder: targetOrder, newOrder: currentOrder }
+    });
+    
+    try {
+      // Swap the display orders
+      await Promise.all([
+        menuApi.updateMenuItem(currentItem.id, { displayOrder: targetOrder }),
+        menuApi.updateMenuItem(targetItem.id, { displayOrder: currentOrder }),
+      ]);
+      
+      // Force refetch to see changes
+      await queryClient.refetchQueries({ queryKey: ['menuItems', user?.restaurant.id, selectedCategory] });
+      
+      toast.success('Position swapped');
+    } catch (error) {
+      console.error('Failed to reorder:', error);
+      toast.error('Failed to reorder');
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Header */}
@@ -272,12 +430,13 @@ export default function MenuManagementPage() {
           <div className="text-xs text-gray-500 mt-1">Active</div>
         </div>
         <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="text-2xl font-bold text-orange-600">{lowStockItems}</div>
+          <div className="text-2xl font-bold text-orange-600">—</div>
           <div className="text-xs text-gray-500 mt-1">Low stock</div>
+          <div className="text-xs text-gray-400 mt-1">Requires inventory</div>
         </div>
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <div className="text-2xl font-bold text-red-600">{outOfStockItems}</div>
-          <div className="text-xs text-gray-500 mt-1">Out of stock</div>
+          <div className="text-xs text-gray-500 mt-1">Unavailable</div>
         </div>
       </div>
 
@@ -322,6 +481,24 @@ export default function MenuManagementPage() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            {isBulkMode ? (
+              <button
+                onClick={() => {
+                  setIsBulkMode(false);
+                  setSelectedItems(new Set());
+                }}
+                className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsBulkMode(true)}
+                className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Select
+              </button>
+            )}
             <label className={`flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}>
               <Upload className="w-4 h-4" />
               <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import'}</span>
@@ -343,6 +520,67 @@ export default function MenuManagementPage() {
           </div>
         </div>
       </div>
+
+      {/* Bulk Actions Toolbar */}
+      {isBulkMode && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedItems.size === filteredItems.length && filteredItems.length > 0}
+                onChange={toggleSelectAll}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-700">
+                {selectedItems.size} selected
+              </span>
+            </div>
+            
+            {selectedItems.size > 0 && (
+              <>
+                <div className="h-6 w-px bg-gray-300" />
+                <button
+                  onClick={() => handleBulkAvailability(true)}
+                  className="px-3 py-1.5 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600"
+                >
+                  Mark Available
+                </button>
+                <button
+                  onClick={() => handleBulkAvailability(false)}
+                  className="px-3 py-1.5 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                >
+                  Mark Unavailable
+                </button>
+                
+                <select
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleBulkCategoryChange(e.target.value);
+                    }
+                  }}
+                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white"
+                  defaultValue=""
+                >
+                  <option value="">Move to Category...</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                
+                <button
+                  onClick={handleBulkDelete}
+                  className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  Delete Selected
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Menu Items Grid */}
       {isLoading ? (
@@ -371,18 +609,26 @@ export default function MenuManagementPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
-          {filteredItems.map((item) => (
+          {filteredItems.map((item, index) => (
             <MenuItemCard
               key={item.id}
               item={item}
+              isSelected={selectedItems.has(item.id)}
+              isBulkMode={isBulkMode}
+              onSelect={() => toggleSelectItem(item.id)}
               onEdit={() => setEditingItem(item)}
               onDelete={() => handleDelete(item.id, item.name)}
+              onDuplicate={() => handleDuplicate(item)}
               onToggleAvailability={() =>
                 toggleAvailabilityMutation.mutate({
                   id: item.id,
                   isAvailable: !item.isAvailable,
                 })
               }
+              onMoveUp={() => handleMoveItem(index, 'up')}
+              onMoveDown={() => handleMoveItem(index, 'down')}
+              canMoveUp={index > 0}
+              canMoveDown={index < filteredItems.length - 1}
             />
           ))}
         </div>
@@ -415,19 +661,37 @@ export default function MenuManagementPage() {
 // Menu Item Card Component
 function MenuItemCard({
   item,
+  isSelected,
+  isBulkMode,
+  onSelect,
   onEdit,
   onDelete,
+  onDuplicate,
   onToggleAvailability,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp,
+  canMoveDown,
 }: {
   item: MenuItem;
+  isSelected: boolean;
+  isBulkMode: boolean;
+  onSelect: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onDuplicate: () => void;
   onToggleAvailability: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
 }) {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition-all group">
+    <div className={`bg-white rounded-lg overflow-hidden border-2 hover:shadow-lg transition-all group ${
+      isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+    }`}>
       {/* Image */}
       <div className="relative aspect-[4/3] bg-gradient-to-br from-orange-100 to-orange-50 overflow-hidden">
         {item.image ? (
@@ -450,79 +714,125 @@ function MenuItemCard({
           </div>
         )}
         
+        {/* Selection Checkbox (Bulk Mode) */}
+        {isBulkMode && (
+          <div className="absolute top-2 left-2">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={onSelect}
+              className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
+        
         {/* Menu Button */}
-        <div className="absolute top-2 right-2">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50"
-          >
-            <MoreVertical className="w-4 h-4 text-gray-600" />
-          </button>
-          
-          {/* Dropdown Menu */}
-          {showMenu && (
-            <>
-              <div 
-                className="fixed inset-0 z-10" 
-                onClick={() => setShowMenu(false)}
-              />
-              <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20">
+        {!isBulkMode && (
+          <>
+            {/* Reorder Buttons */}
+            <div className="absolute bottom-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {canMoveUp && (
                 <button
-                  onClick={() => {
-                    onEdit();
-                    setShowMenu(false);
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMoveUp?.();
                   }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-gray-50"
+                  title="Move up"
                 >
-                  <Edit className="w-4 h-4" />
-                  Edit dish
+                  <ChevronUp className="w-4 h-4 text-gray-600" />
                 </button>
+              )}
+              {canMoveDown && (
                 <button
-                  onClick={() => {
-                    onToggleAvailability();
-                    setShowMenu(false);
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMoveDown?.();
                   }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-gray-50"
+                  title="Move down"
                 >
-                  {item.isAvailable ? (
-                    <>
-                      <EyeOff className="w-4 h-4" />
-                      Mark unavailable
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="w-4 h-4" />
-                      Mark available
-                    </>
-                  )}
+                  <ChevronDown className="w-4 h-4 text-gray-600" />
                 </button>
-                <button
-                  onClick={() => {
-                    setShowMenu(false);
-                  }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                >
-                  <Copy className="w-4 h-4" />
-                  Duplicate
-                </button>
-                <hr className="my-1" />
-                <button
-                  onClick={() => {
-                    onDelete();
-                    setShowMenu(false);
-                  }}
-                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Delete
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+              )}
+            </div>
+            
+            <div className="absolute top-2 right-2">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50"
+            >
+              <MoreVertical className="w-4 h-4 text-gray-600" />
+            </button>
+            
+            {/* Dropdown Menu */}
+            {showMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-10" 
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20">
+                  <button
+                    onClick={() => {
+                      onEdit();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit dish
+                  </button>
+                  <button
+                    onClick={() => {
+                      onToggleAvailability();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    {item.isAvailable ? (
+                      <>
+                        <EyeOff className="w-4 h-4" />
+                        Mark unavailable
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4" />
+                        Mark available
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDuplicate();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Duplicate
+                  </button>
+                  <hr className="my-1" />
+                  <button
+                    onClick={() => {
+                      onDelete();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </>
+        )}
 
         {/* Availability Badge */}
-        {!item.isAvailable && (
+        {!item.isAvailable && !isBulkMode && (
           <div className="absolute top-2 left-2">
             <span className="px-2 py-1 bg-red-500 text-white text-xs font-medium rounded">
               Unavailable

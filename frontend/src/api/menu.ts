@@ -35,6 +35,7 @@ export interface MenuItem {
   preparationTime?: number;
   isVegetarian?: boolean;
   isSpicy?: boolean;
+  displayOrder?: number;
   variants?: MenuVariant[];
   addons?: MenuAddon[];
 }
@@ -82,6 +83,7 @@ export interface UpdateMenuItemInput {
   isAvailable?: boolean;
   isVegetarian?: boolean;
   isSpicy?: boolean;
+  displayOrder?: number;
   allergens?: string[];
   nutritionInfo?: any;
 }

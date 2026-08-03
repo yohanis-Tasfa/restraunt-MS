@@ -108,7 +108,10 @@ export class MenuItemService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { displayOrder: 'asc' },
+        { createdAt: 'desc' }
+      ],
     });
 
     return {
