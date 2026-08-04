@@ -378,8 +378,8 @@ export default function ReservationsPage() {
         </Button>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      {/* Statistics Cards - 2x2 grid on mobile, 4 columns on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
@@ -442,100 +442,104 @@ export default function ReservationsPage() {
         </div>
       </div>
 
-      {/* Reservations Table */}
+      {/* Reservations Table - Wrapped in horizontal scroll container */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        {/* Table Header */}
-        <div className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
-          <div>#</div>
-          <div>Customer</div>
-          <div>Phone</div>
-          <div>Date & Time</div>
-          <div>Guests</div>
-          <div>Table</div>
-          <div>Status</div>
-          <div>Created</div>
-          <div></div>
-        </div>
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full align-middle">
+            {/* Table Header */}
+            <div className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
+              <div>#</div>
+              <div>Customer</div>
+              <div>Phone</div>
+              <div>Date & Time</div>
+              <div>Guests</div>
+              <div>Table</div>
+              <div>Status</div>
+              <div>Created</div>
+              <div></div>
+            </div>
 
-        {/* Table Body */}
-        <div className="divide-y divide-gray-200">
-          {filteredReservations.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No reservations found</h3>
-              <p className="text-gray-500 mb-4">
-                {searchTerm ? 'Try adjusting your search' : 'Create your first reservation'}
-              </p>
-              {!searchTerm && (
-                <Button onClick={() => setIsCreateModalOpen(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Reservation
-                </Button>
+            {/* Table Body */}
+            <div className="divide-y divide-gray-200">
+              {filteredReservations.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No reservations found</h3>
+                  <p className="text-gray-500 mb-4">
+                    {searchTerm ? 'Try adjusting your search' : 'Create your first reservation'}
+                  </p>
+                  {!searchTerm && (
+                    <Button onClick={() => setIsCreateModalOpen(true)}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      New Reservation
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                filteredReservations.map((reservation: Reservation, index: number) => (
+                  <div
+                    key={reservation.id}
+                    className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm"
+                  >
+                    {/* Number */}
+                    <div className="font-medium text-gray-900">{index + 1}</div>
+
+                    {/* Customer */}
+                    <div className="text-gray-900 font-medium">
+                      {reservation.customer.firstName} {reservation.customer.lastName}
+                    </div>
+
+                    {/* Phone */}
+                    <div className="text-gray-700">{reservation.customer.phone || '-'}</div>
+
+                    {/* Date & Time */}
+                    <div className="text-gray-700">
+                      {format(new Date(reservation.reservationDate), 'MMM dd, yyyy HH:mm')}
+                    </div>
+
+                    {/* Guests */}
+                    <div className="text-gray-700 flex items-center gap-1">
+                      <Users className="w-4 h-4" />
+                      {reservation.guests}
+                    </div>
+
+                    {/* Table */}
+                    <div className="text-gray-700">
+                      {reservation.reservationTables && reservation.reservationTables.length > 0
+                        ? reservation.reservationTables
+                            .map(rt => `Table ${rt.table.number}`)
+                            .join(', ')
+                        : reservation.table
+                        ? `Table ${reservation.table.number}`
+                        : 'Not assigned'}
+                    </div>
+
+                    {/* Status */}
+                    <div>
+                      <Badge className={`${getStatusColor(reservation.status)} font-normal text-xs`}>
+                        {reservation.status}
+                      </Badge>
+                    </div>
+
+                    {/* Created */}
+                    <div className="text-gray-500 text-xs">{getTimeAgo(reservation.createdAt)}</div>
+
+                    {/* Actions */}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => handleViewDetails(reservation)}
+                        className="p-1 hover:bg-gray-100 rounded transition-colors"
+                      >
+                        <Eye className="w-5 h-5 text-gray-400" />
+                      </button>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
-          ) : (
-            filteredReservations.map((reservation: Reservation, index: number) => (
-              <div
-                key={reservation.id}
-                className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm"
-              >
-                {/* Number */}
-                <div className="font-medium text-gray-900">{index + 1}</div>
-
-                {/* Customer */}
-                <div className="text-gray-900 font-medium">
-                  {reservation.customer.firstName} {reservation.customer.lastName}
-                </div>
-
-                {/* Phone */}
-                <div className="text-gray-700">{reservation.customer.phone || '-'}</div>
-
-                {/* Date & Time */}
-                <div className="text-gray-700">
-                  {format(new Date(reservation.reservationDate), 'MMM dd, yyyy HH:mm')}
-                </div>
-
-                {/* Guests */}
-                <div className="text-gray-700 flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  {reservation.guests}
-                </div>
-
-                {/* Table */}
-                <div className="text-gray-700">
-                  {reservation.reservationTables && reservation.reservationTables.length > 0
-                    ? reservation.reservationTables
-                        .map(rt => `Table ${rt.table.number}`)
-                        .join(', ')
-                    : reservation.table
-                    ? `Table ${reservation.table.number}`
-                    : 'Not assigned'}
-                </div>
-
-                {/* Status */}
-                <div>
-                  <Badge className={`${getStatusColor(reservation.status)} font-normal text-xs`}>
-                    {reservation.status}
-                  </Badge>
-                </div>
-
-                {/* Created */}
-                <div className="text-gray-500 text-xs">{getTimeAgo(reservation.createdAt)}</div>
-
-                {/* Actions */}
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => handleViewDetails(reservation)}
-                    className="p-1 hover:bg-gray-100 rounded transition-colors"
-                  >
-                    <Eye className="w-5 h-5 text-gray-400" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+          </div>
         </div>
       </div>
 

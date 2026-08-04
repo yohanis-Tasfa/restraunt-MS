@@ -99,8 +99,13 @@ export default function MenuManagementPage() {
       queryClient.invalidateQueries({ queryKey: ['menuItems'] });
       toast.success('Menu item deleted successfully');
     },
-    onError: () => {
-      toast.error('Failed to delete menu item');
+    onError: (error: any) => {
+      const message = error.response?.data?.message || 'Failed to delete menu item';
+      if (message.includes('order history')) {
+        toast.error('Cannot delete item with order history. Mark as unavailable instead.');
+      } else {
+        toast.error(message);
+      }
     },
   });
 
@@ -296,61 +301,83 @@ export default function MenuManagementPage() {
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedItems.size === 0) {
       toast.error('No items selected');
       return;
     }
-    if (window.confirm(`Delete ${selectedItems.size} selected items?`)) {
-      Promise.all(
-        Array.from(selectedItems).map(id => menuApi.deleteMenuItem(id))
-      ).then(() => {
-        queryClient.invalidateQueries({ queryKey: ['menuItems'] });
-        toast.success(`${selectedItems.size} items deleted`);
-        setSelectedItems(new Set());
-        setIsBulkMode(false);
-      }).catch(() => {
-        toast.error('Failed to delete some items');
-      });
+    if (!window.confirm(`Delete ${selectedItems.size} selected items?`)) {
+      return;
+    }
+    
+    try {
+      const results = await Promise.allSettled(
+        Array.from(selectedItems).map(id => deleteMutation.mutateAsync(id))
+      );
+      
+      const successful = results.filter(r => r.status === 'fulfilled').length;
+      const failed = results.filter(r => r.status === 'rejected').length;
+      
+      queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+      
+      if (successful > 0 && failed === 0) {
+        toast.success(`${successful} items deleted`);
+      } else if (successful > 0 && failed > 0) {
+        toast.error(`${successful} deleted, ${failed} failed. Items with order history cannot be deleted - mark as unavailable instead.`);
+      } else {
+        toast.error('Failed to delete items. Items with order history cannot be deleted - mark as unavailable instead.');
+      }
+      
+      setSelectedItems(new Set());
+      setIsBulkMode(false);
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      toast.error('Failed to delete items');
     }
   };
 
-  const handleBulkAvailability = (isAvailable: boolean) => {
+  const handleBulkAvailability = async (isAvailable: boolean) => {
     if (selectedItems.size === 0) {
       toast.error('No items selected');
       return;
     }
-    Promise.all(
-      Array.from(selectedItems).map(id => 
-        menuApi.toggleMenuItemAvailability(id, isAvailable)
-      )
-    ).then(() => {
+    
+    try {
+      await Promise.all(
+        Array.from(selectedItems).map(id => 
+          toggleAvailabilityMutation.mutateAsync({ id, isAvailable })
+        )
+      );
       queryClient.invalidateQueries({ queryKey: ['menuItems'] });
       toast.success(`${selectedItems.size} items updated`);
       setSelectedItems(new Set());
       setIsBulkMode(false);
-    }).catch(() => {
+    } catch (error) {
+      console.error('Bulk availability error:', error);
       toast.error('Failed to update some items');
-    });
+    }
   };
 
-  const handleBulkCategoryChange = (categoryId: string) => {
+  const handleBulkCategoryChange = async (categoryId: string) => {
     if (selectedItems.size === 0) {
       toast.error('No items selected');
       return;
     }
-    Promise.all(
-      Array.from(selectedItems).map(id => 
-        menuApi.updateMenuItem(id, { categoryId })
-      )
-    ).then(() => {
+    
+    try {
+      await Promise.all(
+        Array.from(selectedItems).map(id => 
+          updateMutation.mutateAsync({ id, data: { categoryId } })
+        )
+      );
       queryClient.invalidateQueries({ queryKey: ['menuItems'] });
       toast.success(`${selectedItems.size} items moved`);
       setSelectedItems(new Set());
       setIsBulkMode(false);
-    }).catch(() => {
+    } catch (error) {
+      console.error('Bulk category change error:', error);
       toast.error('Failed to move some items');
-    });
+    }
   };
 
   const handleMoveItem = async (index: number, direction: 'up' | 'down') => {
