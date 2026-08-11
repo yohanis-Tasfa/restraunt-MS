@@ -42,6 +42,7 @@ model User {
   attendances       Attendance[]
   leaves            Leave[]
   expenses          Expense[]
+  employee          Employee?
   
   @@index([email])
   @@index([roleId])
@@ -630,6 +631,46 @@ enum ReservationStatus {
 // EMPLOYEE MANAGEMENT
 // ============================================
 
+model Employee {
+  id              String          @id @default(uuid())
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode    String          @unique
+  department      String
+  position        String
+  employmentType  EmploymentType  @default(FULL_TIME)
+  salary          Float
+  hireDate        DateTime        @db.Date
+  contractEndDate DateTime?       @db.Date
+  emergencyContact String?
+  emergencyPhone  String?
+  bankAccount     String?
+  taxNumber       String?
+  status          EmployeeStatus  @default(ACTIVE)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  payrolls        Payroll[]
+  
+  @@index([department])
+  @@index([status])
+  @@map("employees")
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  SUSPENDED
+  TERMINATED
+}
+
 model Attendance {
   id        String    @id @default(uuid())
   userId    String
@@ -687,6 +728,35 @@ enum LeaveStatus {
   PENDING
   APPROVED
   REJECTED
+  CANCELLED
+}
+
+model Payroll {
+  id              String        @id @default(uuid())
+  employeeId      String
+  employee        Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  period          DateTime      @db.Date
+  basicSalary     Float
+  allowances      Float         @default(0)
+  deductions      Float         @default(0)
+  overtime        Float         @default(0)
+  netSalary       Float
+  status          PayrollStatus @default(PENDING)
+  paidAt          DateTime?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([employeeId])
+  @@index([period])
+  @@index([status])
+  @@map("payrolls")
+}
+
+enum PayrollStatus {
+  PENDING
+  APPROVED
+  PAID
   CANCELLED
 }
 

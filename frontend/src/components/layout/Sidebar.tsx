@@ -60,6 +60,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const businessItems: NavItem[] = [
     { label: 'Expenses', icon: Wallet, path: '/expenses', roles: ['Super Admin', 'Admin', 'Manager'] },
     { label: 'Reports', icon: BarChart3, path: '/reports', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Employees', icon: Users, path: '/employees', roles: ['Super Admin', 'Admin', 'Manager'] },
   ];
 
   const isActive = (path: string) => location.pathname === path;

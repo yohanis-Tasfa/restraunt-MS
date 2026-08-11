@@ -1,6 +1,7 @@
 import app from './app';
 import prisma from './config/database';
 
+// Server configuration
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
