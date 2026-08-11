@@ -12,6 +12,7 @@ import MenuManagementPage from './pages/MenuManagementPage';
 import RecipesPage from './pages/RecipesPage';
 import InventoryPage from './pages/InventoryPage';
 import ExpensesPage from './pages/ExpensesPage';
+import ReportsPage from './pages/ReportsPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -103,6 +104,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
                   <ExpensesPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/reports" 
+              element={
+                <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                  <ReportsPage />
                 </ProtectedRoute>
               } 
             />

@@ -16,6 +16,7 @@ import {
   Store,
   X,
   Wallet,
+  BarChart3,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -58,6 +59,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Business Section Items
   const businessItems: NavItem[] = [
     { label: 'Expenses', icon: Wallet, path: '/expenses', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Reports', icon: BarChart3, path: '/reports', roles: ['Super Admin', 'Admin', 'Manager'] },
   ];
 
   const isActive = (path: string) => location.pathname === path;
