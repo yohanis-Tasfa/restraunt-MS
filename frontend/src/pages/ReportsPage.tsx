@@ -214,8 +214,9 @@ function OverviewTab({ dateParams }: { dateParams: { startDate: string; endDate:
   const sales = salesData?.data || salesData;
   const expenses = expensesData?.data || expensesData;
 
-  const formatCurrency = (amount: number) => {
-    return `Br ${amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  const formatCurrency = (amount: number | null | undefined) => {
+    const value = amount || 0;
+    return `Br ${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   };
 
   const revenue = sales?.summary?.totalRevenue || 0;
@@ -378,8 +379,9 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
   const topItemsData = topItems?.data || topItems;
   const categoryData = revenueByCategory?.data || revenueByCategory;
 
-  const formatCurrency = (amount: number) => {
-    return `Br ${amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  const formatCurrency = (amount: number | null | undefined) => {
+    const value = amount || 0;
+    return `Br ${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   };
 
   if (loadingSales || loadingItems || loadingCategory) {
@@ -393,13 +395,13 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
   // Prepare chart data
   const revenueChartData = salesData?.data?.map((item: any) => ({
     date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    revenue: item.revenue,
-    orders: item.orders,
+    revenue: item.revenue || 0,
+    orders: item.orders || 0,
   })) || [];
 
   const categoryChartData = categoryData?.categories?.slice(0, 6).map((item: any) => ({
-    name: item.category,
-    value: item.revenue,
+    name: item.category || 'Unknown',
+    value: item.revenue || 0,
   })) || [];
 
   return (
@@ -501,8 +503,9 @@ function ExpensesTab({ dateParams }: { dateParams: { startDate: string; endDate:
 
   const expenses = expensesData?.data || expensesData;
 
-  const formatCurrency = (amount: number) => {
-    return `Br ${amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  const formatCurrency = (amount: number | null | undefined) => {
+    const value = amount || 0;
+    return `Br ${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   };
 
   if (isLoading) {

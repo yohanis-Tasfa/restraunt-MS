@@ -13,6 +13,8 @@ import {
   getRevenueByBranch,
   getRevenueByCategory,
   getDashboardStats,
+  getExpensesSummary,
+  getProfitLoss,
 } from '../controllers/report.controller';
 
 const router = Router();
@@ -63,5 +65,13 @@ router.get('/revenue/by-branch', authorize(reportRoles), getRevenueByBranch);
 
 // GET /api/reports/revenue/by-category - Get revenue by category
 router.get('/revenue/by-category', authorize(reportRoles), getRevenueByCategory);
+
+// ============ EXPENSE REPORTS ============
+// GET /api/reports/expenses/summary - Get expense summary
+router.get('/expenses/summary', authorize(reportRoles), getExpensesSummary);
+
+// ============ PROFIT & LOSS ============
+// GET /api/reports/profit-loss - Get profit & loss statement
+router.get('/profit-loss', authorize(reportRoles), getProfitLoss);
 
 export default router;
