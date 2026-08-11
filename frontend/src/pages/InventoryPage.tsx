@@ -677,7 +677,17 @@ interface MovementModalProps {
   isOpen: boolean;
   onClose: () => void;
   item: InventoryItem;
-  onSubmit: (data: { inventoryId: string; type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'WASTE' | 'TRANSFER'; quantity: number; reference?: string; notes?: string }) => void;
+  onSubmit: (data: { 
+    inventoryId: string; 
+    type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'WASTE' | 'TRANSFER'; 
+    quantity: number; 
+    reference?: string; 
+    notes?: string;
+    costPerUnit?: number;
+    totalCost?: number;
+    supplier?: string;
+    paymentMethod?: string;
+  }) => void;
 }
 
 function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) {
@@ -686,15 +696,41 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
     quantity: 0,
     reference: '',
     notes: '',
+    costPerUnit: 0,
+    totalCost: 0,
+    supplier: '',
+    paymentMethod: 'Cash',
   });
+
+  // Auto-calculate total cost
+  const handleQuantityChange = (quantity: number) => {
+    setFormData({
+      ...formData,
+      quantity,
+      totalCost: quantity * formData.costPerUnit,
+    });
+  };
+
+  const handleCostPerUnitChange = (costPerUnit: number) => {
+    setFormData({
+      ...formData,
+      costPerUnit,
+      totalCost: formData.quantity * costPerUnit,
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
       inventoryId: item.id,
-      ...formData,
+      type: formData.type,
+      quantity: formData.quantity,
       reference: formData.reference || undefined,
       notes: formData.notes || undefined,
+      costPerUnit: formData.type === 'IN' && formData.costPerUnit > 0 ? formData.costPerUnit : undefined,
+      totalCost: formData.type === 'IN' && formData.totalCost > 0 ? formData.totalCost : undefined,
+      supplier: formData.type === 'IN' && formData.supplier ? formData.supplier : undefined,
+      paymentMethod: formData.type === 'IN' && formData.paymentMethod ? formData.paymentMethod : undefined,
     });
   };
 
@@ -702,8 +738,8 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full">
-        <div className="p-6 border-b border-gray-200">
+      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
           <h2 className="text-xl font-bold text-gray-900">Record Stock Movement</h2>
           <p className="text-sm text-gray-600 mt-1">
             Item: <span className="font-medium">{item.name}</span> (Current: {item.quantity} {item.unit})
@@ -719,7 +755,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
               required
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             >
               <option value="IN">Stock In (Add)</option>
               <option value="OUT">Stock Out (Deduct)</option>
@@ -739,19 +775,101 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
               min="0.01"
               step="0.01"
               value={formData.quantity}
-              onChange={(e) => setFormData({ ...formData, quantity: parseFloat(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              onChange={(e) => handleQuantityChange(parseFloat(e.target.value) || 0)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             />
           </div>
+
+          {/* Cost Fields - Only for Stock In */}
+          {formData.type === 'IN' && (
+            <>
+              <div className="border-t border-gray-200 pt-4 mt-2">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Payment Details</h3>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cost per {item.unit}
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.costPerUnit}
+                      onChange={(e) => handleCostPerUnitChange(parseFloat(e.target.value) || 0)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total Cost (ETB)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.totalCost}
+                      onChange={(e) => setFormData({ ...formData, totalCost: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Supplier Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.supplier}
+                    onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    placeholder="e.g., ABC Market"
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Payment Method
+                  </label>
+                  <select
+                    value={formData.paymentMethod}
+                    onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  >
+                    <option value="Cash">Cash</option>
+                    <option value="Bank transfer">Bank transfer</option>
+                    <option value="Card">Card</option>
+                    <option value="CBE Birr">CBE Birr</option>
+                    <option value="Telebirr">Telebirr</option>
+                    <option value="M-Pesa">M-Pesa</option>
+                  </select>
+                </div>
+
+                {formData.totalCost > 0 && (
+                  <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-sm text-green-800">
+                      💰 <strong>Expense will be auto-created:</strong> {formData.totalCost.toLocaleString()} ETB
+                      <br />
+                      <span className="text-xs">Category: Ingredients | Status: Paid</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Reference</label>
             <input
               type="text"
-              placeholder="e.g., PO-1234, Transfer from Branch A"
+              placeholder="e.g., Invoice #123, Transfer from Branch A"
               value={formData.reference}
               onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             />
           </div>
 
@@ -762,7 +880,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
               placeholder="Additional details..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             />
           </div>
 
@@ -778,7 +896,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
             </p>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-4 sticky bottom-0 bg-white border-t border-gray-200 -mx-6 px-6 pb-6">
             <button
               type="button"
               onClick={onClose}

@@ -11,6 +11,7 @@ import ReservationsPage from './pages/ReservationsPage';
 import MenuManagementPage from './pages/MenuManagementPage';
 import RecipesPage from './pages/RecipesPage';
 import InventoryPage from './pages/InventoryPage';
+import ExpensesPage from './pages/ExpensesPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -94,6 +95,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Inventory Manager']}>
                   <InventoryPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/expenses" 
+              element={
+                <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                  <ExpensesPage />
                 </ProtectedRoute>
               } 
             />

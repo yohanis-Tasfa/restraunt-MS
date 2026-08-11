@@ -24,6 +24,12 @@ interface MovementData {
   quantity: number;
   reference?: string;
   notes?: string;
+  // New fields for automatic expense creation
+  costPerUnit?: number;
+  totalCost?: number;
+  supplier?: string;
+  paymentMethod?: string;
+  userId?: string;
 }
 
 interface QueryParams {
@@ -338,10 +344,39 @@ export class InventoryService {
       data: { quantity: newQuantity },
     });
 
+    // Auto-create expense for Stock-In with cost information
+    let expense = null;
+    if (data.type === 'IN' && data.totalCost && data.totalCost > 0 && data.userId) {
+      try {
+        const expenseDescription = `${item.name} - ${data.quantity} ${item.unit}${data.supplier ? ` from ${data.supplier}` : ''}`;
+        const expenseReference = data.paymentMethod || data.reference || 'Stock In';
+
+        expense = await prisma.expense.create({
+          data: {
+            category: 'Ingredients',
+            amount: data.totalCost,
+            description: expenseDescription,
+            reference: expenseReference,
+            userId: data.userId,
+            date: new Date(),
+            status: 'APPROVED', // Mark as paid immediately
+          },
+        });
+      } catch (error) {
+        console.error('Failed to create expense:', error);
+        // Don't fail the entire operation if expense creation fails
+      }
+    }
+
     return {
       movement,
       newQuantity,
       unit: item.unit,
+      expense: expense ? {
+        id: expense.id,
+        amount: expense.amount,
+        category: expense.category,
+      } : null,
     };
   }
 

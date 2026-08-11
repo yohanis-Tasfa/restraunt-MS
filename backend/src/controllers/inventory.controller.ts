@@ -102,7 +102,16 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
 export const addMovement = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { type, quantity, reference, notes } = req.body;
+  const { 
+    type, 
+    quantity, 
+    reference, 
+    notes,
+    costPerUnit,
+    totalCost,
+    supplier,
+    paymentMethod
+  } = req.body;
 
   if (!type || !quantity) {
     throw new ApiError(400, 'Type and quantity are required');
@@ -114,6 +123,11 @@ export const addMovement = asyncHandler(async (req: Request, res: Response) => {
     quantity: parseFloat(quantity),
     reference,
     notes,
+    costPerUnit: costPerUnit ? parseFloat(costPerUnit) : undefined,
+    totalCost: totalCost ? parseFloat(totalCost) : undefined,
+    supplier,
+    paymentMethod,
+    userId: req.user.id,
   });
 
   res.status(200).json(

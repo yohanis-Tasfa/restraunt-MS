@@ -15,6 +15,7 @@ import {
   LogOut,
   Store,
   X,
+  Wallet,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -54,6 +55,11 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
     { label: 'Inventory', icon: Package, path: '/inventory', roles: ['Super Admin', 'Admin', 'Manager', 'Inventory Manager'] },
   ];
 
+  // Business Section Items
+  const businessItems: NavItem[] = [
+    { label: 'Expenses', icon: Wallet, path: '/expenses', roles: ['Super Admin', 'Admin', 'Manager'] },
+  ];
+
   const isActive = (path: string) => location.pathname === path;
 
   // Filter navigation items based on user role
@@ -68,6 +74,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
   const filteredOverviewItems = overviewItems.filter(canAccessItem);
   const filteredOperationsItems = operationsItems.filter(canAccessItem);
+  const filteredBusinessItems = businessItems.filter(canAccessItem);
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -177,6 +184,42 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
               </div>
             )}
             {filteredOperationsItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => handleNavigate(item.path)}
+                className={cn(
+                  'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
+                  isActive(item.path)
+                    ? 'bg-green-50 text-green-700'
+                    : 'text-gray-700 hover:bg-gray-50',
+                  isCollapsed && 'lg:justify-center lg:px-2'
+                )}
+                title={isCollapsed ? item.label : undefined}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {!isCollapsed && (
+                  <>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.badge && (
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700">
+                        {item.badge}
+                      </span>
+                    )}
+                  </>
+                )}
+                {isCollapsed && item.badge && (
+                  <span className="absolute right-2 top-2 w-2 h-2 bg-red-500 rounded-full" />
+                )}
+              </button>
+            ))}
+
+            {/* Business Section */}
+            {filteredBusinessItems.length > 0 && !isCollapsed && (
+              <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">
+                Business
+              </div>
+            )}
+            {filteredBusinessItems.map((item) => (
               <button
                 key={item.path}
                 onClick={() => handleNavigate(item.path)}

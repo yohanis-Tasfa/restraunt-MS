@@ -63,6 +63,10 @@ export interface AddMovementInput {
   quantity: number;
   reference?: string;
   notes?: string;
+  costPerUnit?: number;
+  totalCost?: number;
+  supplier?: string;
+  paymentMethod?: string;
 }
 
 export interface InventoryQueryParams {
@@ -127,6 +131,10 @@ const inventoryApi = {
       quantity: data.quantity,
       reference: data.reference,
       notes: data.notes,
+      costPerUnit: data.costPerUnit,
+      totalCost: data.totalCost,
+      supplier: data.supplier,
+      paymentMethod: data.paymentMethod,
     });
     return response.data;
   },
