@@ -717,7 +717,10 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip formatter={(value: number) => formatCurrency(value)} />
+            <Tooltip 
+              formatter={(value: number) => formatCurrency(value)}
+              cursor={false}
+            />
             <Bar dataKey="amount" />
           </BarChart>
         </ResponsiveContainer>
