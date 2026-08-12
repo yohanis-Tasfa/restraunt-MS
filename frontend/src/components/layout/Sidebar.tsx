@@ -256,22 +256,27 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
         {/* User Section */}
         <div className="p-4 border-t border-gray-200">
-          <div className={cn(
-            'flex items-center gap-3 mb-3',
-            isCollapsed && 'lg:justify-center lg:gap-0'
-          )}>
+          <button
+            onClick={() => handleNavigate('/profile')}
+            className={cn(
+              'w-full flex items-center gap-3 mb-3 p-2 rounded-lg hover:bg-gray-50 transition-colors',
+              isActive('/profile') && 'bg-green-50',
+              isCollapsed && 'lg:justify-center lg:gap-0'
+            )}
+            title={isCollapsed ? `${user?.firstName} ${user?.lastName}` : undefined}
+          >
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
             {!isCollapsed && (
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-gray-900 truncate">
                   {user?.firstName} {user?.lastName}
                 </p>
                 <p className="text-xs text-gray-500 truncate">{user?.role?.name}</p>
               </div>
             )}
-          </div>
+          </button>
           <button
             onClick={logout}
             className={cn(

@@ -14,6 +14,7 @@ import InventoryPage from './pages/InventoryPage';
 import ExpensesPage from './pages/ExpensesPage';
 import ReportsPage from './pages/ReportsPage';
 import EmployeesPage from './pages/EmployeesPage';
+import ProfilePage from './pages/ProfilePage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -121,6 +122,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
                   <EmployeesPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               } 
             />
