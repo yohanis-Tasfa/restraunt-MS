@@ -99,33 +99,82 @@ export default function EmployeesPage() {
   };
 
   const loadRoles = async () => {
-    // Mock roles - replace with actual API call
-    setRoles([
-      { id: '1', name: 'Admin' },
-      { id: '2', name: 'Manager' },
-      { id: '3', name: 'Chef' },
-      { id: '4', name: 'Waiter' },
-      { id: '5', name: 'Cashier' },
-    ]);
+    try {
+      // Fetch actual roles from API
+      const response = await fetch('http://localhost:3000/api/users/roles/all', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        // API Response format: { statusCode: 200, data: [...], message: "..." }
+        setRoles(result.data || result);
+      } else {
+        console.error('Failed to load roles');
+        setRoles([]);
+      }
+    } catch (error) {
+      console.error('Error loading roles:', error);
+      setRoles([]);
+    }
   };
 
   const loadBranches = async () => {
-    // Mock branches - replace with actual API call
-    setBranches([
-      { id: '1', name: 'Main Branch' },
-      { id: '2', name: 'Downtown Branch' },
-    ]);
+    try {
+      // Fetch actual branches from API
+      const response = await fetch('http://localhost:3000/api/branches', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        // ApiResponse format: { statusCode, data: { data: [...], pagination }, message }
+        if (result.data && result.data.data && Array.isArray(result.data.data)) {
+          setBranches(result.data.data);
+        } else {
+          console.error('Unexpected branches response format:', result);
+          setBranches([]);
+        }
+      } else {
+        console.error('Failed to load branches');
+        setBranches([]);
+      }
+    } catch (error) {
+      console.error('Error loading branches:', error);
+      setBranches([]);
+    }
   };
 
   const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await employeesApi.createEmployee(formData as CreateEmployeeData);
+      console.log('Form data before cleaning:', formData);
+      
+      // Validate required fields
+      if (!formData.hireDate) {
+        alert('Hire Date is required');
+        return;
+      }
+      
+      // Clean up the data - only send branchId and restaurantId if they're actually selected
+      const cleanedData = {
+        ...formData,
+        branchId: formData.branchId || undefined,
+        restaurantId: formData.restaurantId || undefined,
+      };
+      
+      console.log('Submitting employee data:', cleanedData);
+      
+      await employeesApi.createEmployee(cleanedData as CreateEmployeeData);
       setShowAddModal(false);
       setFormData({ employmentType: 'FULL_TIME', salary: 0 });
       loadEmployees();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating employee:', error);
+      console.error('Error response:', error.response?.data);
+      alert(`Failed to create employee: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -613,6 +662,35 @@ export default function EmployeesPage() {
                     value={formData.emergencyPhone || ''}
                     onChange={(e) => setFormData({ ...formData, emergencyPhone: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Banking & Tax Information */}
+                <div className="col-span-2 mt-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Banking & Tax Information</h3>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Bank Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bankAccount || ''}
+                    onChange={(e) => setFormData({ ...formData, bankAccount: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter bank account number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tax Number (TIN)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.taxNumber || ''}
+                    onChange={(e) => setFormData({ ...formData, taxNumber: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter tax identification number"
                   />
                 </div>
               </div>

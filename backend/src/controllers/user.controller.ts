@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import prisma from '../config/database';
 import { UserService } from '../services/user.service';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';

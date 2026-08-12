@@ -20,14 +20,20 @@ export const employeeService = {
     position: string;
     employmentType: EmploymentType;
     salary: number;
-    hireDate: Date;
-    contractEndDate?: Date;
+    hireDate: Date | string;
+    contractEndDate?: Date | string;
     emergencyContact?: string;
     emergencyPhone?: string;
     bankAccount?: string;
     taxNumber?: string;
   }) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    // Convert date strings to Date objects
+    const hireDate = typeof data.hireDate === 'string' ? new Date(data.hireDate) : data.hireDate;
+    const contractEndDate = data.contractEndDate 
+      ? (typeof data.contractEndDate === 'string' ? new Date(data.contractEndDate) : data.contractEndDate)
+      : undefined;
 
     // Create user and employee in a transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -53,8 +59,8 @@ export const employeeService = {
           position: data.position,
           employmentType: data.employmentType,
           salary: data.salary,
-          hireDate: data.hireDate,
-          contractEndDate: data.contractEndDate,
+          hireDate: hireDate,
+          contractEndDate: contractEndDate,
           emergencyContact: data.emergencyContact,
           emergencyPhone: data.emergencyPhone,
           bankAccount: data.bankAccount,
