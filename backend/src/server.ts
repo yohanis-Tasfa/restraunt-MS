@@ -1,13 +1,22 @@
 import app from './app';
 import prisma from './config/database';
+import { createServer } from 'http';
+import { websocketService } from './services/websocket.service';
 
 // Server configuration
 const PORT = process.env.PORT || 3000;
 
-const server = app.listen(PORT, () => {
+// Create HTTP server
+const httpServer = createServer(app);
+
+// Initialize WebSocket
+websocketService.initialize(httpServer);
+
+const server = httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 API: http://localhost:${PORT}/api`);
+  console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
   console.log(`❤️  Health check: http://localhost:${PORT}/api/health`);
 });
 

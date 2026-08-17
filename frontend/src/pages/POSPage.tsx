@@ -9,6 +9,7 @@ import { LogOut, ShoppingCart, User } from 'lucide-react';
 import MenuSection from '../components/pos/MenuSection';
 import CartSection from '../components/pos/CartSection';
 import CheckoutDialog from '../components/pos/CheckoutDialog';
+import FloatingCallPanel from '../components/pos/FloatingCallPanel';
 
 export default function POSPage() {
   const { user, logout } = useAuthStore();
@@ -118,6 +119,9 @@ export default function POSPage() {
         open={isCheckoutOpen}
         onOpenChange={setIsCheckoutOpen}
       />
+
+      {/* Floating Waiter Call Panel */}
+      <FloatingCallPanel />
     </div>
   );
 }

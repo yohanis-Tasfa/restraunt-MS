@@ -62,6 +62,15 @@ export const authenticate = asyncHandler(async (req: Request, res: Response, nex
   }
 });
 
+// Export verifyToken for WebSocket authentication
+export const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET!);
+  } catch (error) {
+    throw new ApiError(401, 'Invalid token');
+  }
+};
+
 export const authorize = (...permissions: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {

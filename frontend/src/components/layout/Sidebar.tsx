@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useActiveCalls } from '../../hooks/useWaiterCalls';
+import { useWebSocket } from '../../contexts/WebSocketContext';
 import logo from '../../assets/image.png';
 import {
   LayoutDashboard,
@@ -19,6 +20,8 @@ import {
   Wallet,
   BarChart3,
   Bell,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -40,6 +43,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  const { isConnected } = useWebSocket();
   
   // Get active waiter calls for badge count
   const { calls: activeCalls } = useActiveCalls(false); // false = no sound in sidebar
@@ -147,6 +151,44 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
             </button>
           )}
         </div>
+
+        {/* WebSocket Status Indicator */}
+        {!isCollapsed && (
+          <div className={cn(
+            'mx-3 my-2 px-3 py-2 rounded-lg flex items-center gap-2 text-xs',
+            isConnected 
+              ? 'bg-green-50 text-green-700' 
+              : 'bg-red-50 text-red-700'
+          )}>
+            {isConnected ? (
+              <>
+                <Wifi className="w-3.5 h-3.5" />
+                <span className="font-medium">Real-time connected</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="w-3.5 h-3.5" />
+                <span className="font-medium">Disconnected - reconnecting...</span>
+              </>
+            )}
+          </div>
+        )}
+        {isCollapsed && (
+          <div className={cn(
+            'mx-2 my-2 p-1.5 rounded-lg flex items-center justify-center',
+            isConnected 
+              ? 'bg-green-50 text-green-700' 
+              : 'bg-red-50 text-red-700'
+          )}
+          title={isConnected ? 'Real-time connected' : 'Disconnected - reconnecting...'}
+          >
+            {isConnected ? (
+              <Wifi className="w-4 h-4" />
+            ) : (
+              <WifiOff className="w-4 h-4 animate-pulse" />
+            )}
+          </div>
+        )}
 
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto py-4">

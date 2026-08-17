@@ -1,4 +1,5 @@
 import prisma from '../config/database';
+import { websocketService } from './websocket.service';
 
 interface CreateCallData {
   sessionId: string;
@@ -83,6 +84,12 @@ export const waiterCallService = {
             id: true,
             number: true,
             capacity: true,
+            branchId: true,
+            branch: {
+              select: {
+                restaurantId: true,
+              },
+            },
           },
         },
         waiter: {
@@ -95,6 +102,15 @@ export const waiterCallService = {
         },
       },
     });
+
+    // Emit WebSocket event
+    if (call.table.branchId && call.table.branch.restaurantId) {
+      websocketService.emitWaiterCallCreated(
+        call,
+        call.table.branchId,
+        call.table.branch.restaurantId
+      );
+    }
 
     return call;
   },
@@ -236,6 +252,12 @@ export const waiterCallService = {
           select: {
             id: true,
             number: true,
+            branchId: true,
+            branch: {
+              select: {
+                restaurantId: true,
+              },
+            },
           },
         },
         waiter: {
@@ -247,6 +269,29 @@ export const waiterCallService = {
         },
       },
     });
+
+    // Emit WebSocket events based on status
+    if (call.table.branchId && call.table.branch?.restaurantId) {
+      if (status === 'ACKNOWLEDGED') {
+        websocketService.emitWaiterCallAcknowledged(
+          call,
+          call.table.branchId,
+          call.table.branch.restaurantId
+        );
+      } else if (status === 'COMPLETED') {
+        websocketService.emitWaiterCallCompleted(
+          call,
+          call.table.branchId,
+          call.table.branch.restaurantId
+        );
+      } else {
+        websocketService.emitWaiterCallUpdated(
+          call,
+          call.table.branchId,
+          call.table.branch.restaurantId
+        );
+      }
+    }
 
     return call;
   },
@@ -261,7 +306,18 @@ export const waiterCallService = {
       },
       include: {
         session: true,
-        table: true,
+        table: {
+          select: {
+            id: true,
+            number: true,
+            branchId: true,
+            branch: {
+              select: {
+                restaurantId: true,
+              },
+            },
+          },
+        },
         waiter: {
           select: {
             id: true,
@@ -271,6 +327,15 @@ export const waiterCallService = {
         },
       },
     });
+
+    // Emit WebSocket event
+    if (call.table.branchId && call.table.branch?.restaurantId) {
+      websocketService.emitWaiterCallCancelled(
+        call,
+        call.table.branchId,
+        call.table.branch.restaurantId
+      );
+    }
 
     return call;
   },

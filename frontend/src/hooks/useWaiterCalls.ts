@@ -2,12 +2,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { waiterCallsApi, type WaiterCall, type WaiterCallsQueryParams } from '../api/waiter-calls';
 import { useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
+import { useWebSocket } from '../contexts/WebSocketContext';
 
 // Hook for real-time waiter calls with auto-refresh
 export function useWaiterCalls(params?: WaiterCallsQueryParams, enableSound = true) {
   const queryClient = useQueryClient();
   const previousCallsRef = useRef<WaiterCall[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { socket } = useWebSocket();
 
   // Initialize notification sound
   useEffect(() => {
@@ -40,14 +42,40 @@ export function useWaiterCalls(params?: WaiterCallsQueryParams, enableSound = tr
     }
   }, [enableSound]);
 
-  // Query for waiter calls with auto-refresh
+  // Query for waiter calls with WebSocket updates
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['waiter-calls', params],
     queryFn: () => waiterCallsApi.getCalls(params),
-    refetchInterval: 5000, // Refresh every 5 seconds
-    refetchIntervalInBackground: true,
+    // WebSocket-only: no polling
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
+    staleTime: Infinity, // WebSocket keeps data fresh
   });
+
+  // WebSocket event listeners for this hook too
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCallEvent = () => {
+      // Refetch data when any call event happens
+      queryClient.invalidateQueries({ queryKey: ['waiter-calls', params] });
+    };
+
+    socket.on('waiter-call:created', handleCallEvent);
+    socket.on('waiter-call:acknowledged', handleCallEvent);
+    socket.on('waiter-call:completed', handleCallEvent);
+    socket.on('waiter-call:cancelled', handleCallEvent);
+    socket.on('waiter-call:updated', handleCallEvent);
+
+    return () => {
+      socket.off('waiter-call:created', handleCallEvent);
+      socket.off('waiter-call:acknowledged', handleCallEvent);
+      socket.off('waiter-call:completed', handleCallEvent);
+      socket.off('waiter-call:cancelled', handleCallEvent);
+      socket.off('waiter-call:updated', handleCallEvent);
+    };
+  }, [socket, queryClient, params]);
 
   // Detect new calls and play sound
   useEffect(() => {
@@ -104,6 +132,7 @@ export function useActiveCalls(enableSound = true) {
   const queryClient = useQueryClient();
   const previousCallsRef = useRef<WaiterCall[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { socket, isConnected } = useWebSocket();
 
   // Initialize notification sound
   useEffect(() => {
@@ -125,55 +154,114 @@ export function useActiveCalls(enableSound = true) {
     }
   }, [enableSound]);
 
+  // Fetch initial data ONCE on mount
   const { data: calls, isLoading, error, refetch } = useQuery({
     queryKey: ['waiter-calls-active'],
     queryFn: () => waiterCallsApi.getActiveCalls(),
-    refetchInterval: 10000, // Refresh every 10 seconds (reduced from 3s to prevent rate limiting)
-    refetchIntervalInBackground: true,
-    refetchOnWindowFocus: true,
+    // WebSocket-only: no polling at all
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true, // Only refetch when window regains focus
+    staleTime: Infinity, // Data never goes stale since WebSocket keeps it fresh
   });
 
-  // Detect new calls
+  // WebSocket event listeners
   useEffect(() => {
-    if (calls && previousCallsRef.current.length > 0) {
-      const newCalls = calls.filter(
-        (call) => 
-          call.status === 'PENDING' &&
-          !previousCallsRef.current.some((prev) => prev.id === call.id)
-      );
+    if (!socket) return;
 
-      if (newCalls.length > 0 && enableSound && audioRef.current) {
+    const handleCallCreated = (call: WaiterCall) => {
+      console.log('WebSocket: waiter-call:created', call);
+      
+      // Update query cache
+      queryClient.setQueryData(['waiter-calls-active'], (oldData: WaiterCall[] | undefined) => {
+        if (!oldData) return [call];
+        // Add new call if not already present
+        if (!oldData.some((c) => c.id === call.id)) {
+          return [call, ...oldData];
+        }
+        return oldData;
+      });
+
+      // Play sound and show notification
+      if (enableSound && audioRef.current) {
         audioRef.current.play();
         
-        newCalls.forEach((call) => {
-          const requestTypeLabels = {
-            ASSISTANCE: '🔔 Assistance',
-            ORDER_READY: '🛒 Ready to Order',
-            BILL_REQUEST: '💳 Bill Request',
-            OTHER: '❓ Other',
-          };
-          
-          toast.success(
-            `New Call: Table ${call.table.number} - ${requestTypeLabels[call.requestType]}`,
-            {
-              duration: 5000,
-              position: 'top-right',
-            }
-          );
-        });
+        const requestTypeLabels = {
+          ASSISTANCE: '🔔 Assistance',
+          ORDER_READY: '🛒 Ready to Order',
+          BILL_REQUEST: '💳 Bill Request',
+          OTHER: '❓ Other',
+        };
+        
+        toast.success(
+          `New Call: Table ${call.table.number} - ${requestTypeLabels[call.requestType]}`,
+          {
+            duration: 5000,
+            position: 'top-right',
+          }
+        );
       }
-    }
-    
-    if (calls) {
-      previousCallsRef.current = calls;
-    }
-  }, [calls, enableSound]);
+    };
+
+    const handleCallAcknowledged = (call: WaiterCall) => {
+      console.log('WebSocket: waiter-call:acknowledged', call);
+      updateCallInCache(call);
+    };
+
+    const handleCallCompleted = (call: WaiterCall) => {
+      console.log('WebSocket: waiter-call:completed', call);
+      // Remove completed call from active calls
+      queryClient.setQueryData(['waiter-calls-active'], (oldData: WaiterCall[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.filter((c) => c.id !== call.id);
+      });
+    };
+
+    const handleCallCancelled = (call: WaiterCall) => {
+      console.log('WebSocket: waiter-call:cancelled', call);
+      // Remove cancelled call from active calls
+      queryClient.setQueryData(['waiter-calls-active'], (oldData: WaiterCall[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.filter((c) => c.id !== call.id);
+      });
+    };
+
+    const handleCallUpdated = (call: WaiterCall) => {
+      console.log('WebSocket: waiter-call:updated', call);
+      updateCallInCache(call);
+    };
+
+    // Helper to update call in cache
+    const updateCallInCache = (updatedCall: WaiterCall) => {
+      queryClient.setQueryData(['waiter-calls-active'], (oldData: WaiterCall[] | undefined) => {
+        if (!oldData) return [updatedCall];
+        return oldData.map((c) => (c.id === updatedCall.id ? updatedCall : c));
+      });
+    };
+
+    // Subscribe to events
+    socket.on('waiter-call:created', handleCallCreated);
+    socket.on('waiter-call:acknowledged', handleCallAcknowledged);
+    socket.on('waiter-call:completed', handleCallCompleted);
+    socket.on('waiter-call:cancelled', handleCallCancelled);
+    socket.on('waiter-call:updated', handleCallUpdated);
+
+    // Cleanup listeners
+    return () => {
+      socket.off('waiter-call:created', handleCallCreated);
+      socket.off('waiter-call:acknowledged', handleCallAcknowledged);
+      socket.off('waiter-call:completed', handleCallCompleted);
+      socket.off('waiter-call:cancelled', handleCallCancelled);
+      socket.off('waiter-call:updated', handleCallUpdated);
+    };
+  }, [socket, queryClient, enableSound]);
 
   return {
     calls: calls || [],
     isLoading,
     error,
     refetch,
+    isConnected, // Expose connection status
   };
 }
 
