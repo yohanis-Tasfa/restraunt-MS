@@ -25,6 +25,11 @@ export const waiterCallService = {
         table: {
           include: {
             assignedWaiter: true,
+            branch: {
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },
@@ -34,8 +39,31 @@ export const waiterCallService = {
       throw new Error('Session not found');
     }
 
-    if (!session.table.assignedWaiter) {
-      throw new Error('No waiter assigned to this table');
+    // If no waiter assigned to table, find any available waiter in the branch
+    let waiterId = session.table.assignedWaiter?.id;
+
+    if (!waiterId) {
+      // Find any active waiter in the branch
+      const availableWaiter = await prisma.user.findFirst({
+        where: {
+          branchId: session.table.branchId,
+          isActive: true,
+          role: {
+            name: {
+              in: ['Waiter', 'Server', 'Manager', 'Admin', 'Super Admin'],
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!availableWaiter) {
+        throw new Error('No waiters available. Please contact staff.');
+      }
+
+      waiterId = availableWaiter.id;
     }
 
     // Create waiter call
@@ -43,7 +71,7 @@ export const waiterCallService = {
       data: {
         sessionId,
         tableId: session.tableId,
-        waiterId: session.table.assignedWaiter.id,
+        waiterId,
         requestType,
         selectedItems,
         status: 'PENDING',
@@ -376,5 +404,203 @@ export const waiterCallService = {
         count: item._count,
       })),
     };
+  },
+
+  // Get all calls with filters
+  async getAllCalls(params: {
+    status?: string;
+    requestType?: string;
+    tableId?: string;
+    waiterId?: string;
+    branchId?: string;
+    startDate?: string;
+    endDate?: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    const { status, requestType, tableId, waiterId, branchId, startDate, endDate, limit = 50, offset = 0 } = params;
+
+    const where: any = {};
+
+    if (status) where.status = status;
+    if (requestType) where.requestType = requestType;
+    if (tableId) where.tableId = tableId;
+    if (waiterId) where.waiterId = waiterId;
+    
+    if (branchId) {
+      where.table = {
+        branchId,
+      };
+    }
+
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    const [calls, total] = await Promise.all([
+      prisma.waiterCall.findMany({
+        where,
+        include: {
+          session: {
+            select: {
+              id: true,
+              customerName: true,
+              guestCount: true,
+            },
+          },
+          table: {
+            select: {
+              id: true,
+              number: true,
+              capacity: true,
+              status: true,
+            },
+          },
+          waiter: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: limit,
+        skip: offset,
+      }),
+      prisma.waiterCall.count({ where }),
+    ]);
+
+    return {
+      calls,
+      total,
+      page: Math.floor(offset / limit) + 1,
+      limit,
+    };
+  },
+
+  // Get active calls (PENDING or ACKNOWLEDGED)
+  async getActiveCalls(branchId?: string) {
+    const where: any = {
+      status: {
+        in: ['PENDING', 'ACKNOWLEDGED'],
+      },
+    };
+
+    if (branchId) {
+      where.table = {
+        branchId,
+      };
+    }
+
+    const calls = await prisma.waiterCall.findMany({
+      where,
+      include: {
+        session: {
+          select: {
+            id: true,
+            customerName: true,
+            guestCount: true,
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            number: true,
+            capacity: true,
+            status: true,
+          },
+        },
+        waiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          priority: 'desc',
+        },
+        {
+          createdAt: 'asc',
+        },
+      ],
+    });
+
+    return calls;
+  },
+
+  // Get calls for a table
+  async getCallsForTable(tableId: string) {
+    const calls = await prisma.waiterCall.findMany({
+      where: { tableId },
+      include: {
+        session: {
+          select: {
+            id: true,
+            customerName: true,
+            guestCount: true,
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            number: true,
+          },
+        },
+        waiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return calls;
+  },
+
+  // Update call notes
+  async updateNotes(id: string, notes: string) {
+    const call = await prisma.waiterCall.update({
+      where: { id },
+      data: { notes },
+      include: {
+        session: {
+          select: {
+            id: true,
+            customerName: true,
+            guestCount: true,
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            number: true,
+          },
+        },
+        waiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    return call;
   },
 };

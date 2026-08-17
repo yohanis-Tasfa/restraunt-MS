@@ -130,4 +130,96 @@ export const waiterCallController = {
       next(error);
     }
   },
+
+  // Get all calls with filters
+  async getAllCalls(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { status, requestType, tableId, waiterId, startDate, endDate, limit, offset } = req.query;
+      const branchId = req.user?.branchId;
+
+      const result = await waiterCallService.getAllCalls({
+        status: status as any,
+        requestType: requestType as any,
+        tableId: tableId as string,
+        waiterId: waiterId as string,
+        branchId: branchId as string,
+        startDate: startDate as string,
+        endDate: endDate as string,
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get active calls (PENDING or ACKNOWLEDGED)
+  async getActiveCalls(req: Request, res: Response, next: NextFunction) {
+    try {
+      const branchId = req.user?.branchId;
+      const calls = await waiterCallService.getActiveCalls(branchId);
+
+      res.json(calls);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get calls for a table
+  async getCallsForTable(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tableId } = req.params;
+      const calls = await waiterCallService.getCallsForTable(tableId);
+
+      res.json(calls);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Acknowledge call
+  async acknowledgeCall(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { notes } = req.body;
+      const waiterId = req.user?.id;
+
+      const call = await waiterCallService.updateCallStatus(id, 'ACKNOWLEDGED', waiterId, notes);
+
+      res.json(call);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Complete call
+  async completeCall(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { notes } = req.body;
+      const waiterId = req.user?.id;
+
+      const call = await waiterCallService.updateCallStatus(id, 'COMPLETED', waiterId, notes);
+
+      res.json(call);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Update call notes
+  async updateNotes(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { notes } = req.body;
+
+      const call = await waiterCallService.updateNotes(id, notes);
+
+      res.json(call);
+    } catch (error) {
+      next(error);
+    }
+  },
 };

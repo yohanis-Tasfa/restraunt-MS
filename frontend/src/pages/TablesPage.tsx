@@ -489,12 +489,24 @@ export default function TablesPage() {
               </div>
 
               {/* Assigned Waiter */}
-              {table.assignedWaiter && (
+              {table.assignedWaiter ? (
                 <div className="flex items-center gap-2 mb-3 text-sm">
-                  <UserCheck className="w-4 h-4" />
-                  <span className="truncate">
+                  <UserCheck className="w-4 h-4 text-green-600" />
+                  <span className="truncate text-green-700">
                     {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}
                   </span>
+                </div>
+              ) : (
+                <div className="mb-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs border-orange-300 text-orange-700 hover:bg-orange-50"
+                    onClick={() => openWaiterModal(table)}
+                  >
+                    <UserCheck className="w-3 h-3 mr-1" />
+                    Assign Waiter
+                  </Button>
                 </div>
               )}
 

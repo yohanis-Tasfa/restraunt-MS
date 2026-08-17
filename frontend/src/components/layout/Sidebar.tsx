@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { useActiveCalls } from '../../hooks/useWaiterCalls';
 import logo from '../../assets/image.png';
 import {
   LayoutDashboard,
@@ -17,6 +18,7 @@ import {
   X,
   Wallet,
   BarChart3,
+  Bell,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -38,6 +40,10 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  
+  // Get active waiter calls for badge count
+  const { calls: activeCalls } = useActiveCalls(false); // false = no sound in sidebar
+  const pendingCallsCount = activeCalls.filter(call => call.status === 'PENDING').length;
 
   // Overview Section Items
   const overviewItems: NavItem[] = [
@@ -50,6 +56,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Operations Section Items
   const operationsItems: NavItem[] = [
     { label: 'Tables', icon: Store, path: '/tables' },
+    { label: 'Waiter Calls', icon: Bell, path: '/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
     { label: 'Reservations', icon: ClipboardList, path: '/reservations' },
     { label: 'Menu', icon: UtensilsCrossed, path: '/menu', roles: ['Super Admin', 'Admin', 'Manager'] },
     { label: 'Recipes', icon: Beef, path: '/recipes', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },

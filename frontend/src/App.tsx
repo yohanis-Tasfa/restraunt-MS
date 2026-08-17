@@ -16,6 +16,7 @@ import ReportsPage from './pages/ReportsPage';
 import EmployeesPage from './pages/EmployeesPage';
 import ProfilePage from './pages/ProfilePage';
 import CustomerMenuPage from './pages/CustomerMenuPage';
+import WaiterCallsPage from './pages/WaiterCallsPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -80,6 +81,7 @@ function App() {
             />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/tables" element={<TablesPage />} />
+            <Route path="/waiter-calls" element={<WaiterCallsPage />} />
             <Route path="/reservations" element={<ReservationsPage />} />
             <Route 
               path="/menu" 

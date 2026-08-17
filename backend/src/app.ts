@@ -20,8 +20,10 @@ app.use(cors({
   credentials: true,
 }));
 
-// Rate limiting
-app.use(rateLimiter());
+// Rate limiting (increased for polling endpoints like waiter-calls)
+// With 10s polling intervals: 6 req/min * 15 min = 90 req/15min per client
+// Allow 500 to handle multiple users/devices
+app.use(rateLimiter(15 * 60 * 1000, 500)); // 500 requests per 15 minutes
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
