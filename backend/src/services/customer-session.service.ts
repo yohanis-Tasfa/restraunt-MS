@@ -42,10 +42,9 @@ export const customerSessionService = {
     }
 
     // Verify table exists and has this QR code
-    const table = await prisma.table.findFirst({
+    const table = await prisma.table.findUnique({
       where: {
         id: tableId,
-        qrCodeData: qrCodeData,
       },
       include: {
         assignedWaiter: {
@@ -61,6 +60,11 @@ export const customerSessionService = {
 
     if (!table) {
       throw new Error('Invalid QR code or table not found');
+    }
+
+    // Verify the QR code matches (security check)
+    if (table.qrCodeData !== qrCodeData) {
+      throw new Error('Invalid or expired QR code');
     }
 
     // Check if there's already an active session for this table

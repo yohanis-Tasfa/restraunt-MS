@@ -15,6 +15,7 @@ import ExpensesPage from './pages/ExpensesPage';
 import ReportsPage from './pages/ReportsPage';
 import EmployeesPage from './pages/EmployeesPage';
 import ProfilePage from './pages/ProfilePage';
+import CustomerMenuPage from './pages/CustomerMenuPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -48,6 +49,9 @@ function App() {
             path="/login" 
             element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
           />
+          
+          {/* Public customer menu route - no authentication required */}
+          <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
           
           {/* Protected routes with persistent layout */}
           <Route
