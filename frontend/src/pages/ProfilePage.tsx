@@ -3,16 +3,12 @@ import {
   User,
   Mail,
   Phone,
-  Briefcase,
-  Calendar,
   Shield,
   Activity,
   Camera,
   Save,
   Lock,
   Building2,
-  DollarSign,
-  Clock,
   FileText,
 } from 'lucide-react';
 import profileApi, { type UserProfile, type ActivityLog } from '../api/profile';
@@ -26,7 +22,7 @@ export default function ProfilePage() {
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const { user: authUser, setUser } = useAuthStore();
+  const { updateUser } = useAuthStore();
 
   // Form states
   const [personalInfo, setPersonalInfo] = useState({
@@ -101,16 +97,24 @@ export default function ProfilePage() {
     try {
       setSaving(true);
       const result = await profileApi.uploadProfilePicture(profilePictureFile);
-      setPreviewUrl(result.profilePicture);
-      setProfilePictureFile(null);
       
-      // Update auth store
-      if (authUser) {
-        setUser({ ...authUser, profilePicture: result.profilePicture });
+      // Update preview and clear file
+      if (result.profilePicture) {
+        setPreviewUrl(result.profilePicture);
+        
+        // Update profile state
+        if (profile) {
+          setProfile({ ...profile, profilePicture: result.profilePicture });
+        }
+        
+        // Update auth store so sidebar reflects the change
+        updateUser({ profilePicture: result.profilePicture });
       }
       
+      setProfilePictureFile(null);
       alert('Profile picture updated successfully!');
     } catch (error: any) {
+      console.error('Upload error:', error);
       alert(error.response?.data?.error || 'Failed to upload profile picture');
     } finally {
       setSaving(false);
@@ -122,17 +126,18 @@ export default function ProfilePage() {
     try {
       setSaving(true);
       const updated = await profileApi.updateProfile(personalInfo);
-      setProfile(updated);
       
-      // Update auth store
-      if (authUser) {
-        setUser({
-          ...authUser,
-          firstName: updated.firstName,
-          lastName: updated.lastName,
-          email: updated.email,
-        });
+      // Update profile state
+      if (profile) {
+        setProfile({ ...profile, ...updated });
       }
+      
+      // Update auth store so sidebar reflects the change
+      updateUser({
+        firstName: updated.firstName,
+        lastName: updated.lastName,
+        email: updated.email,
+      });
       
       alert('Profile updated successfully!');
     } catch (error: any) {
@@ -218,16 +223,16 @@ export default function ProfilePage() {
                 <img
                   src={previewUrl}
                   alt="Profile"
-                  className="w-24 h-24 rounded-full object-cover border-4 border-blue-100"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-green-100"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-2xl font-bold border-4 border-blue-100">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white text-2xl font-bold border-4 border-green-100">
                   {getInitials(profile.firstName, profile.lastName)}
                 </div>
               )}
               <label
                 htmlFor="profile-picture"
-                className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors"
+                className="absolute bottom-0 right-0 bg-green-600 text-white p-2 rounded-full cursor-pointer hover:bg-green-700 transition-colors"
               >
                 <Camera className="w-4 h-4" />
                 <input
@@ -243,7 +248,7 @@ export default function ProfilePage() {
               <button
                 onClick={handleUploadProfilePicture}
                 disabled={saving}
-                className="mt-2 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+                className="mt-2 px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400"
               >
                 {saving ? 'Uploading...' : 'Upload'}
               </button>
@@ -255,7 +260,7 @@ export default function ProfilePage() {
             <h2 className="text-2xl font-bold text-gray-900">
               {profile.firstName} {profile.lastName}
             </h2>
-            <p className="text-blue-600 font-medium">{profile.role.name}</p>
+            <p className="text-green-600 font-medium">{profile.role.name}</p>
             {profile.employee && (
               <p className="text-sm text-gray-600 mt-1">
                 {profile.employee.position} • {profile.employee.department}
@@ -284,7 +289,7 @@ export default function ProfilePage() {
           {/* Statistics */}
           <div className="flex gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{profile.statistics.totalOrders}</div>
+              <div className="text-2xl font-bold text-green-600">{profile.statistics.totalOrders}</div>
               <div className="text-xs text-gray-600">Orders</div>
             </div>
             <div className="text-center">
@@ -305,7 +310,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('personal')}
               className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
                 activeTab === 'personal'
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-green-600 text-green-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -318,7 +323,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('security')}
               className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
                 activeTab === 'security'
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-green-600 text-green-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -331,7 +336,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('activity')}
               className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
                 activeTab === 'activity'
-                  ? 'border-blue-600 text-blue-600'
+                  ? 'border-green-600 text-green-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -360,7 +365,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, firstName: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -374,7 +379,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, lastName: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -388,7 +393,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, email: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -399,7 +404,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, phone: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -455,7 +460,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 flex items-center gap-2"
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'Saving...' : 'Save Changes'}
@@ -482,7 +487,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, currentPassword: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -496,7 +501,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Must be at least 6 characters long
@@ -513,7 +518,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -522,7 +527,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 flex items-center gap-2"
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 flex items-center gap-2"
                   >
                     <Lock className="w-4 h-4" />
                     {saving ? 'Changing...' : 'Change Password'}
@@ -581,8 +586,8 @@ export default function ProfilePage() {
                       key={activity.id}
                       className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
                     >
-                      <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Activity className="w-5 h-5 text-blue-600" />
+                      <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <Activity className="w-5 h-5 text-green-600" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between">

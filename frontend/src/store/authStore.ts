@@ -5,6 +5,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  profilePicture?: string;
   role: {
     id: string;
     name: string;
@@ -26,6 +27,7 @@ interface AuthStore {
   isAuthenticated: boolean;
   
   setAuth: (user: User, token: string) => void;
+  updateUser: (updates: Partial<User>) => void;
   clearAuth: () => void;
   logout: () => void;
   hasRole: (roles: string[]) => boolean;
@@ -41,6 +43,15 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     set({ user, token, isAuthenticated: true });
+  },
+  
+  updateUser: (updates) => {
+    const { user } = get();
+    if (!user) return;
+    
+    const updatedUser = { ...user, ...updates };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    set({ user: updatedUser });
   },
   
   clearAuth: () => {

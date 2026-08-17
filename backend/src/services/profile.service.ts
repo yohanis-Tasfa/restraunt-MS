@@ -7,78 +7,87 @@ const prisma = new PrismaClient();
 export const profileService = {
   // Get user profile with employee info if exists
   async getProfile(userId: string) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        profilePicture: true,
-        isActive: true,
-        lastLogin: true,
-        createdAt: true,
-        updatedAt: true,
-        role: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          profilePicture: true,
+          isActive: true,
+          lastLogin: true,
+          createdAt: true,
+          updatedAt: true,
+          role: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+            },
+          },
+          branch: {
+            select: {
+              id: true,
+              name: true,
+              address: true,
+              phone: true,
+            },
+          },
+          restaurant: {
+            select: {
+              id: true,
+              name: true,
+              logo: true,
+            },
           },
         },
-        branch: {
-          select: {
-            id: true,
-            name: true,
-            address: true,
-            phone: true,
-          },
-        },
-        restaurant: {
-          select: {
-            id: true,
-            name: true,
-            logo: true,
-          },
-        },
-        employee: {
-          select: {
-            id: true,
-            employeeCode: true,
-            department: true,
-            position: true,
-            employmentType: true,
-            salary: true,
-            hireDate: true,
-            status: true,
-          },
-        },
-      },
-    });
+      });
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+      if (!user) {
+        throw new Error('User not found');
+      }
 
-    // Get user statistics
-    const [totalOrders, totalExpenses] = await Promise.all([
-      prisma.order.count({
-        where: { createdById: userId },
-      }),
-      prisma.expense.count({
+      // Get employee info separately (may not exist for all users)
+      const employee = await prisma.employee.findUnique({
         where: { userId },
-      }),
-    ]);
+        select: {
+          id: true,
+          employeeCode: true,
+          department: true,
+          position: true,
+          employmentType: true,
+          salary: true,
+          hireDate: true,
+          status: true,
+        },
+      });
 
-    return {
-      ...user,
-      statistics: {
-        totalOrders,
-        totalExpenses,
-      },
-    };
+      // Get user statistics
+      const [totalOrders, totalExpenses] = await Promise.all([
+        prisma.order.count({
+          where: { createdById: userId },
+        }),
+        prisma.expense.count({
+          where: { userId },
+        }),
+      ]);
+
+      return {
+        ...user,
+        employee: employee || null,
+        statistics: {
+          totalOrders,
+          totalExpenses,
+        },
+      };
+    } catch (error) {
+      console.error('Error in getProfile:', error);
+      throw error;
+    }
   },
 
   // Update profile information
@@ -145,13 +154,17 @@ export const profileService = {
   // Upload profile picture
   async uploadProfilePicture(userId: string, file: Express.Multer.File) {
     try {
-      // Upload to Cloudinary
-      const result = await uploadToCloudinary(file.buffer, 'profiles');
+      // When using CloudinaryStorage, the file.path contains the Cloudinary URL
+      const imageUrl = (file as any).path || file.path;
+
+      if (!imageUrl) {
+        throw new Error('Failed to upload image');
+      }
 
       // Update user profile picture
       const user = await prisma.user.update({
         where: { id: userId },
-        data: { profilePicture: result.secure_url },
+        data: { profilePicture: imageUrl },
         select: {
           id: true,
           profilePicture: true,
@@ -160,6 +173,7 @@ export const profileService = {
 
       return user;
     } catch (error) {
+      console.error('Error uploading profile picture:', error);
       throw new Error('Failed to upload profile picture');
     }
   },

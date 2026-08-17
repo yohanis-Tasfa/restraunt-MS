@@ -265,9 +265,17 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
             )}
             title={isCollapsed ? `${user?.firstName} ${user?.lastName}` : undefined}
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
-              {user?.firstName?.[0]}{user?.lastName?.[0]}
-            </div>
+            {user?.profilePicture ? (
+              <img
+                src={user.profilePicture}
+                alt={`${user.firstName} ${user.lastName}`}
+                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
+              </div>
+            )}
             {!isCollapsed && (
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-gray-900 truncate">

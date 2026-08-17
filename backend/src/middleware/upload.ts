@@ -16,9 +16,34 @@ const storage = new CloudinaryStorage({
   } as any,
 });
 
+// Configure Cloudinary storage for profile pictures
+const profileStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'profiles', // Folder name in Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+  } as any,
+});
+
 // Configure multer
 export const upload = multer({
   storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Check file type
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  },
+});
+
+// Configure multer for profile pictures
+export const profileUpload = multer({
+  storage: profileStorage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },

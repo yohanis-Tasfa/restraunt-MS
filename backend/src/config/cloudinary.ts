@@ -8,6 +8,35 @@ cloudinary.config({
 
 export default cloudinary;
 
+// Helper function to upload image to Cloudinary
+export const uploadToCloudinary = async (
+  fileBuffer: Buffer,
+  folder: string = 'uploads'
+): Promise<{ secure_url: string; public_id: string }> => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: 'auto',
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else if (result) {
+          resolve({
+            secure_url: result.secure_url,
+            public_id: result.public_id,
+          });
+        } else {
+          reject(new Error('Upload failed'));
+        }
+      }
+    );
+
+    uploadStream.end(fileBuffer);
+  });
+};
+
 // Helper function to extract public_id from Cloudinary URL
 export const getPublicIdFromUrl = (url: string): string | null => {
   if (!url) return null;

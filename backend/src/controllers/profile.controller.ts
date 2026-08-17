@@ -5,7 +5,7 @@ export const profileController = {
   // Get current user profile
   async getProfile(req: Request, res: Response) {
     try {
-      const userId = req.user.userId;
+      const userId = req.user.id;
       const profile = await profileService.getProfile(userId);
       res.json(profile);
     } catch (error: any) {
@@ -16,7 +16,7 @@ export const profileController = {
   // Update profile information
   async updateProfile(req: Request, res: Response) {
     try {
-      const userId = req.user.userId;
+      const userId = req.user.id;
       const profile = await profileService.updateProfile(userId, req.body);
       res.json(profile);
     } catch (error: any) {
@@ -27,7 +27,7 @@ export const profileController = {
   // Change password
   async changePassword(req: Request, res: Response) {
     try {
-      const userId = req.user.userId;
+      const userId = req.user.id;
       const { currentPassword, newPassword } = req.body;
 
       if (!currentPassword || !newPassword) {
@@ -48,7 +48,7 @@ export const profileController = {
   // Upload profile picture
   async uploadProfilePicture(req: Request, res: Response) {
     try {
-      const userId = req.user.userId;
+      const userId = req.user.id;
       
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
@@ -64,7 +64,7 @@ export const profileController = {
   // Get activity log
   async getActivityLog(req: Request, res: Response) {
     try {
-      const userId = req.user.userId;
+      const userId = req.user.id;
       const { limit } = req.query;
       
       const activities = await profileService.getActivityLog(

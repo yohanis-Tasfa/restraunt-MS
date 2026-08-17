@@ -68,29 +68,28 @@ export interface ActivityLog {
 
 const profileApi = {
   // Get current user profile
-  async getProfile() {
-    const response = await api.get<UserProfile>('/profile');
-    return response;
+  async getProfile(): Promise<UserProfile> {
+    return await api.get<UserProfile>('/profile');
   },
 
   // Update profile information
-  async updateProfile(data: UpdateProfileData) {
-    const response = await api.put<UserProfile>('/profile', data);
-    return response;
+  async updateProfile(data: UpdateProfileData): Promise<UserProfile> {
+    return await api.put<UserProfile>('/profile', data);
   },
 
   // Change password
-  async changePassword(data: ChangePasswordData) {
-    const response = await api.post<{ message: string }>('/profile/change-password', data);
-    return response;
+  async changePassword(data: ChangePasswordData): Promise<{ message: string }> {
+    return await api.post<{ message: string }>('/profile/change-password', data);
   },
 
   // Upload profile picture
-  async uploadProfilePicture(file: File) {
+  async uploadProfilePicture(file: File): Promise<{
+    profilePicture: string; id: string; profilePicture: string 
+}> {
     const formData = new FormData();
     formData.append('profilePicture', file);
 
-    const response = await api.post<{ id: string; profilePicture: string }>(
+    return await api.post<{ id: string; profilePicture: string }>(
       '/profile/picture',
       formData,
       {
@@ -99,13 +98,11 @@ const profileApi = {
         },
       }
     );
-    return response;
   },
 
   // Get activity log
-  async getActivityLog(limit: number = 10) {
-    const response = await api.get<ActivityLog[]>(`/profile/activity?limit=${limit}`);
-    return response;
+  async getActivityLog(limit: number = 10): Promise<ActivityLog[]> {
+    return await api.get<ActivityLog[]>(`/profile/activity?limit=${limit}`);
   },
 };
 
