@@ -14,6 +14,7 @@ import {
   Building2,
   Briefcase,
   X,
+  Shield,
 } from 'lucide-react';
 import { employeesApi, type Employee, type CreateEmployeeData, type UpdateEmployeeData } from '../api/employees';
 
@@ -835,7 +836,7 @@ export default function EmployeesPage() {
       {/* View Employee Modal */}
       {showViewModal && selectedEmployee && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Employee Details</h2>
               <button
@@ -849,87 +850,203 @@ export default function EmployeesPage() {
               </button>
             </div>
             <div className="p-6">
-              <div className="flex items-center mb-6">
+              {/* Header Section */}
+              <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
                 <div className="flex-shrink-0 h-20 w-20 bg-blue-100 rounded-full flex items-center justify-center">
                   <span className="text-blue-600 font-semibold text-2xl">
                     {selectedEmployee.user.firstName[0]}
                     {selectedEmployee.user.lastName[0]}
                   </span>
                 </div>
-                <div className="ml-6">
+                <div className="ml-6 flex-1">
                   <h3 className="text-2xl font-bold text-gray-900">
                     {selectedEmployee.user.firstName} {selectedEmployee.user.lastName}
                   </h3>
-                  <p className="text-gray-600">{selectedEmployee.position}</p>
-                  {getStatusBadge(selectedEmployee.status)}
+                  <p className="text-gray-600 mt-1">{selectedEmployee.position}</p>
+                  <div className="flex items-center gap-3 mt-2">
+                    {getStatusBadge(selectedEmployee.status)}
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                      {selectedEmployee.employmentType.replace('_', ' ')}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                {/* Contact Information */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
                     Contact Information
                   </h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900">{selectedEmployee.user.email}</span>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-500">Email</label>
+                      <p className="text-sm text-gray-900">{selectedEmployee.user.email}</p>
                     </div>
                     {selectedEmployee.user.phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-900">{selectedEmployee.user.phone}</span>
+                      <div>
+                        <label className="text-xs text-gray-500">Phone</label>
+                        <p className="text-sm text-gray-900">{selectedEmployee.user.phone}</p>
+                      </div>
+                    )}
+                    <div>
+                      <label className="text-xs text-gray-500">Username</label>
+                      <p className="text-sm text-gray-900">{selectedEmployee.user.username}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Role & Access */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    Role & Access
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-500">System Role</label>
+                      <p className="text-sm text-gray-900 font-medium">{selectedEmployee.user.role.name}</p>
+                    </div>
+                    {selectedEmployee.user.branch && (
+                      <div>
+                        <label className="text-xs text-gray-500">Branch</label>
+                        <p className="text-sm text-gray-900">{selectedEmployee.user.branch.name}</p>
+                      </div>
+                    )}
+                    <div>
+                      <label className="text-xs text-gray-500">Account Status</label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            selectedEmployee.user.isActive
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {selectedEmployee.user.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Employment Details */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                    <Briefcase className="w-4 h-4" />
+                    Employment Details
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-500">Employee Code</label>
+                      <p className="text-sm text-gray-900 font-mono">{selectedEmployee.employeeCode}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500">Department</label>
+                      <p className="text-sm text-gray-900">{selectedEmployee.department}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500">Position</label>
+                      <p className="text-sm text-gray-900">{selectedEmployee.position}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500">Employment Type</label>
+                      <p className="text-sm text-gray-900">
+                        {selectedEmployee.employmentType.replace('_', ' ')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Salary & Dates */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    Salary & Dates
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-500">Salary</label>
+                      <p className="text-sm text-gray-900 font-semibold">
+                        {formatCurrency(selectedEmployee.salary)}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500">Hire Date</label>
+                      <p className="text-sm text-gray-900">{formatDate(selectedEmployee.hireDate)}</p>
+                    </div>
+                    {selectedEmployee.contractEndDate && (
+                      <div>
+                        <label className="text-xs text-gray-500">Contract End Date</label>
+                        <p className="text-sm text-gray-900">
+                          {formatDate(selectedEmployee.contractEndDate)}
+                        </p>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                    Employment Details
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900">
-                        {selectedEmployee.employeeCode}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900">{selectedEmployee.department}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900">
-                        Hired: {formatDate(selectedEmployee.hireDate)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900">
-                        {formatCurrency(selectedEmployee.salary)}
-                      </span>
+                {/* Banking Information */}
+                {(selectedEmployee.bankAccount || selectedEmployee.taxNumber) && (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                      <Building2 className="w-4 h-4" />
+                      Banking & Tax Information
+                    </h4>
+                    <div className="space-y-3">
+                      {selectedEmployee.bankAccount && (
+                        <div>
+                          <label className="text-xs text-gray-500">Bank Account Number</label>
+                          <p className="text-sm text-gray-900 font-mono">{selectedEmployee.bankAccount}</p>
+                        </div>
+                      )}
+                      {selectedEmployee.taxNumber && (
+                        <div>
+                          <label className="text-xs text-gray-500">Tax Number (TIN)</label>
+                          <p className="text-sm text-gray-900 font-mono">{selectedEmployee.taxNumber}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                )}
 
-                {selectedEmployee.emergencyContact && (
-                  <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                {/* Emergency Contact */}
+                {(selectedEmployee.emergencyContact || selectedEmployee.emergencyPhone) && (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center gap-2">
+                      <Phone className="w-4 h-4" />
                       Emergency Contact
                     </h4>
-                    <div className="space-y-2">
-                      <p className="text-sm text-gray-900">{selectedEmployee.emergencyContact}</p>
+                    <div className="space-y-3">
+                      {selectedEmployee.emergencyContact && (
+                        <div>
+                          <label className="text-xs text-gray-500">Contact Name</label>
+                          <p className="text-sm text-gray-900">{selectedEmployee.emergencyContact}</p>
+                        </div>
+                      )}
                       {selectedEmployee.emergencyPhone && (
-                        <p className="text-sm text-gray-600">{selectedEmployee.emergencyPhone}</p>
+                        <div>
+                          <label className="text-xs text-gray-500">Contact Phone</label>
+                          <p className="text-sm text-gray-900">{selectedEmployee.emergencyPhone}</p>
+                        </div>
                       )}
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 flex justify-end">
+              {/* Action Buttons */}
+              <div className="mt-6 pt-6 border-t border-gray-200 flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowViewModal(false);
+                    setSelectedEmployee(null);
+                  }}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Close
+                </button>
                 <button
                   onClick={() => {
                     setShowViewModal(false);
