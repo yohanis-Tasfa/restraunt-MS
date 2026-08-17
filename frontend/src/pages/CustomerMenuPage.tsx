@@ -57,7 +57,6 @@ export default function CustomerMenuPage() {
   const { isLoading: isLoadingSession, error: sessionError, data: sessionData } = useQuery<CustomerSession | { noSession: boolean }>({
     queryKey: ['customer-session', qrCode],
     queryFn: async (): Promise<CustomerSession | { noSession: boolean }> => {
-      console.log('[CustomerMenuPage] QueryFn called with qrCode:', qrCode);
       if (!qrCode) {
         throw new Error('Invalid QR code');
       }
@@ -65,13 +64,10 @@ export default function CustomerMenuPage() {
       try {
         // Try to get existing active session
         const existingSession = await customerSessionApi.getSessionByQRCode(qrCode);
-        console.log('[CustomerMenuPage] Session found:', existingSession);
         return existingSession;
       } catch (error: any) {
-        console.log('[CustomerMenuPage] Session API error:', error.response?.status);
         // If no session exists (404), return a placeholder
         if (error.response?.status === 404) {
-          console.log('[CustomerMenuPage] Returning noSession placeholder');
           return { noSession: true }; // Placeholder to indicate no session exists
         }
         // For any other error, throw it
