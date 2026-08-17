@@ -142,3 +142,70 @@ export const getAvailability = asyncHandler(async (req: Request, res: Response) 
     new ApiResponse(200, availability, 'Table availability fetched successfully')
   );
 });
+
+// QR Code Ordering Endpoints
+
+export const generateQRCode = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await tableService.generateQRCode(id);
+
+  res.status(200).json(
+    new ApiResponse(200, result, 'QR code generated successfully')
+  );
+});
+
+export const regenerateQRCode = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await tableService.regenerateQRCode(id);
+
+  res.status(200).json(
+    new ApiResponse(200, result, 'QR code regenerated successfully')
+  );
+});
+
+export const downloadQRCode = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const { buffer, filename } = await tableService.downloadQRCode(id);
+
+  res.setHeader('Content-Type', 'image/png');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.send(buffer);
+});
+
+export const assignWaiter = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { waiterId } = req.body;
+
+  if (!waiterId) {
+    throw new ApiError(400, 'Waiter ID is required');
+  }
+
+  const result = await tableService.assignWaiter(id, waiterId);
+
+  res.status(200).json(
+    new ApiResponse(200, result, 'Waiter assigned to table successfully')
+  );
+});
+
+export const unassignWaiter = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await tableService.unassignWaiter(id);
+
+  res.status(200).json(
+    new ApiResponse(200, result, 'Waiter unassigned from table successfully')
+  );
+});
+
+export const getAssignedTables = asyncHandler(async (req: Request, res: Response) => {
+  const { waiterId } = req.params;
+
+  const tables = await tableService.getAssignedTables(waiterId);
+
+  res.status(200).json(
+    new ApiResponse(200, tables, 'Assigned tables fetched successfully')
+  );
+});

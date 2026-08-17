@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tablesApi, TableStatus, type Table } from '../api/tables';
+import { employeesApi, type Employee } from '../api/employees';
 import { useAuthStore } from '../store/authStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -32,6 +33,10 @@ import {
   XCircle,
   AlertCircle,
   MoreVertical,
+  QrCode,
+  Download,
+  RefreshCw,
+  UserCheck,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -40,7 +45,10 @@ export default function TablesPage() {
   const queryClient = useQueryClient();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isWaiterModalOpen, setIsWaiterModalOpen] = useState(false);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
+  const [selectedWaiterId, setSelectedWaiterId] = useState<string>('');
   const [formData, setFormData] = useState({
     number: '',
     capacity: '',
@@ -54,6 +62,18 @@ export default function TablesPage() {
   });
 
   const tables = tablesData?.data || [];
+
+  // Fetch waiters (employees with waiter role)
+  const { data: employeesData } = useQuery({
+    queryKey: ['employees'],
+    queryFn: () => employeesApi.getEmployees({ status: 'ACTIVE' }),
+  });
+
+  // Filter waiters from employees
+  const waiters = (employeesData?.data?.employees || []).filter(
+    (emp: Employee) => emp.user?.role?.name?.toLowerCase().includes('waiter') || 
+                      emp.position?.toLowerCase().includes('waiter')
+  );
 
   // Create table mutation
   const createTableMutation = useMutation({
@@ -110,6 +130,58 @@ export default function TablesPage() {
     },
   });
 
+  // Generate QR code mutation
+  const generateQRMutation = useMutation({
+    mutationFn: tablesApi.generateQRCode,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] });
+      toast.success('QR code generated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to generate QR code');
+    },
+  });
+
+  // Regenerate QR code mutation
+  const regenerateQRMutation = useMutation({
+    mutationFn: tablesApi.regenerateQRCode,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] });
+      toast.success('QR code regenerated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to regenerate QR code');
+    },
+  });
+
+  // Assign waiter mutation
+  const assignWaiterMutation = useMutation({
+    mutationFn: ({ tableId, waiterId }: { tableId: string; waiterId: string }) =>
+      tablesApi.assignWaiter(tableId, waiterId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] });
+      toast.success('Waiter assigned successfully');
+      setIsWaiterModalOpen(false);
+      setSelectedTable(null);
+      setSelectedWaiterId('');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to assign waiter');
+    },
+  });
+
+  // Unassign waiter mutation
+  const unassignWaiterMutation = useMutation({
+    mutationFn: tablesApi.unassignWaiter,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] });
+      toast.success('Waiter unassigned successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to unassign waiter');
+    },
+  });
+
   const handleCreateTable = () => {
     if (!formData.number || !formData.capacity) {
       toast.error('Please fill all required fields');
@@ -151,6 +223,67 @@ export default function TablesPage() {
       capacity: table.capacity.toString(),
     });
     setIsEditModalOpen(true);
+  };
+
+  const openQRModal = (table: Table) => {
+    setSelectedTable(table);
+    setIsQRModalOpen(true);
+  };
+
+  const openWaiterModal = (table: Table) => {
+    setSelectedTable(table);
+    setSelectedWaiterId(table.assignedWaiterId || '');
+    setIsWaiterModalOpen(true);
+  };
+
+  const handleDownloadQR = async (tableId: string, tableNumber: string) => {
+    try {
+      // Create download URL with token
+      const token = localStorage.getItem('token');
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      const downloadUrl = `${baseUrl}/tables/${tableId}/qr-code/download`;
+      
+      // Fetch with proper headers
+      const response = await fetch(downloadUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download QR code');
+      }
+
+      // Get blob from response
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `table-${tableNumber}-qr.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('QR code downloaded');
+    } catch (error: any) {
+      console.error('Download error:', error);
+      toast.error('Failed to download QR code');
+    }
+  };
+
+  const handleAssignWaiter = () => {
+    if (!selectedTable || !selectedWaiterId) {
+      toast.error('Please select a waiter');
+      return;
+    }
+    assignWaiterMutation.mutate({
+      tableId: selectedTable.id,
+      waiterId: selectedWaiterId,
+    });
   };
 
   const getStatusColor = (status: TableStatus) => {
@@ -316,13 +449,27 @@ export default function TablesPage() {
                   <button className="p-1 hover:bg-black/5 rounded transition-colors">
                     <MoreVertical className="w-4 h-4" />
                   </button>
-                  <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 hidden group-hover:block z-10 min-w-[120px]">
+                  <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 hidden group-hover:block z-10 min-w-[160px]">
                     <button
                       onClick={() => openEditModal(table)}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
                     >
                       <Edit className="w-4 h-4" />
-                      Edit
+                      Edit Table
+                    </button>
+                    <button
+                      onClick={() => openQRModal(table)}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      QR Code
+                    </button>
+                    <button
+                      onClick={() => openWaiterModal(table)}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <UserCheck className="w-4 h-4" />
+                      Assign Waiter
                     </button>
                     <button
                       onClick={() => handleDeleteTable(table.id)}
@@ -340,6 +487,24 @@ export default function TablesPage() {
                 <Users className="w-4 h-4" />
                 <span className="text-sm">Capacity: {table.capacity}</span>
               </div>
+
+              {/* Assigned Waiter */}
+              {table.assignedWaiter && (
+                <div className="flex items-center gap-2 mb-3 text-sm">
+                  <UserCheck className="w-4 h-4" />
+                  <span className="truncate">
+                    {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}
+                  </span>
+                </div>
+              )}
+
+              {/* QR Code Status */}
+              {table.qrCodeUrl && (
+                <div className="flex items-center gap-2 mb-3 text-sm text-green-600">
+                  <QrCode className="w-4 h-4" />
+                  <span>QR Active</span>
+                </div>
+              )}
 
               {/* Status Badge */}
               <Badge className={`w-full justify-center ${getStatusColor(table.status)}`}>
@@ -467,6 +632,134 @@ export default function TablesPage() {
               disabled={updateTableMutation.isPending}
             >
               {updateTableMutation.isPending ? 'Updating...' : 'Update Table'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Code Modal */}
+      <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>QR Code Management</DialogTitle>
+            <DialogDescription>
+              Generate and manage QR code for Table {selectedTable?.number}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedTable?.qrCodeUrl ? (
+              <>
+                <div className="flex justify-center p-6 bg-gray-50 rounded-lg">
+                  <img
+                    src={selectedTable.qrCodeUrl}
+                    alt={`QR Code for Table ${selectedTable.number}`}
+                    className="w-64 h-64 object-contain"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => regenerateQRMutation.mutate(selectedTable.id)}
+                    disabled={regenerateQRMutation.isPending}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    {regenerateQRMutation.isPending ? 'Regenerating...' : 'Regenerate'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => handleDownloadQR(selectedTable.id, selectedTable.number)}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                  <QrCode className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600 mb-4">No QR code generated yet</p>
+                <Button
+                  onClick={() => generateQRMutation.mutate(selectedTable?.id || '')}
+                  disabled={generateQRMutation.isPending}
+                >
+                  <QrCode className="w-4 h-4 mr-2" />
+                  {generateQRMutation.isPending ? 'Generating...' : 'Generate QR Code'}
+                </Button>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsQRModalOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Waiter Assignment Modal */}
+      <Dialog open={isWaiterModalOpen} onOpenChange={setIsWaiterModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Waiter</DialogTitle>
+            <DialogDescription>
+              Assign a waiter to Table {selectedTable?.number}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedTable?.assignedWaiter && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-green-800 font-medium">Currently Assigned</p>
+                    <p className="text-green-900">
+                      {selectedTable.assignedWaiter.firstName} {selectedTable.assignedWaiter.lastName}
+                    </p>
+                    <p className="text-sm text-green-700">{selectedTable.assignedWaiter.email}</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => unassignWaiterMutation.mutate(selectedTable.id)}
+                    disabled={unassignWaiterMutation.isPending}
+                  >
+                    {unassignWaiterMutation.isPending ? 'Removing...' : 'Remove'}
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div>
+              <Label htmlFor="waiter-select">Select Waiter</Label>
+              <Select value={selectedWaiterId} onValueChange={setSelectedWaiterId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a waiter" />
+                </SelectTrigger>
+                <SelectContent>
+                  {waiters.length === 0 ? (
+                    <div className="p-2 text-sm text-gray-500">No waiters available</div>
+                  ) : (
+                    waiters.map((waiter: Employee) => (
+                      <SelectItem key={waiter.userId} value={waiter.userId}>
+                        {waiter.user.firstName} {waiter.user.lastName} - {waiter.position}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsWaiterModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAssignWaiter}
+              disabled={assignWaiterMutation.isPending || !selectedWaiterId}
+            >
+              {assignWaiterMutation.isPending ? 'Assigning...' : 'Assign Waiter'}
             </Button>
           </DialogFooter>
         </DialogContent>

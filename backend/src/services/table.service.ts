@@ -1,5 +1,10 @@
 import { ApiError } from '../utils/ApiError';
 import prisma from '../config/database';
+import {
+  generateTableQRCode,
+  regenerateTableQRCode,
+  generateQRCodeBuffer,
+} from '../utils/qrcode';
 
 interface CreateTableData {
   number: string;
@@ -482,4 +487,279 @@ export class TableService {
       })),
     }));
   }
+
+  // QR Code Ordering Methods
+
+  async generateQRCode(id: string) {
+    const table = await prisma.table.findUnique({
+      where: { id },
+      include: {
+        branch: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!table) {
+      throw new ApiError(404, 'Table not found');
+    }
+
+    // Check if QR code already exists
+    if (table.qrCodeUrl && table.qrCodeData) {
+      return {
+        id: table.id,
+        number: table.number,
+        qrCodeUrl: table.qrCodeUrl,
+        qrCodeData: table.qrCodeData,
+        message: 'QR code already exists. Use regenerate endpoint to create a new one.',
+      };
+    }
+
+    // Generate new QR code
+    const qrCodeResult = await generateTableQRCode(
+      table.id,
+      table.number,
+      table.branchId
+    );
+
+    // Update table with QR code data
+    const updated = await prisma.table.update({
+      where: { id },
+      data: {
+        qrCodeUrl: qrCodeResult.qrCodeUrl,
+        qrCodeData: qrCodeResult.qrCodeData,
+      },
+    });
+
+    return {
+      id: updated.id,
+      number: updated.number,
+      qrCodeUrl: updated.qrCodeUrl,
+      qrCodeData: updated.qrCodeData,
+      menuUrl: qrCodeResult.menuUrl,
+    };
+  }
+
+  async regenerateQRCode(id: string) {
+    const table = await prisma.table.findUnique({
+      where: { id },
+    });
+
+    if (!table) {
+      throw new ApiError(404, 'Table not found');
+    }
+
+    // Generate new QR code (will delete old one if exists)
+    const qrCodeResult = await regenerateTableQRCode(
+      table.id,
+      table.number,
+      table.branchId,
+      table.qrCodeUrl || undefined
+    );
+
+    // Update table with new QR code data
+    const updated = await prisma.table.update({
+      where: { id },
+      data: {
+        qrCodeUrl: qrCodeResult.qrCodeUrl,
+        qrCodeData: qrCodeResult.qrCodeData,
+      },
+    });
+
+    return {
+      id: updated.id,
+      number: updated.number,
+      qrCodeUrl: updated.qrCodeUrl,
+      qrCodeData: updated.qrCodeData,
+      menuUrl: qrCodeResult.menuUrl,
+    };
+  }
+
+  async downloadQRCode(id: string) {
+    const table = await prisma.table.findUnique({
+      where: { id },
+    });
+
+    if (!table) {
+      throw new ApiError(404, 'Table not found');
+    }
+
+    if (!table.qrCodeData) {
+      throw new ApiError(400, 'Table does not have a QR code. Generate one first.');
+    }
+
+    // Construct menu URL
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const menuUrl = `${frontendUrl}/menu/table/${table.qrCodeData}`;
+
+    // Generate QR code buffer
+    const buffer = await generateQRCodeBuffer(menuUrl);
+
+    return {
+      buffer,
+      filename: `table_${table.number}_qr.png`,
+    };
+  }
+
+  // Waiter Assignment Methods
+
+  async assignWaiter(tableId: string, waiterId: string) {
+    // Check if table exists
+    const table = await prisma.table.findUnique({
+      where: { id: tableId },
+    });
+
+    if (!table) {
+      throw new ApiError(404, 'Table not found');
+    }
+
+    // Check if waiter exists and is active
+    const waiter = await prisma.user.findUnique({
+      where: { id: waiterId },
+      include: {
+        role: true,
+        employee: true,
+      },
+    });
+
+    if (!waiter) {
+      throw new ApiError(404, 'Waiter not found');
+    }
+
+    if (!waiter.isActive) {
+      throw new ApiError(400, 'Waiter account is not active');
+    }
+
+    // Verify waiter has appropriate role (optional - you can customize this)
+    const waiterRoles = ['Waiter', 'Manager', 'Admin', 'Super Admin'];
+    if (!waiterRoles.includes(waiter.role.name)) {
+      throw new ApiError(400, `User role '${waiter.role.name}' cannot be assigned as waiter`);
+    }
+
+    // Update table with assigned waiter
+    const updated = await prisma.table.update({
+      where: { id: tableId },
+      data: { assignedWaiterId: waiterId },
+      include: {
+        assignedWaiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      id: updated.id,
+      number: updated.number,
+      assignedWaiter: updated.assignedWaiter,
+    };
+  }
+
+  async unassignWaiter(tableId: string) {
+    const table = await prisma.table.findUnique({
+      where: { id: tableId },
+    });
+
+    if (!table) {
+      throw new ApiError(404, 'Table not found');
+    }
+
+    if (!table.assignedWaiterId) {
+      throw new ApiError(400, 'Table does not have an assigned waiter');
+    }
+
+    // Remove waiter assignment
+    const updated = await prisma.table.update({
+      where: { id: tableId },
+      data: { assignedWaiterId: null },
+    });
+
+    return {
+      id: updated.id,
+      number: updated.number,
+      message: 'Waiter unassigned successfully',
+    };
+  }
+
+  async getAssignedTables(waiterId: string) {
+    // Check if waiter exists
+    const waiter = await prisma.user.findUnique({
+      where: { id: waiterId },
+      include: {
+        role: true,
+      },
+    });
+
+    if (!waiter) {
+      throw new ApiError(404, 'Waiter not found');
+    }
+
+    // Get all tables assigned to this waiter
+    const tables = await prisma.table.findMany({
+      where: { assignedWaiterId: waiterId },
+      include: {
+        floor: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        branch: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        orders: {
+          where: {
+            status: { in: ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'] },
+          },
+          select: {
+            id: true,
+            orderNumber: true,
+            status: true,
+            total: true,
+          },
+        },
+        waiterCalls: {
+          where: {
+            status: { in: ['PENDING', 'ACKNOWLEDGED'] },
+          },
+          select: {
+            id: true,
+            status: true,
+            priority: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+      orderBy: [{ branchId: 'asc' }, { number: 'asc' }],
+    });
+
+    return {
+      waiter: {
+        id: waiter.id,
+        name: `${waiter.firstName} ${waiter.lastName}`,
+        role: waiter.role.name,
+      },
+      tables,
+    };
+  }
 }
+
+
+export const tableService = new TableService();

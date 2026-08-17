@@ -20,6 +20,8 @@ import settingRoutes from './setting.routes';
 import uploadRoutes from './upload.routes';
 import employeeRoutes from './employee.routes';
 import profileRoutes from './profile.routes';
+import customerSessionRoutes from './customer-session.routes';
+import waiterCallRoutes from './waiter-call.routes';
 
 const router = Router();
 
@@ -44,6 +46,8 @@ router.use('/settings', settingRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/employees', employeeRoutes);
 router.use('/profile', profileRoutes);
+router.use('/customer-sessions', customerSessionRoutes);
+router.use('/waiter-calls', waiterCallRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

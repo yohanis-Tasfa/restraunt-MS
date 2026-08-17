@@ -44,6 +44,8 @@ model User {
   leaves            Leave[]
   expenses          Expense[]
   employee          Employee?
+  assignedTables    Table[]         @relation("TableWaiter")
+  waiterCalls       WaiterCall[]    @relation("WaiterCalls")
   
   @@index([email])
   @@index([roleId])
@@ -177,15 +179,25 @@ model Table {
   floor       Floor?        @relation(fields: [floorId], references: [id])
   branchId    String
   branch      Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  
+  // QR Code Ordering Fields
+  assignedWaiterId  String?
+  assignedWaiter    User?      @relation("TableWaiter", fields: [assignedWaiterId], references: [id])
+  qrCodeUrl         String?    @unique  // Cloudinary URL for QR image
+  qrCodeData        String?    @unique  // Unique identifier in QR code
+  
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   
   orders            Order[]
   reservations      Reservation[]
   reservationTables ReservationTable[]
+  customerSessions  CustomerSession[]
+  waiterCalls       WaiterCall[]
   
   @@unique([branchId, number])
   @@index([branchId])
+  @@index([assignedWaiterId])
   @@map("tables")
 }
 
@@ -803,4 +815,74 @@ model Setting {
   updatedAt DateTime @updatedAt
   
   @@map("settings")
+}
+
+// ============================================
+// QR CODE TABLE ORDERING
+// ============================================
+
+model CustomerSession {
+  id            String   @id @default(uuid())
+  tableId       String
+  table         Table    @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  customerName  String?  // Optional customer name
+  customerPhone String?  // Optional customer phone
+  guestCount    Int      @default(1) // Number of guests at table
+  status        CustomerSessionStatus @default(ACTIVE)
+  startedAt     DateTime @default(now())
+  endedAt       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  waiterCalls   WaiterCall[]
+  
+  @@index([tableId, status])
+  @@index([startedAt])
+  @@map("customer_sessions")
+}
+
+enum CustomerSessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+model WaiterCall {
+  id              String           @id @default(uuid())
+  sessionId       String
+  session         CustomerSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  tableId         String
+  table           Table            @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  waiterId        String
+  waiter          User             @relation("WaiterCalls", fields: [waiterId], references: [id])
+  requestType     WaiterCallRequestType @default(ASSISTANCE) // Type of request
+  selectedItems   Json?            // Optional: items customer selected to show waiter
+  status          WaiterCallStatus @default(PENDING)
+  priority        Int              @default(0) // Higher = more urgent (based on wait time)
+  createdAt       DateTime         @default(now())
+  acknowledgedAt  DateTime?        // When waiter clicked "I'm going"
+  completedAt     DateTime?        // When service was completed
+  notes           String?          // Optional waiter notes
+  
+  @@index([waiterId, status])
+  @@index([tableId])
+  @@index([sessionId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("waiter_calls")
+}
+
+enum WaiterCallRequestType {
+  ASSISTANCE    // General help
+  ORDER_READY   // Ready to order
+  BILL_REQUEST  // Want to pay
+  OTHER         // Other requests
+}
+
+enum WaiterCallStatus {
+  PENDING      // Waiting for waiter to acknowledge
+  ACKNOWLEDGED // Waiter is on the way
+  COMPLETED    // Service done
+  TIMEOUT      // No response in 5 minutes, alert manager
+  CANCELLED    // Customer cancelled the call
 }
