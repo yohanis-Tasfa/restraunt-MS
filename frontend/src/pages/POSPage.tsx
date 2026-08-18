@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
 import { menuApi, type MenuCategory, type MenuItem } from '../api/menu';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
@@ -10,12 +11,41 @@ import MenuSection from '../components/pos/MenuSection';
 import CartSection from '../components/pos/CartSection';
 import CheckoutDialog from '../components/pos/CheckoutDialog';
 import FloatingCallPanel from '../components/pos/FloatingCallPanel';
+import toast from 'react-hot-toast';
 
 export default function POSPage() {
+  const location = useLocation();
   const { user, logout } = useAuthStore();
-  const { items, getItemCount } = useCartStore();
+  const { items, getItemCount, addItem, clearCart } = useCartStore();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Load customer cart when navigating from waiter calls
+  useEffect(() => {
+    const state = location.state as any;
+    if (state?.customerCart && state.customerCart.items.length > 0) {
+      // Clear existing cart
+      clearCart();
+      
+      // Load customer's cart items
+      state.customerCart.items.forEach((item: any) => {
+        addItem({
+          menuItemId: item.menuItemId,
+          name: item.name,
+          unitPrice: item.price,
+          quantity: item.quantity,
+          image: item.image,
+          category: item.category,
+          specialInstructions: item.notes,
+        });
+      });
+      
+      toast.success(`Loaded ${state.customerCart.items.length} items from Table ${state.tableNumber}`);
+      
+      // Clear navigation state so it doesn't reload on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Fetch menu categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({

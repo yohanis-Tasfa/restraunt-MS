@@ -33,6 +33,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>('');
+  const [createdOrderType, setCreatedOrderType] = useState<OrderType>(OrderType.DINE_IN);
 
   // Fetch available tables
   const { data: tablesData } = useQuery({
@@ -48,9 +49,14 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
     mutationFn: ordersApi.createOrder,
     onSuccess: (data) => {
       setOrderNumber(data.orderNumber);
+      setCreatedOrderType(orderType);
       setIsSuccess(true);
       clearCart();
-      toast.success('Order placed successfully!');
+      toast.success(
+        orderType === OrderType.DINE_IN 
+          ? 'Order sent to kitchen!' 
+          : 'Order placed successfully!'
+      );
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to create order');
@@ -73,6 +79,10 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
         price: item.unitPrice,
         notes: item.specialInstructions,
       })),
+      // For dine-in, create order WITHOUT payment (traditional restaurant)
+      // For takeaway/delivery, payment can be optional or required
+      paymentMethod: orderType === OrderType.DINE_IN ? undefined : paymentMethod,
+      paymentStatus: orderType === OrderType.DINE_IN ? 'UNPAID' : undefined,
     };
 
     createOrderMutation.mutate(orderData);
@@ -95,6 +105,8 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
 
   // Success View
   if (isSuccess) {
+    const isDineIn = createdOrderType === OrderType.DINE_IN;
+    
     return (
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
@@ -102,18 +114,40 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
             <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Placed!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {isDineIn ? 'Order Sent to Kitchen!' : 'Order Placed!'}
+            </h2>
             <p className="text-gray-600 mb-4">Order #{orderNumber}</p>
             
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600 mb-1">Total Amount</p>
-              <p className="text-3xl font-bold text-green-600">{total.toFixed(2)} ብር</p>
-            </div>
+            {isDineIn ? (
+              // Dine-in: Show unpaid status
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-800 font-medium mb-2">Payment Status</p>
+                <Badge className="bg-orange-100 text-orange-700 border-orange-300">
+                  UNPAID - Collect After Service
+                </Badge>
+                <p className="text-sm text-blue-700 mt-3">
+                  Order Total: <strong>{total.toFixed(2)} ብር</strong>
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Payment will be collected when customer requests bill
+                </p>
+              </div>
+            ) : (
+              // Takeaway/Delivery: Show paid status
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-600 mb-1">Total Amount</p>
+                <p className="text-3xl font-bold text-green-600">{total.toFixed(2)} ብር</p>
+                <Badge className="bg-green-100 text-green-700 border-green-300 mt-2">
+                  PAID - {paymentMethod}
+                </Badge>
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={handleClose}>
-                <Printer className="w-4 h-4" />
-                Print Receipt
+                <Printer className="w-4 h-4 mr-2" />
+                Print {isDineIn ? 'Kitchen Ticket' : 'Receipt'}
               </Button>
               <Button className="flex-1" onClick={handleClose}>
                 New Order
@@ -174,45 +208,56 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
             </div>
           )}
 
-          {/* Payment Method */}
-          <div>
-            <label className="text-sm font-semibold text-gray-700 mb-2 block">Payment Method</label>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => setPaymentMethod('CASH')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
-                  paymentMethod === 'CASH'
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <Banknote className="w-6 h-6" />
-                <span className="text-xs font-medium">Cash</span>
-              </button>
-              <button
-                onClick={() => setPaymentMethod('CARD')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
-                  paymentMethod === 'CARD'
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <CreditCard className="w-6 h-6" />
-                <span className="text-xs font-medium">Card</span>
-              </button>
-              <button
-                onClick={() => setPaymentMethod('MOBILE')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
-                  paymentMethod === 'MOBILE'
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <Smartphone className="w-6 h-6" />
-                <span className="text-xs font-medium">Mobile</span>
-              </button>
+          {/* Payment Method - Only for TAKEAWAY and DELIVERY */}
+          {orderType !== OrderType.DINE_IN && (
+            <div>
+              <label className="text-sm font-semibold text-gray-700 mb-2 block">Payment Method</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => setPaymentMethod('CASH')}
+                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                    paymentMethod === 'CASH'
+                      ? 'border-green-600 bg-green-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <Banknote className="w-6 h-6" />
+                  <span className="text-xs font-medium">Cash</span>
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('CARD')}
+                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                    paymentMethod === 'CARD'
+                      ? 'border-green-600 bg-green-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <CreditCard className="w-6 h-6" />
+                  <span className="text-xs font-medium">Card</span>
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('MOBILE')}
+                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                    paymentMethod === 'MOBILE'
+                      ? 'border-green-600 bg-green-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <Smartphone className="w-6 h-6" />
+                  <span className="text-xs font-medium">Mobile</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Dine-in Notice */}
+          {orderType === OrderType.DINE_IN && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-sm text-blue-800">
+                <strong>Note:</strong> Order will be sent to kitchen. Payment will be collected after service.
+              </p>
+            </div>
+          )}
 
           {/* Order Summary */}
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
@@ -241,7 +286,11 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
               onClick={handlePlaceOrder}
               disabled={createOrderMutation.isPending}
             >
-              {createOrderMutation.isPending ? 'Processing...' : 'Place Order'}
+              {createOrderMutation.isPending 
+                ? 'Processing...' 
+                : orderType === OrderType.DINE_IN 
+                  ? 'Send to Kitchen' 
+                  : 'Place Order & Pay'}
             </Button>
           </div>
         </div>

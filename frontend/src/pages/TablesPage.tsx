@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tablesApi, TableStatus, type Table } from '../api/tables';
 import { employeesApi, type Employee } from '../api/employees';
+import { customerSessionApi } from '../api/customer-session';
 import { useAuthStore } from '../store/authStore';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -65,15 +66,26 @@ export default function TablesPage() {
 
   // Fetch waiters (employees with waiter role)
   const { data: employeesData } = useQuery({
-    queryKey: ['employees'],
+    queryKey: ['employees', 'ACTIVE'],
     queryFn: () => employeesApi.getEmployees({ status: 'ACTIVE' }),
   });
 
-  // Filter waiters from employees
-  const waiters = (employeesData?.data?.employees || []).filter(
-    (emp: Employee) => emp.user?.role?.name?.toLowerCase().includes('waiter') || 
-                      emp.position?.toLowerCase().includes('waiter')
+  console.log('Employees API full response:', employeesData);
+
+  // Filter waiters from employees - handle the nested data structure
+  const waiters = (employeesData?.employees || []).filter(
+    (emp: Employee) => {
+      const roleName = emp.user?.role?.name?.toLowerCase() || '';
+      const position = emp.position?.toLowerCase() || '';
+      return roleName.includes('waiter') || 
+             roleName.includes('server') ||
+             position.includes('waiter') || 
+             position.includes('server');
+    }
   );
+
+  console.log('All employees:', employeesData?.employees);
+  console.log('Filtered waiters:', waiters);
 
   // Create table mutation
   const createTableMutation = useMutation({
@@ -179,6 +191,23 @@ export default function TablesPage() {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to unassign waiter');
+    },
+  });
+
+  // End customer session mutation
+  const endSessionMutation = useMutation({
+    mutationFn: async (tableId: string) => {
+      // First get the active session for this table
+      const session = await customerSessionApi.getActiveSessionByTable(tableId);
+      // Then end it
+      return await customerSessionApi.endSession(session.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] });
+      toast.success('Session ended. Table is now available.');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to end session');
     },
   });
 
@@ -556,6 +585,20 @@ export default function TablesPage() {
                       Mark as Available
                     </Button>
                   )}
+                </div>
+              )}
+
+              {/* End Session Button for OCCUPIED tables */}
+              {table.status === TableStatus.OCCUPIED && (
+                <div className="mt-3">
+                  <Button
+                    size="sm"
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                    onClick={() => endSessionMutation.mutate(table.id)}
+                    disabled={endSessionMutation.isPending}
+                  >
+                    {endSessionMutation.isPending ? 'Ending...' : 'End Session & Clear Table'}
+                  </Button>
                 </div>
               )}
             </Card>

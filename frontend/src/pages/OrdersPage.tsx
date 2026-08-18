@@ -23,9 +23,11 @@ import {
   ChefHat,
   CheckCircle,
   DollarSign,
+  CreditCard,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
+import PaymentDialog from '../components/orders/PaymentDialog';
 
 export default function OrdersPage() {
   const { user } = useAuthStore();
@@ -33,8 +35,16 @@ export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [paymentFilter, setPaymentFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const limit = 20;
+
+  const handleProcessPayment = (order: Order) => {
+    setSelectedOrder(order);
+    setIsPaymentModalOpen(true);
+  };
 
   // Fetch orders
   const { data, isLoading, refetch } = useQuery({
@@ -51,14 +61,29 @@ export default function OrdersPage() {
   const orders = data?.data || [];
   const pagination = data?.pagination || null;
 
-  // Filter orders by search term (client-side)
-  const filteredOrders = (orders || []).filter(
-    (order: Order) =>
+  // Filter orders by search term, status, and payment status (client-side)
+  const filteredOrders = (orders || []).filter((order: Order) => {
+    // Search filter
+    const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.table?.number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.customer?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      order.customer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Status filter
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'pending' && order.status === OrderStatus.PENDING) ||
+      (statusFilter === 'completed' && order.status === OrderStatus.COMPLETED);
+
+    // Payment filter
+    const matchesPayment =
+      paymentFilter === 'all' ||
+      (paymentFilter === 'unpaid' && order.paymentStatus === 'UNPAID') ||
+      (paymentFilter === 'paid' && order.paymentStatus === 'PAID');
+
+    return matchesSearch && matchesStatus && matchesPayment;
+  });
 
   // Sort orders by date (newest first)
   const sortedOrders = [...filteredOrders].sort((a, b) => {
@@ -166,6 +191,7 @@ export default function OrdersPage() {
     pending: (orders || []).filter((o: Order) => o.status === OrderStatus.PENDING).length,
     cancelled: (orders || []).filter((o: Order) => o.status === OrderStatus.CANCELLED).length,
     completed: (orders || []).filter((o: Order) => o.status === OrderStatus.COMPLETED).length,
+    unpaid: (orders || []).filter((o: Order) => o.paymentStatus === 'UNPAID').length,
     totalRevenue: (orders || []).reduce((sum: number, o: Order) => sum + (o.total || 0), 0),
   };
 
@@ -222,11 +248,11 @@ export default function OrdersPage() {
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Cancelled</p>
-              <p className="text-2xl font-bold text-red-600 mt-1">{stats.cancelled}</p>
+              <p className="text-sm text-gray-600">Unpaid</p>
+              <p className="text-2xl font-bold text-red-600 mt-1">{stats.unpaid}</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-              <X className="w-6 h-6 text-red-600" />
+              <CreditCard className="w-6 h-6 text-red-600" />
             </div>
           </div>
         </Card>
@@ -258,6 +284,54 @@ export default function OrdersPage() {
         </Card>
       </div>
 
+      {/* Filter Tabs */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
+          <Button
+            variant={statusFilter === 'all' && paymentFilter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setStatusFilter('all');
+              setPaymentFilter('all');
+            }}
+          >
+            All Orders
+          </Button>
+          <Button
+            variant={statusFilter === 'pending' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setStatusFilter('pending');
+              setPaymentFilter('all');
+            }}
+          >
+            Pending ({stats.pending})
+          </Button>
+          <Button
+            variant={statusFilter === 'completed' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setStatusFilter('completed');
+              setPaymentFilter('all');
+            }}
+          >
+            Completed ({stats.completed})
+          </Button>
+          <Button
+            variant={paymentFilter === 'unpaid' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setStatusFilter('all');
+              setPaymentFilter('unpaid');
+            }}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            <CreditCard className="w-4 h-4 mr-2" />
+            Unpaid Orders ({stats.unpaid})
+          </Button>
+        </div>
+      </div>
+
       {/* Search Bar */}
       <div className="mb-4">
         <div className="relative">
@@ -274,13 +348,14 @@ export default function OrdersPage() {
       {/* Orders Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {/* Table Header */}
-        <div className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_120px_50px] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
+        <div className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
           <div>Order</div>
           <div>Table</div>
           <div>Waiter</div>
           <div>Items</div>
           <div>Total</div>
           <div>Status</div>
+          <div>Payment</div>
           <div>Placed</div>
           <div></div>
         </div>
@@ -300,7 +375,7 @@ export default function OrdersPage() {
             sortedOrders.map((order: Order, index: number) => (
               <div
                 key={order.id}
-                className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm"
+                className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm"
               >
                 {/* Sequential Order Number */}
                 <div className="font-medium text-gray-900">
@@ -349,11 +424,28 @@ export default function OrdersPage() {
                   </Badge>
                 </div>
 
+                {/* Payment Status */}
+                <div>
+                  <Badge className={`${getPaymentStatusColor(order.paymentStatus)} font-normal text-xs`}>
+                    {order.paymentStatus}
+                  </Badge>
+                </div>
+
                 {/* Time Ago */}
                 <div className="text-gray-500 text-xs">{getTimeAgo(order.createdAt)}</div>
 
-                {/* Actions Menu */}
-                <div className="flex justify-end">
+                {/* Actions */}
+                <div className="flex justify-end gap-2">
+                  {order.paymentStatus === 'UNPAID' && (
+                    <Button
+                      size="sm"
+                      onClick={() => handleProcessPayment(order)}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <CreditCard className="w-4 h-4 mr-1" />
+                      Pay
+                    </Button>
+                  )}
                   <button
                     onClick={() => handleViewDetails(order)}
                     className="p-1 hover:bg-gray-100 rounded transition-colors"
@@ -464,8 +556,8 @@ export default function OrdersPage() {
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{item.subtotal.toFixed(2)} ETB</p>
-                        <p className="text-sm text-gray-600">@ {item.price.toFixed(2)} ETB</p>
+                        <p className="font-medium">{(item.subtotal || 0).toFixed(2)} ETB</p>
+                        <p className="text-sm text-gray-600">@ {(item.price || 0).toFixed(2)} ETB</p>
                       </div>
                     </div>
                   ))}
@@ -519,6 +611,20 @@ export default function OrdersPage() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-4 border-t">
+                {/* Payment Button for Unpaid Orders */}
+                {selectedOrder.paymentStatus === 'UNPAID' && (
+                  <Button
+                    onClick={() => {
+                      setIsDetailsModalOpen(false);
+                      handleProcessPayment(selectedOrder);
+                    }}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Process Payment
+                  </Button>
+                )}
+
                 {selectedOrder.status !== OrderStatus.CANCELLED &&
                   selectedOrder.status !== OrderStatus.COMPLETED && (
                     <>
@@ -582,6 +688,13 @@ export default function OrdersPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Payment Dialog */}
+      <PaymentDialog
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        order={selectedOrder}
+      />
     </div>
   );
 }

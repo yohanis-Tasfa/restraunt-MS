@@ -94,6 +94,9 @@ export class OrderService {
           select: {
             id: true,
             quantity: true,
+            price: true,
+            subtotal: true,
+            notes: true,
             menuItem: {
               select: {
                 id: true,

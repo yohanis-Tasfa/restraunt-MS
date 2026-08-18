@@ -463,27 +463,25 @@ export default function WaiterCallsPage() {
             </div>
 
             <DialogFooter className="flex gap-2">
+              {selectedCall.requestType === 'ORDER_READY' && (
+                <Button
+                  onClick={() => handleCreateOrder(selectedCall)}
+                  className="bg-green-600 hover:bg-green-700"
+                  disabled={isActionLoading}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Create Order
+                </Button>
+              )}
               {selectedCall.status === 'PENDING' && (
-                <>
-                  {selectedCall.requestType === 'ORDER_READY' && (
-                    <Button
-                      onClick={() => handleCreateOrder(selectedCall)}
-                      className="bg-green-600 hover:bg-green-700"
-                      disabled={isActionLoading}
-                    >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Create Order
-                    </Button>
-                  )}
-                  <Button
-                    onClick={() => handleAcknowledge(selectedCall)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                    disabled={isActionLoading}
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Acknowledge
-                  </Button>
-                </>
+                <Button
+                  onClick={() => handleAcknowledge(selectedCall)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                  disabled={isActionLoading}
+                >
+                  <Clock className="w-4 h-4 mr-2" />
+                  Accept
+                </Button>
               )}
               {selectedCall.status === 'ACKNOWLEDGED' && (
                 <Button
@@ -592,7 +590,7 @@ function CallCard({
 
         {/* Quick Actions */}
         <div className="flex gap-2 pt-2 border-t border-gray-200">
-          {call.status === 'PENDING' && call.requestType === 'ORDER_READY' && (
+          {call.requestType === 'ORDER_READY' && (
             <Button
               size="sm"
               onClick={(e) => {
