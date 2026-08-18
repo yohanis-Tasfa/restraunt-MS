@@ -3,6 +3,9 @@ export interface CreatePaymentData {
   amount: number;
   method: 'CASH' | 'CARD' | 'MOBILE' | 'TELEBIRR' | 'CBE_BIRR' | 'BANK_TRANSFER';
   reference?: string;
+  proofImageUrl?: string;
+  transactionRef?: string;
+  notes?: string;
 }
 
 export interface RefundPaymentData {

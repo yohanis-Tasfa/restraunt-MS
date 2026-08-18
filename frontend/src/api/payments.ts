@@ -4,6 +4,8 @@ export enum PaymentMethod {
   CASH = 'CASH',
   CARD = 'CARD',
   MOBILE = 'MOBILE',
+  TELEBIRR = 'TELEBIRR',
+  CBE_BIRR = 'CBE_BIRR',
   BANK_TRANSFER = 'BANK_TRANSFER',
 }
 
@@ -14,6 +16,11 @@ export interface Payment {
   method: PaymentMethod;
   reference?: string;
   status: string;
+  proofImageUrl?: string;
+  transactionRef?: string;
+  notes?: string;
+  verifiedAt?: string;
+  verifiedById?: string;
   createdAt: string;
   order?: any;
 }
@@ -23,6 +30,9 @@ export interface CreatePaymentData {
   amount: number;
   method: PaymentMethod;
   reference?: string;
+  proofImageUrl?: string;
+  transactionRef?: string;
+  notes?: string;
 }
 
 export interface PaymentSummary {

@@ -390,16 +390,28 @@ enum OrderItemStatus {
 }
 
 model Payment {
-  id          String        @id @default(uuid())
-  orderId     String
-  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  amount      Float
-  method      PaymentMethod
-  reference   String?
-  status      String        @default("completed")
-  createdAt   DateTime      @default(now())
+  id              String        @id @default(uuid())
+  orderId         String
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount          Float
+  method          PaymentMethod
+  reference       String?       // Transaction reference number
+  status          String        @default("completed")
+  
+  // Payment Proof Fields
+  proofImageUrl   String?       // Cloudinary URL of payment screenshot
+  transactionRef  String?       // Customer's transaction reference from screenshot
+  notes           String?       // Additional notes from waiter
+  
+  // Verification Fields
+  verifiedAt      DateTime?     // When manager verified the proof
+  verifiedById    String?       // Manager who verified (optional for now)
+  
+  createdAt       DateTime      @default(now())
   
   @@index([orderId])
+  @@index([method])
+  @@index([createdAt])
   @@map("payments")
 }
 

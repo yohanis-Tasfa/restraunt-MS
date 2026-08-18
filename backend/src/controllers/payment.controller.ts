@@ -34,7 +34,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const { orderId, amount, method, reference } = req.body;
+  const { orderId, amount, method, reference, proofImageUrl, transactionRef, notes } = req.body;
 
   if (!orderId || !amount || !method) {
     throw new ApiError(400, 'OrderId, amount, and method are required');
@@ -45,6 +45,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     amount: parseFloat(amount),
     method,
     reference,
+    proofImageUrl,
+    transactionRef,
+    notes,
   });
 
   res.status(201).json(

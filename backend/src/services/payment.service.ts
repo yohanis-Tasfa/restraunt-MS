@@ -143,6 +143,9 @@ export class PaymentService {
         amount: data.amount,
         method: data.method,
         reference: data.reference,
+        proofImageUrl: data.proofImageUrl,
+        transactionRef: data.transactionRef,
+        notes: data.notes,
         status: 'completed',
       },
       include: {
