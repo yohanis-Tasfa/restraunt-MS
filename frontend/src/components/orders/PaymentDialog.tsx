@@ -12,6 +12,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { paymentsApi, PaymentMethod } from '../../api/payments';
+import { uploadApi } from '../../api/upload';
 import { customerSessionApi } from '../../api/customer-session';
 import { 
   CreditCard, 
@@ -27,7 +28,6 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { Order } from '../../api/orders';
-import axios from 'axios';
 
 interface PaymentDialogProps {
   open: boolean;
@@ -59,22 +59,14 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
     }
   });
 
-  // Upload image to Cloudinary
+  // Upload image to backend (which uploads to Cloudinary)
   const uploadImageToCloudinary = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'rms_payment_proofs'); // You'll need to create this preset in Cloudinary
-    formData.append('folder', 'rms/payment-proofs');
-
     try {
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        formData
-      );
-      return response.data.secure_url;
-    } catch (error) {
-      console.error('Cloudinary upload error:', error);
-      throw new Error('Failed to upload image');
+      const result = await uploadApi.uploadPaymentProof(file);
+      return result.url;
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      throw new Error(error.response?.data?.message || 'Failed to upload image');
     }
   };
 
