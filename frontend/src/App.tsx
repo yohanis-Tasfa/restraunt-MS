@@ -17,6 +17,7 @@ import EmployeesPage from './pages/EmployeesPage';
 import ProfilePage from './pages/ProfilePage';
 import CustomerMenuPage from './pages/CustomerMenuPage';
 import WaiterCallsPage from './pages/WaiterCallsPage';
+import PublicLandingPage from './pages/PublicLandingPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -49,7 +50,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             {/* Public routes - NO authentication required */}
-            <Route path="/" element={<div>Public Landing Page (Coming Soon)</div>} />
+            <Route path="/" element={<PublicLandingPage />} />
             <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
             
             {/* Admin login route */}
