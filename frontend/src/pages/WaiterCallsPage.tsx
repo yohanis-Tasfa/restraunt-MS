@@ -101,7 +101,7 @@ export default function WaiterCallsPage() {
     
     if (cart && cart.items.length > 0) {
       // Navigate to POS with pre-filled cart
-      navigate('/pos', { 
+      navigate('/admin/pos', { 
         state: { 
           tableId: call.tableId,
           tableNumber: call.table.number,
@@ -114,7 +114,7 @@ export default function WaiterCallsPage() {
       acknowledge({ id: call.id, notes: 'Creating order from customer cart' });
     } else {
       // No cart items, just go to POS
-      navigate('/pos', { 
+      navigate('/admin/pos', { 
         state: { 
           tableId: call.tableId,
           tableNumber: call.table.number,

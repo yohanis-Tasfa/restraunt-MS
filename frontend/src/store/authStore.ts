@@ -64,7 +64,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     set({ user: null, token: null, isAuthenticated: false });
-    window.location.href = '/login';
+    window.location.href = '/admin/login';
   },
   
   hasRole: (roles) => {

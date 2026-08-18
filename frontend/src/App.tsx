@@ -48,25 +48,28 @@ function App() {
       <WebSocketProvider>
         <BrowserRouter>
           <Routes>
-            <Route 
-              path="/login" 
-              element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
-            />
-            
-            {/* Public customer menu route - no authentication required */}
+            {/* Public routes - NO authentication required */}
+            <Route path="/" element={<div>Public Landing Page (Coming Soon)</div>} />
             <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
             
-            {/* Protected routes with persistent layout */}
+            {/* Admin login route */}
+            <Route 
+              path="/admin/login" 
+              element={isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <LoginPage />} 
+            />
+            
+            {/* Protected admin routes with persistent layout */}
             <Route
+              path="/admin"
               element={
                 <ProtectedRoute>
                   <LayoutWrapper />
                 </ProtectedRoute>
               }
             >
-              <Route path="/" element={<DashboardPage />} />
+              <Route path="dashboard" element={<DashboardPage />} />
               <Route 
-                path="/pos" 
+                path="pos" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Cashier']}>
                     <POSPage />
@@ -74,19 +77,19 @@ function App() {
                 } 
               />
               <Route 
-                path="/kitchen" 
+                path="kitchen" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
                     <KitchenPage />
                   </ProtectedRoute>
                 } 
               />
-              <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/tables" element={<TablesPage />} />
-              <Route path="/waiter-calls" element={<WaiterCallsPage />} />
-              <Route path="/reservations" element={<ReservationsPage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="tables" element={<TablesPage />} />
+              <Route path="waiter-calls" element={<WaiterCallsPage />} />
+              <Route path="reservations" element={<ReservationsPage />} />
               <Route 
-                path="/menu" 
+                path="menu" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
                     <MenuManagementPage />
@@ -94,7 +97,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/recipes" 
+                path="recipes" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
                     <RecipesPage />
@@ -102,7 +105,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/inventory" 
+                path="inventory" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Inventory Manager']}>
                     <InventoryPage />
@@ -110,7 +113,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/expenses" 
+                path="expenses" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
                     <ExpensesPage />
@@ -118,7 +121,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/reports" 
+                path="reports" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
                     <ReportsPage />
@@ -126,7 +129,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/employees" 
+                path="employees" 
                 element={
                   <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
                     <EmployeesPage />
@@ -134,7 +137,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/profile" 
+                path="profile" 
                 element={
                   <ProtectedRoute>
                     <ProfilePage />
@@ -143,6 +146,13 @@ function App() {
               />
             </Route>
             
+            {/* Redirect old admin routes to new /admin/* structure */}
+            <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+            <Route path="/orders" element={<Navigate to="/admin/orders" replace />} />
+            <Route path="/pos" element={<Navigate to="/admin/pos" replace />} />
+            <Route path="/tables" element={<Navigate to="/admin/tables" replace />} />
+            
+            {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

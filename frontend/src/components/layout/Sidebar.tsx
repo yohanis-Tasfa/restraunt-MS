@@ -51,27 +51,27 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
   // Overview Section Items
   const overviewItems: NavItem[] = [
-    { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-    { label: 'POS', icon: ShoppingCart, path: '/pos', roles: ['Super Admin', 'Admin', 'Manager', 'Cashier'] },
-    { label: 'Orders', icon: ListOrdered, path: '/orders' },
-    { label: 'Kitchen', icon: ChefHat, path: '/kitchen', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
+    { label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+    { label: 'POS', icon: ShoppingCart, path: '/admin/pos', roles: ['Super Admin', 'Admin', 'Manager', 'Cashier'] },
+    { label: 'Orders', icon: ListOrdered, path: '/admin/orders' },
+    { label: 'Kitchen', icon: ChefHat, path: '/admin/kitchen', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
   ];
 
   // Operations Section Items
   const operationsItems: NavItem[] = [
-    { label: 'Tables', icon: Store, path: '/tables' },
-    { label: 'Waiter Calls', icon: Bell, path: '/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
-    { label: 'Reservations', icon: ClipboardList, path: '/reservations' },
-    { label: 'Menu', icon: UtensilsCrossed, path: '/menu', roles: ['Super Admin', 'Admin', 'Manager'] },
-    { label: 'Recipes', icon: Beef, path: '/recipes', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
-    { label: 'Inventory', icon: Package, path: '/inventory', roles: ['Super Admin', 'Admin', 'Manager', 'Inventory Manager'] },
+    { label: 'Tables', icon: Store, path: '/admin/tables' },
+    { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
+    { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations' },
+    { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
+    { label: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['Super Admin', 'Admin', 'Manager', 'Inventory Manager'] },
   ];
 
   // Business Section Items
   const businessItems: NavItem[] = [
-    { label: 'Expenses', icon: Wallet, path: '/expenses', roles: ['Super Admin', 'Admin', 'Manager'] },
-    { label: 'Reports', icon: BarChart3, path: '/reports', roles: ['Super Admin', 'Admin', 'Manager'] },
-    { label: 'Employees', icon: Users, path: '/employees', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Expenses', icon: Wallet, path: '/admin/expenses', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Reports', icon: BarChart3, path: '/admin/reports', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Employees', icon: Users, path: '/admin/employees', roles: ['Super Admin', 'Admin', 'Manager'] },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -306,10 +306,10 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
         {/* User Section */}
         <div className="p-4 border-t border-gray-200">
           <button
-            onClick={() => handleNavigate('/profile')}
+            onClick={() => handleNavigate('/admin/profile')}
             className={cn(
               'w-full flex items-center gap-3 mb-3 p-2 rounded-lg hover:bg-gray-50 transition-colors',
-              isActive('/profile') && 'bg-green-50',
+              isActive('/admin/profile') && 'bg-green-50',
               isCollapsed && 'lg:justify-center lg:gap-0'
             )}
             title={isCollapsed ? `${user?.firstName} ${user?.lastName}` : undefined}
