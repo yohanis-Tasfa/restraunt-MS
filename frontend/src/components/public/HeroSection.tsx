@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Truck, Utensils, Award, Smartphone, Shield, Calendar } from 'lucide-react';
 import bannerImage from '../../assets/banner.png';
 
 interface HeroSectionProps {
@@ -26,7 +26,7 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">
+      <div className="relative z-10 h-full flex flex-col justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">
         <div className="grid lg:grid-cols-2 gap-6 items-center">
           {/* Left side - Text content with better contrast */}
           <div className="text-white">
@@ -126,13 +126,73 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
           {/* Right side - Keep space for balance but no separate image */}
           <div className="hidden lg:block"></div>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-        <div className="animate-bounce">
-          <div className="w-4 h-7 border-2 border-gray-400/50 rounded-full flex justify-center p-1">
-            <div className="w-0.5 h-2 bg-gray-300/70 rounded-full" />
+        {/* Feature Cards - Full Width at Bottom */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-3 mt-auto pb-4">
+          {/* Feature 1 - Fast Delivery */}
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md rounded-lg p-2.5 border border-white/10 hover:border-green-500/50 transition-all duration-300 group">
+            <div className="w-8 h-8 rounded-lg bg-green-600/20 border border-green-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Truck className="w-4 h-4 text-green-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate drop-shadow-md">Fast Delivery</p>
+              <p className="text-[10px] text-gray-300 truncate">Quick & reliable</p>
+            </div>
+          </div>
+
+          {/* Feature 2 - Fresh & Tasty */}
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md rounded-lg p-2.5 border border-white/10 hover:border-orange-500/50 transition-all duration-300 group">
+            <div className="w-8 h-8 rounded-lg bg-orange-600/20 border border-orange-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Utensils className="w-4 h-4 text-orange-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate drop-shadow-md">Fresh & Tasty</p>
+              <p className="text-[10px] text-gray-300 truncate">Best ingredients</p>
+            </div>
+          </div>
+
+          {/* Feature 3 - Top Quality */}
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md rounded-lg p-2.5 border border-white/10 hover:border-yellow-500/50 transition-all duration-300 group">
+            <div className="w-8 h-8 rounded-lg bg-yellow-600/20 border border-yellow-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Award className="w-4 h-4 text-yellow-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate drop-shadow-md">Top Quality</p>
+              <p className="text-[10px] text-gray-300 truncate">Highest standards</p>
+            </div>
+          </div>
+
+          {/* Feature 4 - Easy Ordering */}
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md rounded-lg p-2.5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 group">
+            <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Smartphone className="w-4 h-4 text-blue-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate drop-shadow-md">Easy Ordering</p>
+              <p className="text-[10px] text-gray-300 truncate">Just a few clicks</p>
+            </div>
+          </div>
+
+          {/* Feature 5 - Secure Payment */}
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md rounded-lg p-2.5 border border-white/10 hover:border-purple-500/50 transition-all duration-300 group">
+            <div className="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Shield className="w-4 h-4 text-purple-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate drop-shadow-md">Secure Payment</p>
+              <p className="text-[10px] text-gray-300 truncate">Multiple options</p>
+            </div>
+          </div>
+
+          {/* Feature 6 - Table Reservation */}
+          <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md rounded-lg p-2.5 border border-white/10 hover:border-red-500/50 transition-all duration-300 group">
+            <div className="w-8 h-8 rounded-lg bg-red-600/20 border border-red-600/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <Calendar className="w-4 h-4 text-red-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate drop-shadow-md">Table Reservation</p>
+              <p className="text-[10px] text-gray-300 truncate">Book your table</p>
+            </div>
           </div>
         </div>
       </div>

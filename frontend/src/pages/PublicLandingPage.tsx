@@ -3,8 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import PublicNavbar from '../components/public/PublicNavbar';
 import Footer from '../components/public/Footer';
 import HeroSection from '../components/public/HeroSection';
-import FeaturesSection from '../components/public/FeaturesSection';
-import StatsSection from '../components/public/StatsSection';
+import WhyChooseUsSection from '../components/public/WhyChooseUsSection';
 
 export default function PublicLandingPage() {
   const [searchParams] = useSearchParams();
@@ -74,11 +73,8 @@ export default function PublicLandingPage() {
           onBookTable={() => handleNavigate('contact')}
         />
 
-        {/* Features Section */}
-        <FeaturesSection />
-
-        {/* Stats Section */}
-        <StatsSection />
+        {/* Why Choose Us Section - Phase 3 */}
+        <WhyChooseUsSection />
 
         {/* About Section - Placeholder */}
         <section id="about" className="min-h-screen flex items-center justify-center bg-white">
