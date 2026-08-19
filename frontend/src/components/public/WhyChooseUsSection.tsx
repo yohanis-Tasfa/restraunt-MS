@@ -41,23 +41,24 @@ export default function WhyChooseUsSection() {
   ];
 
   return (
-    <section id="why-choose-us" className="py-16 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 opacity-10">
+    <section id="why-choose-us" className="py-16 bg-black relative overflow-hidden">
+      {/* Decorative Background Elements - Same as hero */}
+      <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-10 w-72 h-72 bg-green-500 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-500 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-orange-500 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/50 backdrop-blur-sm border border-green-700/50 rounded-full mb-4">
-            <span className="text-green-400 font-semibold text-sm">WHY CHOOSE US</span>
+            <span className="text-green-400 font-semibold text-sm uppercase tracking-wider">WHY CHOOSE US</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-2xl">
             Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-500">Yoni Restaurant</span>
           </h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto drop-shadow-md">
             Discover what makes us the premier destination for authentic Ethiopian cuisine
           </p>
         </div>
@@ -67,20 +68,20 @@ export default function WhyChooseUsSection() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-green-500/20 transition-all duration-300 hover:-translate-y-2 border border-gray-700/50 hover:border-green-500/50"
+              className="group relative bg-black/40 backdrop-blur-md rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-2 border border-white/10 hover:border-green-500/50"
             >
               {/* Gradient Background on Hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`} />
               
               {/* Icon */}
               <div className="relative mb-4">
-                <div className="inline-flex p-4 rounded-xl bg-gray-700/50 backdrop-blur-sm border border-gray-600/50 text-gray-200 group-hover:scale-110 transition-all duration-300">
+                <div className={`inline-flex p-4 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10 text-gray-200 group-hover:scale-110 transition-all duration-300`}>
                   {feature.icon}
                 </div>
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300 drop-shadow-md">
                 {feature.title}
               </h3>
               <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
@@ -95,7 +96,7 @@ export default function WhyChooseUsSection() {
 
         {/* Call to Action */}
         <div className="mt-12 text-center">
-          <p className="text-gray-300 mb-6 text-lg">
+          <p className="text-gray-300 mb-6 text-lg drop-shadow-md">
             Ready to experience authentic Ethiopian cuisine?
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -108,7 +109,7 @@ export default function WhyChooseUsSection() {
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center justify-center px-8 py-3 bg-gray-800/50 backdrop-blur-sm text-white font-semibold rounded-xl border-2 border-green-500 hover:bg-green-600/20 transition-all duration-300"
+              className="inline-flex items-center justify-center px-8 py-3 bg-black/40 backdrop-blur-md text-white font-semibold rounded-xl border-2 border-green-500 hover:bg-green-600/20 transition-all duration-300"
             >
               <span>📍 Find Us</span>
             </a>
