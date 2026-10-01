@@ -402,53 +402,6 @@ export default function MenuPreviewSection() {
           </>
         )}
 
-        {/* View Full Menu CTA */}
-        <div className="mt-12 text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/30 backdrop-blur-sm border border-green-700/30 rounded-full mb-4">
-            <Clock className="w-4 h-4 text-green-400" />
-            <span className="text-sm text-gray-300">Open Daily: 10:00 AM - 11:00 PM</span>
-          </div>
-          <p className="text-gray-300 mb-6 text-lg drop-shadow-md">
-            This is just a taste! Explore our full menu with over 50+ dishes
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleViewFullMenu}
-              className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold rounded-xl hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300 hover:scale-105"
-            >
-              <span>View Full Menu</span>
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center px-8 py-3 bg-black/40 backdrop-blur-md text-white font-semibold rounded-xl border-2 border-green-500 hover:bg-green-600/20 transition-all duration-300"
-            >
-              <span>📍 Find Us</span>
-            </a>
-          </div>
-        </div>
-
-        {/* QR Code Info */}
-        <div className="mt-12 p-6 bg-black/40 backdrop-blur-md rounded-2xl border border-green-500/30 max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="flex-shrink-0">
-              <div className="w-24 h-24 bg-white rounded-xl flex items-center justify-center">
-                <span className="text-5xl">📱</span>
-              </div>
-            </div>
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-xl font-bold text-white mb-2 drop-shadow-md">Scan & Order from Your Table</h3>
-              <p className="text-gray-300 mb-3">
-                Each table has a QR code. Scan it to browse the menu, place orders, and track your dining experience - all from your phone!
-              </p>
-              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm border border-green-600/30">Contactless Menu</span>
-                <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm border border-blue-600/30">Easy Ordering</span>
-                <span className="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-full text-sm border border-purple-600/30">Fast Service</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Menu Item Modal */}
