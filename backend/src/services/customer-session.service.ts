@@ -31,6 +31,100 @@ interface SessionStatsFilters {
 }
 
 export const customerSessionService = {
+  // Create or get active session by table number
+  async createOrGetSessionByTableNumber(data: {
+    tableNumber: string;
+    branchId?: string;
+    customerName?: string;
+    customerPhone?: string;
+    guestCount: number;
+  }) {
+    const { tableNumber, branchId, customerName, customerPhone, guestCount } = data;
+
+    // Find table by number
+    const table = await prisma.table.findFirst({
+      where: {
+        number: tableNumber,
+        ...(branchId && { branchId }),
+      },
+      include: {
+        assignedWaiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (!table) {
+      throw new Error('Table not found');
+    }
+
+    // Check if there's already an active session for this table
+    const activeSession = await prisma.customerSession.findFirst({
+      where: {
+        tableId: table.id,
+        status: 'ACTIVE',
+      },
+      include: {
+        table: {
+          include: {
+            assignedWaiter: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (activeSession) {
+      // Return existing active session
+      return activeSession;
+    }
+
+    // Create new session
+    const session = await prisma.customerSession.create({
+      data: {
+        tableId: table.id,
+        customerName,
+        customerPhone,
+        guestCount,
+        status: 'ACTIVE',
+        startedAt: new Date(),
+      },
+      include: {
+        table: {
+          include: {
+            assignedWaiter: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Update table status to OCCUPIED
+    await prisma.table.update({
+      where: { id: table.id },
+      data: { status: 'OCCUPIED' },
+    });
+
+    return session;
+  },
+
   // Create a new customer session
   async createSession(data: CreateSessionData) {
     const { qrCodeData, customerName, customerPhone, guestCount } = data;

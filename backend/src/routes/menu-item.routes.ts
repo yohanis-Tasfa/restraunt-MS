@@ -4,20 +4,21 @@ import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
-// All routes require authentication
-router.use(authenticate);
-
-// Get all items (any authenticated user)
+// Public routes (no authentication required)
+// Get all items (public - for customers viewing menu)
 router.get('/', menuItemController.getAll);
 
-// Get single item (any authenticated user)
+// Get single item (public - for customers viewing menu)
 router.get('/:id', menuItemController.getById);
 
-// Get item variants (any authenticated user)
+// Get item variants (public - for customers viewing menu)
 router.get('/:id/variants', menuItemController.getVariants);
 
-// Get item addons (any authenticated user)
+// Get item addons (public - for customers viewing menu)
 router.get('/:id/addons', menuItemController.getAddons);
+
+// Protected routes (authentication required)
+router.use(authenticate);
 
 // Create item (Manager+)
 router.post('/', authorize('menu.create'), menuItemController.create);

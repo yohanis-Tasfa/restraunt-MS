@@ -4,20 +4,21 @@ import { authenticate, authorize } from '../middleware/auth';
 
 const router = Router();
 
-// All routes require authentication
-router.use(authenticate);
-
-// Get all categories (any authenticated user)
+// Public routes (no authentication required)
+// Get all categories (public - for customers viewing menu)
 router.get('/', menuCategoryController.getAll);
 
-// Get category tree (any authenticated user)
+// Get category tree (public - for customers viewing menu)
 router.get('/tree', menuCategoryController.getTree);
 
-// Get single category (any authenticated user)
+// Get single category (public - for customers viewing menu)
 router.get('/:id', menuCategoryController.getById);
 
-// Get category items (any authenticated user)
+// Get category items (public - for customers viewing menu)
 router.get('/:id/items', menuCategoryController.getCategoryItems);
+
+// Protected routes (authentication required)
+router.use(authenticate);
 
 // Create category (Manager+)
 router.post('/', authorize('menu.create'), menuCategoryController.create);

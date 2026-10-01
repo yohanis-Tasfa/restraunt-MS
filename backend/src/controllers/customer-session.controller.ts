@@ -2,6 +2,28 @@ import { Request, Response, NextFunction } from 'express';
 import { customerSessionService } from '../services/customer-session.service';
 
 export const customerSessionController = {
+  // Create or get session by table number (for public QR ordering)
+  async createOrGetSessionByTableNumber(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tableNumber, customerName, customerPhone, guestCount } = req.body;
+
+      if (!tableNumber) {
+        return res.status(400).json({ message: 'Table number is required' });
+      }
+
+      const session = await customerSessionService.createOrGetSessionByTableNumber({
+        tableNumber,
+        customerName,
+        customerPhone,
+        guestCount: guestCount || 1,
+      });
+
+      res.status(200).json(session);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Create a new customer session (when customer scans QR code)
   async createSession(req: Request, res: Response, next: NextFunction) {
     try {

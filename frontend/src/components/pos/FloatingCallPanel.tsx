@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Bell, ChevronDown, ChevronUp, Clock, X } from 'lucide-react';
+import { Bell, ChevronDown, ChevronUp, Clock, X, ShoppingCart } from 'lucide-react';
 import { useActiveCalls, useWaiterCallActions } from '../../hooks/useWaiterCalls';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { cn } from '../../lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const requestTypeIcons = {
   ASSISTANCE: '🔔',
@@ -25,9 +26,25 @@ export default function FloatingCallPanel() {
   const [isMinimized, setIsMinimized] = useState(false);
   const { calls, isLoading } = useActiveCalls(false); // No sound notifications in POS
   const { acknowledge, complete } = useWaiterCallActions();
+  const navigate = useNavigate();
 
   const pendingCalls = calls.filter((call) => call.status === 'PENDING');
   const acknowledgedCalls = calls.filter((call) => call.status === 'ACKNOWLEDGED');
+
+  const handleProcessOrder = (call: any) => {
+    // Check if call has selectedItems (customer cart)
+    if (call.selectedItems && call.selectedItems.items) {
+      // Navigate to POS with prefilled cart
+      navigate('/admin/pos', {
+        state: {
+          customerCart: call.selectedItems,
+          tableNumber: call.table.number,
+          orderType: call.selectedItems.orderType,
+          callId: call.id,
+        },
+      });
+    }
+  };
 
   if (calls.length === 0) {
     return null; // Hide panel when no active calls
@@ -135,20 +152,35 @@ export default function FloatingCallPanel() {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => acknowledge({ id: call.id })}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700"
-                        >
-                          Acknowledge
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => complete({ id: call.id })}
-                          className="flex-1 bg-green-600 hover:bg-green-700"
-                        >
-                          Complete
-                        </Button>
+                        {call.selectedItems && call.selectedItems.items ? (
+                          // If call has cart data, show Process Order button
+                          <Button
+                            size="sm"
+                            onClick={() => handleProcessOrder(call)}
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            <ShoppingCart className="w-4 h-4 mr-1" />
+                            Process Order ({call.selectedItems.totalItems} items)
+                          </Button>
+                        ) : (
+                          // Otherwise show normal acknowledge/complete buttons
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => acknowledge({ id: call.id })}
+                              className="flex-1 bg-blue-600 hover:bg-blue-700"
+                            >
+                              Acknowledge
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => complete({ id: call.id })}
+                              className="flex-1 bg-green-600 hover:bg-green-700"
+                            >
+                              Complete
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -200,13 +232,28 @@ export default function FloatingCallPanel() {
                           )}
                         </div>
                       </div>
-                      <Button
-                        size="sm"
-                        onClick={() => complete({ id: call.id })}
-                        className="w-full bg-green-600 hover:bg-green-700"
-                      >
-                        Mark Complete
-                      </Button>
+                      <div className="flex gap-2">
+                        {call.selectedItems && call.selectedItems.items ? (
+                          // If call has cart data, show Process Order button
+                          <Button
+                            size="sm"
+                            onClick={() => handleProcessOrder(call)}
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            <ShoppingCart className="w-4 h-4 mr-1" />
+                            Process Order ({call.selectedItems.totalItems} items)
+                          </Button>
+                        ) : (
+                          // Otherwise show normal complete button
+                          <Button
+                            size="sm"
+                            onClick={() => complete({ id: call.id })}
+                            className="w-full bg-green-600 hover:bg-green-700"
+                          >
+                            Mark Complete
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

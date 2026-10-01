@@ -6,6 +6,9 @@ const router = Router();
 
 // Public routes (for customers scanning QR codes)
 
+// Create or get session by table number (for public QR ordering)
+router.post('/by-table', customerSessionController.createOrGetSessionByTableNumber);
+
 // Create a new session (when customer scans QR code)
 router.post('/', customerSessionController.createSession);
 
