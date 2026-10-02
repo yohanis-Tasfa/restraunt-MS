@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Dialog,
@@ -20,29 +20,49 @@ import toast from 'react-hot-toast';
 interface CheckoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  prefillData?: {
+    tableNumber?: string;
+    orderType?: OrderType;
+  };
 }
 
 type PaymentMethod = 'CASH' | 'CARD' | 'MOBILE';
 
-export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
+export default function CheckoutDialog({ open, onOpenChange, prefillData }: CheckoutDialogProps) {
   const { user } = useAuthStore();
   const { items, getSubtotal, getTax, getTotal, clearCart } = useCartStore();
   
-  const [orderType, setOrderType] = useState<OrderType>(OrderType.DINE_IN);
+  const [orderType, setOrderType] = useState<OrderType>(prefillData?.orderType || OrderType.DINE_IN);
   const [selectedTable, setSelectedTable] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>('');
   const [createdOrderType, setCreatedOrderType] = useState<OrderType>(OrderType.DINE_IN);
 
-  // Fetch available tables
-  const { data: tablesData } = useQuery({
+  // Fetch all tables (not just available ones, because customer might already be at the table)
+  const { data: tablesResponse } = useQuery({
     queryKey: ['tables', user?.branch?.id],
-    queryFn: () => tablesApi.getAvailableTables(user?.branch?.id),
+    queryFn: () => tablesApi.getTables(user?.branch?.id),
     enabled: open && !!user?.branch?.id && orderType === OrderType.DINE_IN,
   });
 
-  const tables = tablesData || [];
+  const tables = tablesResponse?.data || [];
+
+  // Auto-select table when tables are loaded and we have prefill data
+  useEffect(() => {
+    if (prefillData?.tableNumber && tables.length > 0 && !selectedTable) {
+      console.log('🔍 Looking for table:', prefillData.tableNumber);
+      console.log('📋 Available tables:', tables.map((t: any) => ({ id: t.id, number: t.number, status: t.status })));
+      const matchingTable = tables.find((t: any) => t.number === prefillData.tableNumber);
+      console.log('✅ Found matching table:', matchingTable);
+      if (matchingTable) {
+        setSelectedTable(matchingTable.id);
+        console.log('🎯 Auto-selected table:', matchingTable.number);
+      } else {
+        console.log('❌ No matching table found for:', prefillData.tableNumber);
+      }
+    }
+  }, [prefillData?.tableNumber, tables, selectedTable]);
 
   // Create order mutation
   const createOrderMutation = useMutation({

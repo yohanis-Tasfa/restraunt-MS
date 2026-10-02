@@ -28,12 +28,12 @@ export const generateTableQRCode = async (
   branchId: string
 ): Promise<QRCodeResult> => {
   try {
-    // Generate unique QR code identifier
+    // Generate unique QR code identifier (kept for backward compatibility)
     const qrCodeData = `table_${tableId}_${uuidv4()}`;
     
-    // Construct the customer menu URL
+    // Construct the PUBLIC LANDING PAGE URL with table number
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const menuUrl = `${frontendUrl}/menu/table/${qrCodeData}`;
+    const menuUrl = `${frontendUrl}/?table=${tableNumber}`;
     
     // Generate QR code as data URL
     const qrCodeDataUrl = await QRCode.toDataURL(menuUrl, {

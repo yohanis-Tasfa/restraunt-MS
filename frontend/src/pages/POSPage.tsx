@@ -19,23 +19,60 @@ export default function POSPage() {
   const { items, getItemCount, addItem, clearCart } = useCartStore();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPrefillData, setCheckoutPrefillData] = useState<{
+    tableNumber?: string;
+    orderType?: any;
+  } | undefined>(undefined);
 
   // Load customer cart when navigating from waiter calls
   useEffect(() => {
     const state = location.state as any;
     if (state?.customerCart && state.customerCart.items.length > 0) {
+      console.log('📦 Loading customer cart from state:', state);
+      
       // Clear existing cart
       clearCart();
       
-      // Load customer's cart items
+      // Set prefill data for checkout
+      const prefill = {
+        tableNumber: state.tableNumber,
+        orderType: state.orderType,
+      };
+      console.log('🎯 Setting prefill data:', prefill);
+      setCheckoutPrefillData(prefill);
+      
+      // Load customer's cart items with proper structure
       state.customerCart.items.forEach((item: any) => {
         addItem({
           menuItemId: item.menuItemId,
-          name: item.name,
+          menuItem: {
+            id: item.menuItemId,
+            name: item.name,
+            price: item.price,
+            image: item.image,
+            categoryId: item.category?.id || '',
+            isAvailable: true,
+          },
           unitPrice: item.price,
           quantity: item.quantity,
-          image: item.image,
-          category: item.category,
+          addons: item.addons?.map((addon: any) => ({
+            addonId: addon.id || `addon-${Date.now()}`,
+            addon: {
+              id: addon.id || `addon-${Date.now()}`,
+              name: addon.name,
+              price: addon.price,
+              isAvailable: true,
+            },
+            quantity: 1,
+            price: addon.price,
+          })) || [],
+          variantId: item.variant?.id,
+          variant: item.variant ? {
+            id: item.variant.id || `variant-${Date.now()}`,
+            name: item.variant.name,
+            price: item.variant.price,
+            isAvailable: true,
+          } : undefined,
           specialInstructions: item.notes,
         });
       });
@@ -45,7 +82,7 @@ export default function POSPage() {
       // Clear navigation state so it doesn't reload on refresh
       window.history.replaceState({}, document.title);
     }
-  }, [location.state]);
+  }, [location.state, clearCart, addItem]);
 
   // Fetch menu categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
@@ -148,6 +185,7 @@ export default function POSPage() {
       <CheckoutDialog
         open={isCheckoutOpen}
         onOpenChange={setIsCheckoutOpen}
+        prefillData={checkoutPrefillData}
       />
 
       {/* Floating Waiter Call Panel */}
