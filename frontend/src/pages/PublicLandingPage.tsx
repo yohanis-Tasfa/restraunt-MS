@@ -4,6 +4,7 @@ import PublicNavbar from '../components/public/PublicNavbar';
 import Footer from '../components/public/Footer';
 import HeroSection from '../components/public/HeroSection';
 import MenuPreviewSection from '../components/public/MenuPreviewSection';
+import AboutUsSection from '../components/public/AboutUsSection';
 
 export default function PublicLandingPage() {
   const [searchParams] = useSearchParams();
@@ -76,15 +77,8 @@ export default function PublicLandingPage() {
         {/* Menu Preview Section */}
         <MenuPreviewSection />
 
-        {/* About Section - Placeholder */}
-        <section id="about" className="min-h-screen flex items-center justify-center bg-white">
-          <div className="text-center px-4">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">About Us</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Section content will be added in Phase 3
-            </p>
-          </div>
-        </section>
+        {/* About Us Section */}
+        <AboutUsSection />
 
         {/* Gallery Section - Placeholder */}
         <section id="gallery" className="min-h-screen flex items-center justify-center bg-white">
