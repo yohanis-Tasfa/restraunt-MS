@@ -73,6 +73,14 @@ export class OrderService {
           select: {
             id: true,
             number: true,
+            assignedWaiterId: true,
+            assignedWaiter: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
         },
         customer: {

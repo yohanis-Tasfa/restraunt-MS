@@ -19,6 +19,9 @@ router.get('/:id', authorize('payments.create'), paymentController.getById);
 // Process payment (Cashier+)
 router.post('/', authorize('payments.create'), paymentController.create);
 
+// Collect payment from customer (Waiter/Cashier+)
+router.post('/collect', authorize('payments.create'), paymentController.collectPayment);
+
 // Refund payment (Manager+)
 router.post('/:id/refund', authorize('orders.cancel'), paymentController.refund);
 

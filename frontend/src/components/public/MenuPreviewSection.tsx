@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt } from 'lucide-react';
 import { menuApi } from '../../api/menu';
 import { useSearchParams } from 'react-router-dom';
 import MenuItemModal from './MenuItemModal';
 import FloatingCart, { type CartItem } from './FloatingCart';
 import OrderTypeDialog from './OrderTypeDialog';
+import BillRequestDialog from './BillRequestDialog';
 import toast from 'react-hot-toast';
+import apiClient from '../../api/client';
 
 // Simple UUID generator
 const generateId = () => {
@@ -57,10 +59,102 @@ export default function MenuPreviewSection() {
   
   // Order type dialog state
   const [isOrderTypeDialogOpen, setIsOrderTypeDialogOpen] = useState(false);
+  
+  // Bill request state
+  const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
+  const [activeOrder, setActiveOrder] = useState<any>(null);
+  const [sessionData, setSessionData] = useState<any>(null);
+  const [checkOrderInterval, setCheckOrderInterval] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     fetchMenuItems();
-  }, []);
+    
+    // Check if customer has an active order for bill requests
+    if (tableNumber) {
+      checkForActiveOrder();
+    }
+    
+    // Cleanup interval on unmount
+    return () => {
+      if (checkOrderInterval) {
+        clearInterval(checkOrderInterval);
+      }
+    };
+  }, [tableNumber, checkOrderInterval]);
+
+  const checkForActiveOrder = async () => {
+    try {
+      console.log('🔍 Checking for active order...');
+      
+      // Get customer session
+      const sessionResponse = await fetch('/api/customer-sessions/by-table', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tableNumber,
+          guestCount: 1,
+        }),
+      });
+
+      if (sessionResponse.ok) {
+        const session = await sessionResponse.json();
+        setSessionData(session);
+        console.log('📋 Session data:', session);
+
+        // Get table ID from session
+        const tableId = session.tableId || session.table?.id;
+        console.log('🏷️ Table ID:', tableId);
+
+        if (!tableId) {
+          console.error('❌ No table ID found in session');
+          return;
+        }
+
+        // Check for unpaid orders on this table using tableId
+        console.log(`🔎 Fetching orders for table: ${tableId}`);
+        const ordersResponse = await apiClient.get(`/orders?tableId=${tableId}`);
+        console.log('📦 Orders response:', ordersResponse.data);
+        
+        if (ordersResponse.data?.data && ordersResponse.data.data.length > 0) {
+          console.log(`✅ Found ${ordersResponse.data.data.length} orders`);
+          
+          // Filter for unpaid orders with active status
+          const unpaidOrders = ordersResponse.data.data.filter(
+            (order: any) => {
+              const isUnpaid = order.paymentStatus === 'UNPAID';
+              const isActive = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'].includes(order.status);
+              console.log(`Order ${order.orderNumber}: paymentStatus=${order.paymentStatus}, status=${order.status}, isUnpaid=${isUnpaid}, isActive=${isActive}`);
+              return isUnpaid && isActive;
+            }
+          );
+          
+          console.log(`💰 Found ${unpaidOrders.length} unpaid active orders`);
+          
+          if (unpaidOrders.length > 0) {
+            // Get the most recent unpaid order
+            const order = unpaidOrders[0];
+            setActiveOrder(order);
+            console.log('🎯 Set active order:', order);
+            
+            // Stop polling once we find an order
+            if (checkOrderInterval) {
+              clearInterval(checkOrderInterval);
+              setCheckOrderInterval(null);
+              console.log('⏸️ Stopped polling - order found');
+            }
+          } else {
+            console.log('⚠️ No unpaid active orders found');
+          }
+        } else {
+          console.log('⚠️ No orders found for this table');
+        }
+      } else {
+        console.error('❌ Failed to get session:', await sessionResponse.text());
+      }
+    } catch (error) {
+      console.error('❌ Failed to check for active order:', error);
+    }
+  };
 
   const fetchMenuItems = async () => {
     try {
@@ -126,6 +220,7 @@ export default function MenuPreviewSection() {
       price: itemPrice,
       quantity,
       image: item.image,
+      category: item.category,
       variant: selectedVariant ? { name: selectedVariant.name, price: selectedVariant.price } : undefined,
       addons: selectedAddons?.map(addon => ({ name: addon.name, price: addon.price })),
       notes,
@@ -230,11 +325,71 @@ export default function MenuPreviewSection() {
         `Waiter has been notified! They will come to Table ${tableNumber} shortly to confirm your ${orderType === 'DINE_IN' ? 'dine-in' : 'takeaway'} order.`
       );
 
-      // Keep cart for waiter to see, don't clear it
+      // Clear cart and check for active order
+      setCart([]);
+      
+      // Show a message to customer
+      toast.success(
+        `✅ Waiter notified!\n\n📱 Your waiter will come to Table ${tableNumber} to confirm your order.\n\n💡 After the waiter sends your order to the kitchen, you can request your bill.`,
+        { duration: 6000 }
+      );
+      
+      // Check for order after waiter has time to process (poll every 3 seconds)
+      const interval = setInterval(() => {
+        checkForActiveOrder();
+      }, 3000);
+      setCheckOrderInterval(interval);
+      
+      // Stop checking after 2 minutes
+      setTimeout(() => {
+        if (interval) {
+          clearInterval(interval);
+          setCheckOrderInterval(null);
+        }
+      }, 120000);
     } catch (error) {
       console.error('Failed to call waiter:', error);
       toast.error('Failed to notify waiter. Please try again or call for assistance.');
     }
+  };
+
+  const handleRequestBill = () => {
+    if (!activeOrder) {
+      toast.error('No active order found');
+      return;
+    }
+    
+    // Debug logging
+    console.log('📋 Active Order:', activeOrder);
+    console.log('📋 Session Data:', sessionData);
+    
+    // Check if we have all required data
+    if (!sessionData?.id) {
+      toast.error('Session not found. Please refresh the page.');
+      return;
+    }
+    
+    const tableId = sessionData?.tableId || sessionData?.table?.id || activeOrder?.tableId;
+    if (!tableId) {
+      toast.error('Table information not found. Please refresh the page.');
+      return;
+    }
+    
+    // Try to get waiter from multiple sources
+    const waiterId = 
+      sessionData?.table?.assignedWaiterId || 
+      activeOrder?.table?.assignedWaiterId ||
+      activeOrder?.createdById; // Fallback to the person who created the order
+    
+    console.log('🏷️ Table ID:', tableId);
+    console.log('👤 Waiter ID:', waiterId);
+    
+    if (!waiterId) {
+      toast.error('No staff member available. Please call for assistance.');
+      return;
+    }
+    
+    setIsBillDialogOpen(true);
   };
 
   const handleViewFullMenu = () => {
@@ -416,6 +571,51 @@ export default function MenuPreviewSection() {
         onClose={() => setIsOrderTypeDialogOpen(false)}
         onSelectType={handleOrderTypeSelected}
       />
+
+      {/* Bill Request Dialog */}
+      {activeOrder && sessionData && (
+        <BillRequestDialog
+          open={isBillDialogOpen}
+          onOpenChange={setIsBillDialogOpen}
+          order={activeOrder}
+          sessionId={sessionData.id}
+          tableNumber={tableNumber || ''}
+          tableId={sessionData.tableId || sessionData.table?.id || activeOrder.tableId}
+          waiterId={
+            sessionData.table?.assignedWaiterId || 
+            activeOrder.table?.assignedWaiterId || 
+            activeOrder.createdById ||
+            ''
+          }
+        />
+      )}
+
+      {/* Floating Request Bill Button */}
+      {activeOrder && tableNumber && (
+        <button
+          onClick={handleRequestBill}
+          className="fixed bottom-24 right-6 z-50 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2 border-2 border-blue-500/50 animate-bounce"
+        >
+          <Receipt className="w-5 h-5" />
+          <span className="font-semibold">Request Bill</span>
+        </button>
+      )}
+
+      {/* Waiting for Order Message - Shows after calling waiter but before order is ready */}
+      {!activeOrder && tableNumber && cart.length === 0 && (
+        <div className="fixed bottom-24 right-6 z-50 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl shadow-2xl border-2 border-green-500/50">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-3 h-3 bg-white rounded-full animate-ping absolute"></div>
+              <div className="w-3 h-3 bg-white rounded-full"></div>
+            </div>
+            <div>
+              <p className="font-semibold text-sm">Waiting for Order</p>
+              <p className="text-xs opacity-90">Bill request available after order is sent to kitchen</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Floating Cart */}
       <FloatingCart

@@ -86,3 +86,29 @@ export const getSummary = asyncHandler(async (req: Request, res: Response) => {
     new ApiResponse(200, summary, 'Payment summary fetched successfully')
   );
 });
+
+/**
+ * Collect payment from customer - used by waiters
+ * POST /api/payments/collect
+ */
+export const collectPayment = asyncHandler(async (req: Request, res: Response) => {
+  const { orderId, amount, method, amountReceived, proofImageUrl, transactionRef, notes } = req.body;
+
+  if (!orderId || !amount || !method) {
+    throw new ApiError(400, 'OrderId, amount, and method are required');
+  }
+
+  const result = await paymentService.collectPayment({
+    orderId,
+    amount: parseFloat(amount),
+    method,
+    amountReceived: amountReceived ? parseFloat(amountReceived) : undefined,
+    proofImageUrl,
+    transactionRef,
+    notes,
+  });
+
+  res.status(201).json(
+    new ApiResponse(201, result, 'Payment collected successfully')
+  );
+});

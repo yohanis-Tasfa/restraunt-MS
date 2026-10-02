@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Bell, ChevronDown, ChevronUp, Clock, X, ShoppingCart } from 'lucide-react';
+import { Bell, ChevronDown, ChevronUp, Clock, X, ShoppingCart, Receipt } from 'lucide-react';
 import { useActiveCalls, useWaiterCallActions } from '../../hooks/useWaiterCalls';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { cn } from '../../lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import PaymentCollectionDialog from './PaymentCollectionDialog';
 
 const requestTypeIcons = {
   ASSISTANCE: '🔔',
@@ -24,7 +25,9 @@ const requestTypeLabels = {
 export default function FloatingCallPanel() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
-  const { calls, isLoading } = useActiveCalls(false); // No sound notifications in POS
+  const [selectedBillRequest, setSelectedBillRequest] = useState<any>(null);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const { calls, isLoading, refetch } = useActiveCalls(false); // No sound notifications in POS
   const { acknowledge, complete } = useWaiterCallActions();
   const navigate = useNavigate();
 
@@ -44,6 +47,17 @@ export default function FloatingCallPanel() {
         },
       });
     }
+  };
+
+  const handleCollectPayment = (call: any) => {
+    setSelectedBillRequest(call);
+    setIsPaymentDialogOpen(true);
+  };
+
+  const handlePaymentComplete = () => {
+    setIsPaymentDialogOpen(false);
+    setSelectedBillRequest(null);
+    refetch(); // Refresh calls list
   };
 
   if (calls.length === 0) {
@@ -162,6 +176,26 @@ export default function FloatingCallPanel() {
                             <ShoppingCart className="w-4 h-4 mr-1" />
                             Process Order ({call.selectedItems.totalItems} items)
                           </Button>
+                        ) : call.requestType === 'BILL_REQUEST' && call.selectedItems ? (
+                          // If it's a bill request, show Collect Payment button
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => acknowledge({ id: call.id })}
+                              variant="outline"
+                              className="flex-1"
+                            >
+                              I'm Going
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleCollectPayment(call)}
+                              className="flex-1 bg-green-600 hover:bg-green-700"
+                            >
+                              <Receipt className="w-4 h-4 mr-1" />
+                              Collect Payment
+                            </Button>
+                          </>
                         ) : (
                           // Otherwise show normal acknowledge/complete buttons
                           <>
@@ -243,6 +277,16 @@ export default function FloatingCallPanel() {
                             <ShoppingCart className="w-4 h-4 mr-1" />
                             Process Order ({call.selectedItems.totalItems} items)
                           </Button>
+                        ) : call.requestType === 'BILL_REQUEST' && call.selectedItems ? (
+                          // If it's a bill request, show Collect Payment button
+                          <Button
+                            size="sm"
+                            onClick={() => handleCollectPayment(call)}
+                            className="w-full bg-green-600 hover:bg-green-700"
+                          >
+                            <Receipt className="w-4 h-4 mr-1" />
+                            Collect Payment
+                          </Button>
                         ) : (
                           // Otherwise show normal complete button
                           <Button
@@ -261,6 +305,16 @@ export default function FloatingCallPanel() {
             </>
           )}
         </div>
+      )}
+
+      {/* Payment Collection Dialog */}
+      {selectedBillRequest && (
+        <PaymentCollectionDialog
+          open={isPaymentDialogOpen}
+          onOpenChange={setIsPaymentDialogOpen}
+          billRequest={selectedBillRequest}
+          onPaymentComplete={handlePaymentComplete}
+        />
       )}
     </div>
   );

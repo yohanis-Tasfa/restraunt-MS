@@ -22,6 +22,7 @@ import employeeRoutes from './employee.routes';
 import profileRoutes from './profile.routes';
 import customerSessionRoutes from './customer-session.routes';
 import waiterCallRoutes from './waiter-call.routes';
+import billRequestRoutes from './bill-request.routes';
 
 const router = Router();
 
@@ -48,6 +49,7 @@ router.use('/employees', employeeRoutes);
 router.use('/profile', profileRoutes);
 router.use('/customer-sessions', customerSessionRoutes);
 router.use('/waiter-calls', waiterCallRoutes);
+router.use('/bill-requests', billRequestRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

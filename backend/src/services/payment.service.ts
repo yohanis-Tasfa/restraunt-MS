@@ -179,6 +179,124 @@ export class PaymentService {
     return payment;
   }
 
+  /**
+   * Collect payment from customer - used by waiters
+   * Handles cash and transfer with photo upload
+   * Returns change amount for cash payments
+   */
+  async collectPayment(data: CreatePaymentData & { amountReceived?: number }) {
+    // Validate order
+    const order = await prisma.order.findUnique({
+      where: { id: data.orderId },
+      include: {
+        payments: true,
+        table: true,
+      },
+    });
+
+    if (!order) {
+      throw new ApiError(404, 'Order not found');
+    }
+
+    if (order.status === 'CANCELLED') {
+      throw new ApiError(400, 'Cannot process payment for cancelled order');
+    }
+
+    // Calculate total paid so far
+    const totalPaid = order.payments.reduce((sum, p) => sum + p.amount, 0);
+    const remaining = order.total - totalPaid;
+
+    // Validate payment amount
+    if (data.amount <= 0) {
+      throw new ApiError(400, 'Payment amount must be greater than 0');
+    }
+
+    if (data.amount > remaining) {
+      throw new ApiError(
+        400,
+        `Payment amount (${data.amount} ETB) exceeds remaining balance (${remaining} ETB)`
+      );
+    }
+
+    // For CASH, calculate change
+    let change = 0;
+    if (data.method === 'CASH' && data.amountReceived) {
+      if (data.amountReceived < data.amount) {
+        throw new ApiError(400, 'Amount received is less than payment amount');
+      }
+      change = data.amountReceived - data.amount;
+    }
+
+    // For TRANSFER, require proof image
+    if ((data.method === 'BANK_TRANSFER' || data.method === 'MOBILE' || data.method === 'TELEBIRR' || data.method === 'CBE_BIRR') && !data.proofImageUrl) {
+      throw new ApiError(400, 'Transfer proof image is required for digital payments');
+    }
+
+    // Create payment
+    const payment = await prisma.payment.create({
+      data: {
+        orderId: data.orderId,
+        amount: data.amount,
+        method: data.method,
+        reference: data.reference,
+        proofImageUrl: data.proofImageUrl,
+        transactionRef: data.transactionRef,
+        notes: data.notes,
+        status: 'completed',
+      },
+      include: {
+        order: {
+          select: {
+            id: true,
+            orderNumber: true,
+            total: true,
+            table: true,
+          },
+        },
+      },
+    });
+
+    // Update order payment status
+    const newTotalPaid = totalPaid + data.amount;
+    let paymentStatus: 'UNPAID' | 'PARTIAL' | 'PAID' = 'PARTIAL';
+
+    if (newTotalPaid >= order.total) {
+      paymentStatus = 'PAID';
+      
+      // Mark order as completed
+      await prisma.order.update({
+        where: { id: data.orderId },
+        data: { 
+          paymentStatus,
+          status: 'COMPLETED',
+          completedAt: new Date(),
+        },
+      });
+
+      // Free up the table
+      if (order.tableId) {
+        await prisma.table.update({
+          where: { id: order.tableId },
+          data: { status: 'AVAILABLE' },
+        });
+      }
+    } else if (newTotalPaid > 0) {
+      paymentStatus = 'PARTIAL';
+      await prisma.order.update({
+        where: { id: data.orderId },
+        data: { paymentStatus },
+      });
+    }
+
+    return {
+      payment,
+      change,
+      remaining: remaining - data.amount,
+      totalPaid: newTotalPaid,
+      isFullyPaid: paymentStatus === 'PAID',
+    };
+  }
+
   async refund(id: string, data: RefundPaymentData) {
     const payment = await prisma.payment.findUnique({
       where: { id },

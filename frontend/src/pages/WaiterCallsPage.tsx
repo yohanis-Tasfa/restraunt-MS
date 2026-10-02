@@ -3,6 +3,7 @@ import { useActiveCalls, useWaiterCallActions } from '../hooks/useWaiterCalls';
 import { type WaiterCall } from '../api/waiter-calls';
 import { useCustomerCartStore } from '../store/customerCartStore';
 import { useNavigate } from 'react-router-dom';
+import PaymentCollectionDialog from '../components/pos/PaymentCollectionDialog';
 import {
   Bell,
   Clock,
@@ -50,6 +51,8 @@ export default function WaiterCallsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [notes, setNotes] = useState('');
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [selectedBillRequest, setSelectedBillRequest] = useState<any>(null);
 
   // Filter and sort calls
   const filteredCalls = calls
@@ -93,6 +96,18 @@ export default function WaiterCallsPage() {
     cancel({ id: call.id, reason: notes || undefined });
     setShowDetailsModal(false);
     setSelectedCall(null);
+  };
+
+  const handleCollectPayment = (call: WaiterCall) => {
+    setSelectedBillRequest(call);
+    setShowPaymentDialog(true);
+    setShowDetailsModal(false);
+  };
+
+  const handlePaymentComplete = () => {
+    setShowPaymentDialog(false);
+    setSelectedBillRequest(null);
+    refetch();
   };
 
   const handleCreateOrder = (call: WaiterCall) => {
@@ -473,6 +488,16 @@ export default function WaiterCallsPage() {
                   Create Order
                 </Button>
               )}
+              {selectedCall.requestType === 'BILL_REQUEST' && (
+                <Button
+                  onClick={() => handleCollectPayment(selectedCall)}
+                  className="bg-purple-600 hover:bg-purple-700"
+                  disabled={isActionLoading}
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Collect Payment
+                </Button>
+              )}
               {selectedCall.status === 'PENDING' && (
                 <Button
                   onClick={() => handleAcknowledge(selectedCall)}
@@ -483,7 +508,7 @@ export default function WaiterCallsPage() {
                   Accept
                 </Button>
               )}
-              {selectedCall.status === 'ACKNOWLEDGED' && (
+              {selectedCall.status === 'ACKNOWLEDGED' && selectedCall.requestType !== 'BILL_REQUEST' && (
                 <Button
                   onClick={() => handleComplete(selectedCall)}
                   className="bg-green-600 hover:bg-green-700"
@@ -507,6 +532,16 @@ export default function WaiterCallsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      )}
+
+      {/* Payment Collection Dialog */}
+      {selectedBillRequest && (
+        <PaymentCollectionDialog
+          open={showPaymentDialog}
+          onOpenChange={setShowPaymentDialog}
+          billRequest={selectedBillRequest}
+          onPaymentComplete={handlePaymentComplete}
+        />
       )}
     </div>
   );
