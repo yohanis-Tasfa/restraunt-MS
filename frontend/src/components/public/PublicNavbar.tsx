@@ -32,7 +32,6 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
     { label: 'Home', href: '#home', section: 'home' },
     { label: 'Menu', href: '#menu', section: 'menu' },
     { label: 'About', href: '#about', section: 'about' },
-    { label: 'Gallery', href: '#gallery', section: 'gallery' },
     { label: 'Contact', href: '#contact', section: 'contact' },
   ];
 

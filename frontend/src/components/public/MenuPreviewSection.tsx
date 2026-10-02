@@ -247,7 +247,7 @@ export default function MenuPreviewSection() {
   };
 
   return (
-    <section id="menu" className="py-16 bg-black relative overflow-hidden">
+    <section id="menu" className="py-12 bg-black relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-40 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
@@ -392,13 +392,6 @@ export default function MenuPreviewSection() {
                 </button>
               </div>
             )}
-
-            {/* Items Counter */}
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-400">
-                Showing {startIndex + 1} - {Math.min(endIndex, allItems.length)} of {allItems.length} items
-              </p>
-            </div>
           </>
         )}
 

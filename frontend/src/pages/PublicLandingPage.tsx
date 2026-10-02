@@ -30,7 +30,7 @@ export default function PublicLandingPage() {
   // Track active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'menu', 'about', 'gallery', 'contact'];
+      const sections = ['home', 'menu', 'about', 'contact'];
       const scrollPosition = window.scrollY + 100; // Offset for navbar
 
       for (const section of sections) {
@@ -79,16 +79,6 @@ export default function PublicLandingPage() {
 
         {/* About Us Section */}
         <AboutUsSection />
-
-        {/* Gallery Section - Placeholder */}
-        <section id="gallery" className="min-h-screen flex items-center justify-center bg-white">
-          <div className="text-center px-4">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Gallery</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Section content will be added in Phase 5
-            </p>
-          </div>
-        </section>
 
         {/* Contact Section - Placeholder */}
         <section id="contact" className="min-h-screen flex items-center justify-center bg-gray-50">
