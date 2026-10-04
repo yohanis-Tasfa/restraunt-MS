@@ -487,13 +487,13 @@ export default function MenuManagementPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white pr-8"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white pr-8"
             >
-              <option value="all">All Categories ({items.length})</option>
+              <option value="all" className="text-gray-900 bg-white">All Categories ({items.length})</option>
               {categories.map((cat) => {
                 const categoryItemCount = items.filter(item => item.categoryId === cat.id).length;
                 return (
-                  <option key={cat.id} value={cat.id}>
+                  <option key={cat.id} value={cat.id} className="text-gray-900 bg-white">
                     {cat.name} ({categoryItemCount})
                   </option>
                 );
@@ -514,19 +514,19 @@ export default function MenuManagementPage() {
                   setIsBulkMode(false);
                   setSelectedItems(new Set());
                 }}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
               >
                 Cancel
               </button>
             ) : (
               <button
                 onClick={() => setIsBulkMode(true)}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
               >
                 Select
               </button>
             )}
-            <label className={`flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <label className={`flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer font-medium ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}>
               <Upload className="w-4 h-4" />
               <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import'}</span>
               <input
@@ -1132,7 +1132,7 @@ function MenuItemModal({
                             setFormData({ ...formData, categoryId: '' });
                             setShowCategoryDropdown(false);
                           }}
-                          className="w-full px-3 py-2 text-left text-gray-500 hover:bg-gray-50 text-sm border-b border-gray-100"
+                          className="w-full px-3 py-2 text-left text-gray-500 hover:bg-gray-50 text-sm border-b border-gray-100 bg-white"
                         >
                           Select category
                         </button>
@@ -1141,7 +1141,7 @@ function MenuItemModal({
                         {categories.map((cat) => (
                           <div
                             key={cat.id}
-                            className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 group ${
+                            className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 group bg-white ${
                               formData.categoryId === cat.id ? 'bg-green-50' : ''
                             }`}
                           >
