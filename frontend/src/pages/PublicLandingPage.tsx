@@ -5,6 +5,7 @@ import Footer from '../components/public/Footer';
 import HeroSection from '../components/public/HeroSection';
 import MenuPreviewSection from '../components/public/MenuPreviewSection';
 import AboutUsSection from '../components/public/AboutUsSection';
+import ContactUsSection from '../components/public/ContactUsSection';
 
 export default function PublicLandingPage() {
   const [searchParams] = useSearchParams();
@@ -80,15 +81,8 @@ export default function PublicLandingPage() {
         {/* About Us Section */}
         <AboutUsSection />
 
-        {/* Contact Section - Placeholder */}
-        <section id="contact" className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center px-4">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Section content will be added in Phase 7
-            </p>
-          </div>
-        </section>
+        {/* Contact Section */}
+        <ContactUsSection />
       </div>
 
       {/* Footer */}
