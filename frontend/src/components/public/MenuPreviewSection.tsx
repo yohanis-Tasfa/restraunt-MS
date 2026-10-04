@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, Filter, X } from 'lucide-react';
+import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, X } from 'lucide-react';
 import { menuApi } from '../../api/menu';
 import { useSearchParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -58,7 +58,6 @@ export default function MenuPreviewSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [showFilters, setShowFilters] = useState(false);
   
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -477,7 +476,7 @@ export default function MenuPreviewSection() {
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="mb-8 space-y-4">
+        <div className="mb-8 space-y-6">
           {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto">
             <div className="relative">
@@ -487,7 +486,7 @@ export default function MenuPreviewSection() {
                 placeholder="Search for dishes, categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full pl-12 pr-20 py-4 backdrop-blur-md border rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                className={`w-full pl-12 pr-12 py-4 backdrop-blur-md border rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
                   theme === 'dark'
                     ? 'bg-black/40 border-white/20 text-white placeholder-gray-400'
                     : 'bg-white/70 border-gray-300 text-gray-900 placeholder-gray-500'
@@ -496,59 +495,45 @@ export default function MenuPreviewSection() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute right-14 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
+                  className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
                     theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
                   }`}
                 >
                   <X className="w-4 h-4 text-gray-400" />
                 </button>
               )}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-all ${
-                  showFilters 
-                    ? 'bg-green-600 text-white' 
-                    : theme === 'dark'
-                      ? 'bg-white/10 text-gray-400 hover:bg-white/20'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <Filter className="w-5 h-5" />
-              </button>
             </div>
           </div>
 
-          {/* Category Filters */}
-          <div className={`overflow-hidden transition-all duration-300 ${showFilters ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'}`}>
-            <div className="flex items-center justify-center gap-2 flex-wrap">
+          {/* Category Filters - Always Visible */}
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                selectedCategory === 'all'
+                  ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
+                  : theme === 'dark'
+                    ? 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                    : 'bg-white/70 backdrop-blur-md border border-gray-300 text-gray-700 hover:border-green-500/50 hover:text-green-600'
+              }`}
+            >
+              All Dishes
+            </button>
+            {categories.map((category) => (
               <button
-                onClick={() => setSelectedCategory('all')}
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
                 className={`px-4 py-2 rounded-full font-medium transition-all ${
-                  selectedCategory === 'all'
+                  selectedCategory === category.id
                     ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
                     : theme === 'dark'
                       ? 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
                       : 'bg-white/70 backdrop-blur-md border border-gray-300 text-gray-700 hover:border-green-500/50 hover:text-green-600'
                 }`}
               >
-                All Dishes
+                {category.name}
               </button>
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-2 rounded-full font-medium transition-all ${
-                    selectedCategory === category.id
-                      ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
-                      : theme === 'dark'
-                        ? 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
-                        : 'bg-white/70 backdrop-blur-md border border-gray-300 text-gray-700 hover:border-green-500/50 hover:text-green-600'
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
 
           {/* Results Count */}
