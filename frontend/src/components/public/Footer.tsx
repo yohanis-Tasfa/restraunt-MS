@@ -47,11 +47,7 @@ export default function Footer() {
                   About Us
                 </a>
               </li>
-              <li>
-                <a href="#gallery" className="text-sm hover:text-green-400 transition-colors">
-                  Gallery
-                </a>
-              </li>
+
               <li>
                 <a href="#contact" className="text-sm hover:text-green-400 transition-colors">
                   Contact

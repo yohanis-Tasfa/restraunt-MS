@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -215,12 +215,32 @@ export default function ContactUsSection() {
 
         {/* Map Section */}
         <div className="mt-12 bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/10 overflow-hidden">
-          <div className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400">Map integration coming soon</p>
-              <p className="text-sm text-gray-500 mt-2">Bole Road, Addis Ababa, Ethiopia</p>
-            </div>
+          <div className="aspect-video rounded-lg overflow-hidden">
+           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.7283682323223!2d38.78410537478007!3d8.997123291062934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b8502fe44f345%3A0x209cbe597069517f!2sEdna%20Mall!5e0!3m2!1sen!2set!4v1791090507035!5m2!1sen!2set" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-full"
+              title="Restaurant Location Map"
+            />
+          </div>
+          <div className="mt-4 text-center">
+            <p className="text-gray-400 text-sm">
+              <MapPin className="w-4 h-4 inline-block mr-1" />
+              Bole Road, Addis Ababa, Ethiopia
+            </p>
+            <a
+              href="https://www.google.com/maps/dir//Bole+Road,+Addis+Ababa,+Ethiopia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-2 text-green-400 hover:text-green-300 text-sm font-medium transition-colors"
+            >
+              Get Directions
+              <ChevronRight className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>

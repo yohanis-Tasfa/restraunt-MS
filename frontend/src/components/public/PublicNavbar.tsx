@@ -96,10 +96,7 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
 
           {/* Contact Info & CTA */}
           <div className="hidden lg:flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-gray-200">
-              <Phone className="w-4 h-4" />
-              <span>+251 911 123 456</span>
-            </div>
+
             <Link
               to="/admin/login"
               className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
