@@ -22,6 +22,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 import { WebSocketProvider } from './contexts/WebSocketContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,121 +46,123 @@ function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <WebSocketProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes - NO authentication required */}
-            <Route path="/" element={<PublicLandingPage />} />
-            <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
-            
-            {/* Admin login route */}
-            <Route 
-              path="/admin/login" 
-              element={isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <LoginPage />} 
-            />
-            
-            {/* Protected admin routes with persistent layout */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <LayoutWrapper />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="dashboard" element={<DashboardPage />} />
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <WebSocketProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes - NO authentication required */}
+              <Route path="/" element={<PublicLandingPage />} />
+              <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
+              
+              {/* Admin login route */}
               <Route 
-                path="pos" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Cashier']}>
-                    <POSPage />
-                  </ProtectedRoute>
-                } 
+                path="/admin/login" 
+                element={isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <LoginPage />} 
               />
-              <Route 
-                path="kitchen" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
-                    <KitchenPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="orders" element={<OrdersPage />} />
-              <Route path="tables" element={<TablesPage />} />
-              <Route path="waiter-calls" element={<WaiterCallsPage />} />
-              <Route path="reservations" element={<ReservationsPage />} />
-              <Route 
-                path="menu" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
-                    <MenuManagementPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="recipes" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
-                    <RecipesPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="inventory" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Inventory Manager']}>
-                    <InventoryPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="expenses" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
-                    <ExpensesPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="reports" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
-                    <ReportsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="employees" 
-                element={
-                  <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
-                    <EmployeesPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="profile" 
+              
+              {/* Protected admin routes with persistent layout */}
+              <Route
+                path="/admin"
                 element={
                   <ProtectedRoute>
-                    <ProfilePage />
+                    <LayoutWrapper />
                   </ProtectedRoute>
-                } 
-              />
-            </Route>
-            
-            {/* Redirect old admin routes to new /admin/* structure */}
-            <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-            <Route path="/orders" element={<Navigate to="/admin/orders" replace />} />
-            <Route path="/pos" element={<Navigate to="/admin/pos" replace />} />
-            <Route path="/tables" element={<Navigate to="/admin/tables" replace />} />
-            
-            {/* Catch all - redirect to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster position="top-right" />
-      </WebSocketProvider>
-    </QueryClientProvider>
+                }
+              >
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route 
+                  path="pos" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Cashier']}>
+                      <POSPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="kitchen" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
+                      <KitchenPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="tables" element={<TablesPage />} />
+                <Route path="waiter-calls" element={<WaiterCallsPage />} />
+                <Route path="reservations" element={<ReservationsPage />} />
+                <Route 
+                  path="menu" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                      <MenuManagementPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="recipes" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
+                      <RecipesPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="inventory" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Inventory Manager']}>
+                      <InventoryPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="expenses" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                      <ExpensesPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="reports" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                      <ReportsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="employees" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                      <EmployeesPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="profile" 
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+              </Route>
+              
+              {/* Redirect old admin routes to new /admin/* structure */}
+              <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+              <Route path="/orders" element={<Navigate to="/admin/orders" replace />} />
+              <Route path="/pos" element={<Navigate to="/admin/pos" replace />} />
+              <Route path="/tables" element={<Navigate to="/admin/tables" replace />} />
+              
+              {/* Catch all - redirect to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster position="top-right" />
+        </WebSocketProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

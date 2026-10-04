@@ -4,6 +4,16 @@
 
 @layer base {
   body {
+    @apply transition-colors duration-300;
+  }
+  
+  /* Light theme (default) */
+  .light {
     @apply bg-gray-50 text-gray-900;
+  }
+  
+  /* Dark theme */
+  .dark {
+    @apply bg-gray-900 text-white;
   }
 }

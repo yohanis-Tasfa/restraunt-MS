@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Phone, Clock } from 'lucide-react';
+import { Menu, X, Phone, Clock, Sun, Moon } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useTheme } from '../../contexts/ThemeContext';
 import logo from '../../assets/image.png';
 
 interface NavItem {
@@ -18,6 +19,7 @@ interface PublicNavbarProps {
 export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   // Detect scroll for sticky navbar styling
   useEffect(() => {
@@ -54,7 +56,9 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        'bg-black/95 backdrop-blur-md shadow-lg shadow-black/20'
+        theme === 'dark' 
+          ? 'bg-black/95 backdrop-blur-md shadow-lg shadow-black/20'
+          : 'bg-white/95 backdrop-blur-md shadow-lg shadow-gray-200/50'
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,8 +71,12 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
               className="w-10 h-10 rounded-lg object-cover"
             />
             <div className="hidden sm:block">
-              <h1 className="font-bold text-xl text-white">Yoni Restaurant</h1>
-              <p className="text-xs text-gray-300">Authentic Ethiopian Cuisine</p>
+              <h1 className={cn("font-bold text-xl", theme === 'dark' ? 'text-white' : 'text-gray-900')}>
+                Yoni Restaurant
+              </h1>
+              <p className={cn("text-xs", theme === 'dark' ? 'text-gray-300' : 'text-gray-600')}>
+                Authentic Ethiopian Cuisine
+              </p>
             </div>
           </Link>
 
@@ -83,7 +91,9 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
                   'text-sm font-medium transition-colors relative',
                   activeSection === item.section
                     ? 'text-green-400'
-                    : 'text-gray-200 hover:text-green-400'
+                    : theme === 'dark' 
+                      ? 'text-gray-200 hover:text-green-400'
+                      : 'text-gray-700 hover:text-green-600'
                 )}
               >
                 {item.label}
@@ -96,6 +106,23 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
 
           {/* Contact Info & CTA */}
           <div className="hidden lg:flex items-center gap-4">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className={cn(
+                "p-2 rounded-lg transition-all duration-300 hover:scale-110",
+                theme === 'dark' 
+                  ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              )}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
 
             <Link
               to="/admin/login"
@@ -106,22 +133,50 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-white" />
-            ) : (
-              <Menu className="w-6 h-6 text-white" />
-            )}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className={cn(
+                "p-2 rounded-lg transition-all duration-300",
+                theme === 'dark' 
+                  ? 'hover:bg-white/10 text-yellow-400'
+                  : 'hover:bg-gray-200 text-gray-700'
+              )}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+            
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={cn(
+                "p-2 rounded-lg transition-colors",
+                theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
+              )}
+            >
+              {isMobileMenuOpen ? (
+                <X className={cn("w-6 h-6", theme === 'dark' ? 'text-white' : 'text-gray-900')} />
+              ) : (
+                <Menu className={cn("w-6 h-6", theme === 'dark' ? 'text-white' : 'text-gray-900')} />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-700 bg-black/95 backdrop-blur-md">
+        <div className={cn(
+          "md:hidden border-t backdrop-blur-md",
+          theme === 'dark' 
+            ? 'border-gray-700 bg-black/95'
+            : 'border-gray-200 bg-white/95'
+        )}>
           <div className="px-4 py-4 space-y-3">
             {navItems.map((item) => (
               <a
@@ -132,14 +187,19 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
                   'block px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                   activeSection === item.section
                     ? 'bg-green-600 text-white'
-                    : 'text-gray-200 hover:bg-white/10'
+                    : theme === 'dark'
+                      ? 'text-gray-200 hover:bg-white/10'
+                      : 'text-gray-700 hover:bg-gray-100'
                 )}
               >
                 {item.label}
               </a>
             ))}
-            <div className="pt-3 border-t border-gray-700">
-              <div className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200">
+            <div className={cn("pt-3 border-t", theme === 'dark' ? 'border-gray-700' : 'border-gray-200')}>
+              <div className={cn(
+                "flex items-center gap-2 px-4 py-2 text-sm",
+                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+              )}>
                 <Phone className="w-4 h-4" />
                 <span>+251 911 123 456</span>
               </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 import PublicNavbar from '../components/public/PublicNavbar';
 import Footer from '../components/public/Footer';
 import HeroSection from '../components/public/HeroSection';
@@ -10,6 +11,7 @@ import ContactUsSection from '../components/public/ContactUsSection';
 export default function PublicLandingPage() {
   const [searchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState('home');
+  const { theme } = useTheme();
   
   // Get table and section from URL params (for QR code integration)
   const tableParam = searchParams.get('table');
@@ -58,7 +60,7 @@ export default function PublicLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Navigation */}
       <PublicNavbar 
         activeSection={activeSection} 

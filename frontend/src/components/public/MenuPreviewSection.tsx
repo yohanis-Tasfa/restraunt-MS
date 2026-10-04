@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, Filter, X } from 'lucide-react';
 import { menuApi } from '../../api/menu';
 import { useSearchParams } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 import MenuItemModal from './MenuItemModal';
 import FloatingCart, { type CartItem } from './FloatingCart';
 import OrderTypeDialog from './OrderTypeDialog';
@@ -48,6 +49,7 @@ const ITEMS_PER_PAGE = 8;
 export default function MenuPreviewSection() {
   const [searchParams] = useSearchParams();
   const tableNumber = searchParams.get('table');
+  const { theme } = useTheme();
   
   const [allItems, setAllItems] = useState<MenuItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
@@ -441,7 +443,7 @@ export default function MenuPreviewSection() {
   };
 
   return (
-    <section id="menu" className="py-12 bg-black relative overflow-hidden">
+    <section id="menu" className={`py-12 relative overflow-hidden ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`}>
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-40 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
@@ -451,13 +453,25 @@ export default function MenuPreviewSection() {
       <div className="px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-8 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/50 backdrop-blur-sm border border-green-700/50 rounded-full mb-4">
-            <span className="text-green-400 font-semibold text-sm uppercase tracking-wider">OUR MENU</span>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm border rounded-full mb-4 ${
+            theme === 'dark' 
+              ? 'bg-green-900/50 border-green-700/50' 
+              : 'bg-green-100/80 border-green-300/50'
+          }`}>
+            <span className={`font-semibold text-sm uppercase tracking-wider ${
+              theme === 'dark' ? 'text-green-400' : 'text-green-700'
+            }`}>
+              OUR MENU
+            </span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-2xl">
+          <h2 className={`text-3xl md:text-4xl font-bold mb-4 drop-shadow-2xl ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
             Explore Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-500">Delicious Menu</span>
           </h2>
-          <p className="text-lg text-gray-300 drop-shadow-md">
+          <p className={`text-lg drop-shadow-md ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
             From traditional Ethiopian dishes to modern fusion cuisine, discover flavors that tell a story
           </p>
         </div>
@@ -473,12 +487,18 @@ export default function MenuPreviewSection() {
                 placeholder="Search for dishes, categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-20 py-4 bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className={`w-full pl-12 pr-20 py-4 backdrop-blur-md border rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  theme === 'dark'
+                    ? 'bg-black/40 border-white/20 text-white placeholder-gray-400'
+                    : 'bg-white/70 border-gray-300 text-gray-900 placeholder-gray-500'
+                }`}
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-14 top-1/2 transform -translate-y-1/2 p-1 hover:bg-white/10 rounded-full transition-colors"
+                  className={`absolute right-14 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
+                    theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
+                  }`}
                 >
                   <X className="w-4 h-4 text-gray-400" />
                 </button>
@@ -486,7 +506,11 @@ export default function MenuPreviewSection() {
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-all ${
-                  showFilters ? 'bg-green-600 text-white' : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                  showFilters 
+                    ? 'bg-green-600 text-white' 
+                    : theme === 'dark'
+                      ? 'bg-white/10 text-gray-400 hover:bg-white/20'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 <Filter className="w-5 h-5" />
@@ -502,7 +526,9 @@ export default function MenuPreviewSection() {
                 className={`px-4 py-2 rounded-full font-medium transition-all ${
                   selectedCategory === 'all'
                     ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
-                    : 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                    : theme === 'dark'
+                      ? 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                      : 'bg-white/70 backdrop-blur-md border border-gray-300 text-gray-700 hover:border-green-500/50 hover:text-green-600'
                 }`}
               >
                 All Dishes
@@ -514,7 +540,9 @@ export default function MenuPreviewSection() {
                   className={`px-4 py-2 rounded-full font-medium transition-all ${
                     selectedCategory === category.id
                       ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
-                      : 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                      : theme === 'dark'
+                        ? 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                        : 'bg-white/70 backdrop-blur-md border border-gray-300 text-gray-700 hover:border-green-500/50 hover:text-green-600'
                   }`}
                 >
                   {category.name}
@@ -526,9 +554,9 @@ export default function MenuPreviewSection() {
           {/* Results Count */}
           {(searchQuery || selectedCategory !== 'all') && (
             <div className="text-center">
-              <p className="text-gray-400 text-sm">
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 Found <span className="text-green-400 font-semibold">{filteredItems.length}</span> {filteredItems.length === 1 ? 'dish' : 'dishes'}
-                {searchQuery && <> matching "<span className="text-white">{searchQuery}</span>"</>}
+                {searchQuery && <> matching "<span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>{searchQuery}</span>"</>}
               </p>
             </div>
           )}
@@ -538,19 +566,35 @@ export default function MenuPreviewSection() {
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/10 animate-pulse">
-                <div className="w-full h-48 bg-gray-700/50 rounded-xl mb-4" />
-                <div className="h-6 bg-gray-700/50 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-gray-700/50 rounded w-full mb-2" />
-                <div className="h-4 bg-gray-700/50 rounded w-2/3" />
+              <div key={i} className={`backdrop-blur-md rounded-2xl p-4 border animate-pulse ${
+                theme === 'dark' 
+                  ? 'bg-black/40 border-white/10' 
+                  : 'bg-white/60 border-gray-200'
+              }`}>
+                <div className={`w-full h-48 rounded-xl mb-4 ${
+                  theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-300/50'
+                }`} />
+                <div className={`h-6 rounded w-3/4 mb-2 ${
+                  theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-300/50'
+                }`} />
+                <div className={`h-4 rounded w-full mb-2 ${
+                  theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-300/50'
+                }`} />
+                <div className={`h-4 rounded w-2/3 ${
+                  theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-300/50'
+                }`} />
               </div>
             ))}
           </div>
         ) : currentItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🍽️</div>
-            <p className="text-gray-400 text-lg">No menu items available at the moment.</p>
-            <p className="text-gray-500 text-sm mt-2">Please check back later or contact us for assistance.</p>
+            <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+              No menu items available at the moment.
+            </p>
+            <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+              Please check back later or contact us for assistance.
+            </p>
           </div>
         ) : (
           <>
@@ -558,7 +602,11 @@ export default function MenuPreviewSection() {
               {currentItems.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative bg-black/40 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-500/10"
+                  className={`group relative backdrop-blur-md rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-500/10 ${
+                    theme === 'dark'
+                      ? 'bg-black/40 border-white/10 hover:border-green-500/50'
+                      : 'bg-white/60 border-gray-200 hover:border-green-500/50'
+                  }`}
                 >
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
@@ -575,8 +623,16 @@ export default function MenuPreviewSection() {
                     )}
                     {/* Category Badge */}
                     {item.category && (
-                      <div className="absolute top-3 left-3 px-3 py-1 bg-black/70 backdrop-blur-sm rounded-full border border-white/20">
-                        <span className="text-xs font-semibold text-white">{item.category.name}</span>
+                      <div className={`absolute top-3 left-3 px-3 py-1 backdrop-blur-sm rounded-full border ${
+                        theme === 'dark' 
+                          ? 'bg-black/70 border-white/20' 
+                          : 'bg-white/80 border-gray-300/50'
+                      }`}>
+                        <span className={`text-xs font-semibold ${
+                          theme === 'dark' ? 'text-white' : 'text-gray-800'
+                        }`}>
+                          {item.category.name}
+                        </span>
                       </div>
                     )}
                     {/* Popular Badge */}
@@ -588,10 +644,14 @@ export default function MenuPreviewSection() {
 
                   {/* Content */}
                   <div className="p-4">
-                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-green-400 transition-colors duration-300 drop-shadow-md">
+                    <h3 className={`text-lg font-bold mb-2 group-hover:text-green-400 transition-colors duration-300 drop-shadow-md ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
                       {item.name}
                     </h3>
-                    <p className="text-sm text-gray-400 mb-3 line-clamp-2 group-hover:text-gray-300 transition-colors">
+                    <p className={`text-sm mb-3 line-clamp-2 group-hover:text-gray-300 transition-colors ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
                       {item.description || 'Delicious Ethiopian dish prepared with authentic spices and fresh ingredients.'}
                     </p>
 
@@ -609,7 +669,11 @@ export default function MenuPreviewSection() {
                     {/* Order Button */}
                     <button 
                       onClick={() => handleAddToOrder(item)}
-                      className="w-full px-4 py-2 bg-green-600/20 backdrop-blur-sm text-green-400 border border-green-600/30 rounded-lg font-semibold hover:bg-green-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group-hover:scale-105"
+                      className={`w-full px-4 py-2 backdrop-blur-sm border rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 group-hover:scale-105 ${
+                        theme === 'dark'
+                          ? 'bg-green-600/20 text-green-400 border-green-600/30 hover:bg-green-600 hover:text-white'
+                          : 'bg-green-100/70 text-green-600 border-green-300/50 hover:bg-green-600 hover:text-white'
+                      }`}
                     >
                       <span>Add to Cart</span>
                       <ArrowRight className="w-4 h-4" />
@@ -625,7 +689,11 @@ export default function MenuPreviewSection() {
                 <button
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 bg-black/40 backdrop-blur-md text-white border border-white/10 rounded-lg font-semibold hover:bg-green-600/20 hover:border-green-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className={`px-4 py-2 backdrop-blur-md border rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${
+                    theme === 'dark'
+                      ? 'bg-black/40 text-white border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
+                      : 'bg-white/60 text-gray-900 border-gray-200 hover:bg-green-100/70 hover:border-green-500/50'
+                  }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Previous</span>
@@ -640,7 +708,9 @@ export default function MenuPreviewSection() {
                       className={`w-10 h-10 rounded-lg font-semibold transition-all duration-300 ${
                         currentPage === page
                           ? 'bg-green-600 text-white border-2 border-green-500'
-                          : 'bg-black/40 backdrop-blur-md text-gray-300 border border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
+                          : theme === 'dark'
+                            ? 'bg-black/40 backdrop-blur-md text-gray-300 border border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
+                            : 'bg-white/60 backdrop-blur-md text-gray-700 border border-gray-200 hover:bg-green-100/70 hover:border-green-500/50'
                       }`}
                     >
                       {page}
@@ -651,7 +721,11 @@ export default function MenuPreviewSection() {
                 <button
                   onClick={goToNextPage}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-black/40 backdrop-blur-md text-white border border-white/10 rounded-lg font-semibold hover:bg-green-600/20 hover:border-green-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className={`px-4 py-2 backdrop-blur-md border rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${
+                    theme === 'dark'
+                      ? 'bg-black/40 text-white border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
+                      : 'bg-white/60 text-gray-900 border-gray-200 hover:bg-green-100/70 hover:border-green-500/50'
+                  }`}
                 >
                   <span>Next</span>
                   <ChevronRight className="w-4 h-4" />
