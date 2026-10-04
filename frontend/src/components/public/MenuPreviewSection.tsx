@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt } from 'lucide-react';
+import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, Filter, X } from 'lucide-react';
 import { menuApi } from '../../api/menu';
 import { useSearchParams } from 'react-router-dom';
 import MenuItemModal from './MenuItemModal';
@@ -35,6 +35,7 @@ interface MenuItem {
   price: number;
   image?: string;
   category?: {
+    id: string;
     name: string;
   };
   isAvailable: boolean;
@@ -49,8 +50,13 @@ export default function MenuPreviewSection() {
   const tableNumber = searchParams.get('table');
   
   const [allItems, setAllItems] = useState<MenuItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showFilters, setShowFilters] = useState(false);
   
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -68,6 +74,7 @@ export default function MenuPreviewSection() {
 
   useEffect(() => {
     fetchMenuItems();
+    fetchCategories();
     
     // Check if customer has an active order for bill requests
     if (tableNumber) {
@@ -81,6 +88,38 @@ export default function MenuPreviewSection() {
       }
     };
   }, [tableNumber, checkOrderInterval]);
+
+  // Filter items based on search and category
+  useEffect(() => {
+    let filtered = allItems;
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(item => item.category?.id === selectedCategory);
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(item => 
+        item.name.toLowerCase().includes(query) ||
+        item.description?.toLowerCase().includes(query) ||
+        item.category?.name.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredItems(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [allItems, selectedCategory, searchQuery]);
+
+  const fetchCategories = async () => {
+    try {
+      const cats = await menuApi.getCategories();
+      setCategories(cats);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  };
 
   const checkForActiveOrder = async () => {
     try {
@@ -170,10 +209,10 @@ export default function MenuPreviewSection() {
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentItems = allItems.slice(startIndex, endIndex);
+  const currentItems = filteredItems.slice(startIndex, endIndex);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -411,7 +450,7 @@ export default function MenuPreviewSection() {
 
       <div className="px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12 max-w-4xl mx-auto">
+        <div className="text-center mb-8 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/50 backdrop-blur-sm border border-green-700/50 rounded-full mb-4">
             <span className="text-green-400 font-semibold text-sm uppercase tracking-wider">OUR MENU</span>
           </div>
@@ -421,6 +460,78 @@ export default function MenuPreviewSection() {
           <p className="text-lg text-gray-300 drop-shadow-md">
             From traditional Ethiopian dishes to modern fusion cuisine, discover flavors that tell a story
           </p>
+        </div>
+
+        {/* Search and Filter Bar */}
+        <div className="mb-8 space-y-4">
+          {/* Search Bar */}
+          <div className="relative max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search for dishes, categories..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-20 py-4 bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-14 top-1/2 transform -translate-y-1/2 p-1 hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-gray-400" />
+                </button>
+              )}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-all ${
+                  showFilters ? 'bg-green-600 text-white' : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                }`}
+              >
+                <Filter className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Category Filters */}
+          <div className={`overflow-hidden transition-all duration-300 ${showFilters ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className={`px-4 py-2 rounded-full font-medium transition-all ${
+                  selectedCategory === 'all'
+                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
+                    : 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                }`}
+              >
+                All Dishes
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full font-medium transition-all ${
+                    selectedCategory === category.id
+                      ? 'bg-green-600 text-white shadow-lg shadow-green-600/50'
+                      : 'bg-black/40 backdrop-blur-md border border-white/20 text-gray-300 hover:border-green-500/50 hover:text-green-400'
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Results Count */}
+          {(searchQuery || selectedCategory !== 'all') && (
+            <div className="text-center">
+              <p className="text-gray-400 text-sm">
+                Found <span className="text-green-400 font-semibold">{filteredItems.length}</span> {filteredItems.length === 1 ? 'dish' : 'dishes'}
+                {searchQuery && <> matching "<span className="text-white">{searchQuery}</span>"</>}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Popular Items Grid */}
