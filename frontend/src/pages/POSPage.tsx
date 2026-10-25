@@ -5,13 +5,46 @@ import { menuApi, type MenuCategory, type MenuItem } from '../api/menu';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { LogOut, ShoppingCart, User } from 'lucide-react';
+import { LogOut, ShoppingCart, User, Bell } from 'lucide-react';
 import MenuSection from '../components/pos/MenuSection';
 import CartSection from '../components/pos/CartSection';
 import CheckoutDialog from '../components/pos/CheckoutDialog';
-import FloatingCallPanel from '../components/pos/FloatingCallPanel';
+import ActiveCallsPanel from '../components/pos/ActiveCallsPanel';
+import { useActiveCalls } from '../hooks/useWaiterCalls';
 import toast from 'react-hot-toast';
+
+// Active Calls Indicator Component
+function ActiveCallsIndicator() {
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const { calls } = useActiveCalls(false);
+
+  if (calls.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      <Button
+        onClick={() => setIsPanelOpen(true)}
+        className="relative bg-green-600 hover:bg-green-700 text-white"
+        size="sm"
+      >
+        <Bell className="w-4 h-4 mr-2" />
+        Active Calls
+        <Badge className="ml-2 bg-white text-green-700 hover:bg-white">
+          {calls.length}
+        </Badge>
+      </Button>
+      
+      <ActiveCallsPanel 
+        open={isPanelOpen} 
+        onOpenChange={setIsPanelOpen}
+      />
+    </>
+  );
+}
 
 export default function POSPage() {
   const location = useLocation();
@@ -22,6 +55,7 @@ export default function POSPage() {
   const [checkoutPrefillData, setCheckoutPrefillData] = useState<{
     tableNumber?: string;
     orderType?: any;
+    callId?: string;
   } | undefined>(undefined);
 
   // Load customer cart when navigating from waiter calls
@@ -33,10 +67,11 @@ export default function POSPage() {
       // Clear existing cart
       clearCart();
       
-      // Set prefill data for checkout
+      // Set prefill data for checkout including callId
       const prefill = {
         tableNumber: state.tableNumber,
         orderType: state.orderType,
+        callId: state.callId, // Pass the callId so we can complete the call
       };
       console.log('🎯 Setting prefill data:', prefill);
       setCheckoutPrefillData(prefill);
@@ -114,6 +149,14 @@ export default function POSPage() {
     }
   };
 
+  const handleCheckoutClose = (wasSuccessful: boolean) => {
+    setIsCheckoutOpen(false);
+    // Clear prefill data after successful checkout to prevent reuse
+    if (wasSuccessful) {
+      setCheckoutPrefillData(undefined);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* Header */}
@@ -134,6 +177,9 @@ export default function POSPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Active Calls Indicator */}
+            <ActiveCallsIndicator />
+            
             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg">
               <User className="w-4 h-4 text-gray-600" />
               <span className="text-sm font-medium text-gray-700">
@@ -184,12 +230,14 @@ export default function POSPage() {
       {/* Checkout Dialog */}
       <CheckoutDialog
         open={isCheckoutOpen}
-        onOpenChange={setIsCheckoutOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCheckoutClose(false);
+        }}
         prefillData={checkoutPrefillData}
+        onSuccess={() => {
+          setCheckoutPrefillData(undefined); // Clear prefill data after successful order
+        }}
       />
-
-      {/* Floating Waiter Call Panel */}
-      <FloatingCallPanel />
     </div>
   );
 }

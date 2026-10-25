@@ -52,9 +52,9 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Overview Section Items
   const overviewItems: NavItem[] = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-    { label: 'POS', icon: ShoppingCart, path: '/admin/pos', roles: ['Super Admin', 'Admin', 'Manager', 'Cashier'] },
+    { label: 'POS', icon: ShoppingCart, path: '/admin/pos', roles: ['Owner', 'Manager', 'Cashier'] },
     { label: 'Orders', icon: ListOrdered, path: '/admin/orders' },
-    { label: 'Kitchen', icon: ChefHat, path: '/admin/kitchen', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
+    { label: 'Kitchen', icon: ChefHat, path: '/admin/kitchen', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
   ];
 
   // Operations Section Items
@@ -62,24 +62,24 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
     { label: 'Tables', icon: Store, path: '/admin/tables' },
     { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
     { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations' },
-    { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Super Admin', 'Admin', 'Manager'] },
-    { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Super Admin', 'Admin', 'Manager', 'Kitchen Staff'] },
-    { label: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['Super Admin', 'Admin', 'Manager', 'Inventory Manager'] },
+    { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Owner', 'Manager'] },
+    { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
+    { label: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['Owner', 'Manager'] },
   ];
 
   // Business Section Items
   const businessItems: NavItem[] = [
-    { label: 'Expenses', icon: Wallet, path: '/admin/expenses', roles: ['Super Admin', 'Admin', 'Manager'] },
-    { label: 'Reports', icon: BarChart3, path: '/admin/reports', roles: ['Super Admin', 'Admin', 'Manager'] },
-    { label: 'Employees', icon: Users, path: '/admin/employees', roles: ['Super Admin', 'Admin', 'Manager'] },
+    { label: 'Expenses', icon: Wallet, path: '/admin/expenses', roles: ['Owner', 'Manager'] },
+    { label: 'Reports', icon: BarChart3, path: '/admin/reports', roles: ['Owner', 'Manager'] },
+    { label: 'Employees', icon: Users, path: '/admin/employees', roles: ['Owner', 'Manager'] },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   // Filter navigation items based on user role
   const canAccessItem = (item: NavItem) => {
-    // Super Admin and Admin have access to everything
-    if (user?.role?.name === 'Super Admin' || user?.role?.name === 'Admin') return true;
+    // Owner has access to everything
+    if (user?.role?.name === 'Owner') return true;
     // If no roles specified, everyone can access
     if (!item.roles) return true;
     // Check if user's role is in the allowed roles

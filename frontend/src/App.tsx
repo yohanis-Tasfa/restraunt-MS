@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import CashierDashboardPage from './pages/CashierDashboardPage';
 import POSPage from './pages/POSPage';
 import KitchenPage from './pages/KitchenPage';
 import OrdersPage from './pages/OrdersPage';
@@ -42,6 +43,29 @@ function LayoutWrapper() {
   );
 }
 
+// Role-based dashboard component
+function RoleBasedDashboard() {
+  const user = useAuthStore((state) => state.user);
+  const userRole = user?.role?.name;
+
+  // Cashiers get simplified dashboard
+  if (userRole === 'Cashier') {
+    return <CashierDashboardPage />;
+  }
+
+  // Kitchen Staff and Waiters should redirect to their main work page
+  if (userRole === 'Kitchen Staff') {
+    return <Navigate to="/admin/kitchen" replace />;
+  }
+
+  if (userRole === 'Waiter') {
+    return <Navigate to="/admin/tables" replace />;
+  }
+
+  // Owner and Manager get full dashboard
+  return <DashboardPage />;
+}
+
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -70,11 +94,11 @@ function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="dashboard" element={<RoleBasedDashboard />} />
                 <Route 
                   path="pos" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Cashier']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier']}>
                       <POSPage />
                     </ProtectedRoute>
                   } 
@@ -82,7 +106,7 @@ function App() {
                 <Route 
                   path="kitchen" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
                       <KitchenPage />
                     </ProtectedRoute>
                   } 
@@ -94,7 +118,7 @@ function App() {
                 <Route 
                   path="menu" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <MenuManagementPage />
                     </ProtectedRoute>
                   } 
@@ -102,7 +126,7 @@ function App() {
                 <Route 
                   path="recipes" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Kitchen Staff']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
                       <RecipesPage />
                     </ProtectedRoute>
                   } 
@@ -110,7 +134,7 @@ function App() {
                 <Route 
                   path="inventory" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager', 'Inventory Manager']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <InventoryPage />
                     </ProtectedRoute>
                   } 
@@ -118,7 +142,7 @@ function App() {
                 <Route 
                   path="expenses" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <ExpensesPage />
                     </ProtectedRoute>
                   } 
@@ -126,7 +150,7 @@ function App() {
                 <Route 
                   path="reports" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <ReportsPage />
                     </ProtectedRoute>
                   } 
@@ -134,7 +158,7 @@ function App() {
                 <Route 
                   path="employees" 
                   element={
-                    <ProtectedRoute allowedRoles={['Super Admin', 'Admin', 'Manager']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <EmployeesPage />
                     </ProtectedRoute>
                   } 

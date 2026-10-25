@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
 import { ordersApi, OrderType, type CreateOrderData } from '../../api/orders';
 import { tablesApi } from '../../api/tables';
+import { waiterCallsApi } from '../../api/waiter-calls';
 import { CreditCard, Banknote, Smartphone, Printer, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -23,14 +24,24 @@ interface CheckoutDialogProps {
   prefillData?: {
     tableNumber?: string;
     orderType?: OrderType;
+    callId?: string; // Add callId to track which call this order is for
   };
+  onSuccess?: () => void; // Callback when order is successfully created
 }
 
 type PaymentMethod = 'CASH' | 'CARD' | 'MOBILE';
 
-export default function CheckoutDialog({ open, onOpenChange, prefillData }: CheckoutDialogProps) {
+export default function CheckoutDialog({ open, onOpenChange, prefillData, onSuccess }: CheckoutDialogProps) {
   const { user } = useAuthStore();
+  const queryClient = useQueryClient();
   const { items, getSubtotal, getTax, getTotal, clearCart } = useCartStore();
+  
+  // Log prefillData when dialog opens
+  useEffect(() => {
+    if (open && prefillData) {
+      console.log('🎯 CheckoutDialog opened with prefillData:', prefillData);
+    }
+  }, [open, prefillData]);
   
   const [orderType, setOrderType] = useState<OrderType>(prefillData?.orderType || OrderType.DINE_IN);
   const [selectedTable, setSelectedTable] = useState<string>('');
@@ -67,11 +78,37 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData }: Chec
   // Create order mutation
   const createOrderMutation = useMutation({
     mutationFn: ordersApi.createOrder,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      console.log('📦 Order created successfully:', data);
+      console.log('🔍 Checking for callId in prefillData:', prefillData);
+      
       setOrderNumber(data.orderNumber);
       setCreatedOrderType(orderType);
       setIsSuccess(true);
       clearCart();
+      
+      // If this order was created from a waiter call, complete the call
+      if (prefillData?.callId) {
+        console.log('✅ Found callId, attempting to complete waiter call:', prefillData.callId);
+        try {
+          const result = await waiterCallsApi.completeCall(prefillData.callId, 'Order processed at POS');
+          console.log('✅ Waiter call completed successfully:', result);
+          queryClient.invalidateQueries({ queryKey: ['waiter-calls-active'] });
+          queryClient.invalidateQueries({ queryKey: ['waiter-calls'] });
+          toast.success('Order sent to kitchen and call completed!');
+        } catch (error) {
+          console.error('❌ Failed to complete waiter call:', error);
+          // Don't show error to user, order was successful
+        }
+      } else {
+        console.log('⚠️ No callId found in prefillData');
+      }
+      
+      // Call onSuccess callback to clear prefill data
+      if (onSuccess) {
+        onSuccess();
+      }
+      
       toast.success(
         orderType === OrderType.DINE_IN 
           ? 'Order sent to kitchen!' 

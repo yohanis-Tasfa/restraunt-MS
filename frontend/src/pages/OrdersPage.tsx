@@ -294,6 +294,11 @@ export default function OrdersPage() {
               setStatusFilter('all');
               setPaymentFilter('all');
             }}
+            className={
+              statusFilter === 'all' && paymentFilter === 'all'
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+            }
           >
             All Orders
           </Button>
@@ -304,6 +309,11 @@ export default function OrdersPage() {
               setStatusFilter('pending');
               setPaymentFilter('all');
             }}
+            className={
+              statusFilter === 'pending'
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+            }
           >
             Pending ({stats.pending})
           </Button>
@@ -314,6 +324,11 @@ export default function OrdersPage() {
               setStatusFilter('completed');
               setPaymentFilter('all');
             }}
+            className={
+              statusFilter === 'completed'
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+            }
           >
             Completed ({stats.completed})
           </Button>
@@ -324,7 +339,11 @@ export default function OrdersPage() {
               setStatusFilter('all');
               setPaymentFilter('unpaid');
             }}
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className={
+              paymentFilter === 'unpaid'
+                ? 'bg-red-600 hover:bg-red-700 text-white'
+                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+            }
           >
             <CreditCard className="w-4 h-4 mr-2" />
             Unpaid Orders ({stats.unpaid})

@@ -11,120 +11,34 @@ async function main() {
 
   const roles = [
     {
-      name: 'Super Admin',
-      description: 'Full system access with all permissions',
+      name: 'Owner',
+      description: 'Restaurant owner with full system access and business oversight',
       isSystem: true,
-      permissions: ['*'], // Wildcard for all permissions
-    },
-    {
-      name: 'Admin',
-      description: 'Restaurant administrator with full management access',
-      isSystem: true,
-      permissions: [
-        'users.create',
-        'users.read',
-        'users.update',
-        'users.delete',
-        'restaurants.create',
-        'restaurants.read',
-        'restaurants.update',
-        'restaurants.delete',
-        'branches.create',
-        'branches.read',
-        'branches.update',
-        'branches.delete',
-        'menu.create',
-        'menu.read',
-        'menu.update',
-        'menu.delete',
-        'orders.read',
-        'orders.create',
-        'orders.update',
-        'orders.cancel',
-        'inventory.read',
-        'inventory.update',
-        'reports.read',
-        'settings.read',
-        'settings.update',
-      ],
+      permissions: ['*'], // Wildcard for all permissions - Complete system control
     },
     {
       name: 'Manager',
-      description: 'Branch manager with operational access',
+      description: 'Branch manager with daily operations, inventory, and staff coordination',
       isSystem: true,
       permissions: [
-        'users.read',
-        'branches.read',
+        // Menu Management
         'menu.read',
+        'menu.create',
         'menu.update',
+        'menu.delete',
+        // Order Management
         'orders.read',
         'orders.create',
         'orders.update',
         'orders.cancel',
-        'inventory.read',
-        'inventory.update',
-        'customers.read',
-        'customers.create',
-        'reservations.read',
-        'reservations.create',
-        'reports.read',
-        'employees.read',
-        'employees.update',
-      ],
-    },
-    {
-      name: 'Cashier',
-      description: 'POS operator with order and payment access',
-      isSystem: true,
-      permissions: [
-        'menu.read',
-        'orders.read',
-        'orders.create',
-        'orders.update',
-        'payments.create',
-        'customers.read',
-        'customers.create',
-      ],
-    },
-    {
-      name: 'Waiter',
-      description: 'Waiter with order taking capabilities',
-      isSystem: true,
-      permissions: [
-        'menu.read',
-        'orders.read',
-        'orders.create',
-        'orders.update',
+        // Table & Reservation Management
         'tables.read',
         'tables.update',
         'reservations.read',
-      ],
-    },
-    {
-      name: 'Kitchen Staff',
-      description: 'Kitchen staff with order preparation access',
-      isSystem: true,
-      permissions: [
-        'orders.read',
-        'orders.update',
-        'menu.read',
-      ],
-    },
-    {
-      name: 'Delivery',
-      description: 'Delivery personnel',
-      isSystem: true,
-      permissions: [
-        'orders.read',
-        'orders.update',
-        'customers.read',
-      ],
-    },
-    {
-      name: 'Inventory Manager',
-      description: 'Inventory and purchasing manager',
-      isSystem: true,
-      permissions: [
+        'reservations.create',
+        'reservations.update',
+        'reservations.cancel',
+        // Inventory Management (merged from Inventory Manager)
         'inventory.read',
         'inventory.create',
         'inventory.update',
@@ -135,7 +49,92 @@ async function main() {
         'purchases.read',
         'purchases.create',
         'purchases.update',
+        // Customer Management
+        'customers.read',
+        'customers.create',
+        'customers.update',
+        // Employee Management
+        'employees.read',
+        'employees.update',
+        'attendance.read',
+        'attendance.create',
+        // Expense Management
+        'expenses.read',
+        'expenses.create',
+        'expenses.update',
+        // Reports
         'reports.read',
+        'reports.generate',
+        // Basic User Viewing
+        'users.read',
+        'branches.read',
+      ],
+    },
+    {
+      name: 'Cashier',
+      description: 'POS operator with order processing and payment handling',
+      isSystem: true,
+      permissions: [
+        // Menu Viewing
+        'menu.read',
+        // Order Management
+        'orders.read',
+        'orders.create',
+        'orders.update',
+        // Payment Processing
+        'payments.read',
+        'payments.create',
+        // Customer Management
+        'customers.read',
+        'customers.create',
+        'customers.update',
+        // Table Status Viewing
+        'tables.read',
+        // Basic Reports (own transactions)
+        'reports.read',
+      ],
+    },
+    {
+      name: 'Kitchen Staff',
+      description: 'Kitchen staff with order preparation and food fulfillment access',
+      isSystem: true,
+      permissions: [
+        // Order Management (kitchen operations)
+        'orders.read',
+        'orders.update',
+        // Menu & Recipe Viewing
+        'menu.read',
+        'recipes.read',
+        // Inventory Viewing (ingredient availability)
+        'inventory.read',
+      ],
+    },
+    {
+      name: 'Waiter',
+      description: 'Waiter with customer service and table management',
+      isSystem: true,
+      permissions: [
+        // Menu Viewing
+        'menu.read',
+        // Order Management
+        'orders.read',
+        'orders.create',
+        'orders.update',
+        // Table Management
+        'tables.read',
+        'tables.update',
+        // Reservation Viewing
+        'reservations.read',
+        // Customer Management
+        'customers.read',
+        'customers.create',
+        // Waiter Calls & Bill Requests
+        'waiter-calls.read',
+        'waiter-calls.update',
+        'bill-requests.read',
+        'bill-requests.update',
+        // Payment Collection (for bill requests)
+        'payments.create',
       ],
     },
   ];
@@ -208,44 +207,44 @@ async function main() {
     console.log(`⏭️  Branch already exists: ${branch.name}`);
   }
 
-  // Create Super Admin user
-  console.log('\nCreating Super Admin user...');
+  // Create Owner user
+  console.log('\nCreating Owner user...');
 
-  const superAdminRole = await prisma.role.findUnique({
-    where: { name: 'Super Admin' },
+  const ownerRole = await prisma.role.findUnique({
+    where: { name: 'Owner' },
   });
 
-  if (!superAdminRole) {
-    throw new Error('Super Admin role not found');
+  if (!ownerRole) {
+    throw new Error('Owner role not found');
   }
 
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: 'admin@rms.com' },
+  const existingOwner = await prisma.user.findUnique({
+    where: { email: 'owner@rms.com' },
   });
 
-  if (!existingAdmin) {
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+  if (!existingOwner) {
+    const hashedPassword = await bcrypt.hash('owner123', 10);
 
     await prisma.user.create({
       data: {
-        email: 'admin@rms.com',
-        username: 'admin',
+        email: 'owner@rms.com',
+        username: 'owner',
         password: hashedPassword,
-        firstName: 'Super',
-        lastName: 'Admin',
+        firstName: 'Restaurant',
+        lastName: 'Owner',
         phone: '+251911111111',
-        roleId: superAdminRole.id,
+        roleId: ownerRole.id,
         restaurantId: restaurant.id,
         branchId: branch.id,
         isActive: true,
         isLocked: false,
       },
     });
-    console.log('✅ Created Super Admin user');
-    console.log('   📧 Email: admin@rms.com');
-    console.log('   🔑 Password: admin123');
+    console.log('✅ Created Owner user');
+    console.log('   📧 Email: owner@rms.com');
+    console.log('   🔑 Password: owner123');
   } else {
-    console.log('⏭️  Super Admin user already exists');
+    console.log('⏭️  Owner user already exists');
   }
 
   // Create Manager user
@@ -328,16 +327,98 @@ async function main() {
     console.log('⏭️  Cashier user already exists');
   }
 
+  // Create Kitchen Staff user
+  console.log('\nCreating Kitchen Staff user...');
+
+  const kitchenRole = await prisma.role.findUnique({
+    where: { name: 'Kitchen Staff' },
+  });
+
+  if (!kitchenRole) {
+    throw new Error('Kitchen Staff role not found');
+  }
+
+  const existingKitchen = await prisma.user.findUnique({
+    where: { email: 'kitchen@rms.com' },
+  });
+
+  if (!existingKitchen) {
+    const hashedPassword = await bcrypt.hash('kitchen123', 10);
+
+    await prisma.user.create({
+      data: {
+        email: 'kitchen@rms.com',
+        username: 'kitchen',
+        password: hashedPassword,
+        firstName: 'Chef',
+        lastName: 'Cook',
+        phone: '+251944444444',
+        roleId: kitchenRole.id,
+        restaurantId: restaurant.id,
+        branchId: branch.id,
+        isActive: true,
+        isLocked: false,
+      },
+    });
+    console.log('✅ Created Kitchen Staff user');
+    console.log('   📧 Email: kitchen@rms.com');
+    console.log('   🔑 Password: kitchen123');
+  } else {
+    console.log('⏭️  Kitchen Staff user already exists');
+  }
+
+  // Create Waiter user
+  console.log('\nCreating Waiter user...');
+
+  const waiterRole = await prisma.role.findUnique({
+    where: { name: 'Waiter' },
+  });
+
+  if (!waiterRole) {
+    throw new Error('Waiter role not found');
+  }
+
+  const existingWaiter = await prisma.user.findUnique({
+    where: { email: 'waiter@rms.com' },
+  });
+
+  if (!existingWaiter) {
+    const hashedPassword = await bcrypt.hash('waiter123', 10);
+
+    await prisma.user.create({
+      data: {
+        email: 'waiter@rms.com',
+        username: 'waiter',
+        password: hashedPassword,
+        firstName: 'Server',
+        lastName: 'Waiter',
+        phone: '+251955555555',
+        roleId: waiterRole.id,
+        restaurantId: restaurant.id,
+        branchId: branch.id,
+        isActive: true,
+        isLocked: false,
+      },
+    });
+    console.log('✅ Created Waiter user');
+    console.log('   📧 Email: waiter@rms.com');
+    console.log('   🔑 Password: waiter123');
+  } else {
+    console.log('⏭️  Waiter user already exists');
+  }
+
   console.log('\n✅ Database seeding completed successfully!');
   console.log('\n📝 Summary:');
-  console.log('   - 8 Roles created');
+  console.log('   - 5 Roles created (Owner, Manager, Cashier, Kitchen Staff, Waiter)');
   console.log('   - 1 Restaurant created');
   console.log('   - 1 Branch created');
-  console.log('   - 3 Demo users created');
+  console.log('   - 5 Demo users created');
   console.log('\n🔐 Login Credentials:');
-  console.log('   Super Admin: admin@rms.com / admin123');
+  console.log('   Owner: owner@rms.com / owner123');
   console.log('   Manager: manager@rms.com / manager123');
   console.log('   Cashier: cashier@rms.com / cashier123');
+  console.log('   Kitchen Staff: kitchen@rms.com / kitchen123');
+  console.log('   Waiter: waiter@rms.com / waiter123');
 }
 
 main()

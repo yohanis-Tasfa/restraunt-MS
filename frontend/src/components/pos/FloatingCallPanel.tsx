@@ -66,10 +66,10 @@ export default function FloatingCallPanel() {
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-4 left-64 z-50 ml-4">
         <Button
           onClick={() => setIsMinimized(false)}
-          className="relative shadow-lg hover:shadow-xl transition-shadow"
+          className="relative shadow-lg hover:shadow-xl transition-shadow bg-green-600 hover:bg-green-700"
           size="lg"
         >
           <Bell className="w-5 h-5 mr-2" />
@@ -85,7 +85,7 @@ export default function FloatingCallPanel() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] flex flex-col">
+    <div className="fixed bottom-4 left-64 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-40 max-h-[600px] flex flex-col ml-4">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
         <div className="flex items-center gap-2">
