@@ -685,17 +685,32 @@ export class OrderService {
 
     const date = new Date();
     const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+    const branchCode = branch?.code || 'ORD';
 
-    // Count orders today for this branch
+    // Try to find the last order number for today
     const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-    const count = await prisma.order.count({
+    const lastOrder = await prisma.order.findFirst({
       where: {
         branchId,
         createdAt: { gte: startOfDay },
+        orderNumber: { startsWith: `${branchCode}-${dateStr}` },
       },
+      orderBy: { createdAt: 'desc' },
+      select: { orderNumber: true },
     });
 
-    const sequence = (count + 1).toString().padStart(4, '0');
-    return `${branch?.code || 'ORD'}-${dateStr}-${sequence}`;
+    let sequence = 1;
+    if (lastOrder) {
+      // Extract sequence number from last order
+      const parts = lastOrder.orderNumber.split('-');
+      const lastSequence = parseInt(parts[parts.length - 1], 10);
+      sequence = lastSequence + 1;
+    }
+
+    // Add random suffix to ensure uniqueness in case of race conditions
+    const randomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+    const sequenceStr = sequence.toString().padStart(4, '0');
+    
+    return `${branchCode}-${dateStr}-${sequenceStr}-${randomSuffix}`;
   }
 }

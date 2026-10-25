@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import CashierDashboardPage from './pages/CashierDashboardPage';
+import WaiterDashboardPage from './pages/WaiterDashboardPage';
 import POSPage from './pages/POSPage';
 import KitchenPage from './pages/KitchenPage';
 import OrdersPage from './pages/OrdersPage';
@@ -53,13 +54,14 @@ function RoleBasedDashboard() {
     return <CashierDashboardPage />;
   }
 
-  // Kitchen Staff and Waiters should redirect to their main work page
-  if (userRole === 'Kitchen Staff') {
-    return <Navigate to="/admin/kitchen" replace />;
+  // Waiters get their own dashboard
+  if (userRole === 'Waiter') {
+    return <WaiterDashboardPage />;
   }
 
-  if (userRole === 'Waiter') {
-    return <Navigate to="/admin/tables" replace />;
+  // Kitchen Staff should redirect to their main work page
+  if (userRole === 'Kitchen Staff') {
+    return <Navigate to="/admin/kitchen" replace />;
   }
 
   // Owner and Manager get full dashboard
@@ -98,7 +100,7 @@ function App() {
                 <Route 
                   path="pos" 
                   element={
-                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier']}>
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier', 'Waiter']}>
                       <POSPage />
                     </ProtectedRoute>
                   } 
