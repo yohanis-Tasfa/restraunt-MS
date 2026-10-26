@@ -222,6 +222,40 @@ class WebSocketService {
     return this.io ? this.io.sockets.sockets.size : 0;
   }
 
+  // Tip notification events
+  emitTipReceived(tip: any, waiterId: string, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      tip,
+      message: `You received a ${tip.amount.toFixed(2)} ETB tip from ${tip.method === 'CASH' ? 'cash' : 'transfer'} payment!`,
+      type: 'received',
+    };
+
+    // Emit to the specific waiter who received the tip
+    this.io.to(`user:${waiterId}`).emit('tip:received', data);
+    
+    // Also emit to branch for managers to track
+    this.io.to(`branch:${branchId}`).emit('tip:created', data);
+    
+    console.log(`Emitted tip:received to user:${waiterId} - Amount: ${tip.amount} ETB`);
+  }
+
+  emitTipPaid(tip: any, waiterId: string, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      tip,
+      message: `Your ${tip.amount.toFixed(2)} ETB tip has been paid out!`,
+      type: 'paid',
+    };
+
+    // Emit to the specific waiter
+    this.io.to(`user:${waiterId}`).emit('tip:paid', data);
+    
+    console.log(`Emitted tip:paid to user:${waiterId} - Amount: ${tip.amount} ETB`);
+  }
+
   // Get instance
   getIO(): Server | null {
     return this.io;

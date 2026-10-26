@@ -23,6 +23,7 @@ import {
   Wifi,
   WifiOff,
   FileText,
+  DollarSign,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -63,6 +64,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
     { label: 'Tables', icon: Store, path: '/admin/tables' },
     { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
     { label: 'Bill Requests', icon: FileText, path: '/admin/bill-requests', roles: ['Owner', 'Manager', 'Cashier'] },
+    { label: 'My Tips', icon: DollarSign, path: '/admin/my-tips', roles: ['Waiter'] },
     { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations' },
     { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Owner', 'Manager'] },
     { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
@@ -72,6 +74,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Business Section Items
   const businessItems: NavItem[] = [
     { label: 'Expenses', icon: Wallet, path: '/admin/expenses', roles: ['Owner', 'Manager'] },
+    { label: 'Tips Management', icon: DollarSign, path: '/admin/tips-management', roles: ['Owner', 'Manager'] },
     { label: 'Reports', icon: BarChart3, path: '/admin/reports', roles: ['Owner', 'Manager'] },
     { label: 'Employees', icon: Users, path: '/admin/employees', roles: ['Owner', 'Manager'] },
   ];

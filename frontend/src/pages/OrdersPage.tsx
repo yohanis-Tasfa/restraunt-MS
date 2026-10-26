@@ -47,6 +47,23 @@ export default function OrdersPage() {
   // Enable real-time bill request notifications
   useBillRequestNotifications();
 
+  // Fetch bill requests to check status for orders
+  const { data: billRequestsData } = useQuery({
+    queryKey: ['bill-requests'],
+    queryFn: () => billRequestsApi.getAll({ page: 1, limit: 100 }),
+    refetchInterval: 5000, // Refresh every 5 seconds
+  });
+
+  const billRequests = billRequestsData?.data || [];
+
+  // Helper to get bill request for an order
+  const getBillRequestForOrder = (orderId: string) => {
+    return billRequests.find(
+      (br: any) =>
+        br.orderId === orderId && ['PENDING', 'PROCESSING', 'COMPLETED'].includes(br.status)
+    );
+  };
+
   const handleProcessPayment = (order: Order) => {
     setSelectedOrder(order);
     setIsPaymentModalOpen(true);
@@ -484,35 +501,70 @@ export default function OrdersPage() {
 
                 {/* Actions */}
                 <div className="flex justify-end gap-2">
-                  {/* Request Bill button - show for SERVED/COMPLETED orders that are unpaid */}
-                  {(['SERVED', 'COMPLETED'].includes(order.status)) &&
-                    order.paymentStatus === 'UNPAID' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleRequestBill(order)}
-                        className="border-blue-300 text-blue-700 hover:bg-blue-50"
-                      >
-                        <FileText className="w-4 h-4 mr-1" />
-                        Bill
-                      </Button>
-                    )}
-                  {order.paymentStatus === 'UNPAID' && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleProcessPayment(order)}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <CreditCard className="w-4 h-4 mr-1" />
-                      Pay
-                    </Button>
-                  )}
-                  <button
-                    onClick={() => handleViewDetails(order)}
-                    className="p-1 hover:bg-gray-100 rounded transition-colors"
-                  >
-                    <MoreVertical className="w-5 h-5 text-gray-400" />
-                  </button>
+                  {(() => {
+                    const billRequest = getBillRequestForOrder(order.id);
+                    const isUnpaid = order.paymentStatus === 'UNPAID';
+                    const canRequestBill =
+                      ['SERVED', 'COMPLETED'].includes(order.status) && isUnpaid && !billRequest;
+                    const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
+                    const billInProgress = billRequest && billRequest.status !== 'COMPLETED';
+
+                    return (
+                      <>
+                        {/* Show bill status badge if exists */}
+                        {billInProgress && (
+                          <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">
+                            {billRequest.status === 'PENDING' && '📄 Bill Requested'}
+                            {billRequest.status === 'PROCESSING' && '⏳ Bill Processing'}
+                          </Badge>
+                        )}
+
+                        {/* Request Bill button - only show if no bill request exists */}
+                        {canRequestBill && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleRequestBill(order)}
+                            className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                          >
+                            <FileText className="w-4 h-4 mr-1" />
+                            Bill
+                          </Button>
+                        )}
+
+                        {/* Collect Payment button - show when bill is ready */}
+                        {billReady && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleProcessPayment(order)}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <CreditCard className="w-4 h-4 mr-1" />
+                            Collect Payment
+                          </Button>
+                        )}
+
+                        {/* Regular Pay button - for direct payment without bill request */}
+                        {isUnpaid && !billRequest && !canRequestBill && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleProcessPayment(order)}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <CreditCard className="w-4 h-4 mr-1" />
+                            Pay
+                          </Button>
+                        )}
+
+                        <button
+                          onClick={() => handleViewDetails(order)}
+                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                        >
+                          <MoreVertical className="w-5 h-5 text-gray-400" />
+                        </button>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             ))
@@ -672,35 +724,79 @@ export default function OrdersPage() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-4 border-t">
-                {/* Request Bill button for SERVED/COMPLETED unpaid orders */}
-                {(['SERVED', 'COMPLETED'].includes(selectedOrder.status)) &&
-                  selectedOrder.paymentStatus === 'UNPAID' && (
-                    <Button
-                      onClick={() => {
-                        setIsDetailsModalOpen(false);
-                        handleRequestBill(selectedOrder);
-                      }}
-                      variant="outline"
-                      className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
-                    >
-                      <FileText className="w-4 h-4 mr-2" />
-                      Request Bill
-                    </Button>
-                  )}
+                {(() => {
+                  const billRequest = getBillRequestForOrder(selectedOrder.id);
+                  const isUnpaid = selectedOrder.paymentStatus === 'UNPAID';
+                  const canRequestBill =
+                    ['SERVED', 'COMPLETED'].includes(selectedOrder.status) && isUnpaid && !billRequest;
+                  const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
+                  const billInProgress = billRequest && billRequest.status !== 'COMPLETED';
 
-                {/* Payment Button for Unpaid Orders */}
-                {selectedOrder.paymentStatus === 'UNPAID' && (
-                  <Button
-                    onClick={() => {
-                      setIsDetailsModalOpen(false);
-                      handleProcessPayment(selectedOrder);
-                    }}
-                    className="flex-1 bg-green-600 hover:bg-green-700"
-                  >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Process Payment
-                  </Button>
-                )}
+                  return (
+                    <>
+                      {/* Show bill status message */}
+                      {billInProgress && (
+                        <div className="w-full mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-sm text-blue-800 font-medium">
+                            {billRequest.status === 'PENDING' && '📄 Bill request sent to cashier'}
+                            {billRequest.status === 'PROCESSING' && '⏳ Cashier is processing your bill request'}
+                          </p>
+                        </div>
+                      )}
+
+                      {billReady && (
+                        <div className="w-full mb-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-sm text-green-800 font-medium">
+                            ✅ Bill is ready! You can now collect payment from customer
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Request Bill button */}
+                      {canRequestBill && (
+                        <Button
+                          onClick={() => {
+                            setIsDetailsModalOpen(false);
+                            handleRequestBill(selectedOrder);
+                          }}
+                          variant="outline"
+                          className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Request Bill
+                        </Button>
+                      )}
+
+                      {/* Collect Payment Button when bill is ready */}
+                      {billReady && (
+                        <Button
+                          onClick={() => {
+                            setIsDetailsModalOpen(false);
+                            handleProcessPayment(selectedOrder);
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Collect Payment
+                        </Button>
+                      )}
+
+                      {/* Regular Payment Button for unpaid orders without bill request */}
+                      {isUnpaid && !billRequest && !canRequestBill && (
+                        <Button
+                          onClick={() => {
+                            setIsDetailsModalOpen(false);
+                            handleProcessPayment(selectedOrder);
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Process Payment
+                        </Button>
+                      )}
+                    </>
+                  );
+                })()}
 
                 {selectedOrder.status !== OrderStatus.CANCELLED &&
                   selectedOrder.status !== OrderStatus.COMPLETED && (
@@ -710,7 +806,7 @@ export default function OrdersPage() {
                           onClick={() =>
                             handleStatusChange(selectedOrder.id, OrderStatus.CONFIRMED)
                           }
-                          className="flex-1"
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           Confirm Order
                         </Button>
@@ -720,7 +816,7 @@ export default function OrdersPage() {
                           onClick={() =>
                             handleStatusChange(selectedOrder.id, OrderStatus.PREPARING)
                           }
-                          className="flex-1"
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           Start Preparing
                         </Button>
@@ -728,7 +824,7 @@ export default function OrdersPage() {
                       {selectedOrder.status === OrderStatus.PREPARING && (
                         <Button
                           onClick={() => handleStatusChange(selectedOrder.id, OrderStatus.READY)}
-                          className="flex-1"
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           Mark as Ready
                         </Button>
@@ -736,7 +832,7 @@ export default function OrdersPage() {
                       {selectedOrder.status === OrderStatus.READY && (
                         <Button
                           onClick={() => handleStatusChange(selectedOrder.id, OrderStatus.SERVED)}
-                          className="flex-1"
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           Mark as Served
                         </Button>
@@ -746,7 +842,7 @@ export default function OrdersPage() {
                           onClick={() =>
                             handleStatusChange(selectedOrder.id, OrderStatus.COMPLETED)
                           }
-                          className="flex-1"
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           Complete Order
                         </Button>
@@ -754,6 +850,7 @@ export default function OrdersPage() {
                       <Button
                         variant="destructive"
                         onClick={() => handleCancelOrder(selectedOrder.id)}
+                        className="bg-red-600 hover:bg-red-700 text-white"
                       >
                         <X className="w-4 h-4 mr-2" />
                         Cancel Order

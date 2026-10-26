@@ -98,6 +98,20 @@ export const paymentsApi = {
     const response = await apiClient.post(`/payments/${id}/refund`, { reason });
     return response.data;
   },
+
+  // Collect payment from customer (for waiters)
+  collectPayment: async (data: {
+    orderId: string;
+    amount: number;
+    method: PaymentMethod;
+    amountReceived?: number;
+    proofImageUrl?: string;
+    transactionRef?: string;
+    notes?: string;
+  }): Promise<Payment> => {
+    const response = await apiClient.post('/payments/collect', data);
+    return response.data;
+  },
 };
 
 export default paymentsApi;

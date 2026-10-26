@@ -48,6 +48,8 @@ model User {
   waiterCalls       WaiterCall[]    @relation("WaiterCalls")
   billRequestsRequested BillRequest[] @relation("BillRequestedBy")
   billRequestsProcessed BillRequest[] @relation("BillProcessedBy")
+  tipsReceived      Tip[]           @relation("WaiterTips")
+  tipsPaidOut       Tip[]           @relation("TipPaidBy")
   
   @@index([email])
   @@index([roleId])
@@ -331,6 +333,7 @@ model Order {
   items           OrderItem[]
   payments        Payment[]
   billRequests    BillRequest[]
+  tips            Tip[]
   
   @@index([branchId])
   @@index([tableId])
@@ -411,6 +414,9 @@ model Payment {
   verifiedAt      DateTime?     // When manager verified the proof
   verifiedById    String?       // Manager who verified (optional for now)
   
+  // Tip relation
+  tips            Tip[]
+  
   createdAt       DateTime      @default(now())
   
   @@index([orderId])
@@ -426,6 +432,43 @@ enum PaymentMethod {
   TELEBIRR
   CBE_BIRR
   BANK_TRANSFER
+}
+
+// ============================================
+// TIP MANAGEMENT
+// ============================================
+
+model Tip {
+  id              String        @id @default(uuid())
+  orderId         String
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paymentId       String
+  payment         Payment       @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  waiterId        String
+  waiter          User          @relation("WaiterTips", fields: [waiterId], references: [id], onDelete: Cascade)
+  amount          Float
+  method          PaymentMethod // CASH or TRANSFER
+  status          TipStatus     @default(PENDING)
+  
+  // For transfer tips - when manager pays waiter
+  paidAt          DateTime?
+  paidById        String?       // Manager/Cashier who paid the waiter
+  paidBy          User?         @relation("TipPaidBy", fields: [paidById], references: [id], onDelete: SetNull)
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([waiterId])
+  @@index([orderId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("tips")
+}
+
+enum TipStatus {
+  PENDING         // Cash tip collected or Transfer tip waiting for payout
+  PAID            // Transfer tip paid to waiter by manager
 }
 
 // ============================================

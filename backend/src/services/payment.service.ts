@@ -1,6 +1,7 @@
 import { ApiError } from '../utils/ApiError';
 import prisma from '../config/database';
 import { CreatePaymentData, RefundPaymentData, PaymentQueryParams } from '../types/payment.types';
+import { websocketService } from './websocket.service';
 
 export class PaymentService {
   async getAll(params: PaymentQueryParams = {}) {
@@ -129,10 +130,12 @@ export class PaymentService {
       throw new ApiError(400, 'Payment amount must be greater than 0');
     }
 
-    if (data.amount > remaining) {
+    // Allow overpayment for tips - payment can be more than remaining balance
+    // Only validate it's not unreasonably high
+    if (data.amount > order.total * 3) {
       throw new ApiError(
         400,
-        `Payment amount (${data.amount} ETB) exceeds remaining balance (${remaining} ETB)`
+        `Payment amount (${data.amount} ETB) seems unreasonably high`
       );
     }
 
@@ -211,20 +214,28 @@ export class PaymentService {
       throw new ApiError(400, 'Payment amount must be greater than 0');
     }
 
-    if (data.amount > remaining) {
+    // Allow overpayment for tips - payment can be more than remaining balance
+    // Only validate it's not unreasonably high (e.g., more than 3x the order total)
+    if (data.amount > order.total * 3) {
       throw new ApiError(
         400,
-        `Payment amount (${data.amount} ETB) exceeds remaining balance (${remaining} ETB)`
+        `Payment amount (${data.amount} ETB) seems unreasonably high`
       );
     }
 
     // For CASH, calculate change
     let change = 0;
+    let tipAmount = 0;
     if (data.method === 'CASH' && data.amountReceived) {
       if (data.amountReceived < data.amount) {
         throw new ApiError(400, 'Amount received is less than payment amount');
       }
       change = data.amountReceived - data.amount;
+    }
+
+    // Calculate tip if paying more than remaining balance
+    if (data.amount > remaining) {
+      tipAmount = data.amount - remaining;
     }
 
     // For TRANSFER, require proof image
@@ -251,10 +262,55 @@ export class PaymentService {
             orderNumber: true,
             total: true,
             table: true,
+            createdById: true, // Get waiter ID
           },
         },
       },
     });
+
+    // Create Tip record if there's an overpayment
+    // ONLY track tips from transfer/digital payments (not cash)
+    // Cash tips go directly to waiter, no need to track
+    let tipRecord = null;
+    if (tipAmount > 0 && data.method !== 'CASH') {
+      tipRecord = await prisma.tip.create({
+        data: {
+          orderId: data.orderId,
+          paymentId: payment.id,
+          waiterId: payment.order.createdById, // The waiter who created the order
+          amount: tipAmount,
+          method: data.method,
+          status: 'PENDING', // Waiting for manager to pay out
+          notes: `Tip from ${data.method} payment - pending payout`,
+        },
+        include: {
+          waiter: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              branchId: true,
+              branch: {
+                select: {
+                  id: true,
+                  restaurantId: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Emit WebSocket notification to waiter
+      if (tipRecord.waiter.branchId && tipRecord.waiter.branch?.restaurantId) {
+        websocketService.emitTipReceived(
+          tipRecord,
+          payment.order.createdById,
+          tipRecord.waiter.branchId,
+          tipRecord.waiter.branch.restaurantId
+        );
+      }
+    }
 
     // Update order payment status
     const newTotalPaid = totalPaid + data.amount;
@@ -291,7 +347,9 @@ export class PaymentService {
     return {
       payment,
       change,
-      remaining: remaining - data.amount,
+      tip: tipAmount,
+      tipId: tipRecord?.id,
+      remaining: Math.max(0, remaining - data.amount), // Don't show negative remaining
       totalPaid: newTotalPaid,
       isFullyPaid: paymentStatus === 'PAID',
     };

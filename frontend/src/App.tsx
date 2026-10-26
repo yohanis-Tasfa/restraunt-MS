@@ -20,6 +20,8 @@ import ProfilePage from './pages/ProfilePage';
 import CustomerMenuPage from './pages/CustomerMenuPage';
 import WaiterCallsPage from './pages/WaiterCallsPage';
 import BillRequestQueuePage from './pages/BillRequestQueuePage';
+import WaiterTipsPage from './pages/WaiterTipsPage';
+import TipsManagementPage from './pages/TipsManagementPage';
 import PublicLandingPage from './pages/PublicLandingPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -120,6 +122,22 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier']}>
                       <BillRequestQueuePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="my-tips" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Waiter']}>
+                      <WaiterTipsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="tips-management" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                      <TipsManagementPage />
                     </ProtectedRoute>
                   } 
                 />

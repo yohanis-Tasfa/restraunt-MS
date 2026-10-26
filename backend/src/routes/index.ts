@@ -23,6 +23,7 @@ import profileRoutes from './profile.routes';
 import customerSessionRoutes from './customer-session.routes';
 import waiterCallRoutes from './waiter-call.routes';
 import billRequestRoutes from './bill-request.routes';
+import tipRoutes from './tip.routes';
 
 const router = Router();
 
@@ -50,6 +51,7 @@ router.use('/profile', profileRoutes);
 router.use('/customer-sessions', customerSessionRoutes);
 router.use('/waiter-calls', waiterCallRoutes);
 router.use('/bill-requests', billRequestRoutes);
+router.use('/tips', tipRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
