@@ -164,15 +164,7 @@ export class PaymentService {
 
     // Update order payment status
     const newTotalPaid = totalPaid + data.amount;
-    let paymentStatus: 'UNPAID' | 'PARTIAL' | 'PAID' = 'PARTIAL';
-
-    if (newTotalPaid >= order.total) {
-      paymentStatus = 'PAID';
-    } else if (newTotalPaid > 0) {
-      paymentStatus = 'PARTIAL';
-    } else {
-      paymentStatus = 'UNPAID';
-    }
+    const paymentStatus = newTotalPaid >= order.total ? 'PAID' : 'UNPAID';
 
     await prisma.order.update({
       where: { id: data.orderId },
@@ -243,16 +235,21 @@ export class PaymentService {
       throw new ApiError(400, 'Transfer proof image is required for digital payments');
     }
 
+    // Actual payment amount toward order (excluding tip)
+    const paymentAmountTowardOrder = Math.min(data.amount, remaining);
+
     // Create payment
     const payment = await prisma.payment.create({
       data: {
         orderId: data.orderId,
-        amount: data.amount,
+        amount: paymentAmountTowardOrder, // Only the amount applied to the order
         method: data.method,
         reference: data.reference,
         proofImageUrl: data.proofImageUrl,
         transactionRef: data.transactionRef,
-        notes: data.notes,
+        notes: tipAmount > 0 
+          ? `${data.notes || ''}\nTotal received: ${data.amount} ETB (includes ${tipAmount.toFixed(2)} ETB tip)`.trim()
+          : data.notes,
         status: 'completed',
       },
       include: {
@@ -313,17 +310,15 @@ export class PaymentService {
     }
 
     // Update order payment status
-    const newTotalPaid = totalPaid + data.amount;
-    let paymentStatus: 'UNPAID' | 'PARTIAL' | 'PAID' = 'PARTIAL';
+    const newTotalPaid = totalPaid + paymentAmountTowardOrder; // Only count payment toward order, not tip
+    let paymentStatus: 'UNPAID' | 'PAID' = newTotalPaid >= order.total ? 'PAID' : 'UNPAID';
 
-    if (newTotalPaid >= order.total) {
-      paymentStatus = 'PAID';
-      
-      // Mark order as completed
+    if (paymentStatus === 'PAID') {
+      // Mark order as completed and paid
       await prisma.order.update({
         where: { id: data.orderId },
         data: { 
-          paymentStatus,
+          paymentStatus: 'PAID',
           status: 'COMPLETED',
           completedAt: new Date(),
         },
@@ -336,11 +331,11 @@ export class PaymentService {
           data: { status: 'AVAILABLE' },
         });
       }
-    } else if (newTotalPaid > 0) {
-      paymentStatus = 'PARTIAL';
+    } else {
+      // Still unpaid (partial payments not tracked)
       await prisma.order.update({
         where: { id: data.orderId },
-        data: { paymentStatus },
+        data: { paymentStatus: 'UNPAID' },
       });
     }
 
@@ -349,7 +344,7 @@ export class PaymentService {
       change,
       tip: tipAmount,
       tipId: tipRecord?.id,
-      remaining: Math.max(0, remaining - data.amount), // Don't show negative remaining
+      remaining: Math.max(0, remaining - paymentAmountTowardOrder), // Remaining after payment (not tip)
       totalPaid: newTotalPaid,
       isFullyPaid: paymentStatus === 'PAID',
     };

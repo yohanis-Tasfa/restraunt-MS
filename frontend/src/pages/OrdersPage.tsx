@@ -614,7 +614,7 @@ export default function OrdersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Order Type</p>
-                  <p className="font-medium">{selectedOrder.type.replace('_', ' ')}</p>
+                  <p className="font-medium text-gray-900">{selectedOrder.type.replace('_', ' ')}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Status</p>
@@ -625,7 +625,7 @@ export default function OrdersPage() {
                 {selectedOrder.table && (
                   <div>
                     <p className="text-sm text-gray-600">Table</p>
-                    <p className="font-medium">Table {selectedOrder.table.number}</p>
+                    <p className="font-medium text-gray-900">Table {selectedOrder.table.number}</p>
                   </div>
                 )}
                 <div>
@@ -637,7 +637,7 @@ export default function OrdersPage() {
                 {selectedOrder.createdBy && (
                   <div>
                     <p className="text-sm text-gray-600">Waiter</p>
-                    <p className="font-medium">
+                    <p className="font-medium text-gray-900">
                       {selectedOrder.createdBy.firstName} {selectedOrder.createdBy.lastName}
                     </p>
                   </div>
@@ -645,7 +645,7 @@ export default function OrdersPage() {
                 {selectedOrder.customer && (
                   <div>
                     <p className="text-sm text-gray-600">Customer</p>
-                    <p className="font-medium">
+                    <p className="font-medium text-gray-900">
                       {selectedOrder.customer.firstName} {selectedOrder.customer.lastName}
                     </p>
                   </div>
@@ -654,7 +654,7 @@ export default function OrdersPage() {
 
               {/* Items */}
               <div>
-                <h3 className="font-semibold mb-3">Order Items</h3>
+                <h3 className="font-semibold mb-3 text-gray-900">Order Items</h3>
                 <div className="space-y-2">
                   {(selectedOrder.items || []).map((item: any) => (
                     <div
@@ -662,14 +662,14 @@ export default function OrdersPage() {
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                     >
                       <div className="flex-1">
-                        <p className="font-medium">{item.menuItem?.name || 'Unknown Item'}</p>
+                        <p className="font-medium text-gray-900">{item.menuItem?.name || 'Unknown Item'}</p>
                         <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                         {item.notes && (
                           <p className="text-sm text-gray-500 italic">Note: {item.notes}</p>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{(item.subtotal || 0).toFixed(2)} ETB</p>
+                        <p className="font-medium text-gray-900">{(item.subtotal || 0).toFixed(2)} ETB</p>
                         <p className="text-sm text-gray-600">@ {(item.price || 0).toFixed(2)} ETB</p>
                       </div>
                     </div>
@@ -681,18 +681,18 @@ export default function OrdersPage() {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">{selectedOrder.subtotal.toFixed(2)} ETB</span>
+                  <span className="font-medium text-gray-900">{selectedOrder.subtotal.toFixed(2)} ETB</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">
                     Tax ({selectedOrder.tax > 0 ? '15%' : '0%'})
                   </span>
-                  <span className="font-medium">{selectedOrder.tax.toFixed(2)} ETB</span>
+                  <span className="font-medium text-gray-900">{selectedOrder.tax.toFixed(2)} ETB</span>
                 </div>
                 {selectedOrder.serviceCharge > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Service Charge</span>
-                    <span className="font-medium">{selectedOrder.serviceCharge.toFixed(2)} ETB</span>
+                    <span className="font-medium text-gray-900">{selectedOrder.serviceCharge.toFixed(2)} ETB</span>
                   </div>
                 )}
                 {selectedOrder.discount > 0 && (
@@ -702,15 +702,15 @@ export default function OrdersPage() {
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                  <span>Total</span>
-                  <span>{selectedOrder.total.toFixed(2)} ETB</span>
+                  <span className="text-gray-900">Total</span>
+                  <span className="text-gray-900">{selectedOrder.total.toFixed(2)} ETB</span>
                 </div>
               </div>
 
               {/* Notes */}
               {(selectedOrder.notes || selectedOrder.specialInstructions) && (
                 <div>
-                  <h3 className="font-semibold mb-2">Notes</h3>
+                  <h3 className="font-semibold mb-2 text-gray-900">Notes</h3>
                   {selectedOrder.notes && (
                     <p className="text-sm text-gray-600">{selectedOrder.notes}</p>
                   )}

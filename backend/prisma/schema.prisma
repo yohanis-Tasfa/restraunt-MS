@@ -364,7 +364,6 @@ enum OrderStatus {
 
 enum PaymentStatus {
   UNPAID
-  PARTIAL
   PAID
   REFUNDED
 }
