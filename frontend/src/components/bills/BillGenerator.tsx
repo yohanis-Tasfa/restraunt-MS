@@ -109,27 +109,27 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               <div className="mb-4 text-sm">
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Bill Date:</span>
-                  <span className="font-medium">{format(new Date(), 'MMM dd, yyyy HH:mm')}</span>
+                  <span className="font-medium text-gray-900">{format(new Date(), 'MMM dd, yyyy HH:mm')}</span>
                 </div>
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Order Number:</span>
-                  <span className="font-medium">{order.orderNumber}</span>
+                  <span className="font-medium text-gray-900">{order.orderNumber}</span>
                 </div>
                 {billRequest.table && (
                   <div className="flex justify-between mb-1">
                     <span className="text-gray-600">Table:</span>
-                    <span className="font-medium">{billRequest.table.number}</span>
+                    <span className="font-medium text-gray-900">{billRequest.table.number}</span>
                   </div>
                 )}
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Served By:</span>
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-900">
                     {billRequest.requestedBy?.firstName} {billRequest.requestedBy?.lastName}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Cashier:</span>
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-900">
                     {billRequest.processedBy?.firstName} {billRequest.processedBy?.lastName}
                   </span>
                 </div>
@@ -140,19 +140,19 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
                 <table className="w-full text-sm">
                   <thead className="border-b-2 border-gray-800">
                     <tr>
-                      <th className="text-left py-2">Item</th>
-                      <th className="text-center py-2">Qty</th>
-                      <th className="text-right py-2">Price</th>
-                      <th className="text-right py-2">Total</th>
+                      <th className="text-left py-2 text-gray-900">Item</th>
+                      <th className="text-center py-2 text-gray-900">Qty</th>
+                      <th className="text-right py-2 text-gray-900">Price</th>
+                      <th className="text-right py-2 text-gray-900">Total</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {(order.items || []).map((item: any) => (
                       <tr key={item.id}>
-                        <td className="py-2">{item.menuItem?.name || 'Unknown'}</td>
-                        <td className="text-center py-2">{item.quantity}</td>
-                        <td className="text-right py-2">{item.price.toFixed(2)}</td>
-                        <td className="text-right py-2">{item.subtotal.toFixed(2)}</td>
+                        <td className="py-2 text-gray-900">{item.menuItem?.name || 'Unknown'}</td>
+                        <td className="text-center py-2 text-gray-900">{item.quantity}</td>
+                        <td className="text-right py-2 text-gray-900">{item.price.toFixed(2)}</td>
+                        <td className="text-right py-2 text-gray-900">{item.subtotal.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -163,18 +163,18 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               <div className="border-t-2 border-gray-800 pt-3 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal:</span>
-                  <span className="font-medium">{order.subtotal.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                  <span className="font-medium text-gray-900">{order.subtotal.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
                 </div>
                 {order.tax > 0 && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Tax ({restaurant?.taxRate || 0}%):</span>
-                    <span className="font-medium">{order.tax.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                    <span className="font-medium text-gray-900">{order.tax.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
                   </div>
                 )}
                 {order.serviceCharge > 0 && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Service Charge:</span>
-                    <span className="font-medium">{order.serviceCharge.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                    <span className="font-medium text-gray-900">{order.serviceCharge.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
                   </div>
                 )}
                 {order.discount > 0 && (
@@ -183,7 +183,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
                     <span className="font-medium">-{order.discount.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-lg font-bold border-t-2 border-gray-800 pt-2 mt-2">
+                <div className="flex justify-between text-lg font-bold border-t-2 border-gray-800 pt-2 mt-2 text-gray-900">
                   <span>TOTAL:</span>
                   <span>{order.total.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
                 </div>
@@ -219,7 +219,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
             <Button
               onClick={handlePrint}
               disabled={isPrinting || completeMutation.isPending}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             >
               {isPrinting ? (
                 <>
@@ -238,6 +238,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               onClick={handleDownloadPDF}
               disabled={isPrinting || completeMutation.isPending}
               variant="outline"
+              className="text-gray-700 border-gray-300 hover:bg-gray-50"
             >
               <Download className="w-4 h-4 mr-2" />
               Save as PDF
@@ -247,6 +248,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               onClick={handleCompleteWithoutPrint}
               disabled={completeMutation.isPending}
               variant="outline"
+              className="text-gray-700 border-gray-300 hover:bg-gray-50"
             >
               <CheckCircle className="w-4 h-4 mr-2" />
               Complete

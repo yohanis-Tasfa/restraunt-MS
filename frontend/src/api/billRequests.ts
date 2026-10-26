@@ -49,39 +49,68 @@ export interface BillRequestQueryParams {
 // API Functions
 export const billRequestsApi = {
   async getAll(params?: BillRequestQueryParams) {
-    const response = await api.get('/bill-requests', { params });
-    return response.data;
+    // The axios interceptor returns response.data automatically
+    // So response is already { success: true, data: [...], pagination: {...} }
+    const response: any = await api.get('/bill-requests', { params });
+    console.log('Raw API response:', response);
+    console.log('Response is array?:', Array.isArray(response));
+    console.log('Response.data:', response.data);
+    console.log('Response.pagination:', response.pagination);
+    
+    // If response is already { data: [...], pagination: {...} }
+    if (response.data && response.pagination !== undefined) {
+      return {
+        data: response.data,
+        pagination: response.pagination,
+      };
+    }
+    
+    // If response is the array directly (shouldn't happen but fallback)
+    if (Array.isArray(response)) {
+      return {
+        data: response,
+        pagination: undefined,
+      };
+    }
+    
+    // Default fallback
+    return {
+      data: [],
+      pagination: undefined,
+    };
   },
 
   async getById(id: string) {
-    const response = await api.get(`/bill-requests/${id}`);
-    return response.data.data;
+    // Axios interceptor returns response.data automatically
+    // So response is { success: true, data: {...} }
+    const response: any = await api.get(`/bill-requests/${id}`);
+    return response.data;
   },
 
   async create(data: CreateBillRequestData) {
-    const response = await api.post('/bill-requests', data);
-    return response.data.data;
+    const response: any = await api.post('/bill-requests', data);
+    return response.data;
   },
 
   async process(id: string, notes?: string) {
-    const response = await api.patch(`/bill-requests/${id}/process`, { notes });
-    return response.data.data;
+    const response: any = await api.patch(`/bill-requests/${id}/process`, { notes });
+    return response.data;
   },
 
   async complete(id: string, billId?: string) {
-    const response = await api.patch(`/bill-requests/${id}/complete`, { billId });
-    return response.data.data;
+    const response: any = await api.patch(`/bill-requests/${id}/complete`, { billId });
+    return response.data;
   },
 
   async cancel(id: string, reason?: string) {
-    const response = await api.patch(`/bill-requests/${id}/cancel`, { reason });
-    return response.data.data;
+    const response: any = await api.patch(`/bill-requests/${id}/cancel`, { reason });
+    return response.data;
   },
 
   async getPendingCount(userId?: string) {
-    const response = await api.get('/bill-requests/pending-count', {
+    const response: any = await api.get('/bill-requests/pending-count', {
       params: { userId },
     });
-    return response.data.data.count;
+    return response.data.count;
   },
 };

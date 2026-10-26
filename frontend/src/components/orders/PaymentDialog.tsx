@@ -292,18 +292,18 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">{order.subtotal.toFixed(2)} ETB</span>
+                <span className="font-medium text-gray-900">{order.subtotal.toFixed(2)} ETB</span>
               </div>
               {order.tax > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
-                  <span className="font-medium">{order.tax.toFixed(2)} ETB</span>
+                  <span className="font-medium text-gray-900">{order.tax.toFixed(2)} ETB</span>
                 </div>
               )}
               {order.serviceCharge > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Service Charge</span>
-                  <span className="font-medium">{order.serviceCharge.toFixed(2)} ETB</span>
+                  <span className="font-medium text-gray-900">{order.serviceCharge.toFixed(2)} ETB</span>
                 </div>
               )}
               {order.discount > 0 && (
@@ -313,7 +313,7 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                 </div>
               )}
               <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
-                <span>Total Amount</span>
+                <span className="text-gray-900">Total Amount</span>
                 <span className="text-green-600">{order.total.toFixed(2)} ETB</span>
               </div>
             </div>
@@ -331,8 +331,8 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Banknote className="w-8 h-8" />
-                <span className="text-sm font-medium">Cash</span>
+                <Banknote className={`w-8 h-8 ${paymentMethod === PaymentMethod.CASH ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === PaymentMethod.CASH ? 'text-gray-900' : 'text-gray-700'}`}>Cash</span>
               </button>
 
               <button
@@ -343,8 +343,8 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Smartphone className="w-8 h-8" />
-                <span className="text-sm font-medium">Telebirr</span>
+                <Smartphone className={`w-8 h-8 ${paymentMethod === PaymentMethod.TELEBIRR ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === PaymentMethod.TELEBIRR ? 'text-gray-900' : 'text-gray-700'}`}>Telebirr</span>
               </button>
 
               <button
@@ -355,8 +355,8 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Smartphone className="w-8 h-8" />
-                <span className="text-sm font-medium">CBE Birr</span>
+                <Smartphone className={`w-8 h-8 ${paymentMethod === PaymentMethod.CBE_BIRR ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === PaymentMethod.CBE_BIRR ? 'text-gray-900' : 'text-gray-700'}`}>CBE Birr</span>
               </button>
 
               <button
@@ -367,8 +367,8 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <CreditCard className="w-8 h-8" />
-                <span className="text-sm font-medium">Card</span>
+                <CreditCard className={`w-8 h-8 ${paymentMethod === PaymentMethod.CARD ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === PaymentMethod.CARD ? 'text-gray-900' : 'text-gray-700'}`}>Card</span>
               </button>
 
               <button
@@ -379,8 +379,8 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Building2 className="w-8 h-8" />
-                <span className="text-sm font-medium">Bank Transfer</span>
+                <Building2 className={`w-8 h-8 ${paymentMethod === PaymentMethod.BANK_TRANSFER ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === PaymentMethod.BANK_TRANSFER ? 'text-gray-900' : 'text-gray-700'}`}>Bank Transfer</span>
               </button>
 
               <button
@@ -391,8 +391,8 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Smartphone className="w-8 h-8" />
-                <span className="text-sm font-medium">Mobile Money</span>
+                <Smartphone className={`w-8 h-8 ${paymentMethod === PaymentMethod.MOBILE ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === PaymentMethod.MOBILE ? 'text-gray-900' : 'text-gray-700'}`}>Mobile Money</span>
               </button>
             </div>
           </div>

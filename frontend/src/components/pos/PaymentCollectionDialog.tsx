@@ -258,8 +258,8 @@ export default function PaymentCollectionDialog({
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Banknote className="w-6 h-6" />
-                <span className="text-sm font-medium">Cash</span>
+                <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === 'CASH' ? 'text-gray-900' : 'text-gray-700'}`}>Cash</span>
               </button>
               <button
                 onClick={() => setPaymentMethod('BANK_TRANSFER')}
@@ -269,8 +269,8 @@ export default function PaymentCollectionDialog({
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <Upload className="w-6 h-6" />
-                <span className="text-sm font-medium">Transfer</span>
+                <Upload className={`w-6 h-6 ${paymentMethod === 'BANK_TRANSFER' ? 'text-green-600' : 'text-gray-700'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === 'BANK_TRANSFER' ? 'text-gray-900' : 'text-gray-700'}`}>Transfer</span>
               </button>
             </div>
           </div>

@@ -278,8 +278,8 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <Banknote className="w-6 h-6" />
-                  <span className="text-xs font-medium">Cash</span>
+                  <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600' : 'text-gray-700'}`} />
+                  <span className={`text-xs font-medium ${paymentMethod === 'CASH' ? 'text-gray-900' : 'text-gray-700'}`}>Cash</span>
                 </button>
                 <button
                   onClick={() => setPaymentMethod('CARD')}
@@ -289,8 +289,8 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <CreditCard className="w-6 h-6" />
-                  <span className="text-xs font-medium">Card</span>
+                  <CreditCard className={`w-6 h-6 ${paymentMethod === 'CARD' ? 'text-green-600' : 'text-gray-700'}`} />
+                  <span className={`text-xs font-medium ${paymentMethod === 'CARD' ? 'text-gray-900' : 'text-gray-700'}`}>Card</span>
                 </button>
                 <button
                   onClick={() => setPaymentMethod('MOBILE')}
@@ -300,8 +300,8 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <Smartphone className="w-6 h-6" />
-                  <span className="text-xs font-medium">Mobile</span>
+                  <Smartphone className={`w-6 h-6 ${paymentMethod === 'MOBILE' ? 'text-green-600' : 'text-gray-700'}`} />
+                  <span className={`text-xs font-medium ${paymentMethod === 'MOBILE' ? 'text-gray-900' : 'text-gray-700'}`}>Mobile</span>
                 </button>
               </div>
             </div>
@@ -321,14 +321,14 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
             <h3 className="font-semibold text-gray-900 mb-3">Order Summary</h3>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">{subtotal.toFixed(2)} ብር</span>
+              <span className="font-medium text-gray-900">{subtotal.toFixed(2)} ብር</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Tax (15%)</span>
-              <span className="font-medium">{tax.toFixed(2)} ብር</span>
+              <span className="font-medium text-gray-900">{tax.toFixed(2)} ብር</span>
             </div>
             <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
-              <span>Total</span>
+              <span className="text-gray-900">Total</span>
               <span className="text-green-600">{total.toFixed(2)} ብር</span>
             </div>
           </div>

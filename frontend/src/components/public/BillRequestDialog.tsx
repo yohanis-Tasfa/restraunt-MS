@@ -126,7 +126,7 @@ export default function BillRequestDialog({
               {order.items.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <div className="flex-1">
-                    <span className="text-gray-700">{item.name}</span>
+                    <span className="text-gray-900">{item.name}</span>
                     <span className="text-gray-500 ml-2">×{item.quantity}</span>
                   </div>
                   <span className="font-medium text-gray-900">
@@ -141,14 +141,14 @@ export default function BillRequestDialog({
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">{order.subtotal.toFixed(2)} ብር</span>
+              <span className="font-medium text-gray-900">{order.subtotal.toFixed(2)} ብር</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Tax (15%)</span>
-              <span className="font-medium">{order.tax.toFixed(2)} ብር</span>
+              <span className="font-medium text-gray-900">{order.tax.toFixed(2)} ብር</span>
             </div>
             <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
-              <span>Total Amount</span>
+              <span className="text-gray-900">Total Amount</span>
               <span className="text-green-600">{order.total.toFixed(2)} ብር</span>
             </div>
           </div>

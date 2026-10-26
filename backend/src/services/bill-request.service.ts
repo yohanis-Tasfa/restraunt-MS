@@ -23,6 +23,8 @@ export class BillRequestService {
     } = params;
     const skip = (page - 1) * limit;
 
+    console.log('BillRequestService.getAll called with:', params);
+
     const where: any = {};
 
     if (status) {
@@ -37,10 +39,11 @@ export class BillRequestService {
       where.processedById = processedById;
     }
 
-    // Filter by branch
+    // Filter by branch - need to check if order's branchId matches
     if (branchId) {
       where.order = {
-        branchId,
+        ...where.order,
+        branchId: branchId,
       };
     }
 
@@ -54,7 +57,10 @@ export class BillRequestService {
       }
     }
 
+    console.log('Prisma where clause:', JSON.stringify(where, null, 2));
+
     const total = await prisma.billRequest.count({ where });
+    console.log('Total bill requests found:', total);
 
     const billRequests = await prisma.billRequest.findMany({
       where,
@@ -68,6 +74,7 @@ export class BillRequestService {
             type: true,
             status: true,
             total: true,
+            branchId: true,
             createdAt: true,
             items: {
               select: {
@@ -112,7 +119,9 @@ export class BillRequestService {
       orderBy: { requestedAt: 'desc' },
     });
 
-    return {
+    console.log('Bill requests fetched from DB:', billRequests.length);
+
+    const result = {
       data: billRequests,
       pagination: {
         total,
@@ -121,6 +130,13 @@ export class BillRequestService {
         totalPages: Math.ceil(total / limit),
       },
     };
+
+    console.log('Returning result:', {
+      dataLength: result.data.length,
+      pagination: result.pagination,
+    });
+
+    return result;
   }
 
   async getById(id: string) {

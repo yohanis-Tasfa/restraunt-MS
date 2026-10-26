@@ -13,11 +13,19 @@ export const getBillRequests = asyncHandler(async (req: Request, res: Response) 
     status: req.query.status as any,
     requestedById: req.query.requestedById as string,
     processedById: req.query.processedById as string,
+    branchId: req.query.branchId as string,
     startDate: req.query.startDate as string,
     endDate: req.query.endDate as string,
   };
 
+  console.log('Bill requests query params:', params);
+
   const result = await billRequestService.getAll(params);
+
+  console.log('Bill requests service result:', {
+    dataLength: result.data.length,
+    pagination: result.pagination,
+  });
 
   res.json({
     success: true,
