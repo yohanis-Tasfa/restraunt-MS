@@ -7,6 +7,7 @@ import {
   OrderQueryParams,
   OrderItemInput,
 } from '../types/order.types';
+import { websocketService } from './websocket.service';
 
 export class OrderService {
   async getAll(params: OrderQueryParams = {}) {
@@ -418,6 +419,22 @@ export class OrderService {
   async updateStatus(id: string, status: string) {
     const order = await prisma.order.findUnique({
       where: { id },
+      include: {
+        table: true,
+        createdBy: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            branchId: true,
+            branch: {
+              select: {
+                restaurantId: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!order) {
@@ -455,7 +472,41 @@ export class OrderService {
     const updated = await prisma.order.update({
       where: { id },
       data: updateData,
+      include: {
+        table: {
+          select: {
+            number: true,
+          },
+        },
+        items: {
+          select: {
+            quantity: true,
+            menuItem: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
+
+    // Emit WebSocket notification when order is READY (kitchen finished preparing)
+    if (status === 'READY' && order.createdBy) {
+      const itemsCount = updated.items.reduce((sum, item) => sum + item.quantity, 0);
+      const itemNames = updated.items.map(item => `${item.quantity}x ${item.menuItem.name}`).join(', ');
+      
+      websocketService.emitOrderReady(
+        {
+          ...updated,
+          itemsCount,
+          itemNames,
+        },
+        order.createdBy.id, // Notify the waiter who created the order
+        order.createdBy.branchId!,
+        order.createdBy.branch!.restaurantId
+      );
+    }
 
     return updated;
   }

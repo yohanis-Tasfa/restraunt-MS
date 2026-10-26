@@ -256,6 +256,25 @@ class WebSocketService {
     console.log(`Emitted tip:paid to user:${waiterId} - Amount: ${tip.amount} ETB`);
   }
 
+  // Order ready notification events
+  emitOrderReady(order: any, waiterId: string, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      order,
+      message: `Order #${order.orderNumber} is ready! Table ${order.table?.number || 'N/A'} - ${order.itemsCount || 0} items`,
+      type: 'ready',
+    };
+
+    // Emit to the specific waiter who created the order
+    this.io.to(`user:${waiterId}`).emit('order:ready', data);
+    
+    // Also emit to branch for all staff to see
+    this.io.to(`branch:${branchId}`).emit('order:ready', data);
+    
+    console.log(`Emitted order:ready to user:${waiterId} - Order: ${order.orderNumber}`);
+  }
+
   // Get instance
   getIO(): Server | null {
     return this.io;

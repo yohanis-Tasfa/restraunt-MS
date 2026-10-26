@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import { Bell, Plus, Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useTipNotifications } from '../../hooks/useTipNotifications';
+import { useOrderReadyNotifications } from '../../hooks/useOrderReadyNotifications';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   // Enable tip notifications globally for all logged-in users
   // The hook internally checks if user is a waiter
   useTipNotifications();
+  
+  // Enable order ready notifications for waiters
+  useOrderReadyNotifications();
 
   return (
     <div className="flex h-screen bg-gray-50">
