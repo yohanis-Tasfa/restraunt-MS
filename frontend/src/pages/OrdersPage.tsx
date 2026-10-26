@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, OrderStatus, OrderType, type Order } from '../api/orders';
+import { billRequestsApi } from '../api/billRequests';
 import { useAuthStore } from '../store/authStore';
+import { useBillRequestNotifications } from '../hooks/useBillRequestNotifications';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
@@ -24,6 +26,7 @@ import {
   CheckCircle,
   DollarSign,
   CreditCard,
+  FileText,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -40,6 +43,9 @@ export default function OrdersPage() {
   const [paymentFilter, setPaymentFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const limit = 20;
+
+  // Enable real-time bill request notifications
+  useBillRequestNotifications();
 
   const handleProcessPayment = (order: Order) => {
     setSelectedOrder(order);
@@ -118,6 +124,20 @@ export default function OrdersPage() {
     },
   });
 
+  // Request bill mutation
+  const requestBillMutation = useMutation({
+    mutationFn: ({ orderId, tableId, notes }: { orderId: string; tableId?: string; notes?: string }) =>
+      billRequestsApi.create({ orderId, tableId, notes }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ['bill-requests'] });
+      toast.success('Bill request sent to cashier');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to request bill');
+    },
+  });
+
   const handleViewDetails = async (order: Order) => {
     try {
       // Fetch full order details with all items
@@ -137,6 +157,15 @@ export default function OrdersPage() {
   const handleCancelOrder = (orderId: string) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
       cancelOrderMutation.mutate(orderId);
+    }
+  };
+
+  const handleRequestBill = (order: Order) => {
+    if (window.confirm('Request bill for this order?')) {
+      requestBillMutation.mutate({
+        orderId: order.id,
+        tableId: order.tableId,
+      });
     }
   };
 
@@ -455,6 +484,19 @@ export default function OrdersPage() {
 
                 {/* Actions */}
                 <div className="flex justify-end gap-2">
+                  {/* Request Bill button - show for SERVED/COMPLETED orders that are unpaid */}
+                  {(['SERVED', 'COMPLETED'].includes(order.status)) &&
+                    order.paymentStatus === 'UNPAID' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRequestBill(order)}
+                        className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                      >
+                        <FileText className="w-4 h-4 mr-1" />
+                        Bill
+                      </Button>
+                    )}
                   {order.paymentStatus === 'UNPAID' && (
                     <Button
                       size="sm"
@@ -630,6 +672,22 @@ export default function OrdersPage() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-4 border-t">
+                {/* Request Bill button for SERVED/COMPLETED unpaid orders */}
+                {(['SERVED', 'COMPLETED'].includes(selectedOrder.status)) &&
+                  selectedOrder.paymentStatus === 'UNPAID' && (
+                    <Button
+                      onClick={() => {
+                        setIsDetailsModalOpen(false);
+                        handleRequestBill(selectedOrder);
+                      }}
+                      variant="outline"
+                      className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      Request Bill
+                    </Button>
+                  )}
+
                 {/* Payment Button for Unpaid Orders */}
                 {selectedOrder.paymentStatus === 'UNPAID' && (
                   <Button

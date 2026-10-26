@@ -1,17 +1,39 @@
 import { Router } from 'express';
-import * as billRequestController from '../controllers/bill-request.controller';
 import { authenticate } from '../middleware/auth';
+import {
+  getBillRequests,
+  getBillRequest,
+  createBillRequest,
+  processBillRequest,
+  completeBillRequest,
+  cancelBillRequest,
+  getPendingCount,
+} from '../controllers/bill-request.controller';
 
 const router = Router();
 
-// Public route - customer creates bill request
-router.post('/', billRequestController.createBillRequest);
+// All routes require authentication
+router.use(authenticate);
 
-// Protected routes - require authentication
-router.get('/pending', authenticate, billRequestController.getPendingBillRequests);
-router.get('/all', authenticate, billRequestController.getAllPendingBillRequests);
-router.get('/:id', authenticate, billRequestController.getBillRequestById);
-router.patch('/:id/acknowledge', authenticate, billRequestController.acknowledgeBillRequest);
-router.patch('/:id/complete', authenticate, billRequestController.completeBillRequest);
+// Get all bill requests (with filtering)
+router.get('/', getBillRequests);
+
+// Get pending count
+router.get('/pending-count', getPendingCount);
+
+// Get single bill request
+router.get('/:id', getBillRequest);
+
+// Create bill request (Waiter)
+router.post('/', createBillRequest);
+
+// Process bill request (Cashier starts working on it)
+router.patch('/:id/process', processBillRequest);
+
+// Complete bill request (Cashier finished generating bill)
+router.patch('/:id/complete', completeBillRequest);
+
+// Cancel bill request
+router.patch('/:id/cancel', cancelBillRequest);
 
 export default router;

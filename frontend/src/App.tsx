@@ -19,6 +19,7 @@ import EmployeesPage from './pages/EmployeesPage';
 import ProfilePage from './pages/ProfilePage';
 import CustomerMenuPage from './pages/CustomerMenuPage';
 import WaiterCallsPage from './pages/WaiterCallsPage';
+import BillRequestQueuePage from './pages/BillRequestQueuePage';
 import PublicLandingPage from './pages/PublicLandingPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -114,6 +115,14 @@ function App() {
                   } 
                 />
                 <Route path="orders" element={<OrdersPage />} />
+                <Route 
+                  path="bill-requests" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier']}>
+                      <BillRequestQueuePage />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path="tables" element={<TablesPage />} />
                 <Route path="waiter-calls" element={<WaiterCallsPage />} />
                 <Route path="reservations" element={<ReservationsPage />} />

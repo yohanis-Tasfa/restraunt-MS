@@ -22,6 +22,7 @@ import {
   Bell,
   Wifi,
   WifiOff,
+  FileText,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -61,6 +62,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const operationsItems: NavItem[] = [
     { label: 'Tables', icon: Store, path: '/admin/tables' },
     { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
+    { label: 'Bill Requests', icon: FileText, path: '/admin/bill-requests', roles: ['Owner', 'Manager', 'Cashier'] },
     { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations' },
     { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Owner', 'Manager'] },
     { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Owner', 'Manager', 'Kitchen Staff'] },

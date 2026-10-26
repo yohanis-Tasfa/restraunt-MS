@@ -1,119 +1,102 @@
 import { Request, Response } from 'express';
-import billRequestService from '../services/bill-request.service';
+import { BillRequestService } from '../services/bill-request.service';
+import { asyncHandler } from '../utils/asyncHandler';
+import { ApiError } from '../utils/ApiError';
+import { BillRequestQueryParams, CreateBillRequestData, ProcessBillRequestData } from '../types/bill-request.types';
 
-/**
- * Customer creates a bill request
- * POST /api/bill-requests
- */
-export const createBillRequest = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { orderId, sessionId, tableId, waiterId } = req.body;
+const billRequestService = new BillRequestService();
 
-    if (!orderId || !sessionId || !tableId || !waiterId) {
-      res.status(400).json({
-        message: 'orderId, sessionId, tableId, and waiterId are required',
-      });
-      return;
-    }
+export const getBillRequests = asyncHandler(async (req: Request, res: Response) => {
+  const params: BillRequestQueryParams = {
+    page: req.query.page ? parseInt(req.query.page as string) : undefined,
+    limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
+    status: req.query.status as any,
+    requestedById: req.query.requestedById as string,
+    processedById: req.query.processedById as string,
+    startDate: req.query.startDate as string,
+    endDate: req.query.endDate as string,
+  };
 
-    const billRequest = await billRequestService.createBillRequest({
-      orderId,
-      sessionId,
-      tableId,
-      waiterId,
-    });
+  const result = await billRequestService.getAll(params);
 
-    res.status(201).json(billRequest);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || 'Failed to create bill request' });
-  }
-};
+  res.json({
+    success: true,
+    data: result.data,
+    pagination: result.pagination,
+  });
+});
 
-/**
- * Get pending bill requests for the authenticated waiter
- * GET /api/bill-requests/pending
- */
-export const getPendingBillRequests = async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
+export const getBillRequest = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const requests = await billRequestService.getPendingBillRequests(user.id);
+  const billRequest = await billRequestService.getById(id);
 
-    res.json(requests);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || 'Failed to get bill requests' });
-  }
-};
+  res.json({
+    success: true,
+    data: billRequest,
+  });
+});
 
-/**
- * Get all pending bill requests (for managers)
- * GET /api/bill-requests/all
- */
-export const getAllPendingBillRequests = async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
-    const branchId = req.query.branchId as string | undefined;
+export const createBillRequest = asyncHandler(async (req: Request, res: Response) => {
+  const data: CreateBillRequestData = req.body;
+  const userId = req.user!.id;
 
-    const requests = await billRequestService.getAllPendingBillRequests(
-      branchId || user.branchId
-    );
+  const billRequest = await billRequestService.create(data, userId);
 
-    res.json(requests);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || 'Failed to get bill requests' });
-  }
-};
+  res.status(201).json({
+    success: true,
+    message: 'Bill request created successfully',
+    data: billRequest,
+  });
+});
 
-/**
- * Acknowledge a bill request (waiter is on the way)
- * PATCH /api/bill-requests/:id/acknowledge
- */
-export const acknowledgeBillRequest = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+export const processBillRequest = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data: ProcessBillRequestData = req.body;
+  const userId = req.user!.id;
 
-    const billRequest = await billRequestService.acknowledgeBillRequest(id as string);
+  const billRequest = await billRequestService.process(id, userId, data);
 
-    res.json(billRequest);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || 'Failed to acknowledge bill request' });
-  }
-};
+  res.json({
+    success: true,
+    message: 'Bill request is now being processed',
+    data: billRequest,
+  });
+});
 
-/**
- * Complete a bill request (after payment collected)
- * PATCH /api/bill-requests/:id/complete
- */
-export const completeBillRequest = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { notes } = req.body;
+export const completeBillRequest = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { billId } = req.body;
 
-    const billRequest = await billRequestService.completeBillRequest(id as string, notes);
+  const billRequest = await billRequestService.complete(id, billId);
 
-    res.json(billRequest);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || 'Failed to complete bill request' });
-  }
-};
+  res.json({
+    success: true,
+    message: 'Bill request completed successfully',
+    data: billRequest,
+  });
+});
 
-/**
- * Get bill request by ID
- * GET /api/bill-requests/:id
- */
-export const getBillRequestById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
+export const cancelBillRequest = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { reason } = req.body;
 
-    const billRequest = await billRequestService.getBillRequestById(id as string);
+  const billRequest = await billRequestService.cancel(id, reason);
 
-    if (!billRequest) {
-      res.status(404).json({ message: 'Bill request not found' });
-      return;
-    }
+  res.json({
+    success: true,
+    message: 'Bill request cancelled',
+    data: billRequest,
+  });
+});
 
-    res.json(billRequest);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message || 'Failed to get bill request' });
-  }
-};
+export const getPendingCount = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.query.userId as string | undefined;
+
+  const count = await billRequestService.getPendingCount(userId);
+
+  res.json({
+    success: true,
+    data: { count },
+  });
+});

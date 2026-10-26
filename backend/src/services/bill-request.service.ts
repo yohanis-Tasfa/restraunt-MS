@@ -1,187 +1,507 @@
+import { ApiError } from '../utils/ApiError';
 import prisma from '../config/database';
-import { WaiterCallRequestType, WaiterCallStatus } from '@prisma/client';
+import { websocketService } from './websocket.service';
+import {
+  CreateBillRequestData,
+  UpdateBillRequestData,
+  BillRequestQueryParams,
+  BillRequestStatus,
+  ProcessBillRequestData,
+} from '../types/bill-request.types';
 
-export interface CreateBillRequestData {
-  orderId: string;
-  sessionId: string;
-  tableId: string;
-  waiterId: string;
-}
+export class BillRequestService {
+  async getAll(params: BillRequestQueryParams = {}) {
+    const {
+      page = 1,
+      limit = 20,
+      status,
+      requestedById,
+      processedById,
+      branchId,
+      startDate,
+      endDate,
+    } = params;
+    const skip = (page - 1) * limit;
 
-class BillRequestService {
-  /**
-   * Customer requests bill - creates a waiter call with BILL_REQUEST type
-   */
-  async createBillRequest(data: CreateBillRequestData) {
-    const { orderId, sessionId, tableId, waiterId } = data;
+    const where: any = {};
 
-    // Get the order to include in the call data
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
+    if (status) {
+      where.status = status;
+    }
+
+    if (requestedById) {
+      where.requestedById = requestedById;
+    }
+
+    if (processedById) {
+      where.processedById = processedById;
+    }
+
+    // Filter by branch
+    if (branchId) {
+      where.order = {
+        branchId,
+      };
+    }
+
+    if (startDate || endDate) {
+      where.requestedAt = {};
+      if (startDate) {
+        where.requestedAt.gte = new Date(startDate);
+      }
+      if (endDate) {
+        where.requestedAt.lte = new Date(endDate);
+      }
+    }
+
+    const total = await prisma.billRequest.count({ where });
+
+    const billRequests = await prisma.billRequest.findMany({
+      where,
+      skip,
+      take: limit,
       include: {
-        items: {
-          include: {
-            menuItem: true,
+        order: {
+          select: {
+            id: true,
+            orderNumber: true,
+            type: true,
+            status: true,
+            total: true,
+            createdAt: true,
+            items: {
+              select: {
+                id: true,
+                quantity: true,
+                price: true,
+                subtotal: true,
+                menuItem: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
+        table: {
+          select: {
+            id: true,
+            number: true,
+            capacity: true,
+          },
+        },
+        requestedBy: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+          },
+        },
+        processedBy: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+          },
+        },
+      },
+      orderBy: { requestedAt: 'desc' },
+    });
+
+    return {
+      data: billRequests,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getById(id: string) {
+    const billRequest = await prisma.billRequest.findUnique({
+      where: { id },
+      include: {
+        order: {
+          include: {
+            items: {
+              include: {
+                menuItem: {
+                  select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            branch: {
+              select: {
+                id: true,
+                name: true,
+                code: true,
+                restaurant: {
+                  select: {
+                    id: true,
+                    name: true,
+                    logo: true,
+                    phone: true,
+                    address: true,
+                    taxRate: true,
+                    vatRate: true,
+                    serviceCharge: true,
+                    currency: true,
+                  },
+                },
+              },
+            },
+            customer: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                phone: true,
+              },
+            },
+            payments: true,
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            number: true,
+            capacity: true,
+          },
+        },
+        requestedBy: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        processedBy: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!billRequest) {
+      throw new ApiError(404, 'Bill request not found');
+    }
+
+    return billRequest;
+  }
+
+  async create(data: CreateBillRequestData, userId: string) {
+    // Validate order exists and is served/completed
+    const order = await prisma.order.findUnique({
+      where: { id: data.orderId },
+      include: {
         table: true,
       },
     });
 
     if (!order) {
-      throw new Error('Order not found');
+      throw new ApiError(404, 'Order not found');
     }
 
-    // Create waiter call for bill request
-    const billRequest = await prisma.waiterCall.create({
-      data: {
-        sessionId,
-        tableId,
-        waiterId,
-        requestType: WaiterCallRequestType.BILL_REQUEST,
-        status: WaiterCallStatus.PENDING,
-        selectedItems: {
-          orderId: order.id,
-          orderNumber: order.orderNumber,
-          items: order.items.map((item) => ({
-            id: item.id,
-            name: item.menuItem.name,
-            quantity: item.quantity,
-            price: item.price,
-            subtotal: item.subtotal,
-          })),
-          subtotal: order.subtotal,
-          tax: order.tax,
-          total: order.total,
-        },
-      },
-      include: {
-        table: true,
-        session: true,
+    // Check if order is in a state where bill can be requested
+    if (!['SERVED', 'COMPLETED'].includes(order.status)) {
+      throw new ApiError(
+        400,
+        'Bill can only be requested for served or completed orders'
+      );
+    }
+
+    // Check if there's already a pending bill request for this order
+    const existingRequest = await prisma.billRequest.findFirst({
+      where: {
+        orderId: data.orderId,
+        status: { in: ['PENDING', 'PROCESSING'] },
       },
     });
+
+    if (existingRequest) {
+      throw new ApiError(400, 'A bill request already exists for this order');
+    }
+
+    // Calculate priority based on how long the order has been served
+    const now = new Date();
+    const orderTime = new Date(order.updatedAt);
+    const minutesWaiting = Math.floor(
+      (now.getTime() - orderTime.getTime()) / (1000 * 60)
+    );
+    const priority = Math.min(minutesWaiting, 100); // Cap at 100
+
+    const billRequest = await prisma.billRequest.create({
+      data: {
+        orderId: data.orderId,
+        tableId: data.tableId || order.tableId,
+        requestedById: userId,
+        status: BillRequestStatus.PENDING,
+        priority,
+        notes: data.notes,
+      },
+      include: {
+        order: {
+          select: {
+            id: true,
+            orderNumber: true,
+            total: true,
+            branch: {
+              select: {
+                id: true,
+                restaurantId: true,
+              },
+            },
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            number: true,
+          },
+        },
+        requestedBy: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    // Emit WebSocket event
+    if (billRequest.order?.branch) {
+      websocketService.emitBillRequestCreated(
+        billRequest,
+        billRequest.order.branch.id,
+        billRequest.order.branch.restaurantId
+      );
+    }
 
     return billRequest;
   }
 
-  /**
-   * Get pending bill requests for a waiter
-   */
-  async getPendingBillRequests(waiterId: string) {
-    const requests = await prisma.waiterCall.findMany({
-      where: {
-        waiterId,
-        requestType: WaiterCallRequestType.BILL_REQUEST,
-        status: {
-          in: [WaiterCallStatus.PENDING, WaiterCallStatus.ACKNOWLEDGED],
-        },
-      },
+  async update(id: string, data: UpdateBillRequestData) {
+    const existing = await prisma.billRequest.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      throw new ApiError(404, 'Bill request not found');
+    }
+
+    if (existing.status === BillRequestStatus.COMPLETED) {
+      throw new ApiError(400, 'Cannot update completed bill request');
+    }
+
+    const updated = await prisma.billRequest.update({
+      where: { id },
+      data,
       include: {
+        order: true,
         table: true,
-        session: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
+        requestedBy: true,
+        processedBy: true,
       },
     });
 
-    return requests;
+    return updated;
   }
 
-  /**
-   * Get all pending bill requests (for managers)
-   */
-  async getAllPendingBillRequests(branchId?: string) {
-    const where: any = {
-      requestType: WaiterCallRequestType.BILL_REQUEST,
-      status: {
-        in: [WaiterCallStatus.PENDING, WaiterCallStatus.ACKNOWLEDGED],
+  async process(id: string, userId: string, data: ProcessBillRequestData = {}) {
+    const billRequest = await prisma.billRequest.findUnique({
+      where: { id },
+      include: {
+        order: true,
       },
+    });
+
+    if (!billRequest) {
+      throw new ApiError(404, 'Bill request not found');
+    }
+
+    if (billRequest.status !== BillRequestStatus.PENDING) {
+      throw new ApiError(
+        400,
+        `Bill request is already ${billRequest.status.toLowerCase()}`
+      );
+    }
+
+    // Update bill request to processing
+    const updated = await prisma.billRequest.update({
+      where: { id },
+      data: {
+        status: BillRequestStatus.PROCESSING,
+        processedById: userId,
+        processedAt: new Date(),
+        notes: data.notes
+          ? `${billRequest.notes || ''}\n${data.notes}`.trim()
+          : billRequest.notes,
+      },
+      include: {
+        order: {
+          include: {
+            items: {
+              include: {
+                menuItem: true,
+              },
+            },
+            branch: {
+              include: {
+                restaurant: true,
+              },
+            },
+          },
+        },
+        table: true,
+        requestedBy: true,
+        processedBy: true,
+      },
+    });
+
+    // Emit WebSocket event
+    if (updated.order?.branch) {
+      websocketService.emitBillRequestProcessed(
+        updated,
+        updated.order.branch.id,
+        updated.order.branch.restaurantId
+      );
+    }
+
+    return updated;
+  }
+
+  async complete(id: string, billId?: string) {
+    const billRequest = await prisma.billRequest.findUnique({
+      where: { id },
+    });
+
+    if (!billRequest) {
+      throw new ApiError(404, 'Bill request not found');
+    }
+
+    if (billRequest.status === BillRequestStatus.COMPLETED) {
+      throw new ApiError(400, 'Bill request is already completed');
+    }
+
+    const updated = await prisma.billRequest.update({
+      where: { id },
+      data: {
+        status: BillRequestStatus.COMPLETED,
+        billId,
+      },
+      include: {
+        order: {
+          include: {
+            branch: {
+              select: {
+                id: true,
+                restaurantId: true,
+              },
+            },
+          },
+        },
+        table: true,
+        requestedBy: true,
+        processedBy: true,
+      },
+    });
+
+    // Emit WebSocket event
+    if (updated.order?.branch) {
+      websocketService.emitBillRequestCompleted(
+        updated,
+        updated.order.branch.id,
+        updated.order.branch.restaurantId
+      );
+    }
+
+    return updated;
+  }
+
+  async cancel(id: string, reason?: string) {
+    const billRequest = await prisma.billRequest.findUnique({
+      where: { id },
+    });
+
+    if (!billRequest) {
+      throw new ApiError(404, 'Bill request not found');
+    }
+
+    if (billRequest.status === BillRequestStatus.COMPLETED) {
+      throw new ApiError(400, 'Cannot cancel completed bill request');
+    }
+
+    const updated = await prisma.billRequest.update({
+      where: { id },
+      data: {
+        status: BillRequestStatus.CANCELLED,
+        notes: reason
+          ? `${billRequest.notes || ''}\nCancellation reason: ${reason}`.trim()
+          : billRequest.notes,
+      },
+      include: {
+        order: {
+          include: {
+            branch: {
+              select: {
+                id: true,
+                restaurantId: true,
+              },
+            },
+          },
+        },
+        table: true,
+        requestedBy: true,
+        processedBy: true,
+      },
+    });
+
+    // Emit WebSocket event
+    if (updated.order?.branch) {
+      websocketService.emitBillRequestCancelled(
+        updated,
+        updated.order.branch.id,
+        updated.order.branch.restaurantId
+      );
+    }
+
+    return updated;
+  }
+
+  async getPendingCount(userId?: string) {
+    const where: any = {
+      status: { in: [BillRequestStatus.PENDING, BillRequestStatus.PROCESSING] },
     };
 
-    if (branchId) {
-      where.table = {
-        branchId,
-      };
+    if (userId) {
+      where.requestedById = userId;
     }
 
-    const requests = await prisma.waiterCall.findMany({
-      where,
-      include: {
-        table: true,
-        session: true,
-        waiter: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return requests;
-  }
-
-  /**
-   * Waiter acknowledges bill request (on the way)
-   */
-  async acknowledgeBillRequest(id: string) {
-    const billRequest = await prisma.waiterCall.update({
-      where: { id },
-      data: {
-        status: WaiterCallStatus.ACKNOWLEDGED,
-        acknowledgedAt: new Date(),
-      },
-      include: {
-        table: true,
-        session: true,
-      },
-    });
-
-    return billRequest;
-  }
-
-  /**
-   * Complete bill request (after payment is collected)
-   */
-  async completeBillRequest(id: string, notes?: string) {
-    const billRequest = await prisma.waiterCall.update({
-      where: { id },
-      data: {
-        status: WaiterCallStatus.COMPLETED,
-        completedAt: new Date(),
-        notes,
-      },
-    });
-
-    return billRequest;
-  }
-
-  /**
-   * Get bill request details by ID
-   */
-  async getBillRequestById(id: string) {
-    const billRequest = await prisma.waiterCall.findUnique({
-      where: { id },
-      include: {
-        table: true,
-        session: true,
-        waiter: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-    });
-
-    return billRequest;
+    const count = await prisma.billRequest.count({ where });
+    return count;
   }
 }
-
-export default new BillRequestService();

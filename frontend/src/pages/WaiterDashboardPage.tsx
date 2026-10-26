@@ -12,11 +12,15 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useActiveCalls } from '../hooks/useWaiterCalls';
+import { useBillRequestNotifications } from '../hooks/useBillRequestNotifications';
 import { useNavigate } from 'react-router-dom';
 
 export default function WaiterDashboardPage() {
   const navigate = useNavigate();
   const { calls } = useActiveCalls(false);
+
+  // Enable real-time bill request notifications
+  useBillRequestNotifications();
 
   // Mock data - replace with real API data filtered for waiter's assigned tables/orders
   const stats = {

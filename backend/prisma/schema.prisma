@@ -46,6 +46,8 @@ model User {
   employee          Employee?
   assignedTables    Table[]         @relation("TableWaiter")
   waiterCalls       WaiterCall[]    @relation("WaiterCalls")
+  billRequestsRequested BillRequest[] @relation("BillRequestedBy")
+  billRequestsProcessed BillRequest[] @relation("BillProcessedBy")
   
   @@index([email])
   @@index([roleId])
@@ -194,6 +196,7 @@ model Table {
   reservationTables ReservationTable[]
   customerSessions  CustomerSession[]
   waiterCalls       WaiterCall[]
+  billRequests      BillRequest[]
   
   @@unique([branchId, number])
   @@index([branchId])
@@ -327,6 +330,7 @@ model Order {
   
   items           OrderItem[]
   payments        Payment[]
+  billRequests    BillRequest[]
   
   @@index([branchId])
   @@index([tableId])
@@ -897,4 +901,42 @@ enum WaiterCallStatus {
   COMPLETED    // Service done
   TIMEOUT      // No response in 5 minutes, alert manager
   CANCELLED    // Customer cancelled the call
+}
+
+// ============================================
+// BILL REQUEST MANAGEMENT
+// ============================================
+
+model BillRequest {
+  id              String            @id @default(uuid())
+  orderId         String
+  order           Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tableId         String?
+  table           Table?            @relation(fields: [tableId], references: [id])
+  requestedById   String
+  requestedBy     User              @relation("BillRequestedBy", fields: [requestedById], references: [id])
+  status          BillRequestStatus @default(PENDING)
+  priority        Int               @default(0)
+  notes           String?
+  requestedAt     DateTime          @default(now())
+  processedById   String?
+  processedBy     User?             @relation("BillProcessedBy", fields: [processedById], references: [id])
+  processedAt     DateTime?
+  billId          String?           // Reference to generated bill/receipt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  @@index([orderId])
+  @@index([tableId])
+  @@index([requestedById])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("bill_requests")
+}
+
+enum BillRequestStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
 }

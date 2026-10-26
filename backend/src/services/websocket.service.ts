@@ -140,6 +140,83 @@ class WebSocketService {
     console.log(`Emitted ${event} to user:${userId}`);
   }
 
+  // Bill Request events
+  emitBillRequestCreated(billRequest: any, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      billRequest,
+      message: `New bill request from Table ${billRequest.table?.number || 'N/A'}`,
+      type: 'created',
+    };
+
+    // Emit to all clients in the branch (Cashiers will receive this)
+    this.io.to(`branch:${branchId}`).emit('billRequest:created', data);
+    this.io.to(`restaurant:${restaurantId}`).emit('billRequest:created', data);
+    
+    console.log(`Emitted billRequest:created to branch:${branchId}`);
+  }
+
+  emitBillRequestProcessed(billRequest: any, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      billRequest,
+      message: `Bill request for Table ${billRequest.table?.number || 'N/A'} is being processed`,
+      type: 'processed',
+    };
+
+    // Emit to branch and the specific waiter who created the request
+    this.io.to(`branch:${branchId}`).emit('billRequest:processed', data);
+    this.io.to(`restaurant:${restaurantId}`).emit('billRequest:processed', data);
+    
+    if (billRequest.requestedById) {
+      this.io.to(`user:${billRequest.requestedById}`).emit('billRequest:processed', data);
+    }
+    
+    console.log(`Emitted billRequest:processed to branch:${branchId}`);
+  }
+
+  emitBillRequestCompleted(billRequest: any, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      billRequest,
+      message: `Bill ready for Table ${billRequest.table?.number || 'N/A'}`,
+      type: 'completed',
+    };
+
+    // Emit to branch and the specific waiter who created the request
+    this.io.to(`branch:${branchId}`).emit('billRequest:completed', data);
+    this.io.to(`restaurant:${restaurantId}`).emit('billRequest:completed', data);
+    
+    if (billRequest.requestedById) {
+      this.io.to(`user:${billRequest.requestedById}`).emit('billRequest:completed', data);
+    }
+    
+    console.log(`Emitted billRequest:completed to branch:${branchId}`);
+  }
+
+  emitBillRequestCancelled(billRequest: any, branchId: string, restaurantId: string) {
+    if (!this.io) return;
+
+    const data = {
+      billRequest,
+      message: `Bill request for Table ${billRequest.table?.number || 'N/A'} was cancelled`,
+      type: 'cancelled',
+    };
+
+    // Emit to branch and the specific waiter who created the request
+    this.io.to(`branch:${branchId}`).emit('billRequest:cancelled', data);
+    this.io.to(`restaurant:${restaurantId}`).emit('billRequest:cancelled', data);
+    
+    if (billRequest.requestedById) {
+      this.io.to(`user:${billRequest.requestedById}`).emit('billRequest:cancelled', data);
+    }
+    
+    console.log(`Emitted billRequest:cancelled to branch:${branchId}`);
+  }
+
   // Get connected clients count
   getConnectedClientsCount(): number {
     return this.io ? this.io.sockets.sockets.size : 0;
