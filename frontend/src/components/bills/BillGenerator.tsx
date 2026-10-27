@@ -43,9 +43,9 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
 
   // Print handler
   const handlePrint = useReactToPrint({
-    content: () => billRef.current,
+    contentRef: billRef,
     documentTitle: `Bill-${order?.orderNumber || 'UNKNOWN'}`,
-    onBeforeGetContent: () => {
+    onBeforePrint: () => {
       setIsPrinting(true);
       return Promise.resolve();
     },
@@ -65,7 +65,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
 
   const handleCompleteWithoutPrint = () => {
     if (window.confirm('Complete this bill request without printing?')) {
-      completeMutation.mutate();
+      completeMutation.mutate(undefined);
     }
   };
 

@@ -123,6 +123,21 @@ export default function BillRequestQueuePage() {
     processMutation.mutate(id);
   };
 
+  const handleProcessAndGenerate = async (request: BillRequest) => {
+    try {
+      if (request.status === BillRequestStatus.PENDING) {
+        await billRequestsApi.process(request.id, user?.id);
+        queryClient.invalidateQueries({ queryKey: ['bill-requests'] });
+      }
+      const fullRequest = await billRequestsApi.getById(request.id);
+      setSelectedRequest(fullRequest);
+      setIsBillGeneratorOpen(true);
+    } catch (error: any) {
+      toast.error('Failed to process and generate bill');
+      console.error('Error in handleProcessAndGenerate:', error);
+    }
+  };
+
   const handleGenerateBill = async (request: BillRequest) => {
     try {
       // Fetch full details if needed
@@ -408,14 +423,24 @@ export default function BillRequestQueuePage() {
                     </Button>
 
                     {request.status === BillRequestStatus.PENDING && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleProcess(request.id)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        <Loader2 className="w-4 h-4 mr-1" />
-                        Process
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={() => handleProcess(request.id)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <Loader2 className="w-4 h-4 mr-1" />
+                          Process
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleProcessAndGenerate(request)}
+                          className="bg-purple-600 hover:bg-purple-700 text-white"
+                        >
+                          <Receipt className="w-4 h-4 mr-1" />
+                          Generate Bill
+                        </Button>
+                      </>
                     )}
 
                     {request.status === BillRequestStatus.PROCESSING && (
@@ -592,16 +617,28 @@ export default function BillRequestQueuePage() {
               {/* Actions */}
               <div className="flex gap-2 pt-4 border-t">
                 {selectedRequest.status === BillRequestStatus.PENDING && (
-                  <Button
-                    onClick={() => {
-                      handleProcess(selectedRequest.id);
-                      setIsDetailsModalOpen(false);
-                    }}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Loader2 className="w-4 h-4 mr-2" />
-                    Start Processing
-                  </Button>
+                  <>
+                    <Button
+                      onClick={() => {
+                        handleProcess(selectedRequest.id);
+                        setIsDetailsModalOpen(false);
+                      }}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    >
+                      <Loader2 className="w-4 h-4 mr-2" />
+                      Start Processing
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsDetailsModalOpen(false);
+                        handleProcessAndGenerate(selectedRequest);
+                      }}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Receipt className="w-4 h-4 mr-2" />
+                      Generate Bill
+                    </Button>
+                  </>
                 )}
 
                 {selectedRequest.status === BillRequestStatus.PROCESSING && (

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth';
+import { authenticate, requireRole } from '../middleware/auth';
 import {
   getBillRequests,
   getBillRequest,
@@ -24,16 +24,16 @@ router.get('/pending-count', getPendingCount);
 // Get single bill request
 router.get('/:id', getBillRequest);
 
-// Create bill request (Waiter)
-router.post('/', createBillRequest);
+// Create bill request: ONLY Waiter, Manager, Owner (Cashiers CANNOT request bills)
+router.post('/', requireRole('Waiter', 'Manager', 'Owner'), createBillRequest);
 
-// Process bill request (Cashier starts working on it)
-router.patch('/:id/process', processBillRequest);
+// Process bill request: ONLY Cashier, Manager, Owner (Waiters CANNOT process bills)
+router.patch('/:id/process', requireRole('Cashier', 'Manager', 'Owner'), processBillRequest);
 
-// Complete bill request (Cashier finished generating bill)
-router.patch('/:id/complete', completeBillRequest);
+// Complete bill request: ONLY Cashier, Manager, Owner (Waiters CANNOT complete bills)
+router.patch('/:id/complete', requireRole('Cashier', 'Manager', 'Owner'), completeBillRequest);
 
 // Cancel bill request
-router.patch('/:id/cancel', cancelBillRequest);
+router.patch('/:id/cancel', requireRole('Cashier', 'Manager', 'Owner', 'Waiter'), cancelBillRequest);
 
 export default router;

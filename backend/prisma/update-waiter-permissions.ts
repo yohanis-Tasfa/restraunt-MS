@@ -3,7 +3,24 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🔧 Updating Waiter role permissions...');
+  console.log('🔧 Updating Cashier and Waiter role permissions for clear role separation...');
+
+  const cashierPermissions = [
+    'menu.read',
+    'orders.read',
+    'orders.create',
+    'orders.update',
+    'payments.read',
+    'payments.create',
+    'customers.read',
+    'customers.create',
+    'customers.update',
+    'tables.read',
+    'reports.read',
+    'bill-requests.read',
+    'bill-requests.process',
+    'bill-requests.complete',
+  ];
 
   const waiterPermissions = [
     'menu.read',
@@ -18,19 +35,27 @@ async function main() {
     'waiter-calls.read',
     'waiter-calls.update',
     'bill-requests.read',
-    'bill-requests.update',
-    'payments.create', // This is the missing permission!
+    'bill-requests.create',
+    'payments.create',
   ];
 
-  const result = await prisma.role.update({
+  const cashierResult = await prisma.role.update({
+    where: { name: 'Cashier' },
+    data: {
+      permissions: cashierPermissions,
+    },
+  });
+  console.log('✅ Cashier role updated successfully!');
+  console.log('📋 Cashier permissions:', cashierResult.permissions);
+
+  const waiterResult = await prisma.role.update({
     where: { name: 'Waiter' },
     data: {
       permissions: waiterPermissions,
     },
   });
-
   console.log('✅ Waiter role updated successfully!');
-  console.log('📋 New permissions:', result.permissions);
+  console.log('📋 Waiter permissions:', waiterResult.permissions);
 }
 
 main()

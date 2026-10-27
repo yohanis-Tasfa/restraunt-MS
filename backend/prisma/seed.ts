@@ -72,7 +72,7 @@ async function main() {
     },
     {
       name: 'Cashier',
-      description: 'POS operator with order processing and payment handling',
+      description: 'POS operator with order processing, billing queue, and payment handling',
       isSystem: true,
       permissions: [
         // Menu Viewing
@@ -92,6 +92,10 @@ async function main() {
         'tables.read',
         // Basic Reports (own transactions)
         'reports.read',
+        // Bill Request Queue Processing (Cashier processes, generates, and completes bills)
+        'bill-requests.read',
+        'bill-requests.process',
+        'bill-requests.complete',
       ],
     },
     {
@@ -111,7 +115,7 @@ async function main() {
     },
     {
       name: 'Waiter',
-      description: 'Waiter with customer service and table management',
+      description: 'Waiter with customer service, table management, and bill requests',
       isSystem: true,
       permissions: [
         // Menu Viewing
@@ -128,12 +132,13 @@ async function main() {
         // Customer Management
         'customers.read',
         'customers.create',
-        // Waiter Calls & Bill Requests
+        // Waiter Calls
         'waiter-calls.read',
         'waiter-calls.update',
+        // Bill Requests (Waiter can ONLY request bills, NOT process or complete)
         'bill-requests.read',
-        'bill-requests.update',
-        // Payment Collection (for bill requests)
+        'bill-requests.create',
+        // Payment Collection (at table)
         'payments.create',
       ],
     },

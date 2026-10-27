@@ -90,3 +90,22 @@ export const authorize = (...permissions: string[]) => {
     next();
   };
 };
+
+export const requireRole = (...allowedRoles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      throw new ApiError(401, 'Unauthorized');
+    }
+
+    const roleName = req.user.role?.name;
+    // Owner has access to everything
+    if (roleName === 'Owner' || allowedRoles.includes(roleName)) {
+      return next();
+    }
+
+    throw new ApiError(
+      403,
+      `Access denied for role '${roleName}'. Allowed roles: ${allowedRoles.join(', ')}`
+    );
+  };
+};

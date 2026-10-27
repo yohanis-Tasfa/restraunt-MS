@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -7,9 +9,25 @@ import {
   CreditCard,
   Clock,
   TrendingUp,
+  FileText,
 } from 'lucide-react';
+import { billRequestsApi } from '../api/billRequests';
+import { useBillRequestNotifications } from '../hooks/useBillRequestNotifications';
 
 export default function CashierDashboardPage() {
+  const navigate = useNavigate();
+
+  // Listen for real-time bill requests from waiters
+  useBillRequestNotifications();
+
+  // Query pending bill requests count
+  const { data: pendingCountData } = useQuery({
+    queryKey: ['bill-requests', 'pending-count'],
+    queryFn: () => billRequestsApi.getPendingCount(),
+    refetchInterval: 5000,
+  });
+
+  const pendingBillsCount = pendingCountData?.count || 0;
   // Mock data - replace with real API data filtered for cashier's own transactions
   const stats = {
     todaySales: 12400.0,
@@ -250,22 +268,37 @@ export default function CashierDashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
-          <p className="text-sm text-gray-500">Common cashier tasks</p>
+          <p className="text-sm text-gray-500">Common cashier billing & checkout tasks</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Button
               variant="outline"
-              className="h-20 flex flex-col items-center justify-center gap-2"
-              onClick={() => window.location.href = '/admin/pos'}
+              className="h-20 flex flex-col items-center justify-center gap-2 relative bg-blue-50/50 border-blue-200 hover:bg-blue-100/50"
+              onClick={() => navigate('/admin/bill-requests')}
             >
-              <DollarSign className="w-6 h-6" />
-              <span className="text-sm">New Order</span>
+              <div className="relative">
+                <FileText className="w-6 h-6 text-blue-600" />
+                {pendingBillsCount > 0 && (
+                  <span className="absolute -top-1 -right-2 px-1.5 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">
+                    {pendingBillsCount}
+                  </span>
+                )}
+              </div>
+              <span className="text-sm font-medium text-blue-900">Bill Requests Queue</span>
             </Button>
             <Button
               variant="outline"
               className="h-20 flex flex-col items-center justify-center gap-2"
-              onClick={() => window.location.href = '/admin/orders'}
+              onClick={() => navigate('/admin/pos')}
+            >
+              <DollarSign className="w-6 h-6" />
+              <span className="text-sm">POS Register</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-20 flex flex-col items-center justify-center gap-2"
+              onClick={() => navigate('/admin/orders')}
             >
               <ShoppingBag className="w-6 h-6" />
               <span className="text-sm">View Orders</span>
@@ -273,15 +306,7 @@ export default function CashierDashboardPage() {
             <Button
               variant="outline"
               className="h-20 flex flex-col items-center justify-center gap-2"
-              onClick={() => window.location.href = '/admin/orders'}
-            >
-              <CreditCard className="w-6 h-6" />
-              <span className="text-sm">Process Payment</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-20 flex flex-col items-center justify-center gap-2"
-              onClick={() => window.location.href = '/admin/profile'}
+              onClick={() => navigate('/admin/profile')}
             >
               <Clock className="w-6 h-6" />
               <span className="text-sm">My Profile</span>

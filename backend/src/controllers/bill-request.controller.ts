@@ -47,9 +47,14 @@ export const getBillRequest = asyncHandler(async (req: Request, res: Response) =
 
 export const createBillRequest = asyncHandler(async (req: Request, res: Response) => {
   const data: CreateBillRequestData = req.body;
-  const userId = req.user!.id;
+  const user = req.user!;
 
-  const billRequest = await billRequestService.create(data, userId);
+  // Explicit check: Cashiers cannot request bills
+  if (user.role?.name === 'Cashier') {
+    throw new ApiError(403, 'Cashiers cannot request bills. Only waiters can request bills.');
+  }
+
+  const billRequest = await billRequestService.create(data, user.id);
 
   res.status(201).json({
     success: true,
@@ -61,9 +66,14 @@ export const createBillRequest = asyncHandler(async (req: Request, res: Response
 export const processBillRequest = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const data: ProcessBillRequestData = req.body;
-  const userId = req.user!.id;
+  const user = req.user!;
 
-  const billRequest = await billRequestService.process(id, userId, data);
+  // Explicit check: Waiters cannot process bills
+  if (user.role?.name === 'Waiter') {
+    throw new ApiError(403, 'Waiters cannot process bills. Only cashiers can generate and complete bills.');
+  }
+
+  const billRequest = await billRequestService.process(id, user.id, data);
 
   res.json({
     success: true,
@@ -75,6 +85,12 @@ export const processBillRequest = asyncHandler(async (req: Request, res: Respons
 export const completeBillRequest = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { billId } = req.body;
+  const user = req.user!;
+
+  // Explicit check: Waiters cannot complete bills
+  if (user.role?.name === 'Waiter') {
+    throw new ApiError(403, 'Waiters cannot complete bills. Only cashiers can complete bills.');
+  }
 
   const billRequest = await billRequestService.complete(id, billId);
 

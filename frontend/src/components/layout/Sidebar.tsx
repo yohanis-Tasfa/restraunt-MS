@@ -62,7 +62,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Operations Section Items
   const operationsItems: NavItem[] = [
     { label: 'Tables', icon: Store, path: '/admin/tables' },
-    { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined },
+    { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined, roles: ['Owner', 'Manager', 'Waiter'] },
     { label: 'Bill Requests', icon: FileText, path: '/admin/bill-requests', roles: ['Owner', 'Manager', 'Cashier'] },
     { label: 'My Tips', icon: DollarSign, path: '/admin/my-tips', roles: ['Waiter'] },
     { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations' },

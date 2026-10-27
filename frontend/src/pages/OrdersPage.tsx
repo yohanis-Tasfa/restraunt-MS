@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, OrderStatus, OrderType, type Order } from '../api/orders';
 import { billRequestsApi } from '../api/billRequests';
@@ -34,6 +35,7 @@ import PaymentDialog from '../components/orders/PaymentDialog';
 
 export default function OrdersPage() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -534,15 +536,25 @@ export default function OrdersPage() {
                     const billRequest = getBillRequestForOrder(order.id);
                     const isUnpaid = order.paymentStatus === 'UNPAID';
                     const isReady = order.status === OrderStatus.READY;
+                    const userRole = user?.role?.name;
+                    const isWaiter = userRole === 'Waiter';
+                    const isCashier = userRole === 'Cashier';
+                    const isManagerOrOwner = ['Owner', 'Manager'].includes(userRole || '');
+
+                    // ONLY Waiter, Manager, or Owner can request bills! Cashier NEVER requests a bill!
                     const canRequestBill =
-                      ['SERVED', 'COMPLETED'].includes(order.status) && isUnpaid && !billRequest;
+                      (isWaiter || isManagerOrOwner) &&
+                      ['SERVED', 'COMPLETED'].includes(order.status) &&
+                      isUnpaid &&
+                      !billRequest;
+
                     const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
                     const billInProgress = billRequest && billRequest.status !== 'COMPLETED';
 
                     return (
                       <>
-                        {/* Mark as Served button - for READY orders (food ready to be served) */}
-                        {isReady && (
+                        {/* Mark as Served button - only for Waiter or Manager */}
+                        {isReady && (isWaiter || isManagerOrOwner) && (
                           <Button
                             size="sm"
                             onClick={() => markAsServedMutation.mutate(order.id)}
@@ -554,15 +566,28 @@ export default function OrdersPage() {
                           </Button>
                         )}
 
-                        {/* Show bill status badge if exists */}
+                        {/* Show bill status badge or Cashier queue link if bill is in progress */}
                         {billInProgress && (
-                          <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">
-                            {billRequest.status === 'PENDING' && '📄 Bill Requested'}
-                            {billRequest.status === 'PROCESSING' && '⏳ Bill Processing'}
-                          </Badge>
+                          <>
+                            <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">
+                              {billRequest.status === 'PENDING' && '📄 Bill Requested'}
+                              {billRequest.status === 'PROCESSING' && '⏳ Bill Processing'}
+                            </Badge>
+                            {isCashier && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => navigate('/admin/bill-requests')}
+                                className="border-blue-400 text-blue-700 hover:bg-blue-50 text-xs"
+                              >
+                                <FileText className="w-3.5 h-3.5 mr-1" />
+                                Process Bill
+                              </Button>
+                            )}
+                          </>
                         )}
 
-                        {/* Request Bill button - only show if no bill request exists */}
+                        {/* Request Bill button - ONLY show for Waiters/Managers, NEVER for Cashier */}
                         {canRequestBill && (
                           <Button
                             size="sm"
@@ -571,7 +596,7 @@ export default function OrdersPage() {
                             className="border-blue-300 text-blue-700 hover:bg-blue-50"
                           >
                             <FileText className="w-4 h-4 mr-1" />
-                            Bill
+                            Request Bill
                           </Button>
                         )}
 
@@ -587,7 +612,7 @@ export default function OrdersPage() {
                           </Button>
                         )}
 
-                        {/* Regular Pay button - for direct payment without bill request */}
+                        {/* Regular Pay button - for direct payment when no bill request is active */}
                         {isUnpaid && !billRequest && !canRequestBill && (
                           <Button
                             size="sm"
@@ -770,8 +795,18 @@ export default function OrdersPage() {
                 {(() => {
                   const billRequest = getBillRequestForOrder(selectedOrder.id);
                   const isUnpaid = selectedOrder.paymentStatus === 'UNPAID';
+                  const userRole = user?.role?.name;
+                  const isWaiter = userRole === 'Waiter';
+                  const isCashier = userRole === 'Cashier';
+                  const isManagerOrOwner = ['Owner', 'Manager'].includes(userRole || '');
+
+                  // ONLY Waiter, Manager, or Owner can request bills! Cashier NEVER requests a bill!
                   const canRequestBill =
-                    ['SERVED', 'COMPLETED'].includes(selectedOrder.status) && isUnpaid && !billRequest;
+                    (isWaiter || isManagerOrOwner) &&
+                    ['SERVED', 'COMPLETED'].includes(selectedOrder.status) &&
+                    isUnpaid &&
+                    !billRequest;
+
                   const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
                   const billInProgress = billRequest && billRequest.status !== 'COMPLETED';
 
@@ -781,8 +816,14 @@ export default function OrdersPage() {
                       {billInProgress && (
                         <div className="w-full mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                           <p className="text-sm text-blue-800 font-medium">
-                            {billRequest.status === 'PENDING' && '📄 Bill request sent to cashier'}
-                            {billRequest.status === 'PROCESSING' && '⏳ Cashier is processing your bill request'}
+                            {billRequest.status === 'PENDING' &&
+                              (isCashier
+                                ? '📄 New bill request is waiting in your queue'
+                                : '📄 Bill request sent to cashier')}
+                            {billRequest.status === 'PROCESSING' &&
+                              (isCashier
+                                ? '⏳ You are processing this bill request'
+                                : '⏳ Cashier is processing your bill request')}
                           </p>
                         </div>
                       )}
@@ -795,7 +836,21 @@ export default function OrdersPage() {
                         </div>
                       )}
 
-                      {/* Request Bill button */}
+                      {/* Cashier quick link to Queue when bill is in progress */}
+                      {isCashier && billInProgress && (
+                        <Button
+                          onClick={() => {
+                            setIsDetailsModalOpen(false);
+                            navigate('/admin/bill-requests');
+                          }}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Open in Bill Queue
+                        </Button>
+                      )}
+
+                      {/* Request Bill button - ONLY for Waiters/Managers, NEVER for Cashier */}
                       {canRequestBill && (
                         <Button
                           onClick={() => {
@@ -824,8 +879,22 @@ export default function OrdersPage() {
                         </Button>
                       )}
 
-                      {/* Regular Payment Button for unpaid orders without bill request */}
-                      {isUnpaid && !billRequest && !canRequestBill && (
+                      {/* Cashier Direct Payment Button for unpaid orders */}
+                      {isCashier && isUnpaid && !billReady && !billInProgress && (
+                        <Button
+                          onClick={() => {
+                            setIsDetailsModalOpen(false);
+                            handleProcessPayment(selectedOrder);
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Process Payment
+                        </Button>
+                      )}
+
+                      {/* Manager/Owner fallback payment button */}
+                      {isManagerOrOwner && isUnpaid && !billRequest && !canRequestBill && (
                         <Button
                           onClick={() => {
                             setIsDetailsModalOpen(false);

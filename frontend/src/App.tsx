@@ -142,7 +142,14 @@ function App() {
                   } 
                 />
                 <Route path="tables" element={<TablesPage />} />
-                <Route path="waiter-calls" element={<WaiterCallsPage />} />
+                <Route 
+                  path="waiter-calls" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Waiter']}>
+                      <WaiterCallsPage />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path="reservations" element={<ReservationsPage />} />
                 <Route 
                   path="menu" 
