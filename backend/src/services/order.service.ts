@@ -3,7 +3,6 @@ import prisma from '../config/database';
 import {
   CreateOrderData,
   UpdateOrderData,
-  OrderCalculation,
   OrderQueryParams,
   OrderItemInput,
 } from '../types/order.types';
@@ -17,8 +16,10 @@ export class OrderService {
       search,
       branchId,
       status,
+      paymentStatus,
       type,
       customerId,
+      waiterId,
       startDate,
       endDate,
     } = params;
@@ -38,12 +39,28 @@ export class OrderService {
       where.status = status;
     }
 
+    if (paymentStatus) {
+      where.paymentStatus = paymentStatus;
+    }
+
     if (type) {
       where.type = type;
     }
 
     if (customerId) {
       where.customerId = customerId;
+    }
+
+    if (waiterId) {
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            { createdById: waiterId },
+            { table: { assignedWaiterId: waiterId } },
+          ],
+        },
+      ];
     }
 
     if (startDate || endDate) {
@@ -730,6 +747,92 @@ export class OrderService {
         count: stat._count,
         total: stat._sum.amount || 0,
       })),
+    };
+  }
+
+  async getWaiterStats(waiterId: string) {
+    const now = new Date();
+
+    // Today (00:00:00 to 23:59:59.999)
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    // This Week (Monday 00:00:00 to Sunday 23:59:59.999)
+    const dayOfWeek = now.getDay();
+    const distanceToMonday = (dayOfWeek + 6) % 7;
+    const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - distanceToMonday, 0, 0, 0, 0);
+    const endOfWeek = new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
+
+    // This Month (1st day 00:00:00 to last day 23:59:59.999)
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const getPeriodStats = async (start: Date, end: Date) => {
+      const orderWhere: any = {
+        paymentStatus: 'PAID',
+        OR: [
+          { createdById: waiterId },
+          { table: { assignedWaiterId: waiterId } },
+        ],
+        createdAt: {
+          gte: start,
+          lte: end,
+        },
+      };
+
+      const tipWhere: any = {
+        waiterId,
+        createdAt: {
+          gte: start,
+          lte: end,
+        },
+      };
+
+      const [orderAgg, tipAgg, paidTipsAgg, pendingTipsAgg] = await Promise.all([
+        prisma.order.aggregate({
+          where: orderWhere,
+          _sum: { total: true },
+          _count: true,
+        }),
+        prisma.tip.aggregate({
+          where: tipWhere,
+          _sum: { amount: true },
+          _count: true,
+        }),
+        prisma.tip.aggregate({
+          where: { ...tipWhere, status: 'PAID' },
+          _sum: { amount: true },
+          _count: true,
+        }),
+        prisma.tip.aggregate({
+          where: { ...tipWhere, status: 'PENDING' },
+          _sum: { amount: true },
+          _count: true,
+        }),
+      ]);
+
+      return {
+        paidOrdersCount: orderAgg._count || 0,
+        totalSales: orderAgg._sum.total || 0,
+        totalTips: tipAgg._sum.amount || 0,
+        tipsCount: tipAgg._count || 0,
+        paidTips: paidTipsAgg._sum.amount || 0,
+        pendingTips: pendingTipsAgg._sum.amount || 0,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    };
+
+    const [today, week, month] = await Promise.all([
+      getPeriodStats(startOfToday, endOfToday),
+      getPeriodStats(startOfWeek, endOfWeek),
+      getPeriodStats(startOfMonth, endOfMonth),
+    ]);
+
+    return {
+      today,
+      week,
+      month,
     };
   }
 

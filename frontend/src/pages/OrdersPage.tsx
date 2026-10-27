@@ -37,6 +37,8 @@ export default function OrdersPage() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isWaiter = user?.role?.name === 'Waiter';
+  const [waiterScope, setWaiterScope] = useState<'my' | 'all'>('my');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -73,10 +75,11 @@ export default function OrdersPage() {
 
   // Fetch orders
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['orders', user?.branch?.id, page],
+    queryKey: ['orders', user?.branch?.id, page, isWaiter ? waiterScope : 'all'],
     queryFn: () =>
       ordersApi.getOrders({
         branchId: user?.branch?.id,
+        waiterId: isWaiter && waiterScope === 'my' ? user?.id : undefined,
         page,
         limit,
       }),
@@ -86,8 +89,16 @@ export default function OrdersPage() {
   const orders = data?.data || [];
   const pagination = data?.pagination || null;
 
-  // Filter orders by search term, status, and payment status (client-side)
+  // Filter orders by search term, status, payment status, and waiter scope (client-side)
   const filteredOrders = (orders || []).filter((order: Order) => {
+    // Waiter scope filter (client-side safety check)
+    const matchesWaiterScope =
+      !isWaiter ||
+      waiterScope === 'all' ||
+      order.createdById === user?.id ||
+      order.table?.assignedWaiterId === user?.id ||
+      order.table?.assignedWaiter?.id === user?.id;
+
     // Search filter
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -108,7 +119,7 @@ export default function OrdersPage() {
       (paymentFilter === 'unpaid' && order.paymentStatus === 'UNPAID') ||
       (paymentFilter === 'paid' && order.paymentStatus === 'PAID');
 
-    return matchesSearch && matchesStatus && matchesPayment;
+    return matchesWaiterScope && matchesSearch && matchesStatus && matchesPayment;
   });
 
   // Sort orders by date (newest first)
@@ -254,6 +265,7 @@ export default function OrdersPage() {
     cancelled: (orders || []).filter((o: Order) => o.status === OrderStatus.CANCELLED).length,
     completed: (orders || []).filter((o: Order) => o.status === OrderStatus.COMPLETED).length,
     unpaid: (orders || []).filter((o: Order) => o.paymentStatus === 'UNPAID').length,
+    paid: (orders || []).filter((o: Order) => o.paymentStatus === 'PAID').length,
     totalRevenue: (orders || []).reduce((sum: number, o: Order) => sum + (o.total || 0), 0),
   };
 
@@ -346,9 +358,37 @@ export default function OrdersPage() {
         </Card>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
+      {/* Filter Tabs & Waiter Scope */}
+      <div className="mb-4 space-y-3">
+        {isWaiter && (
+          <div className="flex items-center gap-2 bg-blue-50/70 p-1.5 rounded-lg border border-blue-200/60 w-fit">
+            <span className="text-xs font-semibold text-blue-900 px-2">Scope:</span>
+            <button
+              type="button"
+              onClick={() => setWaiterScope('my')}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                waiterScope === 'my'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-blue-800 hover:bg-blue-100/70'
+              }`}
+            >
+              My Orders Only
+            </button>
+            <button
+              type="button"
+              onClick={() => setWaiterScope('all')}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                waiterScope === 'all'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-blue-800 hover:bg-blue-100/70'
+              }`}
+            >
+              All Branch Orders
+            </button>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <Button
             variant={statusFilter === 'all' && paymentFilter === 'all' ? 'default' : 'outline'}
             size="sm"
@@ -424,6 +464,22 @@ export default function OrdersPage() {
           >
             <CreditCard className="w-4 h-4 mr-2" />
             Unpaid Orders ({stats.unpaid})
+          </Button>
+          <Button
+            variant={paymentFilter === 'paid' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setStatusFilter('all');
+              setPaymentFilter('paid');
+            }}
+            className={
+              paymentFilter === 'paid'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+            }
+          >
+            <CheckCircle className="w-4 h-4 mr-1.5 text-emerald-500" />
+            Paid Orders ({stats.paid})
           </Button>
         </div>
       </div>

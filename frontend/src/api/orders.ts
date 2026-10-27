@@ -79,6 +79,23 @@ export interface CreateOrderData {
   discount?: number;
 }
 
+export interface WaiterPeriodStats {
+  paidOrdersCount: number;
+  totalSales: number;
+  totalTips: number;
+  tipsCount: number;
+  paidTips: number;
+  pendingTips: number;
+  startDate: string;
+  endDate: string;
+}
+
+export interface WaiterStats {
+  today: WaiterPeriodStats;
+  week: WaiterPeriodStats;
+  month: WaiterPeriodStats;
+}
+
 export const ordersApi = {
   // Create order
   createOrder: async (data: CreateOrderData): Promise<Order> => {
@@ -90,7 +107,10 @@ export const ordersApi = {
   getOrders: async (filters?: {
     branchId?: string;
     status?: OrderStatus;
+    paymentStatus?: string;
     type?: OrderType;
+    waiterId?: string;
+    myOrdersOnly?: boolean;
     startDate?: string;
     endDate?: string;
     page?: number;
@@ -99,7 +119,10 @@ export const ordersApi = {
     const params = new URLSearchParams();
     if (filters?.branchId) params.append('branchId', filters.branchId);
     if (filters?.status) params.append('status', filters.status);
+    if (filters?.paymentStatus) params.append('paymentStatus', filters.paymentStatus);
     if (filters?.type) params.append('type', filters.type);
+    if (filters?.waiterId) params.append('waiterId', filters.waiterId);
+    if (filters?.myOrdersOnly) params.append('myOrdersOnly', 'true');
     if (filters?.startDate) params.append('startDate', filters.startDate);
     if (filters?.endDate) params.append('endDate', filters.endDate);
     if (filters?.page) params.append('page', filters.page.toString());
@@ -110,6 +133,12 @@ export const ordersApi = {
     // Interceptor returns: { data: { data: orders, pagination }, message, success }
     // So we access response.data to get { data: orders, pagination }
     return response.data || { data: [], pagination: {} };
+  },
+
+  // Get waiter's personal stats for Today, This Week, and This Month
+  getMyStats: async (): Promise<WaiterStats> => {
+    const response = await apiClient.get('/orders/my-stats');
+    return response.data;
   },
 
   // Get single order

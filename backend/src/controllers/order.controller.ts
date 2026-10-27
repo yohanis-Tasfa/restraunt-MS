@@ -13,11 +13,22 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
     search,
     branchId,
     status,
+    paymentStatus,
     type,
     customerId,
+    waiterId,
+    myOrdersOnly,
     startDate,
     endDate,
   } = req.query;
+
+  // Strict role isolation: Waiters can only filter for their own orders
+  let effectiveWaiterId = waiterId as string | undefined;
+  if (req.user?.role?.name === 'Waiter') {
+    if (effectiveWaiterId || myOrdersOnly === 'true') {
+      effectiveWaiterId = req.user.id;
+    }
+  }
 
   const result = await orderService.getAll({
     page: page ? parseInt(page as string) : undefined,
@@ -25,8 +36,10 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
     search: search as string,
     branchId: branchId as string,
     status: status as string,
+    paymentStatus: paymentStatus as string,
     type: type as string,
     customerId: customerId as string,
+    waiterId: effectiveWaiterId,
     startDate: startDate as string,
     endDate: endDate as string,
   });
@@ -37,7 +50,7 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   const order = await orderService.getById(id);
 
@@ -74,7 +87,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const data = { ...req.body };
 
   if (data.discount) data.discount = parseFloat(data.discount);
@@ -87,7 +100,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateStatus = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { status } = req.body;
 
   if (!status) {
@@ -102,7 +115,7 @@ export const updateStatus = asyncHandler(async (req: Request, res: Response) => 
 });
 
 export const addItems = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { items } = req.body;
 
   if (!items || items.length === 0) {
@@ -117,7 +130,8 @@ export const addItems = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const removeItem = asyncHandler(async (req: Request, res: Response) => {
-  const { id, itemId } = req.params;
+  const id = req.params.id as string;
+  const itemId = req.params.itemId as string;
 
   const order = await orderService.removeItem(id, itemId);
 
@@ -127,7 +141,7 @@ export const removeItem = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const cancel = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { reason } = req.body;
 
   const order = await orderService.cancel(id, reason);
@@ -147,8 +161,21 @@ export const getDailyStats = asyncHandler(async (req: Request, res: Response) =>
   );
 });
 
+export const getMyStats = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new ApiError(401, 'Unauthorized');
+  }
+
+  const stats = await orderService.getWaiterStats(userId);
+
+  res.status(200).json(
+    new ApiResponse(200, stats, 'Waiter personal statistics fetched successfully')
+  );
+});
+
 export const getReceipt = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   const order = await orderService.getById(id);
 

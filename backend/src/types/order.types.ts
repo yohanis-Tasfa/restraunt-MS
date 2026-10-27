@@ -40,8 +40,10 @@ export interface OrderQueryParams {
   search?: string;
   branchId?: string;
   status?: string;
+  paymentStatus?: string;
   type?: string;
   customerId?: string;
+  waiterId?: string;
   startDate?: string;
   endDate?: string;
 }

@@ -13,6 +13,9 @@ router.get('/', orderController.getAll);
 // Get daily stats (Manager+)
 router.get('/stats/daily', authorize('reports.read'), orderController.getDailyStats);
 
+// Get waiter personal stats (Today, Weekly, Monthly earnings & orders)
+router.get('/my-stats', orderController.getMyStats);
+
 // Get single order (any authenticated user)
 router.get('/:id', orderController.getById);
 
