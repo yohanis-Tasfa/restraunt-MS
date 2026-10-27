@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   useGlobalNotifications();
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 text-gray-900">
       <Sidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)}
@@ -35,36 +35,42 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex items-center gap-3">
               {/* Desktop/Tablet Sidebar Collapse Toggle */}
               <button
+                type="button"
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="hidden lg:flex p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="hidden lg:flex p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
                 title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {sidebarCollapsed ? (
-                  <PanelLeft className="w-5 h-5 text-gray-600" />
+                  <PanelLeft className="w-5 h-5" />
                 ) : (
-                  <PanelLeftClose className="w-5 h-5 text-gray-600" />
+                  <PanelLeftClose className="w-5 h-5" />
                 )}
               </button>
 
               {/* Mobile Menu Toggle */}
               <button
+                type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
               >
-                <Menu className="w-5 h-5 text-gray-600" />
+                <Menu className="w-5 h-5" />
               </button>
 
               {/* Branch Selector - Only branch name */}
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                <span className="text-sm text-gray-900 font-semibold">Bole Main</span>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 border border-gray-200 bg-white hover:bg-gray-50 rounded-lg cursor-pointer transition-colors text-gray-900">
+                <span className="text-sm font-semibold">Bole Main</span>
+                <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </div>
 
             {/* Right Section: Actions & Icons */}
             <div className="flex items-center gap-2">
-              {/* Dark Mode Toggle */}
-              <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Dark mode">
+              {/* Dark Mode Icon - Non-functional as requested */}
+              <button 
+                type="button"
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" 
+                title="Dark mode"
+              >
                 <Moon className="w-5 h-5" />
               </button>
 
@@ -75,7 +81,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-gray-50">
           {children}
         </main>
       </div>

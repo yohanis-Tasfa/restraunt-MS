@@ -35,7 +35,6 @@ import {
   TrendingUp,
   AlertCircle,
   DollarSign,
-  Calendar,
   Receipt,
   ArrowRight,
   RefreshCw,
@@ -47,7 +46,6 @@ import {
   BarChart3,
   Award,
   Smartphone,
-  CheckCircle2,
   Printer,
   FileCheck,
   Filter,
@@ -488,22 +486,9 @@ export default function WaiterDashboardPage() {
             <Utensils className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Welcome back, {user?.firstName || 'Waiter'}!
-              </h1>
-              {isDisplayingDemo ? (
-                <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-xs font-semibold gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-600" />
-                  Showcase Data Mode
-                </Badge>
-              ) : (
-                <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-xs font-semibold gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                  Live Database Mode
-                </Badge>
-              )}
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Welcome back, {user?.firstName || 'Waiter'}!
+            </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
               {user?.branch?.name ? `${user.branch.name} • ` : 'Bole Main • '}
               Waiter Sales Performance & Service Dashboard
@@ -549,18 +534,14 @@ export default function WaiterDashboardPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* TIME PERIOD SELECTOR BAR                                                  */}
+      {/* TIME PERIOD SELECTOR (RIGHT-ALIGNED)                                      */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white px-5 py-3.5 rounded-xl border border-gray-200/80 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-semibold text-gray-700">
-          <Calendar className="w-4 h-4 text-blue-600" />
-          <span>Select Performance Period:</span>
-        </div>
-        <div className="inline-flex rounded-lg bg-gray-100 p-1">
+      <div className="flex justify-end">
+        <div className="inline-flex rounded-lg bg-gray-100/90 p-1 border border-gray-200 shadow-xs">
           <button
             type="button"
             onClick={() => setSelectedPeriod('today')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
               selectedPeriod === 'today'
                 ? 'bg-white text-blue-700 shadow-xs'
                 : 'text-gray-600 hover:text-gray-900'
@@ -571,7 +552,7 @@ export default function WaiterDashboardPage() {
           <button
             type="button"
             onClick={() => setSelectedPeriod('week')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
               selectedPeriod === 'week'
                 ? 'bg-white text-blue-700 shadow-xs'
                 : 'text-gray-600 hover:text-gray-900'
@@ -582,7 +563,7 @@ export default function WaiterDashboardPage() {
           <button
             type="button"
             onClick={() => setSelectedPeriod('month')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
               selectedPeriod === 'month'
                 ? 'bg-white text-blue-700 shadow-xs'
                 : 'text-gray-600 hover:text-gray-900'
