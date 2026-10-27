@@ -70,7 +70,7 @@ export default function POSPage() {
       // Set prefill data for checkout including callId
       const prefill = {
         tableNumber: state.tableNumber,
-        orderType: state.orderType,
+        orderType: state.orderType || 'DINE_IN',
         callId: state.callId, // Pass the callId so we can complete the call
       };
       console.log('🎯 Setting prefill data:', prefill);
@@ -79,40 +79,45 @@ export default function POSPage() {
       // Load customer's cart items with proper structure
       state.customerCart.items.forEach((item: any) => {
         addItem({
-          menuItemId: item.menuItemId,
+          menuItemId: item.menuItemId || item.id || `item-${Date.now()}`,
           menuItem: {
-            id: item.menuItemId,
+            id: item.menuItemId || item.id || `item-${Date.now()}`,
             name: item.name,
-            price: item.price,
+            price: Number(item.price || 0),
             image: item.image,
-            categoryId: item.category?.id || '',
+            categoryId: item.category?.id || item.categoryId || '',
             isAvailable: true,
           },
-          unitPrice: item.price,
-          quantity: item.quantity,
+          unitPrice: Number(item.price || 0),
+          quantity: Number(item.quantity || 1),
           addons: item.addons?.map((addon: any) => ({
             addonId: addon.id || `addon-${Date.now()}`,
             addon: {
               id: addon.id || `addon-${Date.now()}`,
               name: addon.name,
-              price: addon.price,
+              price: Number(addon.price || 0),
               isAvailable: true,
             },
             quantity: 1,
-            price: addon.price,
+            price: Number(addon.price || 0),
           })) || [],
           variantId: item.variant?.id,
           variant: item.variant ? {
             id: item.variant.id || `variant-${Date.now()}`,
             name: item.variant.name,
-            price: item.variant.price,
+            price: Number(item.variant.price || 0),
             isAvailable: true,
           } : undefined,
-          specialInstructions: item.notes,
+          specialInstructions: item.notes || item.specialInstructions,
         });
       });
       
       toast.success(`Loaded ${state.customerCart.items.length} items from Table ${state.tableNumber}`);
+
+      // Auto-open checkout modal so waiter can immediately submit order
+      if (state.autoOpenCheckout) {
+        setIsCheckoutOpen(true);
+      }
       
       // Clear navigation state so it doesn't reload on refresh
       window.history.replaceState({}, document.title);

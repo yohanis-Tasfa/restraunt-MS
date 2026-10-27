@@ -15,7 +15,7 @@ import { useAuthStore } from '../../store/authStore';
 import { ordersApi, OrderType, type CreateOrderData } from '../../api/orders';
 import { tablesApi } from '../../api/tables';
 import { waiterCallsApi } from '../../api/waiter-calls';
-import { CreditCard, Banknote, Smartphone, Printer, CheckCircle } from 'lucide-react';
+import { CreditCard, Banknote, Smartphone, Printer, CheckCircle, Utensils } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface CheckoutDialogProps {
@@ -64,7 +64,11 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
     if (prefillData?.tableNumber && tables.length > 0 && !selectedTable) {
       console.log('🔍 Looking for table:', prefillData.tableNumber);
       console.log('📋 Available tables:', tables.map((t: any) => ({ id: t.id, number: t.number, status: t.status })));
-      const matchingTable = tables.find((t: any) => t.number === prefillData.tableNumber);
+      const targetNum = String(prefillData.tableNumber).trim().toLowerCase().replace(/^t/i, '');
+      const matchingTable = tables.find((t: any) => {
+        const tableNum = String(t.number || '').trim().toLowerCase().replace(/^t/i, '');
+        return tableNum === targetNum || String(t.number) === String(prefillData.tableNumber);
+      });
       console.log('✅ Found matching table:', matchingTable);
       if (matchingTable) {
         setSelectedTable(matchingTable.id);
@@ -219,10 +223,10 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
   // Checkout View
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[92vh] overflow-y-auto" hideCloseButton>
         <DialogHeader>
           <DialogTitle>Checkout</DialogTitle>
-          <DialogDescription>Complete order details and payment</DialogDescription>
+          <DialogDescription>Complete order details and send to kitchen</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -316,20 +320,62 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
             </div>
           )}
 
-          {/* Order Summary */}
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <h3 className="font-semibold text-gray-900 mb-3">Order Summary</h3>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium text-gray-900">{subtotal.toFixed(2)} ብር</span>
+          {/* Order Summary with Meals List */}
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200/80 space-y-3">
+            <div className="flex items-center justify-between border-b border-gray-200/80 pb-2">
+              <h3 className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
+                <Utensils className="w-4 h-4 text-emerald-600" />
+                Ordered Meals ({items.reduce((sum, item) => sum + item.quantity, 0)})
+              </h3>
+              <span className="text-xs text-gray-500 font-medium">{items.length} item{items.length !== 1 ? 's' : ''}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Tax (15%)</span>
-              <span className="font-medium text-gray-900">{tax.toFixed(2)} ብር</span>
+
+            {/* List of meals being ordered */}
+            <div className="max-h-44 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100">
+              {items.map((item) => (
+                <div key={item.id} className="pt-2 first:pt-0 flex items-start justify-between text-xs">
+                  <div className="flex-1 pr-2">
+                    <div className="font-semibold text-gray-900 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center justify-center shrink-0">
+                        {item.quantity}x
+                      </span>
+                      <span>{item.menuItem?.name || 'Dish'}</span>
+                      {item.variant?.name && (
+                        <span className="text-[10px] text-gray-500 font-normal">({item.variant.name})</span>
+                      )}
+                    </div>
+                    {item.specialInstructions && (
+                      <p className="text-[11px] text-gray-500 italic pl-6.5 mt-0.5">
+                        Note: {item.specialInstructions}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="font-bold text-gray-900">
+                      {(item.unitPrice * item.quantity).toFixed(2)} ብር
+                    </span>
+                    <p className="text-[10px] text-gray-400">
+                      {item.unitPrice.toFixed(2)} each
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
-              <span className="text-gray-900">Total</span>
-              <span className="text-green-600">{total.toFixed(2)} ብር</span>
+
+            {/* Pricing breakdown */}
+            <div className="border-t border-gray-200/80 pt-2.5 space-y-1.5 text-xs">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Subtotal</span>
+                <span className="font-medium text-gray-900">{subtotal.toFixed(2)} ብር</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Tax (15%)</span>
+                <span className="font-medium text-gray-900">{tax.toFixed(2)} ብር</span>
+              </div>
+              <div className="flex justify-between text-base font-extrabold border-t border-gray-200/90 pt-2 text-gray-900">
+                <span>Total Payable</span>
+                <span className="text-emerald-700">{total.toFixed(2)} ብር</span>
+              </div>
             </div>
           </div>
 
