@@ -17,24 +17,24 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
     type,
     customerId,
     waiterId,
-    myOrdersOnly,
     startDate,
     endDate,
   } = req.query;
 
-  // Strict role isolation: Waiters can only filter for their own orders
+  // Strict role isolation: Waiters can ONLY see their own orders within their assigned branch
   let effectiveWaiterId = waiterId as string | undefined;
+  let effectiveBranchId = branchId as string | undefined;
+
   if (req.user?.role?.name === 'Waiter') {
-    if (effectiveWaiterId || myOrdersOnly === 'true') {
-      effectiveWaiterId = req.user.id;
-    }
+    effectiveWaiterId = req.user.id;
+    effectiveBranchId = req.user.branchId || undefined;
   }
 
   const result = await orderService.getAll({
     page: page ? parseInt(page as string) : undefined,
     limit: limit ? parseInt(limit as string) : undefined,
     search: search as string,
-    branchId: branchId as string,
+    branchId: effectiveBranchId,
     status: status as string,
     paymentStatus: paymentStatus as string,
     type: type as string,

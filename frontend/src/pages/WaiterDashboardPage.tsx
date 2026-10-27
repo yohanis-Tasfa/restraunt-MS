@@ -370,6 +370,8 @@ export default function WaiterDashboardPage() {
   // Filter for paid orders table: 'all' | 'cash' | 'transfer' | 'telebirr' | 'cbe'
   const [paymentTypeFilter, setPaymentTypeFilter] = useState<'all' | 'cash' | 'transfer' | 'telebirr' | 'cbe'>('all');
   const [isHandoverModalOpen, setIsHandoverModalOpen] = useState(false);
+  const [selectedOrderForDetails, setSelectedOrderForDetails] = useState<any | null>(null);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
 
   // Cash vs Transfer Reconciliation breakdowns (for Cashier Handover)
   const cashOrders = useMemo(() => {
@@ -1191,40 +1193,45 @@ export default function WaiterDashboardPage() {
                   key={order.id}
                   className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:bg-gray-50/70 transition-colors"
                 >
-                  {/* Left: Order Info & Table */}
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center font-bold text-xs text-emerald-700 shrink-0">
-                      T{order.table?.number || '0'}
+                  {/* Left: Table & Dish items (No order number, No Paid badge) */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center shrink-0">
+                      <span className="text-[9px] uppercase tracking-wider font-semibold text-emerald-600 leading-none">Table</span>
+                      <span className="text-sm font-extrabold text-emerald-900 leading-none mt-0.5">
+                        {order.table?.number || '—'}
+                      </span>
                     </div>
-                    <div>
+
+                    <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm text-gray-900">{order.orderNumber}</span>
-                        <span className="text-xs text-gray-500 font-medium">Table {order.table?.number || 'Takeaway'}</span>
-                        <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 font-medium text-[11px]">
-                          Paid
-                        </Badge>
+                        <span className="font-bold text-sm text-gray-900">
+                          Table {order.table?.number || 'Walk-in'}
+                        </span>
                         {getPaymentMethodBadge(order.paymentMethod)}
+                        {order.customer?.firstName && (
+                          <span className="text-xs text-gray-400 font-medium hidden sm:inline">
+                            • {order.customer.firstName} {order.customer.lastName || ''}
+                          </span>
+                        )}
                       </div>
 
                       {/* Dish Preview Chips */}
-                      <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
-                        {(order.items || []).slice(0, 3).map((item: any, idx: number) => (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {(order.items || []).map((item: any, idx: number) => (
                           <span
                             key={idx}
-                            className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-[11px] font-medium"
+                            className="bg-gray-100/90 text-gray-700 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60"
                           >
-                            {item.quantity}x {item.menuItem?.name || item.name || 'Dish'}
+                            <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
+                            {item.menuItem?.name || item.name || 'Dish'}
                           </span>
                         ))}
-                        {(order.items?.length || 0) > 3 && (
-                          <span className="text-[11px] text-gray-400">+{order.items.length - 3} more</span>
-                        )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Right: Total, Time & Details Action */}
-                  <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pl-13 md:pl-0">
+                  {/* Right: Total, Time & View Details Action */}
+                  <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pl-14 md:pl-0">
                     <div className="text-left md:text-right">
                       <div className="text-base font-extrabold text-gray-900">
                         Br {Number(order.total).toFixed(2)}
@@ -1236,8 +1243,11 @@ export default function WaiterDashboardPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate('/admin/orders')}
-                      className="text-xs h-8 px-3"
+                      onClick={() => {
+                        setSelectedOrderForDetails(order);
+                        setIsOrderDetailsOpen(true);
+                      }}
+                      className="text-xs font-semibold h-8 px-3 border-gray-300 hover:bg-gray-100 hover:text-gray-900 shadow-2xs"
                     >
                       View
                     </Button>
@@ -1298,7 +1308,7 @@ export default function WaiterDashboardPage() {
       {/* CASHIER SHIFT HANDOVER SLIP MODAL DIALOG                                  */}
       {/* ========================================================================= */}
       <Dialog open={isHandoverModalOpen} onOpenChange={setIsHandoverModalOpen}>
-        <DialogContent className="max-w-lg p-6">
+        <DialogContent className="max-w-lg p-6" hideCloseButton>
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center justify-between text-gray-900">
               <span className="flex items-center gap-2">
@@ -1430,6 +1440,73 @@ export default function WaiterDashboardPage() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ========================================================================= */}
+      {/* PAID ORDER DETAILS POPUP MODAL                                            */}
+      {/* ========================================================================= */}
+      <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
+        <DialogContent className="max-w-md p-6" hideCloseButton>
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold flex items-center justify-between text-gray-900">
+              <span className="flex items-center gap-2">
+                <Receipt className="w-4.5 h-4.5 text-emerald-600" />
+                Table {selectedOrderForDetails?.table?.number || 'Walk-in'} Receipt
+              </span>
+              {selectedOrderForDetails && getPaymentMethodBadge(selectedOrderForDetails.paymentMethod)}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-gray-500">
+              Paid ticket • {selectedOrderForDetails?.createdAt ? format(new Date(selectedOrderForDetails.createdAt), 'MMM d, yyyy • h:mm a') : 'Recent'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedOrderForDetails && (
+            <div className="space-y-4 pt-2">
+              <div className="border border-gray-200 rounded-xl divide-y divide-gray-100 overflow-hidden text-xs">
+                {(selectedOrderForDetails.items || []).map((item: any, idx: number) => (
+                  <div key={idx} className="p-3 flex items-center justify-between">
+                    <div>
+                      <span className="font-semibold text-gray-900">
+                        {item.quantity}x {item.menuItem?.name || item.name || 'Dish'}
+                      </span>
+                      {item.price && (
+                        <p className="text-[11px] text-gray-500">Br {Number(item.price).toFixed(2)} each</p>
+                      )}
+                    </div>
+                    <span className="font-bold text-gray-900">
+                      Br {(Number(item.quantity || 1) * Number(item.price || (selectedOrderForDetails.total / (selectedOrderForDetails.items?.length || 1)))).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+                <div className="p-3 bg-gray-50 flex items-center justify-between font-bold text-sm text-gray-900">
+                  <span>Total Settled</span>
+                  <span className="text-base text-emerald-700">Br {Number(selectedOrderForDetails.total).toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsOrderDetailsOpen(false)}
+                  className="text-xs"
+                >
+                  Close
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setIsOrderDetailsOpen(false);
+                    navigate('/admin/orders');
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 shadow-xs"
+                >
+                  All Orders Page &rarr;
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

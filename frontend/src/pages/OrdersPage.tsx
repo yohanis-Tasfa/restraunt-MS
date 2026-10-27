@@ -38,7 +38,6 @@ export default function OrdersPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isWaiter = user?.role?.name === 'Waiter';
-  const [waiterScope, setWaiterScope] = useState<'my' | 'all'>('my');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -73,13 +72,13 @@ export default function OrdersPage() {
     setIsPaymentModalOpen(true);
   };
 
-  // Fetch orders
+  // Fetch orders (Waiters are strictly locked to their own orders at their assigned branch)
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['orders', user?.branch?.id, page, isWaiter ? waiterScope : 'all'],
+    queryKey: ['orders', user?.branch?.id, page, isWaiter ? 'my' : 'all'],
     queryFn: () =>
       ordersApi.getOrders({
         branchId: user?.branch?.id,
-        waiterId: isWaiter && waiterScope === 'my' ? user?.id : undefined,
+        waiterId: isWaiter ? user?.id : undefined,
         page,
         limit,
       }),
@@ -89,12 +88,10 @@ export default function OrdersPage() {
   const orders = data?.data || [];
   const pagination = data?.pagination || null;
 
-  // Filter orders by search term, status, payment status, and waiter scope (client-side)
+  // Filter orders by search term, status, payment status, and waiter scope (client-side safety check)
   const filteredOrders = (orders || []).filter((order: Order) => {
-    // Waiter scope filter (client-side safety check)
     const matchesWaiterScope =
       !isWaiter ||
-      waiterScope === 'all' ||
       order.createdById === user?.id ||
       order.table?.assignedWaiterId === user?.id ||
       order.table?.assignedWaiter?.id === user?.id;
@@ -358,35 +355,8 @@ export default function OrdersPage() {
         </Card>
       </div>
 
-      {/* Filter Tabs & Waiter Scope */}
-      <div className="mb-4 space-y-3">
-        {isWaiter && (
-          <div className="flex items-center gap-2 bg-blue-50/70 p-1.5 rounded-lg border border-blue-200/60 w-fit">
-            <span className="text-xs font-semibold text-blue-900 px-2">Scope:</span>
-            <button
-              type="button"
-              onClick={() => setWaiterScope('my')}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                waiterScope === 'my'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-blue-800 hover:bg-blue-100/70'
-              }`}
-            >
-              My Orders Only
-            </button>
-            <button
-              type="button"
-              onClick={() => setWaiterScope('all')}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                waiterScope === 'all'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-blue-800 hover:bg-blue-100/70'
-              }`}
-            >
-              All Branch Orders
-            </button>
-          </div>
-        )}
+      {/* Filter Tabs */}
+      <div className="mb-4">
 
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <Button
