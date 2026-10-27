@@ -1,24 +1,26 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Bell, Plus, Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Plus, Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useTipNotifications } from '../../hooks/useTipNotifications';
-import { useOrderReadyNotifications } from '../../hooks/useOrderReadyNotifications';
+import { useGlobalNotifications } from '../../hooks/useGlobalNotifications';
+import NotificationBellDropdown from '../notifications/NotificationBellDropdown';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Enable tip notifications globally for all logged-in users
-  // The hook internally checks if user is a waiter
   useTipNotifications();
   
-  // Enable order ready notifications for waiters
-  useOrderReadyNotifications();
+  // Enable global real-time notifications (Order Ready & Waiter Calls with chimes + voice speech)
+  useGlobalNotifications();
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -65,7 +67,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Right Section: Actions & Icons */}
             <div className="flex items-center gap-2">
               {/* New Order Button */}
-              <Button className="gap-2 bg-green-600 hover:bg-green-700 h-9">
+              <Button 
+                onClick={() => navigate('/admin/pos')}
+                className="gap-2 bg-green-600 hover:bg-green-700 h-9"
+              >
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">New order</span>
               </Button>
@@ -75,11 +80,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Moon className="w-5 h-5" />
               </button>
 
-              {/* Notification Bell */}
-              <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Notifications">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-500 rounded-full border border-white" />
-              </button>
+              {/* Interactive Notification Bell Dropdown */}
+              <NotificationBellDropdown />
             </div>
           </div>
         </header>

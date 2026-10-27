@@ -107,8 +107,7 @@ export default function OrdersPage() {
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'pending' && order.status === OrderStatus.PENDING) ||
-      (statusFilter === 'ready' && order.status === OrderStatus.READY) ||
-      (statusFilter === 'completed' && order.status === OrderStatus.COMPLETED);
+      (statusFilter === 'ready' && order.status === OrderStatus.READY);
 
     // Payment filter
     const matchesPayment =
@@ -403,21 +402,6 @@ export default function OrdersPage() {
             }
           >
             🍽️ Ready ({stats.ready})
-          </Button>
-          <Button
-            variant={statusFilter === 'completed' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => {
-              setStatusFilter('completed');
-              setPaymentFilter('all');
-            }}
-            className={
-              statusFilter === 'completed'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
-            }
-          >
-            Completed ({stats.completed})
           </Button>
           <Button
             variant={paymentFilter === 'unpaid' ? 'default' : 'outline'}

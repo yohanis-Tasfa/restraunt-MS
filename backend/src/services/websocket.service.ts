@@ -89,10 +89,19 @@ class WebSocketService {
     if (!this.io) return;
 
     // Emit to all clients in the branch
-    this.io.to(`branch:${branchId}`).emit('waiter-call:created', call);
+    if (branchId) {
+      this.io.to(`branch:${branchId}`).emit('waiter-call:created', call);
+    }
     
     // Also emit to restaurant room (for multi-branch support)
-    this.io.to(`restaurant:${restaurantId}`).emit('waiter-call:created', call);
+    if (restaurantId) {
+      this.io.to(`restaurant:${restaurantId}`).emit('waiter-call:created', call);
+    }
+
+    // Direct room for assigned waiter
+    if (call.waiterId) {
+      this.io.to(`user:${call.waiterId}`).emit('waiter-call:created', call);
+    }
     
     console.log(`Emitted waiter-call:created to branch:${branchId}`);
   }
@@ -271,9 +280,19 @@ class WebSocketService {
       timestamp: new Date().toISOString(),
     };
 
-    // Emit initial notification to the specific waiter who created the order
-    this.io.to(`user:${waiterId}`).emit('order:ready', data);
-    console.log(`Emitted order:ready to user:${waiterId} - Order: ${order.orderNumber}`);
+    // Emit initial notification to the specific waiter who created the order (if known)
+    if (waiterId) {
+      this.io.to(`user:${waiterId}`).emit('order:ready', data);
+    }
+
+    // Also broadcast to the branch and restaurant so active waiters/managers receive it
+    if (branchId) {
+      this.io.to(`branch:${branchId}`).emit('order:ready', data);
+    }
+    if (restaurantId) {
+      this.io.to(`restaurant:${restaurantId}`).emit('order:ready', data);
+    }
+    console.log(`Emitted order:ready to branch:${branchId} & user:${waiterId} - Order: ${order.orderNumber}`);
 
     // Schedule reminder notifications every 30 seconds (at 30s, 60s, 90s)
     const reminderIntervals = [30000, 60000, 90000]; // 30s, 60s, 90s in milliseconds

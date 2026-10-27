@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useWebSocket } from '../contexts/WebSocketContext';
 
 // Hook for real-time waiter calls with auto-refresh
-export function useWaiterCalls(params?: WaiterCallsQueryParams, enableSound = true) {
+export function useWaiterCalls(params?: WaiterCallsQueryParams, enableSound = false) {
   const queryClient = useQueryClient();
   const previousCallsRef = useRef<WaiterCall[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -128,7 +128,7 @@ export function useWaiterCalls(params?: WaiterCallsQueryParams, enableSound = tr
 }
 
 // Hook for active calls only
-export function useActiveCalls(enableSound = true) {
+export function useActiveCalls(enableSound = false) {
   const queryClient = useQueryClient();
   const previousCallsRef = useRef<WaiterCall[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);

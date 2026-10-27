@@ -509,19 +509,23 @@ export class OrderService {
     });
 
     // Emit WebSocket notification when order is READY (kitchen finished preparing)
-    if (status === 'READY' && order.createdBy) {
+    if (status === 'READY') {
       const itemsCount = updated.items.reduce((sum, item) => sum + item.quantity, 0);
       const itemNames = updated.items.map(item => `${item.quantity}x ${item.menuItem.name}`).join(', ');
       
+      const waiterId = order.createdBy?.id || '';
+      const branchId = order.branchId || order.createdBy?.branchId || '';
+      const restaurantId = order.createdBy?.branch?.restaurantId || '';
+
       websocketService.emitOrderReady(
         {
           ...updated,
           itemsCount,
           itemNames,
         },
-        order.createdBy.id, // Notify the waiter who created the order
-        order.createdBy.branchId!,
-        order.createdBy.branch!.restaurantId
+        waiterId,
+        branchId,
+        restaurantId
       );
     }
 
