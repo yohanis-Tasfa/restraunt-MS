@@ -508,6 +508,11 @@ export class OrderService {
       );
     }
 
+    // Cancel pending notifications when order is SERVED or COMPLETED
+    if (status === 'SERVED' || status === 'COMPLETED') {
+      websocketService.cancelOrderNotifications(id);
+    }
+
     return updated;
   }
 

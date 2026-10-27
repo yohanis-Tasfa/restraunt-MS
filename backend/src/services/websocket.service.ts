@@ -11,6 +11,7 @@ interface AuthenticatedSocket extends Socket {
 
 class WebSocketService {
   private io: Server | null = null;
+  private orderNotificationTimers: Map<string, NodeJS.Timeout[]> = new Map(); // Track timers by orderId
 
   initialize(httpServer: HTTPServer) {
     this.io = new Server(httpServer, {
@@ -256,23 +257,77 @@ class WebSocketService {
     console.log(`Emitted tip:paid to user:${waiterId} - Amount: ${tip.amount} ETB`);
   }
 
-  // Order ready notification events
+  // Order ready notification events with smart escalation
   emitOrderReady(order: any, waiterId: string, branchId: string, restaurantId: string) {
     if (!this.io) return;
+
+    const orderId = order.id;
+    const timers: NodeJS.Timeout[] = [];
 
     const data = {
       order,
       message: `Order #${order.orderNumber} is ready! Table ${order.table?.number || 'N/A'} - ${order.itemsCount || 0} items`,
       type: 'ready',
+      timestamp: new Date().toISOString(),
     };
 
-    // Emit to the specific waiter who created the order
+    // Emit initial notification to the specific waiter who created the order
     this.io.to(`user:${waiterId}`).emit('order:ready', data);
-    
-    // Also emit to branch for all staff to see
-    this.io.to(`branch:${branchId}`).emit('order:ready', data);
-    
     console.log(`Emitted order:ready to user:${waiterId} - Order: ${order.orderNumber}`);
+
+    // Schedule reminder notifications every 30 seconds (at 30s, 60s, 90s)
+    const reminderIntervals = [30000, 60000, 90000]; // 30s, 60s, 90s in milliseconds
+    
+    reminderIntervals.forEach((delay, index) => {
+      const timer = setTimeout(() => {
+        const reminderData = {
+          ...data,
+          message: `🔔 Reminder: Order #${order.orderNumber} still waiting! Table ${order.table?.number || 'N/A'}`,
+          type: 'ready_reminder',
+          reminderCount: index + 1,
+        };
+
+        // Send reminder only to assigned waiter
+        this.io?.to(`user:${waiterId}`).emit('order:ready:reminder', reminderData);
+        console.log(`Sent reminder ${index + 1} to user:${waiterId} - Order: ${order.orderNumber}`);
+      }, delay);
+      
+      timers.push(timer);
+    });
+
+    // Schedule escalation notification after 2 minutes if not acknowledged
+    const escalationTimer = setTimeout(() => {
+      const escalationData = {
+        ...data,
+        message: `🚨 URGENT: Order #${order.orderNumber} has been waiting 2 minutes! Table ${order.table?.number || 'N/A'}`,
+        type: 'ready_escalation',
+        escalated: true,
+      };
+
+      // Broadcast to entire branch (all staff can help)
+      this.io?.to(`branch:${branchId}`).emit('order:ready:escalation', escalationData);
+      
+      console.log(`Escalated order:ready to branch:${branchId} - Order: ${order.orderNumber} (2 min timeout)`);
+      
+      // Clean up timers after escalation
+      this.orderNotificationTimers.delete(orderId);
+    }, 120000); // 2 minutes = 120000ms
+    
+    timers.push(escalationTimer);
+
+    // Store timers so they can be cancelled later
+    this.orderNotificationTimers.set(orderId, timers);
+  }
+
+  // Cancel all pending notifications for an order (when it's served/completed)
+  cancelOrderNotifications(orderId: string) {
+    const timers = this.orderNotificationTimers.get(orderId);
+    
+    if (timers) {
+      timers.forEach(timer => clearTimeout(timer));
+      this.orderNotificationTimers.delete(orderId);
+      console.log(`Cancelled all pending notifications for order: ${orderId}`);
+    }
   }
 
   // Get instance

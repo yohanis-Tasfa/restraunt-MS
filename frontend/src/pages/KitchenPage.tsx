@@ -12,24 +12,24 @@ import { format } from 'date-fns';
 const STATUS_COLORS = {
   [OrderStatus.PENDING]: 'bg-red-50 border-red-300',
   [OrderStatus.PREPARING]: 'bg-orange-50 border-orange-300',
-  [OrderStatus.COMPLETED]: 'bg-green-50 border-green-300',
+  [OrderStatus.READY]: 'bg-green-50 border-green-300',
 };
 
 const STATUS_HEADER_COLORS = {
   [OrderStatus.PENDING]: 'bg-red-500',
   [OrderStatus.PREPARING]: 'bg-orange-500',
-  [OrderStatus.COMPLETED]: 'bg-green-500',
+  [OrderStatus.READY]: 'bg-green-500',
 };
 
 const STATUS_LABELS = {
   [OrderStatus.PENDING]: 'New Orders',
   [OrderStatus.PREPARING]: 'Preparing',
-  [OrderStatus.COMPLETED]: 'Ready',
+  [OrderStatus.READY]: 'Ready',
 };
 
 const NEXT_STATUS = {
   [OrderStatus.PENDING]: OrderStatus.PREPARING,
-  [OrderStatus.PREPARING]: OrderStatus.COMPLETED,
+  [OrderStatus.PREPARING]: OrderStatus.READY,
 };
 
 const ACTION_LABELS = {
@@ -139,13 +139,13 @@ export default function KitchenPage() {
     (order: Order) =>
       order.status === OrderStatus.PENDING ||
       order.status === OrderStatus.PREPARING ||
-      order.status === OrderStatus.COMPLETED
+      order.status === OrderStatus.READY
   );
 
   const ordersByStatus = {
     [OrderStatus.PENDING]: activeOrders.filter((o: Order) => o.status === OrderStatus.PENDING),
     [OrderStatus.PREPARING]: activeOrders.filter((o: Order) => o.status === OrderStatus.PREPARING),
-    [OrderStatus.COMPLETED]: activeOrders.filter((o: Order) => o.status === OrderStatus.COMPLETED),
+    [OrderStatus.READY]: activeOrders.filter((o: Order) => o.status === OrderStatus.READY),
   };
 
   return (
@@ -202,7 +202,7 @@ export default function KitchenPage() {
             {[
               OrderStatus.PENDING,
               OrderStatus.PREPARING,
-              OrderStatus.COMPLETED,
+              OrderStatus.READY,
             ].map((status) => (
               <div key={status} className="flex flex-col min-h-0">
                 {/* Column Header */}
@@ -284,7 +284,7 @@ export default function KitchenPage() {
                         )}
 
                         {/* Action Button */}
-                        {status !== OrderStatus.COMPLETED ? (
+                        {status !== OrderStatus.READY ? (
                           <Button
                             className="w-full font-semibold"
                             size="lg"
@@ -295,7 +295,7 @@ export default function KitchenPage() {
                           </Button>
                         ) : (
                           <div className="w-full py-3 text-center text-base font-bold text-green-700 bg-green-100 rounded-lg border-2 border-green-300">
-                            ✓ Ready - Call Waiter
+                            ✓ Ready for Pickup
                           </div>
                         )}
                       </Card>

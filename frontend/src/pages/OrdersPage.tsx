@@ -97,6 +97,7 @@ export default function OrdersPage() {
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'pending' && order.status === OrderStatus.PENDING) ||
+      (statusFilter === 'ready' && order.status === OrderStatus.READY) ||
       (statusFilter === 'completed' && order.status === OrderStatus.COMPLETED);
 
     // Payment filter
@@ -152,6 +153,18 @@ export default function OrdersPage() {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to request bill');
+    },
+  });
+
+  // Mark order as SERVED mutation (when waiter delivers food to customer)
+  const markAsServedMutation = useMutation({
+    mutationFn: (orderId: string) => ordersApi.updateOrderStatus(orderId, OrderStatus.SERVED),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      toast.success('Order marked as served!');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to update status');
     },
   });
 
@@ -235,6 +248,7 @@ export default function OrdersPage() {
   const stats = {
     total: (orders || []).length,
     pending: (orders || []).filter((o: Order) => o.status === OrderStatus.PENDING).length,
+    ready: (orders || []).filter((o: Order) => o.status === OrderStatus.READY).length,
     cancelled: (orders || []).filter((o: Order) => o.status === OrderStatus.CANCELLED).length,
     completed: (orders || []).filter((o: Order) => o.status === OrderStatus.COMPLETED).length,
     unpaid: (orders || []).filter((o: Order) => o.paymentStatus === 'UNPAID').length,
@@ -362,6 +376,21 @@ export default function OrdersPage() {
             }
           >
             Pending ({stats.pending})
+          </Button>
+          <Button
+            variant={statusFilter === 'ready' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => {
+              setStatusFilter('ready');
+              setPaymentFilter('all');
+            }}
+            className={
+              statusFilter === 'ready'
+                ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+            }
+          >
+            🍽️ Ready ({stats.ready})
           </Button>
           <Button
             variant={statusFilter === 'completed' ? 'default' : 'outline'}
@@ -504,6 +533,7 @@ export default function OrdersPage() {
                   {(() => {
                     const billRequest = getBillRequestForOrder(order.id);
                     const isUnpaid = order.paymentStatus === 'UNPAID';
+                    const isReady = order.status === OrderStatus.READY;
                     const canRequestBill =
                       ['SERVED', 'COMPLETED'].includes(order.status) && isUnpaid && !billRequest;
                     const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
@@ -511,6 +541,19 @@ export default function OrdersPage() {
 
                     return (
                       <>
+                        {/* Mark as Served button - for READY orders (food ready to be served) */}
+                        {isReady && (
+                          <Button
+                            size="sm"
+                            onClick={() => markAsServedMutation.mutate(order.id)}
+                            disabled={markAsServedMutation.isPending}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Mark as Served
+                          </Button>
+                        )}
+
                         {/* Show bill status badge if exists */}
                         {billInProgress && (
                           <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">

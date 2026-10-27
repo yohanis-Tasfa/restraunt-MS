@@ -363,28 +363,28 @@ export default function BillRequestQueuePage() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2">
                       <div>
-                        <p className="text-xs text-gray-600">Order Number</p>
-                        <p className="font-medium text-sm">
+                        <p className="text-xs font-medium text-gray-600 mb-1">Order Number</p>
+                        <p className="font-medium text-sm text-gray-900">
                           {request.order?.orderNumber || 'N/A'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600">Table</p>
-                        <p className="font-medium text-sm flex items-center">
+                        <p className="text-xs font-medium text-gray-600 mb-1">Table</p>
+                        <p className="font-medium text-sm text-gray-900 flex items-center">
                           <TableIcon className="w-3 h-3 mr-1" />
                           {request.table?.number || 'N/A'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600">Requested By</p>
-                        <p className="font-medium text-sm flex items-center">
+                        <p className="text-xs font-medium text-gray-600 mb-1">Requested By</p>
+                        <p className="font-medium text-sm text-gray-900 flex items-center">
                           <User className="w-3 h-3 mr-1" />
                           {request.requestedBy?.firstName || 'N/A'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600">Total Amount</p>
-                        <p className="font-medium text-sm flex items-center">
+                        <p className="text-xs font-medium text-gray-600 mb-1">Total Amount</p>
+                        <p className="font-medium text-sm text-gray-900 flex items-center">
                           <DollarSign className="w-3 h-3 mr-1" />
                           {request.order?.total?.toFixed(2) || '0.00'} ETB
                         </p>
