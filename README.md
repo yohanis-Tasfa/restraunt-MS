@@ -76,41 +76,50 @@ RMS/
 
 ## Features Overview
 
-### Core Modules (24 Total)
-1. ✅ Dashboard - KPIs, charts, real-time stats
-2. ✅ POS - Order entry, payments, receipts
-3. ✅ Kitchen Display System - Real-time order management
-4. ✅ Menu Management - Items, categories, variants
-5. ✅ Inventory - Stock tracking, alerts, movements
-6. 🔄 Table Management - Floor plan, status tracking
-7. 🔄 Reservations - Booking, walk-ins, waitlist
-8. 🔄 Orders - Lifecycle management
-9. 🔄 Customers - Profiles, history, loyalty
-10. 🔄 Employees - Records, attendance, scheduling
-11. 🔄 Reports - Sales, inventory, financial analytics
-12. 🔄 Suppliers - Management, performance tracking
-13. 🔄 Purchasing - POs, receiving, payments
-14. 🔄 Recipes - Ingredients, costing
-15. 🔄 Expenses - Tracking, approval workflow
-16. 🔄 Accounting - Chart of accounts, journal entries
-17. 🔄 Delivery - Order tracking, driver management
-18. 🔄 Online Orders - Customer ordering system
-19. 🔄 QR Menu - Contactless ordering
-20. 🔄 Notifications - Multi-channel alerts
-21. 🔄 Backup - Automated backups, export/import
-22. 🔄 Settings - Restaurant, branch, tax configuration
-23. 🔄 Profile - User management
-24. ✅ Login - Role-based authentication
+### Core Modules (Version 1.0 vs Version 2.0)
+1. ✅ Dashboard - Role-based KPIs, charts, real-time stats
+2. ✅ POS - Order entry, table linking, payments, printed receipts
+3. ✅ Kitchen Display System - Real-time Kanban with waiter ready notifications
+4. ✅ Menu Management - Items, categories, variants, add-ons
+5. ✅ Inventory - Stock tracking, movements (IN/OUT/ADJUSTMENT), alerts
+6. ✅ Table Management - Floor plan, status tracking, QR code generation
+7. ✅ Reservations - Table bookings, customer records
+8. ✅ Orders - Real-time lifecycle management & status transitions
+9. ✅ Bill Requests - Real-time queue, bill generator, printed bills
+10. ✅ Waiter Calls - Instant table call alerts with sound & escalation
+11. ✅ Tips Management - Waiter personal tips & branch tip management
+12. ✅ Recipes - Ingredients, recipe costing
+13. ✅ Expenses - Expense logging & category tracking
+14. ✅ Employees - Staff records, attendance, payroll records
+15. ✅ Reports - Sales analytics, inventory movements, staff performance
+16. ✅ QR Menu - Contactless table ordering, waiter calls, bill requests
+17. ✅ Public Landing Page - Restaurant website, story, menu preview, contact
+18. ✅ Profile - User management & profile settings
+19. ✅ Login - Role-based authentication (Owner, Manager, Cashier, Kitchen, Waiter)
+20. ⏭️ Suppliers - *Deferred to v2.0 (Backend models ready; UI in next version)*
+21. ⏭️ Purchasing - *Deferred to v2.0 (Backend models ready; UI in next version)*
+22. ⏭️ Delivery - *Deferred to v2.0 (Driver dispatch & order tracking)*
+23. ⏭️ Remote Online Orders - *Deferred to v2.0 (Home delivery customer portal)*
+24. ⏭️ Accounting - *Deferred to v2.0 (Chart of accounts & journal entries)*
+25. ⏭️ Backup - *Deferred to v2.0 (Automated backups & export/import UI)*
 
-**Legend:** ✅ UI Complete | 🔄 UI Structure Ready
+**Legend:** ✅ Implemented in v1.0 | ⏭️ Deferred to v2.0 (Next Version)
 
 ---
 
 ## Ethiopian Market Features
 
 - **Currency:** Ethiopian Birr (ETB) - `Br 1,234.56`
-- **Payments:** Telebirr, CBE Birr, M-Pesa, Cash, Card
-- **Language:** English + Amharic (i18n ready)
+- **Supported Payment Methods (v1.0):**
+  - **Cash:** Physical cash accepted at POS counter or collected at table by waiter; automated change calculation in ETB (notes: 200, 100, 50, 10, 5, 1); no screenshot required
+  - **Mobile Transfer (Telebirr, CBE Birr, M-Pesa, Bank Transfer):**
+    - Provider brand logo/image and account name/number displayed on checkout dialog
+    - Customer executes transfer via personal mobile phone app or USSD
+    - Customer/staff captures and uploads screenshot of transaction confirmation screen or SMS
+    - Cashier verifies screenshot proof before completing payment
+    - *(Direct automated API integrations & webhooks deferred to v2.0)*
+  - **Card:** POS terminal card transaction recording
+- **Language:** English (Amharic i18n deferred to v2.0)
 - **Tax:** 15% VAT (configurable)
 - **Menu:** Traditional Ethiopian categories (Wot, Tibs, Fasting foods)
 - **Calendar:** Ethiopian calendar support (optional)
