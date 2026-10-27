@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Plus, Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Menu, ChevronDown, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { useTipNotifications } from '../../hooks/useTipNotifications';
 import { useGlobalNotifications } from '../../hooks/useGlobalNotifications';
 import NotificationBellDropdown from '../notifications/NotificationBellDropdown';
@@ -12,7 +10,6 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -66,15 +63,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Right Section: Actions & Icons */}
             <div className="flex items-center gap-2">
-              {/* New Order Button */}
-              <Button 
-                onClick={() => navigate('/admin/pos')}
-                className="gap-2 bg-green-600 hover:bg-green-700 h-9"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">New order</span>
-              </Button>
-
               {/* Dark Mode Toggle */}
               <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Dark mode">
                 <Moon className="w-5 h-5" />

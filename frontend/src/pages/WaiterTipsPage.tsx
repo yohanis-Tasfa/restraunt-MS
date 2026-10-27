@@ -167,18 +167,18 @@ export default function WaiterTipsPage() {
         </Card>
       </div>
 
-      {/* Filters */}
-      <div className="mb-4 flex gap-4">
-        {/* Status Filter */}
-        <div className="flex gap-2">
+      {/* Filters: Status on Left, Period on Right */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        {/* Status Filter (Left) */}
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant={statusFilter === 'all' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setStatusFilter('all')}
             className={
               statusFilter === 'all'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
             All Tips
@@ -189,11 +189,11 @@ export default function WaiterTipsPage() {
             onClick={() => setStatusFilter('PENDING')}
             className={
               statusFilter === 'PENDING'
-                ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-yellow-600 hover:bg-yellow-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
-            <Clock className="w-4 h-4 mr-1" />
+            <Clock className="w-4 h-4 mr-1.5" />
             Pending
           </Button>
           <Button
@@ -202,28 +202,28 @@ export default function WaiterTipsPage() {
             onClick={() => setStatusFilter('PAID')}
             className={
               statusFilter === 'PAID'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
-            <CheckCircle className="w-4 h-4 mr-1" />
+            <CheckCircle className="w-4 h-4 mr-1.5" />
             Paid
           </Button>
         </div>
 
-        {/* Date Range Filter */}
-        <div className="flex gap-2">
+        {/* Date Range Filter (Right) */}
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           <Button
             variant={dateRange === 'all' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setDateRange('all')}
             className={
               dateRange === 'all'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
-            <Calendar className="w-4 h-4 mr-1" />
+            <Calendar className="w-4 h-4 mr-1.5" />
             All Time
           </Button>
           <Button
@@ -232,8 +232,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('today')}
             className={
               dateRange === 'today'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
             Today
@@ -244,8 +244,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('week')}
             className={
               dateRange === 'week'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
             This Week
@@ -256,8 +256,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('month')}
             className={
               dateRange === 'month'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }
           >
             This Month
