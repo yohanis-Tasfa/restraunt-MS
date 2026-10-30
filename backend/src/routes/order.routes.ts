@@ -31,6 +31,9 @@ router.put('/:id', authorize('orders.update'), orderController.update);
 // Update order status (Cashier+, Kitchen Staff can also update)
 router.patch('/:id/status', authorize('orders.update'), orderController.updateStatus);
 
+// Re-notify waiter that order is ready (Kitchen Staff, Cashier+)
+router.post('/:id/notify-waiter', authorize('orders.update'), orderController.notifyWaiter);
+
 // Add items to order (Cashier+, Waiter)
 router.post('/:id/items', authorize('orders.update'), orderController.addItems);
 

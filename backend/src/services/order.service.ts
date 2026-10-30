@@ -123,14 +123,23 @@ export class OrderService {
             price: true,
             subtotal: true,
             notes: true,
+            status: true,
             menuItem: {
               select: {
                 id: true,
                 name: true,
+                preparationTime: true,
+                isSpicy: true,
+                isVegetarian: true,
+                allergens: true,
+                category: {
+                  select: {
+                    name: true,
+                  },
+                },
               },
             },
           },
-          take: 3, // Only get first 3 items for performance
         },
         _count: {
           select: {
@@ -387,6 +396,9 @@ export class OrderService {
       });
     }
 
+    const restaurantId = branch?.restaurantId || '';
+    websocketService.emitOrderCreated(order, data.branchId, restaurantId);
+
     return order;
   }
 
@@ -534,7 +546,53 @@ export class OrderService {
       websocketService.cancelOrderNotifications(id);
     }
 
+    const branchId = order.branchId || order.createdBy?.branchId || '';
+    const restaurantId = order.createdBy?.branch?.restaurantId || '';
+    websocketService.emitOrderStatusUpdated(updated, branchId, restaurantId);
+
     return updated;
+  }
+
+  async notifyWaiter(id: string) {
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        table: true,
+        createdBy: {
+          include: {
+            branch: true,
+          },
+        },
+        items: {
+          include: {
+            menuItem: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      throw new ApiError(404, 'Order not found');
+    }
+
+    const itemsCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
+    const itemNames = order.items.map((item) => `${item.quantity}x ${item.menuItem?.name || 'Item'}`).join(', ');
+    const waiterId = order.createdBy?.id || '';
+    const branchId = order.branchId || order.createdBy?.branchId || '';
+    const restaurantId = order.createdBy?.branch?.restaurantId || '';
+
+    websocketService.emitOrderReady(
+      {
+        ...order,
+        itemsCount,
+        itemNames,
+      },
+      waiterId,
+      branchId,
+      restaurantId
+    );
+
+    return { message: 'Waiter re-notified successfully' };
   }
 
   async addItems(orderId: string, items: OrderItemInput[]) {

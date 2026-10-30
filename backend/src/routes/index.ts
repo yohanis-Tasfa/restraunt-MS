@@ -24,6 +24,7 @@ import customerSessionRoutes from './customer-session.routes';
 import waiterCallRoutes from './waiter-call.routes';
 import billRequestRoutes from './bill-request.routes';
 import tipRoutes from './tip.routes';
+import ingredientRequestRoutes from './ingredient-request.routes';
 
 const router = Router();
 
@@ -52,6 +53,7 @@ router.use('/customer-sessions', customerSessionRoutes);
 router.use('/waiter-calls', waiterCallRoutes);
 router.use('/bill-requests', billRequestRoutes);
 router.use('/tips', tipRoutes);
+router.use('/ingredient-requests', ingredientRequestRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

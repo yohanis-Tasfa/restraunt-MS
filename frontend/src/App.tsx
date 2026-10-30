@@ -23,6 +23,7 @@ import BillRequestQueuePage from './pages/BillRequestQueuePage';
 import WaiterTipsPage from './pages/WaiterTipsPage';
 import TipsManagementPage from './pages/TipsManagementPage';
 import PublicLandingPage from './pages/PublicLandingPage';
+import IngredientsPage from './pages/IngredientsPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -165,6 +166,22 @@ function App() {
                       <MenuManagementPage />
                     </ProtectedRoute>
                   } 
+                />
+                <Route 
+                  path="ingredients"
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
+                      <IngredientsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="ingredient-requests"
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
+                      <IngredientsPage />
+                    </ProtectedRoute>
+                  }
                 />
                 <Route 
                   path="recipes" 

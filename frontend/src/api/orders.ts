@@ -153,6 +153,12 @@ export const ordersApi = {
     return response.data;
   },
 
+  // Re-notify waiter that order is ready
+  notifyWaiter: async (id: string): Promise<{ message: string }> => {
+    const response = await apiClient.post(`/orders/${id}/notify-waiter`);
+    return response.data;
+  },
+
   // Cancel order
   cancelOrder: async (id: string, reason?: string): Promise<Order> => {
     const response = await apiClient.post(`/orders/${id}/cancel`, { reason });

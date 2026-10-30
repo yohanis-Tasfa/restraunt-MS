@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import recipesApi, { type MenuItemWithRecipe, type RecipeItem, type MenuItemRecipe } from '../api/recipes';
 import inventoryApi from '../api/inventory';
-import { Plus, Search, Trash2, Edit2, ChefHat, Package, DollarSign, TrendingUp } from 'lucide-react';
+import { Plus, Search, Trash2, Edit2, ChefHat, Package, DollarSign, TrendingUp, PackagePlus } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import toast from 'react-hot-toast';
 
@@ -64,14 +65,24 @@ export default function RecipesPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <ChefHat className="w-8 h-8 text-green-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <ChefHat className="w-8 h-8 text-green-600" />
+            <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
+          </div>
+          <p className="text-sm text-gray-600">
+            Link menu items to inventory ingredients for automatic cost calculation
+          </p>
         </div>
-        <p className="text-sm text-gray-600">
-          Link menu items to inventory ingredients for automatic cost calculation
-        </p>
+
+        <Link
+          to="/admin/ingredients"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 text-xs font-bold transition-all shrink-0 shadow-2xs"
+        >
+          <PackagePlus className="w-4 h-4 text-amber-600" />
+          <span>Check Live Ingredients & Request Stock</span>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

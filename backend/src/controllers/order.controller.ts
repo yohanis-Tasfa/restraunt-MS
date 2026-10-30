@@ -114,6 +114,15 @@ export const updateStatus = asyncHandler(async (req: Request, res: Response) => 
   );
 });
 
+export const notifyWaiter = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const result = await orderService.notifyWaiter(id);
+
+  res.status(200).json(
+    new ApiResponse(200, result, 'Waiter notified successfully')
+  );
+});
+
 export const addItems = asyncHandler(async (req: Request, res: Response) => {
   const id = req.params.id as string;
   const { items } = req.body;

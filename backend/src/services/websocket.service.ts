@@ -266,6 +266,46 @@ class WebSocketService {
     console.log(`Emitted tip:paid to user:${waiterId} - Amount: ${tip.amount} ETB`);
   }
 
+  // Emit new order created (for Kitchen & Floor staff)
+  emitOrderCreated(order: any, branchId: string, restaurantId?: string) {
+    if (!this.io) return;
+
+    const data = {
+      order,
+      message: `New Order #${order.orderNumber} received for ${order.table?.number ? `Table ${order.table.number}` : order.type}`,
+      type: 'created',
+      timestamp: new Date().toISOString(),
+    };
+
+    if (branchId) {
+      this.io.to(`branch:${branchId}`).emit('order:created', data);
+    }
+    if (restaurantId) {
+      this.io.to(`restaurant:${restaurantId}`).emit('order:created', data);
+    }
+    console.log(`Emitted order:created to branch:${branchId} - Order #${order.orderNumber}`);
+  }
+
+  // Emit order status update (for Kitchen, Waiters, Cashiers)
+  emitOrderStatusUpdated(order: any, branchId: string, restaurantId?: string) {
+    if (!this.io) return;
+
+    const data = {
+      order,
+      message: `Order #${order.orderNumber} status changed to ${order.status}`,
+      type: 'status_updated',
+      timestamp: new Date().toISOString(),
+    };
+
+    if (branchId) {
+      this.io.to(`branch:${branchId}`).emit('order:status_updated', data);
+    }
+    if (restaurantId) {
+      this.io.to(`restaurant:${restaurantId}`).emit('order:status_updated', data);
+    }
+    console.log(`Emitted order:status_updated to branch:${branchId} - Order #${order.orderNumber} -> ${order.status}`);
+  }
+
   // Order ready notification events with smart escalation
   emitOrderReady(order: any, waiterId: string, branchId: string, restaurantId: string) {
     if (!this.io) return;
