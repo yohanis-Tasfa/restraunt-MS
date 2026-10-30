@@ -111,6 +111,7 @@ export const billRequestsApi = {
     const response: any = await api.get('/bill-requests/pending-count', {
       params: { userId },
     });
-    return response.data.count;
+    const count = response?.data?.count ?? response?.count ?? response?.data ?? response;
+    return typeof count === 'number' ? count : 0;
   },
 };

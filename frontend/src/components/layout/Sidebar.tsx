@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/authStore';
 import { useActiveCalls } from '../../hooks/useWaiterCalls';
 import { useWebSocket } from '../../contexts/WebSocketContext';
+import { billRequestsApi } from '../../api/billRequests';
 import logo from '../../assets/image.png';
 import {
   LayoutDashboard,
@@ -13,7 +16,6 @@ import {
   Beef,
   Package,
   ClipboardList,
-  Settings,
   LogOut,
   Store,
   X,
@@ -44,12 +46,53 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose, isCollapsed = false }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const { user, logout } = useAuthStore();
-  const { isConnected } = useWebSocket();
+  const { isConnected, socket } = useWebSocket();
 
   // Get active waiter calls for badge count
   const { calls: activeCalls } = useActiveCalls(false); // false = no sound in sidebar
   const pendingCallsCount = activeCalls.filter(call => call.status === 'PENDING').length;
+
+  // Check if current user role can view bill requests (Cashier, Manager, Owner)
+  const canSeeBillRequests = ['Owner', 'Manager', 'Cashier', 'Super Admin', 'Admin'].includes(user?.role?.name || '');
+
+  // Query pending bill requests count for Cashier / Manager
+  const { data: pendingBillRequestsCount = 0 } = useQuery({
+    queryKey: ['bill-requests', 'pending-count'],
+    queryFn: async () => {
+      try {
+        const count = await billRequestsApi.getPendingCount();
+        return typeof count === 'number' ? count : 0;
+      } catch (err) {
+        console.error('Error fetching pending bill requests count:', err);
+        return 0;
+      }
+    },
+    enabled: !!user && canSeeBillRequests,
+    refetchInterval: 5000,
+  });
+
+  // Listen for real-time WebSocket events to update bill request count immediately
+  useEffect(() => {
+    if (!socket || !canSeeBillRequests) return;
+
+    const handleBillRequestUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ['bill-requests'] });
+    };
+
+    socket.on('billRequest:created', handleBillRequestUpdate);
+    socket.on('billRequest:processed', handleBillRequestUpdate);
+    socket.on('billRequest:completed', handleBillRequestUpdate);
+    socket.on('billRequest:cancelled', handleBillRequestUpdate);
+
+    return () => {
+      socket.off('billRequest:created', handleBillRequestUpdate);
+      socket.off('billRequest:processed', handleBillRequestUpdate);
+      socket.off('billRequest:completed', handleBillRequestUpdate);
+      socket.off('billRequest:cancelled', handleBillRequestUpdate);
+    };
+  }, [socket, canSeeBillRequests, queryClient]);
 
   // Overview Section Items
   const overviewItems: NavItem[] = [
@@ -63,7 +106,13 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const operationsItems: NavItem[] = [
     { label: 'Tables', icon: Store, path: '/admin/tables' },
     { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined, roles: ['Owner', 'Manager', 'Waiter'] },
-    { label: 'Bill Requests', icon: FileText, path: '/admin/bill-requests', roles: ['Owner', 'Manager', 'Cashier'] },
+    { 
+      label: 'Bill Requests', 
+      icon: FileText, 
+      path: '/admin/bill-requests', 
+      badge: pendingBillRequestsCount > 0 ? pendingBillRequestsCount : undefined, 
+      roles: ['Owner', 'Manager', 'Cashier'] 
+    },
     { label: 'My Tips', icon: DollarSign, path: '/admin/my-tips', roles: ['Waiter'] },
     { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations', roles: ['Owner', 'Manager', 'Cashier', 'Waiter'] },
     { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Owner', 'Manager'] },
@@ -221,15 +270,15 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
                 {!isCollapsed && (
                   <>
                     <span className="flex-1 text-left">{item.label}</span>
-                    {item.badge && (
-                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700">
-                        {item.badge}
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm flex items-center justify-center min-w-[20px] h-5">
+                        {item.badge > 99 ? '99+' : item.badge}
                       </span>
                     )}
                   </>
                 )}
-                {isCollapsed && item.badge && (
-                  <span className="absolute right-2 top-2 w-2 h-2 bg-red-500 rounded-full" />
+                {isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                  <span className="absolute right-1.5 top-1.5 w-2.5 h-2.5 bg-red-600 rounded-full ring-2 ring-white" />
                 )}
               </button>
             ))}
@@ -257,15 +306,15 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
                 {!isCollapsed && (
                   <>
                     <span className="flex-1 text-left">{item.label}</span>
-                    {item.badge && (
-                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700">
-                        {item.badge}
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm flex items-center justify-center min-w-[20px] h-5">
+                        {item.badge > 99 ? '99+' : item.badge}
                       </span>
                     )}
                   </>
                 )}
-                {isCollapsed && item.badge && (
-                  <span className="absolute right-2 top-2 w-2 h-2 bg-red-500 rounded-full" />
+                {isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                  <span className="absolute right-1.5 top-1.5 w-2.5 h-2.5 bg-red-600 rounded-full ring-2 ring-white" />
                 )}
               </button>
             ))}
@@ -293,15 +342,15 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
                 {!isCollapsed && (
                   <>
                     <span className="flex-1 text-left">{item.label}</span>
-                    {item.badge && (
-                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700">
-                        {item.badge}
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm flex items-center justify-center min-w-[20px] h-5">
+                        {item.badge > 99 ? '99+' : item.badge}
                       </span>
                     )}
                   </>
                 )}
-                {isCollapsed && item.badge && (
-                  <span className="absolute right-2 top-2 w-2 h-2 bg-red-500 rounded-full" />
+                {isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                  <span className="absolute right-1.5 top-1.5 w-2.5 h-2.5 bg-red-600 rounded-full ring-2 ring-white" />
                 )}
               </button>
             ))}

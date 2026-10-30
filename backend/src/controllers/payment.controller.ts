@@ -40,15 +40,18 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, 'OrderId, amount, and method are required');
   }
 
-  const payment = await paymentService.create({
-    orderId,
-    amount: parseFloat(amount),
-    method,
-    reference,
-    proofImageUrl,
-    transactionRef,
-    notes,
-  });
+  const payment = await paymentService.create(
+    {
+      orderId,
+      amount: parseFloat(amount),
+      method,
+      reference,
+      proofImageUrl,
+      transactionRef,
+      notes,
+    },
+    req.user?.id
+  );
 
   res.status(201).json(
     new ApiResponse(201, payment, 'Payment processed successfully')
@@ -98,15 +101,18 @@ export const collectPayment = asyncHandler(async (req: Request, res: Response) =
     throw new ApiError(400, 'OrderId, amount, and method are required');
   }
 
-  const result = await paymentService.collectPayment({
-    orderId,
-    amount: parseFloat(amount),
-    method,
-    amountReceived: amountReceived ? parseFloat(amountReceived) : undefined,
-    proofImageUrl,
-    transactionRef,
-    notes,
-  });
+  const result = await paymentService.collectPayment(
+    {
+      orderId,
+      amount: parseFloat(amount),
+      method,
+      amountReceived: amountReceived ? parseFloat(amountReceived) : undefined,
+      proofImageUrl,
+      transactionRef,
+      notes,
+    },
+    req.user?.id
+  );
 
   res.status(201).json(
     new ApiResponse(201, result, 'Payment collected successfully')

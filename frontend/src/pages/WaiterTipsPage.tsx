@@ -76,18 +76,27 @@ export default function WaiterTipsPage() {
   };
 
   const getMethodColor = (method: string) => {
-    if (method === 'CASH') return 'bg-green-100 text-green-700';
-    return 'bg-blue-100 text-blue-700';
+    switch (method?.toUpperCase()) {
+      case 'CASH':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'TELEBIRR':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'CBE_BIRR':
+      case 'CBEBIRR':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
   };
 
   const getStatusColor = (status: TipStatus) => {
     switch (status) {
       case TipStatus.PENDING:
-        return 'bg-yellow-100 text-yellow-700';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       case TipStatus.PAID:
-        return 'bg-green-100 text-green-700';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
 
@@ -265,8 +274,8 @@ export default function WaiterTipsPage() {
         </div>
       </div>
 
-      {/* Tips List */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      {/* Tips Table */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
         {tips.length === 0 ? (
           <div className="text-center py-12">
             <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-3" />
@@ -276,73 +285,100 @@ export default function WaiterTipsPage() {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
-            {tips.map((tip: Tip) => (
-              <div
-                key={tip.id}
-                className="p-4 hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Badge className={`${getMethodColor(tip.method)} font-normal text-xs`}>
-                        <span className="flex items-center gap-1">
-                          {getMethodIcon(tip.method)}
-                          {tip.method}
-                        </span>
-                      </Badge>
-                      <Badge className={`${getStatusColor(tip.status)} font-normal text-xs`}>
-                        {tip.status}
-                      </Badge>
-                      <span className="text-sm text-gray-500">
-                        {format(new Date(tip.createdAt), 'MMM dd, yyyy HH:mm')}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-left">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Table
+                  </th>
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Order Total
+                  </th>
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Payment Method
+                  </th>
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Date &amp; Time
+                  </th>
+                  <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Tip Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {tips.map((tip: Tip) => (
+                  <tr key={tip.id} className="hover:bg-gray-50/80 transition-colors">
+                    {/* Table */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
+                        {tip.order?.table?.number
+                          ? (tip.order.table.number.toLowerCase().startsWith('t')
+                              ? tip.order.table.number
+                              : `Table ${tip.order.table.number}`)
+                          : 'Takeout'}
                       </span>
-                    </div>
+                    </td>
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <p className="text-xs text-gray-600">Order</p>
-                        <p className="font-medium text-sm text-gray-900">
-                          #{tip.order?.orderNumber}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-600">Table</p>
-                        <p className="font-medium text-sm text-gray-900">
-                          {tip.order?.table?.number || 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-600">Order Total</p>
-                        <p className="font-medium text-sm text-gray-900">
-                          {tip.order?.total.toFixed(2)} ETB
-                        </p>
-                      </div>
-                    </div>
+                    {/* Order Total */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-semibold text-gray-900">
+                        {(tip.order?.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ETB
+                      </span>
+                    </td>
 
-                    {tip.status === TipStatus.PAID && tip.paidAt && (
-                      <div className="mt-2 text-xs text-gray-500">
-                        Paid on {format(new Date(tip.paidAt), 'MMM dd, yyyy')} by{' '}
-                        {tip.paidBy?.firstName} {tip.paidBy?.lastName}
-                      </div>
-                    )}
+                    {/* Payment Method */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${getMethodColor(tip.method)}`}>
+                        {getMethodIcon(tip.method)}
+                        {tip.method}
+                      </span>
+                    </td>
 
-                    {tip.status === TipStatus.PENDING && (
-                      <div className="mt-2 text-xs text-yellow-600">
-                        ⏳ Waiting for manager to pay out
+                    {/* Status */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col items-start gap-0.5">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getStatusColor(tip.status)}`}>
+                          {tip.status}
+                        </span>
+                        {tip.status === TipStatus.PENDING && (
+                          <span className="text-[11px] text-amber-700 font-medium">
+                            ⏳ Waiting for payout
+                          </span>
+                        )}
+                        {tip.status === TipStatus.PAID && tip.paidAt && (
+                          <span className="text-[11px] text-gray-500">
+                            Paid {format(new Date(tip.paidAt), 'MMM dd, yyyy')}
+                            {tip.paidBy ? ` by ${tip.paidBy.firstName}` : ''}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </td>
 
-                  <div className="text-right ml-4">
-                    <p className="text-2xl font-bold text-green-600">
-                      {tip.amount.toFixed(2)} ETB
-                    </p>
-                    <p className="text-xs text-gray-500">Tip amount</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+                    {/* Date & Time */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <div className="font-medium text-gray-900">
+                        {format(new Date(tip.createdAt), 'MMM dd, yyyy')}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {format(new Date(tip.createdAt), 'HH:mm')}
+                      </div>
+                    </td>
+
+                    {/* Tip Amount */}
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className="text-xl font-bold text-green-600">
+                        +{tip.amount.toFixed(2)} ETB
+                      </div>
+                      <div className="text-xs text-gray-400 font-medium">Tip received</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

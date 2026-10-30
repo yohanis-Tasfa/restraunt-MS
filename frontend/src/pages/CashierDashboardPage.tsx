@@ -27,7 +27,7 @@ export default function CashierDashboardPage() {
     refetchInterval: 5000,
   });
 
-  const pendingBillsCount = pendingCountData?.count || 0;
+  const pendingBillsCount = typeof pendingCountData === 'number' ? pendingCountData : (pendingCountData?.count || 0);
   // Mock data - replace with real API data filtered for cashier's own transactions
   const stats = {
     todaySales: 12400.0,

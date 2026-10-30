@@ -104,12 +104,45 @@ export class PaymentService {
     return payment;
   }
 
-  async create(data: CreatePaymentData) {
+  private async resolveWaiterId(userId?: string, order?: any): Promise<string | null> {
+    // 1. If userId belongs to a waiter, attribute tip directly to that waiter
+    if (userId) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { role: true },
+      });
+      if (user?.role?.name === 'Waiter') {
+        return user.id;
+      }
+    }
+
+    // 2. If table has an assigned waiter, attribute to table's waiter
+    if (order?.table?.assignedWaiterId) {
+      return order.table.assignedWaiterId;
+    }
+
+    // 3. If order creator was a waiter, attribute to order creator
+    if (order?.createdById) {
+      const creator = await prisma.user.findUnique({
+        where: { id: order.createdById },
+        include: { role: true },
+      });
+      if (creator?.role?.name === 'Waiter') {
+        return creator.id;
+      }
+    }
+
+    // 4. Fallback to userId if available, otherwise order.createdById
+    return userId || order?.createdById || null;
+  }
+
+  async create(data: CreatePaymentData, recordedById?: string) {
     // Validate order
     const order = await prisma.order.findUnique({
       where: { id: data.orderId },
       include: {
         payments: true,
+        table: true,
       },
     });
 
@@ -139,6 +172,15 @@ export class PaymentService {
       );
     }
 
+    // Calculate tip if paying more than remaining balance
+    let tipAmount = 0;
+    if (data.amount > remaining) {
+      tipAmount = Math.round((data.amount - remaining) * 100) / 100;
+    }
+
+    // Amount applied to the order balance
+    const paymentAmountTowardOrder = Math.min(data.amount, remaining);
+
     // Create payment
     const payment = await prisma.payment.create({
       data: {
@@ -148,7 +190,9 @@ export class PaymentService {
         reference: data.reference,
         proofImageUrl: data.proofImageUrl,
         transactionRef: data.transactionRef,
-        notes: data.notes,
+        notes: tipAmount > 0
+          ? `${data.notes || ''}\nTotal received: ${data.amount} ETB (includes ${tipAmount.toFixed(2)} ETB tip)`.trim()
+          : data.notes,
         status: 'completed',
       },
       include: {
@@ -157,19 +201,66 @@ export class PaymentService {
             id: true,
             orderNumber: true,
             total: true,
+            table: true,
+            createdById: true,
           },
         },
       },
     });
 
     // Update order payment status
-    const newTotalPaid = totalPaid + data.amount;
+    const newTotalPaid = totalPaid + paymentAmountTowardOrder;
     const paymentStatus = newTotalPaid >= order.total ? 'PAID' : 'UNPAID';
 
     await prisma.order.update({
       where: { id: data.orderId },
       data: { paymentStatus },
     });
+
+    // Create Tip record if there is an overpayment (tip)
+    if (tipAmount > 0) {
+      const waiterId = await this.resolveWaiterId(recordedById, order);
+
+      if (waiterId) {
+        const tipRecord = await prisma.tip.create({
+          data: {
+            orderId: data.orderId,
+            paymentId: payment.id,
+            waiterId,
+            amount: tipAmount,
+            method: data.method,
+            status: data.method === 'CASH' ? 'PAID' : 'PENDING',
+            notes: `Tip from ${data.method} payment (${data.amount} ETB for ${order.total} ETB bill)`,
+          },
+          include: {
+            waiter: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                branchId: true,
+                branch: {
+                  select: {
+                    id: true,
+                    restaurantId: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Emit WebSocket notification to waiter
+        if (tipRecord.waiter?.branchId && tipRecord.waiter.branch?.restaurantId) {
+          websocketService.emitTipReceived(
+            tipRecord,
+            waiterId,
+            tipRecord.waiter.branchId,
+            tipRecord.waiter.branch.restaurantId
+          );
+        }
+      }
+    }
 
     return payment;
   }
@@ -179,7 +270,7 @@ export class PaymentService {
    * Handles cash and transfer with photo upload
    * Returns change amount for cash payments
    */
-  async collectPayment(data: CreatePaymentData & { amountReceived?: number }) {
+  async collectPayment(data: CreatePaymentData & { amountReceived?: number }, collectedById?: string) {
     // Validate order
     const order = await prisma.order.findUnique({
       where: { id: data.orderId },
@@ -266,46 +357,48 @@ export class PaymentService {
     });
 
     // Create Tip record if there's an overpayment
-    // ONLY track tips from transfer/digital payments (not cash)
-    // Cash tips go directly to waiter, no need to track
     let tipRecord = null;
-    if (tipAmount > 0 && data.method !== 'CASH') {
-      tipRecord = await prisma.tip.create({
-        data: {
-          orderId: data.orderId,
-          paymentId: payment.id,
-          waiterId: payment.order.createdById, // The waiter who created the order
-          amount: tipAmount,
-          method: data.method,
-          status: 'PENDING', // Waiting for manager to pay out
-          notes: `Tip from ${data.method} payment - pending payout`,
-        },
-        include: {
-          waiter: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              branchId: true,
-              branch: {
-                select: {
-                  id: true,
-                  restaurantId: true,
+    if (tipAmount > 0) {
+      const waiterId = await this.resolveWaiterId(collectedById, order);
+
+      if (waiterId) {
+        tipRecord = await prisma.tip.create({
+          data: {
+            orderId: data.orderId,
+            paymentId: payment.id,
+            waiterId,
+            amount: tipAmount,
+            method: data.method,
+            status: data.method === 'CASH' ? 'PAID' : 'PENDING',
+            notes: `Tip from ${data.method} payment - pending payout`,
+          },
+          include: {
+            waiter: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                branchId: true,
+                branch: {
+                  select: {
+                    id: true,
+                    restaurantId: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
+        });
 
-      // Emit WebSocket notification to waiter
-      if (tipRecord.waiter.branchId && tipRecord.waiter.branch?.restaurantId) {
-        websocketService.emitTipReceived(
-          tipRecord,
-          payment.order.createdById,
-          tipRecord.waiter.branchId,
-          tipRecord.waiter.branch.restaurantId
-        );
+        // Emit WebSocket notification to waiter
+        if (tipRecord.waiter?.branchId && tipRecord.waiter.branch?.restaurantId) {
+          websocketService.emitTipReceived(
+            tipRecord,
+            waiterId,
+            tipRecord.waiter.branchId,
+            tipRecord.waiter.branch.restaurantId
+          );
+        }
       }
     }
 
