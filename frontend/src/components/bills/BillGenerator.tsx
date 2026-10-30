@@ -163,29 +163,29 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               <div className="border-t-2 border-gray-800 pt-3 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal:</span>
-                  <span className="font-medium text-gray-900">{order.subtotal.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                  <span className="font-medium text-gray-900">{order.subtotal.toFixed(2)} {restaurant?.currency || 'Br'}</span>
                 </div>
                 {order.tax > 0 && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Tax ({restaurant?.taxRate || 0}%):</span>
-                    <span className="font-medium text-gray-900">{order.tax.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                    <span className="font-medium text-gray-900">{order.tax.toFixed(2)} {restaurant?.currency || 'Br'}</span>
                   </div>
                 )}
                 {order.serviceCharge > 0 && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Service Charge:</span>
-                    <span className="font-medium text-gray-900">{order.serviceCharge.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                    <span className="font-medium text-gray-900">{order.serviceCharge.toFixed(2)} {restaurant?.currency || 'Br'}</span>
                   </div>
                 )}
                 {order.discount > 0 && (
                   <div className="flex justify-between text-red-600">
                     <span>Discount:</span>
-                    <span className="font-medium">-{order.discount.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                    <span className="font-medium">-{order.discount.toFixed(2)} {restaurant?.currency || 'Br'}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold border-t-2 border-gray-800 pt-2 mt-2 text-gray-900">
                   <span>TOTAL:</span>
-                  <span>{order.total.toFixed(2)} {restaurant?.currency || 'ETB'}</span>
+                  <span>{order.total.toFixed(2)} {restaurant?.currency || 'Br'}</span>
                 </div>
               </div>
 

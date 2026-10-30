@@ -141,7 +141,14 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
-                <Route path="tables" element={<TablesPage />} />
+                <Route 
+                  path="tables" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Waiter']}>
+                      <TablesPage />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="waiter-calls" 
                   element={
