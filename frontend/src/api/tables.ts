@@ -25,6 +25,11 @@ export interface Table {
     lastName: string;
     email: string;
   };
+  customerSessions?: Array<{
+    id: string;
+    status: string;
+    startedAt: string;
+  }>;
   orders?: any[];
   reservations?: any[];
   createdAt?: string;

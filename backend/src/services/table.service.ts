@@ -68,6 +68,22 @@ export class TableService {
             code: true,
           },
         },
+        assignedWaiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        customerSessions: {
+          where: { status: 'ACTIVE' },
+          select: {
+            id: true,
+            status: true,
+            startedAt: true,
+          },
+        },
         _count: {
           select: {
             orders: true,
@@ -342,6 +358,20 @@ export class TableService {
       where: { id },
       data: { status },
     });
+
+    // If table is marked as AVAILABLE, also complete any lingering active customer sessions
+    if (status === 'AVAILABLE') {
+      await prisma.customerSession.updateMany({
+        where: {
+          tableId: id,
+          status: 'ACTIVE',
+        },
+        data: {
+          status: 'COMPLETED',
+          endedAt: new Date(),
+        },
+      });
+    }
 
     return updated;
   }

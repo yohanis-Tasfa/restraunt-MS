@@ -121,6 +121,13 @@ export default function POSPage() {
       
       // Clear navigation state so it doesn't reload on refresh
       window.history.replaceState({}, document.title);
+    } else if (state?.tableNumber) {
+      setCheckoutPrefillData({
+        tableNumber: state.tableNumber,
+        orderType: 'DINE_IN',
+      });
+      toast.success(`Table ${state.tableNumber} selected for POS order`);
+      window.history.replaceState({}, document.title);
     }
   }, [location.state, clearCart, addItem]);
 
