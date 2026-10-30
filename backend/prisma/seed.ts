@@ -96,6 +96,10 @@ async function main() {
         'bill-requests.read',
         'bill-requests.process',
         'bill-requests.complete',
+        // Table Reservation Management (Front desk / phone bookings)
+        'reservations.read',
+        'reservations.create',
+        'reservations.update',
       ],
     },
     {

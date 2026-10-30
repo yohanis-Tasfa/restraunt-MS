@@ -65,7 +65,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
     { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined, roles: ['Owner', 'Manager', 'Waiter'] },
     { label: 'Bill Requests', icon: FileText, path: '/admin/bill-requests', roles: ['Owner', 'Manager', 'Cashier'] },
     { label: 'My Tips', icon: DollarSign, path: '/admin/my-tips', roles: ['Waiter'] },
-    { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations' },
+    { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations', roles: ['Owner', 'Manager', 'Cashier', 'Waiter'] },
     { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Owner', 'Manager'] },
     { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
     { label: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['Owner', 'Manager'] },

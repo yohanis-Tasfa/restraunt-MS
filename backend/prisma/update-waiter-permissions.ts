@@ -20,6 +20,9 @@ async function main() {
     'bill-requests.read',
     'bill-requests.process',
     'bill-requests.complete',
+    'reservations.read',
+    'reservations.create',
+    'reservations.update',
   ];
 
   const waiterPermissions = [

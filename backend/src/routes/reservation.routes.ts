@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as reservationController from '../controllers/reservation.controller';
-import { authenticate, authorize } from '../middleware/auth';
+import { authenticate, authorize, requireRole } from '../middleware/auth';
 
 const router = Router();
 
@@ -16,19 +16,39 @@ router.get('/upcoming', reservationController.getUpcoming);
 // Get single reservation (any authenticated user)
 router.get('/:id', reservationController.getById);
 
-// Create reservation (Cashier+, Waiter+)
-router.post('/', authorize('reservations.create'), reservationController.create);
+// Create reservation (Manager, Owner, Cashier / Front-desk)
+router.post(
+  '/',
+  authorize('reservations.create', 'Owner', 'Manager', 'Cashier', 'Super Admin', 'Admin'),
+  reservationController.create
+);
 
-// Update reservation (Cashier+, Waiter+)
-router.put('/:id', authorize('reservations.create'), reservationController.update);
+// Update reservation details (Manager, Owner, Cashier)
+router.put(
+  '/:id',
+  authorize('reservations.update', 'Owner', 'Manager', 'Cashier', 'Super Admin', 'Admin'),
+  reservationController.update
+);
 
-// Update reservation status (Cashier+, Waiter+)
-router.patch('/:id/status', authorize('reservations.create'), reservationController.updateStatus);
+// Update reservation status (Manager, Cashier, Waiter can seat arriving guests or mark complete)
+router.patch(
+  '/:id/status',
+  authorize('reservations.update', 'Owner', 'Manager', 'Cashier', 'Waiter', 'Super Admin', 'Admin'),
+  reservationController.updateStatus
+);
 
-// Cancel reservation (Manager+)
-router.post('/:id/cancel', authorize('reservations.create'), reservationController.cancel);
+// Cancel reservation (Manager, Owner, Cashier)
+router.post(
+  '/:id/cancel',
+  authorize('reservations.cancel', 'Owner', 'Manager', 'Cashier', 'Super Admin', 'Admin'),
+  reservationController.cancel
+);
 
-// Delete reservation (Manager+)
-router.delete('/:id', authorize('reservations.create'), reservationController.deleteReservation);
+// Delete reservation (Manager, Owner only)
+router.delete(
+  '/:id',
+  authorize('reservations.delete', 'Owner', 'Manager', 'Super Admin', 'Admin'),
+  reservationController.deleteReservation
+);
 
 export default router;

@@ -23,23 +23,15 @@ import {
   DialogTitle,
 } from '../components/ui/dialog';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/select';
-import {
   Plus,
   Search,
   Calendar,
   Users,
   Clock,
   CheckCircle,
-  XCircle,
   Eye,
-  Edit,
   X,
+  UserCheck,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -51,6 +43,21 @@ export default function ReservationsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+
+  // Role-based capabilities
+  const userRole = user?.role?.name || '';
+  const isManager = ['Owner', 'Manager', 'Super Admin', 'Admin'].includes(userRole);
+  const isCashier = userRole === 'Cashier';
+  const isWaiter = userRole === 'Waiter';
+
+  const canCreate = isManager || isCashier;
+  const canConfirm = isManager || isCashier;
+  const canSeat = isManager || isCashier || isWaiter;
+  const canComplete = isManager || isCashier || isWaiter;
+  const canMarkNoShow = isManager || isCashier;
+  const canCancel = isManager || isCashier;
+  const canDelete = isManager;
+
   const [formData, setFormData] = useState({
     customerFirstName: '',
     customerLastName: '',
@@ -208,6 +215,11 @@ export default function ReservationsPage() {
   });
 
   const handleCreateReservation = async () => {
+    if (!canCreate) {
+      toast.error('Only Managers and Front Desk/Cashiers can create reservations');
+      return;
+    }
+
     // Validate required fields only (table is optional)
     if (
       !formData.customerFirstName.trim() ||
@@ -275,12 +287,20 @@ export default function ReservationsPage() {
   };
 
   const handleCancelReservation = () => {
+    if (!canCancel) {
+      toast.error('You do not have permission to cancel reservations');
+      return;
+    }
     if (selectedReservation && window.confirm('Are you sure you want to cancel this reservation?')) {
       cancelReservationMutation.mutate(selectedReservation.id);
     }
   };
 
   const handleDeleteReservation = () => {
+    if (!canDelete) {
+      toast.error('Only Managers and Owners can delete reservations');
+      return;
+    }
     if (selectedReservation && window.confirm('Are you sure you want to permanently delete this reservation? This action cannot be undone.')) {
       deleteReservationMutation.mutate(selectedReservation.id);
     }
@@ -367,15 +387,38 @@ export default function ReservationsPage() {
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reservations</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage table reservations</p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-900">Reservations</h1>
+            {isManager && (
+              <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 font-medium">
+                Manager Control
+              </Badge>
+            )}
+            {isCashier && (
+              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-medium">
+                Front Desk & Reception
+              </Badge>
+            )}
+            {isWaiter && (
+              <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 font-medium">
+                Floor Service & Seating
+              </Badge>
+            )}
+          </div>
+          <p className="text-sm text-gray-500 mt-1">
+            {isWaiter
+              ? 'View expected guest arrivals and seat arriving parties at their reserved tables'
+              : 'Manage table bookings, phone reservations, and guest arrivals'}
+          </p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          New Reservation
-        </Button>
+        {canCreate && (
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Reservation
+          </Button>
+        )}
       </div>
 
       {/* Statistics Cards - 2x2 grid on mobile, 4 columns on desktop */}
@@ -468,9 +511,13 @@ export default function ReservationsPage() {
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">No reservations found</h3>
                   <p className="text-gray-500 mb-4">
-                    {searchTerm ? 'Try adjusting your search' : 'Create your first reservation'}
+                    {searchTerm
+                      ? 'Try adjusting your search'
+                      : canCreate
+                      ? 'Create your first reservation'
+                      : 'No upcoming reservations scheduled.'}
                   </p>
-                  {!searchTerm && (
+                  {!searchTerm && canCreate && (
                     <Button onClick={() => setIsCreateModalOpen(true)}>
                       <Plus className="w-4 h-4 mr-2" />
                       New Reservation
@@ -481,7 +528,8 @@ export default function ReservationsPage() {
                 filteredReservations.map((reservation: Reservation, index: number) => (
                   <div
                     key={reservation.id}
-                    className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm"
+                    onClick={() => handleViewDetails(reservation)}
+                    className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm cursor-pointer"
                   >
                     {/* Number */}
                     <div className="font-medium text-gray-900">{index + 1}</div>
@@ -865,47 +913,76 @@ export default function ReservationsPage() {
               )}
 
               {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t">
-                {selectedReservation.status === ReservationStatus.PENDING && (
+              <div className="flex flex-wrap gap-2 pt-4 border-t">
+                {/* Confirm booking: Manager & Cashier */}
+                {canConfirm && selectedReservation.status === ReservationStatus.PENDING && (
                   <Button
                     onClick={() => handleUpdateStatus(ReservationStatus.CONFIRMED)}
-                    className="flex-1"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    Confirm
+                    Confirm Booking
                   </Button>
                 )}
-                {selectedReservation.status === ReservationStatus.CONFIRMED && (
-                  <Button
-                    onClick={() => handleUpdateStatus(ReservationStatus.SEATED)}
-                    className="flex-1"
-                  >
-                    Mark as Seated
-                  </Button>
-                )}
-                {selectedReservation.status === ReservationStatus.SEATED && (
-                  <Button
-                    onClick={() => handleUpdateStatus(ReservationStatus.COMPLETED)}
-                    className="flex-1"
-                  >
-                    Complete
-                  </Button>
-                )}
-                {selectedReservation.status !== ReservationStatus.COMPLETED &&
-                  selectedReservation.status !== ReservationStatus.CANCELLED && (
-                    <Button variant="destructive" onClick={handleCancelReservation}>
-                      <X className="w-4 h-4 mr-2" />
-                      Cancel
+
+                {/* Seat Guests: Manager, Cashier, and Waiter */}
+                {canSeat &&
+                  (selectedReservation.status === ReservationStatus.CONFIRMED ||
+                    selectedReservation.status === ReservationStatus.PENDING) && (
+                    <Button
+                      onClick={() => handleUpdateStatus(ReservationStatus.SEATED)}
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+                    >
+                      <UserCheck className="w-4 h-4 mr-2" />
+                      Seat Guests
                     </Button>
                   )}
-                {/* Delete button - always available */}
-                <Button 
-                  variant="outline" 
-                  className="border-red-300 text-red-600 hover:bg-red-50"
-                  onClick={handleDeleteReservation}
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Delete
-                </Button>
+
+                {/* Complete & Free Table: Manager, Cashier, and Waiter */}
+                {canComplete && selectedReservation.status === ReservationStatus.SEATED && (
+                  <Button
+                    onClick={() => handleUpdateStatus(ReservationStatus.COMPLETED)}
+                    className="flex-1 bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Complete & Free Table
+                  </Button>
+                )}
+
+                {/* Mark as No-Show: Manager & Cashier */}
+                {canMarkNoShow &&
+                  (selectedReservation.status === ReservationStatus.CONFIRMED ||
+                    selectedReservation.status === ReservationStatus.PENDING) && (
+                    <Button
+                      variant="outline"
+                      className="border-amber-300 text-amber-700 hover:bg-amber-50"
+                      onClick={() => handleUpdateStatus(ReservationStatus.NO_SHOW)}
+                    >
+                      Mark No-Show
+                    </Button>
+                  )}
+
+                {/* Cancel Booking: Manager & Cashier */}
+                {canCancel &&
+                  selectedReservation.status !== ReservationStatus.COMPLETED &&
+                  selectedReservation.status !== ReservationStatus.CANCELLED &&
+                  selectedReservation.status !== ReservationStatus.NO_SHOW && (
+                    <Button variant="destructive" onClick={handleCancelReservation}>
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel Booking
+                    </Button>
+                  )}
+
+                {/* Delete button: Strictly Manager & Owner */}
+                {canDelete && (
+                  <Button
+                    variant="outline"
+                    className="border-red-300 text-red-600 hover:bg-red-50"
+                    onClick={handleDeleteReservation}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Delete
+                  </Button>
+                )}
               </div>
             </div>
           )}

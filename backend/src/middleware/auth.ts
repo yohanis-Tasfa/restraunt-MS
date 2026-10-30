@@ -71,19 +71,40 @@ export const verifyToken = (token: string) => {
   }
 };
 
-export const authorize = (...permissions: string[]) => {
+export const authorize = (...permissionsOrRoles: (string | string[])[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       throw new ApiError(401, 'Unauthorized');
     }
 
-    const userPermissions = req.user.role.permissions as string[];
+    const userRoleName = req.user.role?.name;
+    const userPermissions = (req.user.role?.permissions as string[]) || [];
 
-    const hasPermission = permissions.some((permission) => 
-      userPermissions.includes(permission) || userPermissions.includes('*')
-    );
+    // Owner, Super Admin, or wildcard permission '*' always has access
+    if (
+      userRoleName === 'Owner' ||
+      userRoleName === 'Super Admin' ||
+      userPermissions.includes('*')
+    ) {
+      return next();
+    }
 
-    if (!hasPermission) {
+    const items = (permissionsOrRoles as any[]).flat();
+
+    const hasAccess = items.some((item) => {
+      if (!item || typeof item !== 'string') return false;
+      // 1. Check if item matches the user's role name (case-insensitive)
+      if (userRoleName && item.toLowerCase() === userRoleName.toLowerCase()) {
+        return true;
+      }
+      // 2. Check if item matches any user permission
+      if (userPermissions.includes(item)) {
+        return true;
+      }
+      return false;
+    });
+
+    if (!hasAccess) {
       throw new ApiError(403, 'Insufficient permissions');
     }
 
@@ -91,21 +112,33 @@ export const authorize = (...permissions: string[]) => {
   };
 };
 
-export const requireRole = (...allowedRoles: string[]) => {
+export const requireRole = (...allowedRoles: (string | string[])[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       throw new ApiError(401, 'Unauthorized');
     }
 
     const roleName = req.user.role?.name;
-    // Owner has access to everything
-    if (roleName === 'Owner' || allowedRoles.includes(roleName)) {
+    const userPermissions = (req.user.role?.permissions as string[]) || [];
+
+    // Owner, Super Admin, or wildcard '*' always has access
+    if (
+      roleName === 'Owner' ||
+      roleName === 'Super Admin' ||
+      userPermissions.includes('*')
+    ) {
+      return next();
+    }
+
+    const flatRoles = (allowedRoles as any[]).flat().map((r: any) => String(r).toLowerCase());
+
+    if (roleName && flatRoles.includes(roleName.toLowerCase())) {
       return next();
     }
 
     throw new ApiError(
       403,
-      `Access denied for role '${roleName}'. Allowed roles: ${allowedRoles.join(', ')}`
+      `Access denied for role '${roleName}'. Allowed roles: ${(allowedRoles as any[]).flat().join(', ')}`
     );
   };
 };
