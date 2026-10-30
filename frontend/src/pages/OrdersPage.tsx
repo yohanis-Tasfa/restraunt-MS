@@ -15,6 +15,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '../components/ui/dialog';
 import {
   Search,
@@ -28,6 +29,8 @@ import {
   DollarSign,
   CreditCard,
   FileText,
+  Printer,
+  Receipt,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -37,11 +40,15 @@ export default function OrdersPage() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const isWaiter = user?.role?.name === 'Waiter';
+  const userRole = user?.role?.name;
+  const isWaiter = userRole === 'Waiter';
+  const isCashier = userRole === 'Cashier';
+  const isManagerOrOwner = ['Owner', 'Manager'].includes(userRole || '');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [orderToPrint, setOrderToPrint] = useState<{ order: Order; type: 'BILL' | 'RECEIPT' } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [paymentFilter, setPaymentFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
@@ -70,6 +77,19 @@ export default function OrdersPage() {
   const handleProcessPayment = (order: Order) => {
     setSelectedOrder(order);
     setIsPaymentModalOpen(true);
+  };
+
+  const handleOpenPrintSlip = async (order: Order, type: 'BILL' | 'RECEIPT') => {
+    try {
+      if (!order.items || order.items.length === 0) {
+        const fullOrder = await ordersApi.getOrder(order.id);
+        setOrderToPrint({ order: fullOrder, type });
+      } else {
+        setOrderToPrint({ order, type });
+      }
+    } catch {
+      setOrderToPrint({ order, type });
+    }
   };
 
   // Fetch orders (Waiters are strictly locked to their own orders at their assigned branch)
@@ -107,7 +127,8 @@ export default function OrdersPage() {
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'pending' && order.status === OrderStatus.PENDING) ||
-      (statusFilter === 'ready' && order.status === OrderStatus.READY);
+      (statusFilter === 'ready' && order.status === OrderStatus.READY) ||
+      (statusFilter === 'bill_requested' && !!getBillRequestForOrder(order.id));
 
     // Payment filter
     const matchesPayment =
@@ -344,7 +365,7 @@ export default function OrdersPage() {
             <div>
               <p className="text-sm text-gray-600">Revenue</p>
               <p className="text-2xl font-bold text-green-600 mt-1">
-                {stats.totalRevenue.toFixed(0)} ETB
+                Br {stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
@@ -356,7 +377,6 @@ export default function OrdersPage() {
 
       {/* Filter Tabs */}
       <div className="mb-4">
-
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <Button
             variant={statusFilter === 'all' && paymentFilter === 'all' ? 'default' : 'outline'}
@@ -367,42 +387,67 @@ export default function OrdersPage() {
             }}
             className={
               statusFilter === 'all' && paymentFilter === 'all'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
                 : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
             }
           >
-            All Orders
+            All Orders ({stats.total})
           </Button>
-          <Button
-            variant={statusFilter === 'pending' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => {
-              setStatusFilter('pending');
-              setPaymentFilter('all');
-            }}
-            className={
-              statusFilter === 'pending'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
-            }
-          >
-            Pending ({stats.pending})
-          </Button>
-          <Button
-            variant={statusFilter === 'ready' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => {
-              setStatusFilter('ready');
-              setPaymentFilter('all');
-            }}
-            className={
-              statusFilter === 'ready'
-                ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
-            }
-          >
-            🍽️ Ready ({stats.ready})
-          </Button>
+
+          {isCashier && (
+            <Button
+              variant={statusFilter === 'bill_requested' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setStatusFilter('bill_requested');
+                setPaymentFilter('all');
+              }}
+              className={
+                statusFilter === 'bill_requested'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white font-semibold'
+                  : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+              }
+            >
+              <FileText className="w-4 h-4 mr-1.5" />
+              Bill Requested ({billRequests.filter((b: any) => b.status === 'PENDING').length})
+            </Button>
+          )}
+
+          {!isCashier && (
+            <>
+              <Button
+                variant={statusFilter === 'pending' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => {
+                  setStatusFilter('pending');
+                  setPaymentFilter('all');
+                }}
+                className={
+                  statusFilter === 'pending'
+                    ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                    : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                }
+              >
+                Pending ({stats.pending})
+              </Button>
+              <Button
+                variant={statusFilter === 'ready' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => {
+                  setStatusFilter('ready');
+                  setPaymentFilter('all');
+                }}
+                className={
+                  statusFilter === 'ready'
+                    ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                    : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                }
+              >
+                🍽️ Ready ({stats.ready})
+              </Button>
+            </>
+          )}
+
           <Button
             variant={paymentFilter === 'unpaid' ? 'default' : 'outline'}
             size="sm"
@@ -412,11 +457,11 @@ export default function OrdersPage() {
             }}
             className={
               paymentFilter === 'unpaid'
-                ? 'bg-red-600 hover:bg-red-700 text-white'
+                ? 'bg-red-600 hover:bg-red-700 text-white font-semibold'
                 : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
             }
           >
-            <CreditCard className="w-4 h-4 mr-2" />
+            <CreditCard className="w-4 h-4 mr-1.5" />
             Unpaid Orders ({stats.unpaid})
           </Button>
           <Button
@@ -428,11 +473,11 @@ export default function OrdersPage() {
             }}
             className={
               paymentFilter === 'paid'
-                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
                 : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
             }
           >
-            <CheckCircle className="w-4 h-4 mr-1.5 text-emerald-500" />
+            <CheckCircle className="w-4 h-4 mr-1.5 text-emerald-400" />
             Paid Orders ({stats.paid})
           </Button>
         </div>
@@ -541,17 +586,51 @@ export default function OrdersPage() {
                 <div className="text-gray-500 text-xs">{getTimeAgo(order.createdAt)}</div>
 
                 {/* Actions */}
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-2 items-center">
                   {(() => {
                     const billRequest = getBillRequestForOrder(order.id);
                     const isUnpaid = order.paymentStatus === 'UNPAID';
                     const isReady = order.status === OrderStatus.READY;
-                    const userRole = user?.role?.name;
-                    const isWaiter = userRole === 'Waiter';
-                    const isCashier = userRole === 'Cashier';
-                    const isManagerOrOwner = ['Owner', 'Manager'].includes(userRole || '');
 
-                    // ONLY Waiter, Manager, or Owner can request bills! Cashier NEVER requests a bill!
+                    // Cashier Role Actions:
+                    // Cashiers audit, print customer bills, and print settled payment receipts.
+                    // Cashiers do NOT collect payment at table-side (Waiters do).
+                    if (isCashier) {
+                      return (
+                        <>
+                          {isUnpaid ? (
+                            <Button
+                              size="sm"
+                              onClick={() => handleOpenPrintSlip(order, 'BILL')}
+                              className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-2.5 gap-1 font-semibold shadow-xs"
+                            >
+                              <Printer className="w-3.5 h-3.5" />
+                              Print Bill
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleOpenPrintSlip(order, 'RECEIPT')}
+                              className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs h-8 px-2.5 gap-1 font-semibold"
+                            >
+                              <Receipt className="w-3.5 h-3.5 text-emerald-600" />
+                              Receipt
+                            </Button>
+                          )}
+
+                          <button
+                            onClick={() => handleViewDetails(order)}
+                            className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </>
+                      );
+                    }
+
+                    // Waiter & Manager Role Actions
                     const canRequestBill =
                       (isWaiter || isManagerOrOwner) &&
                       ['SERVED', 'COMPLETED'].includes(order.status) &&
@@ -569,76 +648,52 @@ export default function OrdersPage() {
                             size="sm"
                             onClick={() => markAsServedMutation.mutate(order.id)}
                             disabled={markAsServedMutation.isPending}
-                            className="bg-green-600 hover:bg-green-700 text-white"
+                            className="bg-green-600 hover:bg-green-700 text-white text-xs h-8"
                           >
-                            <CheckCircle className="w-4 h-4 mr-1" />
+                            <CheckCircle className="w-3.5 h-3.5 mr-1" />
                             Mark as Served
                           </Button>
                         )}
 
-                        {/* Show bill status badge or Cashier queue link if bill is in progress */}
+                        {/* Show bill status badge */}
                         {billInProgress && (
-                          <>
-                            <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">
-                              {billRequest.status === 'PENDING' && '📄 Bill Requested'}
-                              {billRequest.status === 'PROCESSING' && '⏳ Bill Processing'}
-                            </Badge>
-                            {isCashier && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => navigate('/admin/bill-requests')}
-                                className="border-blue-400 text-blue-700 hover:bg-blue-50 text-xs"
-                              >
-                                <FileText className="w-3.5 h-3.5 mr-1" />
-                                Process Bill
-                              </Button>
-                            )}
-                          </>
+                          <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">
+                            {billRequest.status === 'PENDING' && '📄 Bill Requested'}
+                            {billRequest.status === 'PROCESSING' && '⏳ Bill Processing'}
+                          </Badge>
                         )}
 
-                        {/* Request Bill button - ONLY show for Waiters/Managers, NEVER for Cashier */}
+                        {/* Request Bill button - ONLY for Waiters/Managers */}
                         {canRequestBill && (
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleRequestBill(order)}
-                            className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                            className="border-blue-300 text-blue-700 hover:bg-blue-50 text-xs h-8"
                           >
-                            <FileText className="w-4 h-4 mr-1" />
+                            <FileText className="w-3.5 h-3.5 mr-1" />
                             Request Bill
                           </Button>
                         )}
 
-                        {/* Collect Payment button - show when bill is ready */}
-                        {billReady && (
+                        {/* Collect Payment button for Waiter/Manager */}
+                        {(billReady || (isUnpaid && !billRequest && !canRequestBill)) && (
                           <Button
                             size="sm"
                             onClick={() => handleProcessPayment(order)}
-                            className="bg-green-600 hover:bg-green-700 text-white"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8"
                           >
-                            <CreditCard className="w-4 h-4 mr-1" />
+                            <CreditCard className="w-3.5 h-3.5 mr-1" />
                             Collect Payment
-                          </Button>
-                        )}
-
-                        {/* Regular Pay button - for direct payment when no bill request is active */}
-                        {isUnpaid && !billRequest && !canRequestBill && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleProcessPayment(order)}
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                          >
-                            <CreditCard className="w-4 h-4 mr-1" />
-                            Pay
                           </Button>
                         )}
 
                         <button
                           onClick={() => handleViewDetails(order)}
-                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                          className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors"
+                          title="View Details"
                         >
-                          <MoreVertical className="w-5 h-5 text-gray-400" />
+                          <MoreVertical className="w-4 h-4 text-gray-400" />
                         </button>
                       </>
                     );
@@ -747,8 +802,8 @@ export default function OrdersPage() {
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">{(item.subtotal || 0).toFixed(2)} ETB</p>
-                        <p className="text-sm text-gray-600">@ {(item.price || 0).toFixed(2)} ETB</p>
+                        <p className="font-medium text-gray-900">Br {(item.subtotal || 0).toFixed(2)}</p>
+                        <p className="text-sm text-gray-600">@ Br {(item.price || 0).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
@@ -759,29 +814,31 @@ export default function OrdersPage() {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium text-gray-900">{selectedOrder.subtotal.toFixed(2)} ETB</span>
+                  <span className="font-medium text-gray-900">Br {selectedOrder.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">
                     Tax ({selectedOrder.tax > 0 ? '15%' : '0%'})
                   </span>
-                  <span className="font-medium text-gray-900">{selectedOrder.tax.toFixed(2)} ETB</span>
+                  <span className="font-medium text-gray-900">Br {selectedOrder.tax.toFixed(2)}</span>
                 </div>
                 {selectedOrder.serviceCharge > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Service Charge</span>
-                    <span className="font-medium text-gray-900">{selectedOrder.serviceCharge.toFixed(2)} ETB</span>
+                    <span className="font-medium text-gray-900">Br {selectedOrder.serviceCharge.toFixed(2)}</span>
                   </div>
                 )}
                 {selectedOrder.discount > 0 && (
                   <div className="flex justify-between text-sm text-red-600">
                     <span>Discount</span>
-                    <span className="font-medium">-{selectedOrder.discount.toFixed(2)} ETB</span>
+                    <span className="font-medium">-Br {selectedOrder.discount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold pt-2 border-t">
                   <span className="text-gray-900">Total</span>
-                  <span className="text-gray-900">{selectedOrder.total.toFixed(2)} ETB</span>
+                  <span className="text-gray-900 font-extrabold text-emerald-800">
+                    Br {selectedOrder.total.toFixed(2)}
+                  </span>
                 </div>
               </div>
 
@@ -801,16 +858,50 @@ export default function OrdersPage() {
               )}
 
               {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t">
+              <div className="flex gap-2 pt-4 border-t flex-wrap">
                 {(() => {
                   const billRequest = getBillRequestForOrder(selectedOrder.id);
                   const isUnpaid = selectedOrder.paymentStatus === 'UNPAID';
-                  const userRole = user?.role?.name;
-                  const isWaiter = userRole === 'Waiter';
-                  const isCashier = userRole === 'Cashier';
-                  const isManagerOrOwner = ['Owner', 'Manager'].includes(userRole || '');
 
-                  // ONLY Waiter, Manager, or Owner can request bills! Cashier NEVER requests a bill!
+                  // Cashier Role: Print Bill (if unpaid) or Print Receipt (if paid)
+                  if (isCashier) {
+                    return (
+                      <div className="flex gap-2 w-full">
+                        {isUnpaid ? (
+                          <Button
+                            onClick={() => {
+                              setIsDetailsModalOpen(false);
+                              handleOpenPrintSlip(selectedOrder, 'BILL');
+                            }}
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold gap-1.5"
+                          >
+                            <Printer className="w-4 h-4" />
+                            Print Customer Bill
+                          </Button>
+                        ) : (
+                          <Button
+                            onClick={() => {
+                              setIsDetailsModalOpen(false);
+                              handleOpenPrintSlip(selectedOrder, 'RECEIPT');
+                            }}
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-1.5"
+                          >
+                            <Receipt className="w-4 h-4" />
+                            Print Payment Receipt
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsDetailsModalOpen(false)}
+                          className="px-4"
+                        >
+                          Close
+                        </Button>
+                      </div>
+                    );
+                  }
+
+                  // Waiter & Manager Role Actions
                   const canRequestBill =
                     (isWaiter || isManagerOrOwner) &&
                     ['SERVED', 'COMPLETED'].includes(selectedOrder.status) &&
@@ -826,14 +917,8 @@ export default function OrdersPage() {
                       {billInProgress && (
                         <div className="w-full mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                           <p className="text-sm text-blue-800 font-medium">
-                            {billRequest.status === 'PENDING' &&
-                              (isCashier
-                                ? '📄 New bill request is waiting in your queue'
-                                : '📄 Bill request sent to cashier')}
-                            {billRequest.status === 'PROCESSING' &&
-                              (isCashier
-                                ? '⏳ You are processing this bill request'
-                                : '⏳ Cashier is processing your bill request')}
+                            {billRequest.status === 'PENDING' && '📄 Bill request sent to cashier'}
+                            {billRequest.status === 'PROCESSING' && '⏳ Cashier is processing bill request'}
                           </p>
                         </div>
                       )}
@@ -846,21 +931,7 @@ export default function OrdersPage() {
                         </div>
                       )}
 
-                      {/* Cashier quick link to Queue when bill is in progress */}
-                      {isCashier && billInProgress && (
-                        <Button
-                          onClick={() => {
-                            setIsDetailsModalOpen(false);
-                            navigate('/admin/bill-requests');
-                          }}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          <FileText className="w-4 h-4 mr-2" />
-                          Open in Bill Queue
-                        </Button>
-                      )}
-
-                      {/* Request Bill button - ONLY for Waiters/Managers, NEVER for Cashier */}
+                      {/* Request Bill button - ONLY for Waiters/Managers */}
                       {canRequestBill && (
                         <Button
                           onClick={() => {
@@ -889,20 +960,6 @@ export default function OrdersPage() {
                         </Button>
                       )}
 
-                      {/* Cashier Direct Payment Button for unpaid orders */}
-                      {isCashier && isUnpaid && !billReady && !billInProgress && (
-                        <Button
-                          onClick={() => {
-                            setIsDetailsModalOpen(false);
-                            handleProcessPayment(selectedOrder);
-                          }}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          <CreditCard className="w-4 h-4 mr-2" />
-                          Process Payment
-                        </Button>
-                      )}
-
                       {/* Manager/Owner fallback payment button */}
                       {isManagerOrOwner && isUnpaid && !billRequest && !canRequestBill && (
                         <Button
@@ -913,14 +970,15 @@ export default function OrdersPage() {
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           <CreditCard className="w-4 h-4 mr-2" />
-                          Process Payment
+                          Collect Payment
                         </Button>
                       )}
                     </>
                   );
                 })()}
 
-                {selectedOrder.status !== OrderStatus.CANCELLED &&
+                {!isCashier &&
+                  selectedOrder.status !== OrderStatus.CANCELLED &&
                   selectedOrder.status !== OrderStatus.COMPLETED && (
                     <>
                       {selectedOrder.status === OrderStatus.PENDING && (
@@ -982,6 +1040,125 @@ export default function OrdersPage() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Printable Bill / Receipt Slip Modal */}
+      <Dialog open={!!orderToPrint} onOpenChange={(open) => !open && setOrderToPrint(null)}>
+        <DialogContent className="max-w-md p-6 bg-white rounded-2xl shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-gray-900">
+              <Printer className="w-5 h-5 text-blue-600" />
+              {orderToPrint?.type === 'BILL' ? 'Print Official Customer Bill' : 'Print Settled Payment Receipt'}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-gray-500">
+              Thermal receipt slip preview for Table {orderToPrint?.order.table?.number || 'Takeaway'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {orderToPrint && (
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 font-mono text-xs space-y-2.5">
+              <div className="text-center pb-2 border-b border-gray-300">
+                <h4 className="font-extrabold text-sm uppercase text-gray-900">
+                  {user?.branch?.name || 'Habesha Restaurant'}
+                </h4>
+                <p className="text-[11px] text-gray-500">Bole, Addis Ababa, Ethiopia</p>
+                <p className="text-[11px] font-bold text-gray-800 mt-1">
+                  {orderToPrint.type === 'BILL' ? '*** CUSTOMER BILL ***' : '*** OFFICIAL PAYMENT RECEIPT ***'}
+                </p>
+              </div>
+
+              <div className="text-[11px] space-y-0.5 text-gray-600">
+                <div className="flex justify-between">
+                  <span>Order: #{orderToPrint.order.orderNumber}</span>
+                  <span className="font-bold text-gray-900">
+                    {orderToPrint.order.table ? `Table ${orderToPrint.order.table.number}` : 'Takeaway'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Waiter: {orderToPrint.order.createdBy?.firstName || 'Staff'}</span>
+                  <span>{format(new Date(orderToPrint.order.createdAt), 'MMM dd, HH:mm')}</span>
+                </div>
+                {orderToPrint.type === 'RECEIPT' && (
+                  <div className="flex justify-between text-emerald-700 font-semibold">
+                    <span>Payment: {orderToPrint.order.paymentMethod || 'SETTLED'}</span>
+                    <span>Status: PAID</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-t border-b border-dashed border-gray-300 py-2 space-y-1.5">
+                {(orderToPrint.order.items || []).map((item: any, idx: number) => (
+                  <div key={idx} className="flex justify-between text-gray-900">
+                    <span className="truncate pr-2">
+                      {item.quantity}x {item.menuItem?.name || 'Item'}
+                    </span>
+                    <span className="font-semibold shrink-0">
+                      Br {(item.subtotal || item.price * item.quantity || 0).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-1 text-[11px] text-gray-600">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span>Br {orderToPrint.order.subtotal?.toFixed(2) || orderToPrint.order.total.toFixed(2)}</span>
+                </div>
+                {orderToPrint.order.tax > 0 && (
+                  <div className="flex justify-between">
+                    <span>VAT (15%):</span>
+                    <span>Br {orderToPrint.order.tax.toFixed(2)}</span>
+                  </div>
+                )}
+                {orderToPrint.order.serviceCharge > 0 && (
+                  <div className="flex justify-between">
+                    <span>Service Charge:</span>
+                    <span>Br {orderToPrint.order.serviceCharge.toFixed(2)}</span>
+                  </div>
+                )}
+                {orderToPrint.order.discount > 0 && (
+                  <div className="flex justify-between text-rose-600">
+                    <span>Discount:</span>
+                    <span>-Br {orderToPrint.order.discount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm font-extrabold text-gray-900 pt-1 border-t border-gray-300">
+                  <span>TOTAL DUE:</span>
+                  <span className="text-emerald-700">Br {orderToPrint.order.total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="text-center pt-2 text-[10px] text-gray-400">
+                <p>Thank you for dining with us!</p>
+                <p>Ameseginalehu</p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setOrderToPrint(null)}
+              className="flex-1 text-xs"
+            >
+              Close
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                window.print();
+                toast.success(
+                  orderToPrint?.type === 'BILL' ? 'Bill sent to printer!' : 'Receipt sent to printer!'
+                );
+              }}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 font-semibold"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              Print Thermal Slip
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

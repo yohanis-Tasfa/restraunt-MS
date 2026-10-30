@@ -140,7 +140,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Overview Section Items
   const overviewItems: NavItem[] = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-    { label: 'POS', icon: ShoppingCart, path: '/admin/pos', roles: ['Owner', 'Manager', 'Cashier', 'Waiter'] },
+    { label: 'POS', icon: ShoppingCart, path: '/admin/pos', roles: ['Owner', 'Manager', 'Waiter'] },
     { label: 'Orders', icon: ListOrdered, path: '/admin/orders' },
     { label: 'Kitchen', icon: ChefHat, path: '/admin/kitchen', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
   ];
