@@ -154,15 +154,14 @@ export function useActiveCalls(enableSound = false) {
     }
   }, [enableSound]);
 
-  // Fetch initial data ONCE on mount
+  // Fetch active calls with fast WebSocket sync and 5s polling fallback
   const { data: calls, isLoading, error, refetch } = useQuery({
     queryKey: ['waiter-calls-active'],
     queryFn: () => waiterCallsApi.getActiveCalls(),
-    // WebSocket-only: no polling at all
-    refetchInterval: false,
+    refetchInterval: 5000,
     refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true, // Only refetch when window regains focus
-    staleTime: Infinity, // Data never goes stale since WebSocket keeps it fresh
+    refetchOnWindowFocus: true,
+    staleTime: 4000,
   });
 
   // WebSocket event listeners

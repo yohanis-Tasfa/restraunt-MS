@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/authStore';
-import { useActiveCalls } from '../../hooks/useWaiterCalls';
+import { waiterCallsApi } from '../../api/waiter-calls';
 import { useWebSocket } from '../../contexts/WebSocketContext';
 import { billRequestsApi } from '../../api/billRequests';
 import logo from '../../assets/image.png';
@@ -50,12 +50,55 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   const { user, logout } = useAuthStore();
   const { isConnected, socket } = useWebSocket();
 
-  // Get active waiter calls for badge count
-  const { calls: activeCalls } = useActiveCalls(false); // false = no sound in sidebar
-  const pendingCallsCount = activeCalls.filter(call => call.status === 'PENDING').length;
-
-  // Check if current user role can view bill requests (Cashier, Manager, Owner)
+  // Check if current user role can view waiter calls & bill requests
+  const canSeeWaiterCalls = ['Owner', 'Manager', 'Waiter', 'Cashier', 'Super Admin', 'Admin'].includes(user?.role?.name || '');
   const canSeeBillRequests = ['Owner', 'Manager', 'Cashier', 'Super Admin', 'Admin'].includes(user?.role?.name || '');
+
+  // Query active waiter calls count for real-time red notification badge with fast fallback polling
+  const { data: activeCalls = [] } = useQuery({
+    queryKey: ['waiter-calls-active'],
+    queryFn: async () => {
+      try {
+        const calls = await waiterCallsApi.getActiveCalls();
+        return Array.isArray(calls) ? calls : [];
+      } catch (err) {
+        console.error('Error fetching active waiter calls count:', err);
+        return [];
+      }
+    },
+    enabled: !!user && canSeeWaiterCalls,
+    refetchInterval: 4000,
+  });
+
+  const pendingCallsCount = Array.isArray(activeCalls)
+    ? activeCalls.filter(call => call.status === 'PENDING' || call.status === 'pending').length
+    : 0;
+
+  // Listen for real-time WebSocket events to update waiter calls count immediately
+  useEffect(() => {
+    if (!socket || !canSeeWaiterCalls) return;
+
+    const handleWaiterCallUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ['waiter-calls-active'] });
+      queryClient.invalidateQueries({ queryKey: ['waiter-calls'] });
+    };
+
+    socket.on('waiter-call:created', handleWaiterCallUpdate);
+    socket.on('waiter-call:acknowledged', handleWaiterCallUpdate);
+    socket.on('waiter-call:completed', handleWaiterCallUpdate);
+    socket.on('waiter-call:cancelled', handleWaiterCallUpdate);
+    socket.on('waiter-call:updated', handleWaiterCallUpdate);
+    socket.on('waiter:called', handleWaiterCallUpdate);
+
+    return () => {
+      socket.off('waiter-call:created', handleWaiterCallUpdate);
+      socket.off('waiter-call:acknowledged', handleWaiterCallUpdate);
+      socket.off('waiter-call:completed', handleWaiterCallUpdate);
+      socket.off('waiter-call:cancelled', handleWaiterCallUpdate);
+      socket.off('waiter-call:updated', handleWaiterCallUpdate);
+      socket.off('waiter:called', handleWaiterCallUpdate);
+    };
+  }, [socket, canSeeWaiterCalls, queryClient]);
 
   // Query pending bill requests count for Cashier / Manager
   const { data: pendingBillRequestsCount = 0 } = useQuery({
@@ -105,7 +148,13 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Operations Section Items
   const operationsItems: NavItem[] = [
     { label: 'Tables', icon: Store, path: '/admin/tables' },
-    { label: 'Waiter Calls', icon: Bell, path: '/admin/waiter-calls', badge: pendingCallsCount > 0 ? pendingCallsCount : undefined, roles: ['Owner', 'Manager', 'Waiter'] },
+    { 
+      label: 'Waiter Calls', 
+      icon: Bell, 
+      path: '/admin/waiter-calls', 
+      badge: pendingCallsCount > 0 ? pendingCallsCount : undefined, 
+      roles: ['Owner', 'Manager', 'Waiter', 'Cashier', 'Super Admin', 'Admin'] 
+    },
     { 
       label: 'Bill Requests', 
       icon: FileText, 
@@ -132,8 +181,8 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
   // Filter navigation items based on user role
   const canAccessItem = (item: NavItem) => {
-    // Owner has access to everything
-    if (user?.role?.name === 'Owner') return true;
+    // Owner, Super Admin, and Admin have access to everything
+    if (['Owner', 'Super Admin', 'Admin'].includes(user?.role?.name || '')) return true;
     // If no roles specified, everyone can access
     if (!item.roles) return true;
     // Check if user's role is in the allowed roles

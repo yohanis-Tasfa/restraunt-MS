@@ -553,7 +553,7 @@ export default function WaiterDashboardPage() {
     switch (method?.toUpperCase()) {
       case 'TELEBIRR':
         return (
-          <Badge className="bg-[#00A3E0]/15 text-[#007da8] border-[#00A3E0]/40 font-semibold text-[11px] gap-1 shadow-2xs">
+          <Badge className="bg-[#00A3E0]/15 text-[#007da8] border-[#00A3E0]/40 font-semibold text-[11px] gap-1 shadow-2xs whitespace-nowrap inline-flex items-center">
             <Smartphone className="w-3 h-3 text-[#00A3E0]" />
             Telebirr (Transfer)
           </Badge>
@@ -561,21 +561,21 @@ export default function WaiterDashboardPage() {
       case 'CBE_BIRR':
       case 'CBE BIRR':
         return (
-          <Badge className="bg-purple-100 text-purple-800 border-purple-300 font-semibold text-[11px] gap-1 shadow-2xs">
+          <Badge className="bg-purple-100 text-purple-800 border-purple-300 font-semibold text-[11px] gap-1 shadow-2xs whitespace-nowrap inline-flex items-center">
             <Smartphone className="w-3 h-3 text-purple-600" />
             CBE Birr (Transfer)
           </Badge>
         );
       case 'CASH':
         return (
-          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-semibold text-[11px] gap-1 shadow-2xs">
+          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-semibold text-[11px] gap-1 shadow-2xs whitespace-nowrap inline-flex items-center">
             <Banknote className="w-3 h-3 text-emerald-600" />
             Cash Handover
           </Badge>
         );
       default:
         return (
-          <Badge className="bg-blue-100 text-blue-800 border-blue-300 font-semibold text-[11px] gap-1 shadow-2xs">
+          <Badge className="bg-blue-100 text-blue-800 border-blue-300 font-semibold text-[11px] gap-1 shadow-2xs whitespace-nowrap inline-flex items-center">
             <CreditCard className="w-3 h-3 text-blue-600" />
             {method ? method.replace(/_/g, ' ') : 'Transfer'}
           </Badge>
@@ -1279,73 +1279,109 @@ export default function WaiterDashboardPage() {
             </div>
           ) : (
             <>
-              <div className="divide-y divide-gray-100">
-                {paginatedPaidOrders.map((order: any) => (
-                  <div
-                    key={order.id}
-                    className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:bg-gray-50/70 transition-colors"
-                  >
-                    {/* Left: Table & Dish items (No order number, No Paid badge) */}
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center shrink-0">
-                        <span className="text-[9px] uppercase tracking-wider font-semibold text-emerald-600 leading-none">Table</span>
-                        <span className="text-sm font-extrabold text-emerald-900 leading-none mt-0.5">
-                          {order.table?.number || '—'}
-                        </span>
-                      </div>
-
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-bold text-sm text-gray-900">
-                            Table {order.table?.number || 'Walk-in'}
-                          </span>
-                          {getPaymentMethodBadge(order.paymentMethod)}
-                          {order.customer?.firstName && (
-                            <span className="text-xs text-gray-400 font-medium hidden sm:inline">
-                              • {order.customer.firstName} {order.customer.lastName || ''}
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 text-left">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Table
+                      </th>
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Order Total
+                      </th>
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Payment Method
+                      </th>
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Items Ordered
+                      </th>
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Date &amp; Time
+                      </th>
+                      <th className="px-5 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {paginatedPaidOrders.map((order: any) => (
+                      <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                        {/* Table */}
+                        <td className="px-5 py-3.5 whitespace-nowrap">
+                          <div className="flex flex-col items-start">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                              {order.table?.number
+                                ? (String(order.table.number).toLowerCase().startsWith('t')
+                                    ? order.table.number
+                                    : `Table ${order.table.number}`)
+                                : 'Walk-in'}
                             </span>
-                          )}
-                        </div>
+                            {order.customer?.firstName && (
+                              <span className="text-[11px] text-gray-500 font-medium mt-1 truncate max-w-[120px]">
+                                {order.customer.firstName} {order.customer.lastName || ''}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Order Total */}
+                        <td className="px-5 py-3.5 whitespace-nowrap">
+                          <span className="text-sm font-bold text-gray-900">
+                            Br {Number(order.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
+                        </td>
+
+                        {/* Payment Method */}
+                        <td className="px-5 py-3.5 whitespace-nowrap">
+                          {getPaymentMethodBadge(order.paymentMethod)}
+                        </td>
 
                         {/* Dish Preview Chips */}
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {(order.items || []).map((item: any, idx: number) => (
-                            <span
-                              key={idx}
-                              className="bg-gray-100/90 text-gray-700 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60"
-                            >
-                              <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
-                              {item.menuItem?.name || item.name || 'Dish'}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-1.5 flex-wrap max-w-md">
+                            {(order.items || []).map((item: any, idx: number) => (
+                              <span
+                                key={idx}
+                                className="bg-gray-100/90 text-gray-700 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60 whitespace-nowrap"
+                              >
+                                <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
+                                {item.menuItem?.name || item.name || 'Dish'}
+                              </span>
+                            ))}
+                            {(!order.items || order.items.length === 0) && (
+                              <span className="text-xs text-gray-400 italic">No items recorded</span>
+                            )}
+                          </div>
+                        </td>
 
-                    {/* Right: Total, Time & View Details Action */}
-                    <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pl-14 md:pl-0">
-                      <div className="text-left md:text-right">
-                        <div className="text-base font-extrabold text-gray-900">
-                          Br {Number(order.total).toFixed(2)}
-                        </div>
-                        <span className="text-[11px] text-gray-400">
-                          {order.createdAt ? format(new Date(order.createdAt), 'h:mm a, MMM d') : 'Recent'}
-                        </span>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedOrderForDetails(order);
-                          setIsOrderDetailsOpen(true);
-                        }}
-                        className="text-xs font-semibold h-8 px-3 border-gray-300 hover:bg-gray-100 hover:text-gray-900 shadow-2xs"
-                      >
-                        View
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                        {/* Date & Time */}
+                        <td className="px-5 py-3.5 whitespace-nowrap text-sm text-gray-600">
+                          <div className="font-medium text-gray-900">
+                            {order.createdAt ? format(new Date(order.createdAt), 'MMM dd, yyyy') : 'Recent'}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {order.createdAt ? format(new Date(order.createdAt), 'hh:mm a') : ''}
+                          </div>
+                        </td>
+
+                        {/* Action */}
+                        <td className="px-5 py-3.5 whitespace-nowrap text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedOrderForDetails(order);
+                              setIsOrderDetailsOpen(true);
+                            }}
+                            className="text-xs font-semibold h-8 px-3 border-gray-300 hover:bg-gray-100 hover:text-gray-900 shadow-2xs"
+                          >
+                            View
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
               {/* Pagination Footer */}
