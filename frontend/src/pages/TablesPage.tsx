@@ -80,6 +80,19 @@ export default function TablesPage() {
 
   const tables = tablesData?.data || [];
 
+  // Table accessibility:
+  // - Managers / Admins see ALL tables
+  // - Waiters see ONLY:
+  //   1) Their own assigned tables (table.assignedWaiterId === user.id)
+  //   2) Unassigned tables (open to all waiters)
+  //   * Tables assigned to other waiters are NOT displayed.
+  const accessibleTables = useMemo(() => {
+    if (!isWaiter) return tables;
+    return tables.filter(
+      (table: Table) => !table.assignedWaiterId || table.assignedWaiterId === user?.id
+    );
+  }, [tables, isWaiter, user?.id]);
+
   // Fetch waiters (employees with waiter role) - only managers have access to manage employees
   const { data: employeesData } = useQuery({
     queryKey: ['employees', 'ACTIVE'],
@@ -101,28 +114,28 @@ export default function TablesPage() {
     }
   );
 
-  // Statistics
+  // Statistics (based on accessible tables)
   const stats = useMemo(() => {
     return {
-      total: tables.length,
-      available: tables.filter((t: Table) => t.status === TableStatus.AVAILABLE).length,
-      occupied: tables.filter((t: Table) => t.status === TableStatus.OCCUPIED).length,
-      reserved: tables.filter((t: Table) => t.status === TableStatus.RESERVED).length,
-      myTables: tables.filter((t: Table) => t.assignedWaiterId === user?.id).length,
-      unassigned: tables.filter((t: Table) => !t.assignedWaiterId).length,
+      total: accessibleTables.length,
+      available: accessibleTables.filter((t: Table) => t.status === TableStatus.AVAILABLE).length,
+      occupied: accessibleTables.filter((t: Table) => t.status === TableStatus.OCCUPIED).length,
+      reserved: accessibleTables.filter((t: Table) => t.status === TableStatus.RESERVED).length,
+      myTables: accessibleTables.filter((t: Table) => t.assignedWaiterId === user?.id).length,
+      unassigned: accessibleTables.filter((t: Table) => !t.assignedWaiterId).length,
     };
-  }, [tables, user?.id]);
+  }, [accessibleTables, user?.id]);
 
   // Filtered tables based on selected tab
   const filteredTables = useMemo(() => {
-    return tables.filter((table: Table) => {
+    return accessibleTables.filter((table: Table) => {
       if (activeFilter === 'my') return table.assignedWaiterId === user?.id;
       if (activeFilter === 'available') return table.status === TableStatus.AVAILABLE;
       if (activeFilter === 'occupied') return table.status === TableStatus.OCCUPIED;
       if (activeFilter === 'unassigned') return !table.assignedWaiterId;
       return true;
     });
-  }, [tables, activeFilter, user?.id]);
+  }, [accessibleTables, activeFilter, user?.id]);
 
   // Create table mutation (Manager only)
   const createTableMutation = useMutation({
@@ -457,7 +470,7 @@ export default function TablesPage() {
           </div>
           <p className="text-sm text-gray-500 mt-1">
             {isWaiter
-              ? 'Real-time dining room layout, guest seating, and direct table order taking'
+              ? 'Viewing your assigned tables and open unassigned tables. Other servers\' tables are private.'
               : 'Manage dining room tables, seating capacities, floor layout, and waiter assignments'}
           </p>
         </div>
@@ -620,24 +633,22 @@ export default function TablesPage() {
             Occupied ({stats.occupied})
           </button>
 
-          {/* Manager specific filter: Unassigned Tables */}
-          {isManager && (
-            <button
-              onClick={() => setActiveFilter('unassigned')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
-                activeFilter === 'unassigned'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200'
-              }`}
-            >
-              <AlertCircle className="w-3.5 h-3.5" />
-              Unassigned ({stats.unassigned})
-            </button>
-          )}
+          {/* Unassigned / Open Tables filter */}
+          <button
+            onClick={() => setActiveFilter('unassigned')}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+              activeFilter === 'unassigned'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200'
+            }`}
+          >
+            <AlertCircle className="w-3.5 h-3.5" />
+            Unassigned ({stats.unassigned})
+          </button>
         </div>
 
         <div className="text-xs text-gray-500 font-medium">
-          Showing {filteredTables.length} of {tables.length} tables
+          Showing {filteredTables.length} of {accessibleTables.length} tables
         </div>
       </div>
 
@@ -791,29 +802,16 @@ export default function TablesPage() {
                       </div>
                     )
                   ) : (
-                    // WAITER VIEW: Purely informative, NEVER shows "Assign Waiter" button
+                    // WAITER VIEW: Shows only their assigned tables and open unassigned tables
                     table.assignedWaiter ? (
-                      <div
-                        className={`flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg text-xs font-medium ${
-                          isAssignedToMe
-                            ? 'bg-emerald-100/80 border border-emerald-300 text-emerald-900'
-                            : 'bg-white/80 border border-gray-200 text-gray-700'
-                        }`}
-                      >
-                        <UserCheck
-                          className={`w-3.5 h-3.5 ${
-                            isAssignedToMe ? 'text-emerald-700' : 'text-gray-500'
-                          }`}
-                        />
-                        <span className="truncate">
-                          {isAssignedToMe
-                            ? 'Your Table'
-                            : `Waiter: ${table.assignedWaiter.firstName} ${table.assignedWaiter.lastName}`}
-                        </span>
+                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100/80 border border-emerald-300 text-emerald-900">
+                        <UserCheck className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>Assigned to You</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg bg-gray-100/60 border border-dashed border-gray-200 text-xs text-gray-400 italic">
-                        <span>No server assigned</span>
+                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg bg-amber-50/80 border border-dashed border-amber-200 text-xs font-medium text-amber-800">
+                        <Users className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Unassigned • Open Table</span>
                       </div>
                     )
                   )}

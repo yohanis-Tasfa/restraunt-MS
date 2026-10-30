@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -50,6 +50,8 @@ import {
   FileCheck,
   Filter,
   ArrowDownToLine,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useActiveCalls } from '../hooks/useWaiterCalls';
@@ -251,6 +253,93 @@ const DEMO_PAID_ORDERS = [
     createdAt: new Date(Date.now() - 220 * 60 * 1000).toISOString(),
     customer: { firstName: 'Michael', lastName: 'Tekle' },
   },
+  {
+    id: 'ord-demo-7',
+    orderNumber: 'ORD-2026-0814',
+    table: { number: '8' },
+    items: [
+      { menuItem: { name: 'Special Shiro Tegabino' }, quantity: 2, price: 160 },
+      { menuItem: { name: 'Lamb Tibs' }, quantity: 1, price: 340 },
+      { menuItem: { name: 'Coca Cola' }, quantity: 2, price: 45 },
+    ],
+    total: 750.0,
+    paymentMethod: 'CASH',
+    paymentStatus: 'PAID',
+    createdAt: new Date(Date.now() - 260 * 60 * 1000).toISOString(),
+    customer: { firstName: 'Kidus', lastName: 'Girma' },
+  },
+  {
+    id: 'ord-demo-8',
+    orderNumber: 'ORD-2026-0809',
+    table: { number: '3' },
+    items: [
+      { menuItem: { name: 'Derek Tibs' }, quantity: 1, price: 310 },
+      { menuItem: { name: 'Mirinda' }, quantity: 2, price: 40 },
+      { menuItem: { name: 'Injera Plate' }, quantity: 2, price: 20 },
+    ],
+    total: 430.0,
+    paymentMethod: 'TELEBIRR',
+    paymentStatus: 'PAID',
+    createdAt: new Date(Date.now() - 310 * 60 * 1000).toISOString(),
+    customer: { firstName: 'Eden', lastName: 'Alemayehu' },
+  },
+  {
+    id: 'ord-demo-9',
+    orderNumber: 'ORD-2026-0803',
+    table: { number: '6' },
+    items: [
+      { menuItem: { name: 'Gored Gored' }, quantity: 2, price: 320 },
+      { menuItem: { name: 'Habesha Beer' }, quantity: 3, price: 60 },
+    ],
+    total: 820.0,
+    paymentMethod: 'CBE_BIRR',
+    paymentStatus: 'PAID',
+    createdAt: new Date(Date.now() - 360 * 60 * 1000).toISOString(),
+    customer: { firstName: 'Naod', lastName: 'Fikru' },
+  },
+  {
+    id: 'ord-demo-10',
+    orderNumber: 'ORD-2026-0798',
+    table: { number: '9' },
+    items: [
+      { menuItem: { name: 'Fish Cutlet Special' }, quantity: 1, price: 270 },
+      { menuItem: { name: 'Sprite' }, quantity: 2, price: 40 },
+      { menuItem: { name: 'French Fries' }, quantity: 1, price: 110 },
+    ],
+    total: 460.0,
+    paymentMethod: 'CASH',
+    paymentStatus: 'PAID',
+    createdAt: new Date(Date.now() - 410 * 60 * 1000).toISOString(),
+    customer: { firstName: 'Rahel', lastName: 'Solomon' },
+  },
+  {
+    id: 'ord-demo-11',
+    orderNumber: 'ORD-2026-0792',
+    table: { number: '11' },
+    items: [
+      { menuItem: { name: 'Beyaynetu Deluxe' }, quantity: 1, price: 210 },
+      { menuItem: { name: 'Spiced Tea' }, quantity: 2, price: 45 },
+    ],
+    total: 300.0,
+    paymentMethod: 'TELEBIRR',
+    paymentStatus: 'PAID',
+    createdAt: new Date(Date.now() - 470 * 60 * 1000).toISOString(),
+    customer: { firstName: 'Abel', lastName: 'Kebede' },
+  },
+  {
+    id: 'ord-demo-12',
+    orderNumber: 'ORD-2026-0785',
+    table: { number: '4' },
+    items: [
+      { menuItem: { name: 'Kitfo Leb Leb' }, quantity: 2, price: 330 },
+      { menuItem: { name: 'Rift Valley Red Wine' }, quantity: 1, price: 350 },
+    ],
+    total: 1010.0,
+    paymentMethod: 'CASH',
+    paymentStatus: 'PAID',
+    createdAt: new Date(Date.now() - 530 * 60 * 1000).toISOString(),
+    customer: { firstName: 'Tsion', lastName: 'Berhanu' },
+  },
 ];
 
 const DEMO_TABLES = [
@@ -303,7 +392,7 @@ export default function WaiterDashboardPage() {
         branchId: user?.branch?.id,
         waiterId: user?.id,
         paymentStatus: 'PAID',
-        limit: 15,
+        limit: 100,
       }),
     enabled: !!user?.id,
     refetchInterval: 20000,
@@ -416,6 +505,27 @@ export default function WaiterDashboardPage() {
       return true;
     });
   }, [effectivePaidOrders, paymentTypeFilter]);
+
+  // Pagination for My Paid Orders (default 5 orders per page)
+  const paidOrdersPerPage = 5;
+  const [paidOrdersPage, setPaidOrdersPage] = useState<number>(1);
+
+  // Reset page when filter or period changes
+  useEffect(() => {
+    setPaidOrdersPage(1);
+  }, [paymentTypeFilter, selectedPeriod]);
+
+  // Pagination calculations for filteredPaidOrders
+  const totalPaidOrders = filteredPaidOrders.length;
+  const totalPaidPages = Math.max(1, Math.ceil(totalPaidOrders / paidOrdersPerPage));
+  const currentPaidPage = Math.min(Math.max(1, paidOrdersPage), totalPaidPages);
+
+  const startOrderIndex = (currentPaidPage - 1) * paidOrdersPerPage;
+  const endOrderIndex = Math.min(startOrderIndex + paidOrdersPerPage, totalPaidOrders);
+
+  const paginatedPaidOrders = useMemo(() => {
+    return filteredPaidOrders.slice(startOrderIndex, endOrderIndex);
+  }, [filteredPaidOrders, startOrderIndex, endOrderIndex]);
 
   // Effective tables
   const effectiveTables = useMemo(() => {
@@ -1168,74 +1278,151 @@ export default function WaiterDashboardPage() {
               </button>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
-              {filteredPaidOrders.map((order: any) => (
-                <div
-                  key={order.id}
-                  className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:bg-gray-50/70 transition-colors"
-                >
-                  {/* Left: Table & Dish items (No order number, No Paid badge) */}
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center shrink-0">
-                      <span className="text-[9px] uppercase tracking-wider font-semibold text-emerald-600 leading-none">Table</span>
-                      <span className="text-sm font-extrabold text-emerald-900 leading-none mt-0.5">
-                        {order.table?.number || '—'}
-                      </span>
+            <>
+              <div className="divide-y divide-gray-100">
+                {paginatedPaidOrders.map((order: any) => (
+                  <div
+                    key={order.id}
+                    className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:bg-gray-50/70 transition-colors"
+                  >
+                    {/* Left: Table & Dish items (No order number, No Paid badge) */}
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center shrink-0">
+                        <span className="text-[9px] uppercase tracking-wider font-semibold text-emerald-600 leading-none">Table</span>
+                        <span className="text-sm font-extrabold text-emerald-900 leading-none mt-0.5">
+                          {order.table?.number || '—'}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold text-sm text-gray-900">
+                            Table {order.table?.number || 'Walk-in'}
+                          </span>
+                          {getPaymentMethodBadge(order.paymentMethod)}
+                          {order.customer?.firstName && (
+                            <span className="text-xs text-gray-400 font-medium hidden sm:inline">
+                              • {order.customer.firstName} {order.customer.lastName || ''}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Dish Preview Chips */}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {(order.items || []).map((item: any, idx: number) => (
+                            <span
+                              key={idx}
+                              className="bg-gray-100/90 text-gray-700 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60"
+                            >
+                              <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
+                              {item.menuItem?.name || item.name || 'Dish'}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm text-gray-900">
-                          Table {order.table?.number || 'Walk-in'}
+                    {/* Right: Total, Time & View Details Action */}
+                    <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pl-14 md:pl-0">
+                      <div className="text-left md:text-right">
+                        <div className="text-base font-extrabold text-gray-900">
+                          Br {Number(order.total).toFixed(2)}
+                        </div>
+                        <span className="text-[11px] text-gray-400">
+                          {order.createdAt ? format(new Date(order.createdAt), 'h:mm a, MMM d') : 'Recent'}
                         </span>
-                        {getPaymentMethodBadge(order.paymentMethod)}
-                        {order.customer?.firstName && (
-                          <span className="text-xs text-gray-400 font-medium hidden sm:inline">
-                            • {order.customer.firstName} {order.customer.lastName || ''}
-                          </span>
-                        )}
                       </div>
-
-                      {/* Dish Preview Chips */}
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {(order.items || []).map((item: any, idx: number) => (
-                          <span
-                            key={idx}
-                            className="bg-gray-100/90 text-gray-700 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60"
-                          >
-                            <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
-                            {item.menuItem?.name || item.name || 'Dish'}
-                          </span>
-                        ))}
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedOrderForDetails(order);
+                          setIsOrderDetailsOpen(true);
+                        }}
+                        className="text-xs font-semibold h-8 px-3 border-gray-300 hover:bg-gray-100 hover:text-gray-900 shadow-2xs"
+                      >
+                        View
+                      </Button>
                     </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Right: Total, Time & View Details Action */}
-                  <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pl-14 md:pl-0">
-                    <div className="text-left md:text-right">
-                      <div className="text-base font-extrabold text-gray-900">
-                        Br {Number(order.total).toFixed(2)}
-                      </div>
-                      <span className="text-[11px] text-gray-400">
-                        {order.createdAt ? format(new Date(order.createdAt), 'h:mm a, MMM d') : 'Recent'}
-                      </span>
-                    </div>
+              {/* Pagination Footer */}
+              <div className="px-5 py-3.5 bg-gray-50/70 border-t border-gray-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="text-xs text-gray-600 font-medium">
+                  Showing <span className="font-bold text-gray-900">{totalPaidOrders === 0 ? 0 : startOrderIndex + 1}</span> to{' '}
+                  <span className="font-bold text-gray-900">{endOrderIndex}</span> of{' '}
+                  <span className="font-bold text-gray-900">{totalPaidOrders}</span> orders
+                  {totalPaidPages > 1 && (
+                    <span className="ml-1.5 text-gray-400 font-normal">
+                      (Page {currentPaidPage} of {totalPaidPages})
+                    </span>
+                  )}
+                </div>
+
+                {totalPaidPages > 1 && (
+                  <div className="flex items-center gap-1">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        setSelectedOrderForDetails(order);
-                        setIsOrderDetailsOpen(true);
-                      }}
-                      className="text-xs font-semibold h-8 px-3 border-gray-300 hover:bg-gray-100 hover:text-gray-900 shadow-2xs"
+                      onClick={() => setPaidOrdersPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPaidPage === 1}
+                      className="h-8 px-2.5 text-xs font-semibold gap-1 border-gray-300 disabled:opacity-40"
                     >
-                      View
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>Prev</span>
+                    </Button>
+
+                    <div className="flex items-center gap-1 px-1">
+                      {Array.from({ length: totalPaidPages }, (_, i) => i + 1).map((pageNum) => {
+                        if (
+                          totalPaidPages > 7 &&
+                          pageNum !== 1 &&
+                          pageNum !== totalPaidPages &&
+                          Math.abs(pageNum - currentPaidPage) > 1
+                        ) {
+                          if (pageNum === 2 && currentPaidPage > 3) {
+                            return <span key="ellipsis-start" className="px-1 text-xs text-gray-400">...</span>;
+                          }
+                          if (pageNum === totalPaidPages - 1 && currentPaidPage < totalPaidPages - 2) {
+                            return <span key="ellipsis-end" className="px-1 text-xs text-gray-400">...</span>;
+                          }
+                          return null;
+                        }
+
+                        const isActive = pageNum === currentPaidPage;
+                        return (
+                          <button
+                            key={pageNum}
+                            type="button"
+                            onClick={() => setPaidOrdersPage(pageNum)}
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
+                              isActive
+                                ? 'bg-emerald-600 text-white shadow-xs'
+                                : 'text-gray-700 hover:bg-gray-200/70'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPaidOrdersPage((p) => Math.min(totalPaidPages, p + 1))}
+                      disabled={currentPaidPage === totalPaidPages}
+                      className="h-8 px-2.5 text-xs font-semibold gap-1 border-gray-300 disabled:opacity-40"
+                    >
+                      <span>Next</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
                     </Button>
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

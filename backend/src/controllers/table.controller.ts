@@ -16,6 +16,7 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
     branchId: branchId as string,
     floorId: floorId as string,
     status: status as string,
+    user: req.user,
   });
 
   res.status(200).json(
@@ -36,7 +37,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 export const getByBranch = asyncHandler(async (req: Request, res: Response) => {
   const { branchId } = req.params;
 
-  const tables = await tableService.getByBranch(branchId);
+  const tables = await tableService.getByBranch(branchId, req.user);
 
   res.status(200).json(
     new ApiResponse(200, tables, 'Branch tables fetched successfully')

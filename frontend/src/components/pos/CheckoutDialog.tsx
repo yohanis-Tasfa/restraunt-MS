@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
@@ -59,13 +59,24 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
 
   const tables = tablesResponse?.data || [];
 
+  const userRole = user?.role?.name || '';
+  const isWaiter = userRole === 'Waiter';
+
+  // For waiters: show only unassigned tables and tables assigned to this waiter. Hide other waiters' tables.
+  const visibleTables = useMemo(() => {
+    if (!isWaiter) return tables;
+    return tables.filter(
+      (t: any) => !t.assignedWaiterId || t.assignedWaiterId === user?.id
+    );
+  }, [tables, isWaiter, user?.id]);
+
   // Auto-select table when tables are loaded and we have prefill data
   useEffect(() => {
-    if (prefillData?.tableNumber && tables.length > 0 && !selectedTable) {
+    if (prefillData?.tableNumber && visibleTables.length > 0 && !selectedTable) {
       console.log('🔍 Looking for table:', prefillData.tableNumber);
-      console.log('📋 Available tables:', tables.map((t: any) => ({ id: t.id, number: t.number, status: t.status })));
+      console.log('📋 Available tables:', visibleTables.map((t: any) => ({ id: t.id, number: t.number, status: t.status })));
       const targetNum = String(prefillData.tableNumber).trim().toLowerCase().replace(/^t/i, '');
-      const matchingTable = tables.find((t: any) => {
+      const matchingTable = visibleTables.find((t: any) => {
         const tableNum = String(t.number || '').trim().toLowerCase().replace(/^t/i, '');
         return tableNum === targetNum || String(t.number) === String(prefillData.tableNumber);
       });
@@ -77,7 +88,7 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
         console.log('❌ No matching table found for:', prefillData.tableNumber);
       }
     }
-  }, [prefillData?.tableNumber, tables, selectedTable]);
+  }, [prefillData?.tableNumber, visibleTables, selectedTable]);
 
   // Create order mutation
   const createOrderMutation = useMutation({
@@ -259,11 +270,14 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
                   <SelectValue placeholder="Select a table" />
                 </SelectTrigger>
                 <SelectContent>
-                  {tables.map((table: any) => (
-                    <SelectItem key={table.id} value={table.id}>
-                      Table {table.number} (Capacity: {table.capacity})
-                    </SelectItem>
-                  ))}
+                  {visibleTables.map((table: any) => {
+                    const isMine = table.assignedWaiterId === user?.id;
+                    return (
+                      <SelectItem key={table.id} value={table.id}>
+                        Table {table.number} ({table.capacity} seats) {isMine ? '• [My Table]' : '• [Unassigned]'}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>

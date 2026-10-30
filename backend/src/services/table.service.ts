@@ -23,11 +23,12 @@ interface QueryParams {
   branchId?: string;
   floorId?: string;
   status?: string;
+  user?: any;
 }
 
 export class TableService {
   async getAll(params: QueryParams = {}) {
-    const { page = 1, limit = 50, search, branchId, floorId, status } = params;
+    const { page = 1, limit = 50, search, branchId, floorId, status, user } = params;
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -46,6 +47,20 @@ export class TableService {
 
     if (status) {
       where.status = status;
+    }
+
+    // Role-based visibility for Waiters:
+    // Display unassigned tables to all, but tables assigned to a waiter are only displayed to that waiter
+    if (user?.role?.name === 'Waiter' && user?.id) {
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            { assignedWaiterId: null },
+            { assignedWaiterId: user.id },
+          ],
+        },
+      ];
     }
 
     const total = await prisma.table.count({ where });
@@ -179,7 +194,7 @@ export class TableService {
     return table;
   }
 
-  async getByBranch(branchId: string) {
+  async getByBranch(branchId: string, user?: any) {
     // Check if branch exists
     const branch = await prisma.branch.findUnique({
       where: { id: branchId },
@@ -189,8 +204,24 @@ export class TableService {
       throw new ApiError(404, 'Branch not found');
     }
 
+    const where: any = { branchId };
+
+    // Role-based visibility for Waiters:
+    // Display unassigned tables to all, but tables assigned to a waiter are only displayed to that waiter
+    if (user?.role?.name === 'Waiter' && user?.id) {
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            { assignedWaiterId: null },
+            { assignedWaiterId: user.id },
+          ],
+        },
+      ];
+    }
+
     const tables = await prisma.table.findMany({
-      where: { branchId },
+      where,
       include: {
         floor: {
           select: {
