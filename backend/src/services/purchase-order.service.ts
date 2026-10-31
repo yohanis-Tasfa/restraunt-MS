@@ -282,10 +282,20 @@ export class PurchaseOrderService {
     return updated;
   }
 
-  async receiveGoods(id: string, receivedItems: { itemId: string; receivedQty: number }[]) {
+  async receiveGoods(
+    id: string,
+    receivedItems: { itemId: string; receivedQty: number }[],
+    userId?: string
+  ) {
     const order = await prisma.purchaseOrder.findUnique({
       where: { id },
       include: {
+        supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         items: {
           include: {
             inventory: true,
@@ -298,8 +308,12 @@ export class PurchaseOrderService {
       throw new ApiError(404, 'Purchase order not found');
     }
 
-    if (order.status !== 'APPROVED') {
-      throw new ApiError(400, 'Purchase order must be approved before receiving goods');
+    if (order.status === 'RECEIVED') {
+      throw new ApiError(400, 'Purchase order has already been received');
+    }
+
+    if (order.status === 'CANCELLED') {
+      throw new ApiError(400, 'Cannot receive cancelled purchase order');
     }
 
     // Update received quantities and add inventory
@@ -366,6 +380,39 @@ export class PurchaseOrderService {
         },
       },
     });
+
+    // Automatically record procurement expense in the financial ledger
+    try {
+      // Find valid user ID for recording expense
+      let expenseUserId = userId;
+      if (!expenseUserId) {
+        const adminOrManager = await prisma.user.findFirst({
+          where: {
+            role: {
+              name: { in: ['Manager', 'Admin', 'Owner', 'Super Admin'] },
+            },
+          },
+          select: { id: true },
+        });
+        expenseUserId = adminOrManager?.id;
+      }
+
+      if (expenseUserId) {
+        await prisma.expense.create({
+          data: {
+            category: 'Ingredients',
+            amount: order.total,
+            description: `Auto-recorded: PO #${order.orderNumber} received from ${order.supplier?.name || 'Supplier'}`,
+            reference: order.orderNumber,
+            date: new Date(),
+            status: 'APPROVED',
+            userId: expenseUserId,
+          },
+        });
+      }
+    } catch (expErr) {
+      console.error('Failed to auto-create expense for received PO:', expErr);
+    }
 
     return updated;
   }

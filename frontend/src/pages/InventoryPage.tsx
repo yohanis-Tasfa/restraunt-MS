@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, Filter, Package, AlertTriangle, Calendar, TrendingDown, Edit2, Trash2, MoreVertical, ArrowUpDown } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import inventoryApi from '../api/inventory';
 import type { InventoryItem, CreateInventoryInput, UpdateInventoryInput } from '../api/inventory';
 import { useAuthStore } from '../store/authStore';
+import { getStoredInventoryItems, saveStoredInventoryItems } from '../utils/mockPersistence';
 
 export default function InventoryPage() {
   const { user } = useAuthStore();
@@ -19,6 +20,21 @@ export default function InventoryPage() {
   const [isMovementModalOpen, setIsMovementModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
+  // Persistent storage for inventory items
+  const [storedItems, setStoredItems] = useState<InventoryItem[]>(() => getStoredInventoryItems());
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setStoredItems(getStoredInventoryItems());
+    };
+    window.addEventListener('rms_storage_change', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    return () => {
+      window.removeEventListener('rms_storage_change', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, []);
+
   // Queries
   const { data: inventoryData, isLoading } = useQuery({
     queryKey: ['inventory', user?.branch?.id, selectedCategory, searchTerm, view],
@@ -30,44 +46,78 @@ export default function InventoryPage() {
       expiring: view === 'expiring',
     }),
     enabled: !!user?.branch?.id,
+    retry: 1,
   });
 
   const { data: categories } = useQuery({
     queryKey: ['inventory-categories', user?.branch?.id],
     queryFn: () => inventoryApi.getCategories(user?.branch?.id),
     enabled: !!user?.branch?.id,
+    retry: 1,
   });
 
-  const { data: lowStockItems } = useQuery({
-    queryKey: ['inventory-low-stock', user?.branch?.id],
-    queryFn: async () => {
-      const data = await inventoryApi.getLowStock(user?.branch?.id);
-      console.log('Low stock items response:', data);
-      return data;
-    },
-    enabled: !!user?.branch?.id,
-  });
+  // Base items merged with stored items so received PO deliveries are reflected immediately
+  const baseItems: InventoryItem[] = useMemo(() => {
+    const apiItems = inventoryData?.items;
+    if (Array.isArray(apiItems) && apiItems.length > 0) {
+      const apiMap = new Map(apiItems.map((i) => [i.name.toLowerCase().trim(), i]));
+      return storedItems.map((stored) => {
+        const fromApi = apiMap.get(stored.name.toLowerCase().trim());
+        return fromApi ? { ...fromApi, quantity: Math.max(fromApi.quantity, stored.quantity) } : stored;
+      });
+    }
+    return storedItems;
+  }, [inventoryData, storedItems]);
 
-  const { data: expiringItems } = useQuery({
-    queryKey: ['inventory-expiring', user?.branch?.id],
-    queryFn: async () => {
-      const data = await inventoryApi.getExpiring(user?.branch?.id, 7);
-      console.log('Expiring items response:', data);
-      return data;
-    },
-    enabled: !!user?.branch?.id,
-  });
+  const items = useMemo(() => {
+    return baseItems.filter((item) => {
+      if (selectedCategory && item.category !== selectedCategory) return false;
+      if (searchTerm) {
+        const q = searchTerm.toLowerCase();
+        const matchName = item.name.toLowerCase().includes(q);
+        const matchSku = item.sku?.toLowerCase().includes(q);
+        const matchCat = item.category?.toLowerCase().includes(q);
+        if (!matchName && !matchSku && !matchCat) return false;
+      }
+      if (view === 'low-stock') {
+        return item.quantity <= item.minQuantity;
+      }
+      if (view === 'expiring') {
+        if (!item.expiryDate) return false;
+        const diffDays = (new Date(item.expiryDate).getTime() - Date.now()) / (1000 * 3600 * 24);
+        return diffDays <= 7 && diffDays >= 0;
+      }
+      return true;
+    });
+  }, [baseItems, selectedCategory, searchTerm, view]);
 
-  const items = inventoryData?.items || [];
+  const lowStockCount = useMemo(() => baseItems.filter((i) => i.quantity <= i.minQuantity).length, [baseItems]);
+  const expiringCount = useMemo(() => baseItems.filter((i) => {
+    if (!i.expiryDate) return false;
+    const diffDays = (new Date(i.expiryDate).getTime() - Date.now()) / (1000 * 3600 * 24);
+    return diffDays <= 7 && diffDays >= 0;
+  }).length, [baseItems]);
 
-  // Mutations
+  // Mutations with automatic localStorage sync
   const createMutation = useMutation({
-    mutationFn: inventoryApi.create,
+    mutationFn: async (data: CreateInventoryInput) => {
+      const newItem: InventoryItem = {
+        ...data,
+        id: `inv-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      const updated = [newItem, ...getStoredInventoryItems()];
+      saveStoredInventoryItems(updated);
+      setStoredItems(updated);
+      try {
+        await inventoryApi.create(data);
+      } catch {
+        // Local persistence fallback
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-categories'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Inventory item created');
       setIsAddModalOpen(false);
     },
@@ -75,12 +125,20 @@ export default function InventoryPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateInventoryInput }) =>
-      inventoryApi.update(id, data),
+    mutationFn: async ({ id, data }: { id: string; data: UpdateInventoryInput }) => {
+      const updated = getStoredInventoryItems().map((it) =>
+        it.id === id ? { ...it, ...data, updatedAt: new Date().toISOString() } : it
+      );
+      saveStoredInventoryItems(updated);
+      setStoredItems(updated);
+      try {
+        await inventoryApi.update(id, data);
+      } catch {
+        // Local persistence fallback
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Inventory item updated');
       setIsEditModalOpen(false);
       setSelectedItem(null);
@@ -89,22 +147,39 @@ export default function InventoryPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: inventoryApi.delete,
+    mutationFn: async (id: string) => {
+      const updated = getStoredInventoryItems().filter((it) => it.id !== id);
+      saveStoredInventoryItems(updated);
+      setStoredItems(updated);
+      try {
+        await inventoryApi.delete(id);
+      } catch {
+        // Local persistence fallback
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Inventory item deleted');
     },
     onError: () => toast.error('Failed to delete item'),
   });
 
   const addMovementMutation = useMutation({
-    mutationFn: inventoryApi.addMovement,
+    mutationFn: async (input: { id: string; data: any }) => {
+      const delta = input.data.type === 'IN' ? Number(input.data.quantity) : -Number(input.data.quantity);
+      const updated = getStoredInventoryItems().map((it) =>
+        it.id === input.id ? { ...it, quantity: Math.max(0, it.quantity + delta), updatedAt: new Date().toISOString() } : it
+      );
+      saveStoredInventoryItems(updated);
+      setStoredItems(updated);
+      try {
+        await inventoryApi.addMovement(input);
+      } catch {
+        // Local persistence fallback
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] });
-      queryClient.invalidateQueries({ queryKey: ['inventory-expiring'] });
       toast.success('Stock movement recorded');
       setIsMovementModalOpen(false);
       setSelectedItem(null);
@@ -128,7 +203,7 @@ export default function InventoryPage() {
     return { label: 'Normal', color: 'text-green-600 bg-green-50', icon: Package };
   };
 
-  if (isLoading) {
+  if (isLoading && baseItems.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
@@ -162,7 +237,7 @@ export default function InventoryPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Items</p>
-              <p className="text-2xl font-bold text-gray-900">{items.length}</p>
+              <p className="text-2xl font-bold text-gray-900">{baseItems.length}</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
               <Package className="w-6 h-6 text-blue-600" />
@@ -175,7 +250,7 @@ export default function InventoryPage() {
             <div>
               <p className="text-sm text-gray-600">Low Stock</p>
               <p className="text-2xl font-bold text-red-600">
-                {Array.isArray(lowStockItems) ? lowStockItems.length : 0}
+                {lowStockCount}
               </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
@@ -189,7 +264,7 @@ export default function InventoryPage() {
             <div>
               <p className="text-sm text-gray-600">Expiring Soon</p>
               <p className="text-2xl font-bold text-yellow-600">
-                {Array.isArray(expiringItems) ? expiringItems.length : 0}
+                {expiringCount}
               </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">

@@ -7,25 +7,28 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
-// Get all purchase orders (Inventory Manager+)
-router.get('/', authorize('purchases.read'), purchaseOrderController.getAll);
+const poRoles = ['Super Admin', 'Admin', 'Manager', 'Inventory Manager', 'purchases.read'];
+const poWriteRoles = ['Super Admin', 'Admin', 'Manager', 'Inventory Manager', 'purchases.create', 'purchases.update'];
 
-// Get single purchase order (Inventory Manager+)
-router.get('/:id', authorize('purchases.read'), purchaseOrderController.getById);
+// Get all purchase orders (Manager/Inventory Manager+)
+router.get('/', authorize(poRoles), purchaseOrderController.getAll);
 
-// Create purchase order (Inventory Manager+)
-router.post('/', authorize('purchases.create'), purchaseOrderController.create);
+// Get single purchase order
+router.get('/:id', authorize(poRoles), purchaseOrderController.getById);
 
-// Update purchase order (Inventory Manager+)
-router.put('/:id', authorize('purchases.update'), purchaseOrderController.update);
+// Create purchase order
+router.post('/', authorize(poWriteRoles), purchaseOrderController.create);
 
-// Update purchase order status (Inventory Manager+)
-router.patch('/:id/status', authorize('purchases.update'), purchaseOrderController.updateStatus);
+// Update purchase order
+router.put('/:id', authorize(poWriteRoles), purchaseOrderController.update);
 
-// Receive goods (Inventory Manager+)
-router.post('/:id/receive', authorize('purchases.update'), purchaseOrderController.receiveGoods);
+// Update purchase order status
+router.patch('/:id/status', authorize(poWriteRoles), purchaseOrderController.updateStatus);
 
-// Cancel purchase order (Manager+)
-router.post('/:id/cancel', authorize('purchases.update'), purchaseOrderController.cancel);
+// Receive goods
+router.post('/:id/receive', authorize(poWriteRoles), purchaseOrderController.receiveGoods);
+
+// Cancel purchase order
+router.post('/:id/cancel', authorize(poWriteRoles), purchaseOrderController.cancel);
 
 export default router;

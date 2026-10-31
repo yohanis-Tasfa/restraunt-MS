@@ -28,6 +28,7 @@ import {
   FileText,
   DollarSign,
   PackagePlus,
+  Truck,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -215,6 +216,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
       roles: ['Owner', 'Manager', 'Kitchen Staff'] 
     },
     { label: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['Owner', 'Manager'] },
+    { label: 'Purchase Orders', icon: Truck, path: '/admin/purchases', roles: ['Owner', 'Manager'] },
   ];
 
   // Business Section Items

@@ -24,6 +24,7 @@ import WaiterTipsPage from './pages/WaiterTipsPage';
 import TipsManagementPage from './pages/TipsManagementPage';
 import PublicLandingPage from './pages/PublicLandingPage';
 import IngredientsPage from './pages/IngredientsPage';
+import PurchaseOrdersPage from './pages/PurchaseOrdersPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -207,6 +208,22 @@ function App() {
                   } 
                 />
                 <Route 
+                  path="purchases" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                      <PurchaseOrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="purchase-orders" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                      <PurchaseOrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
                   path="expenses" 
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
@@ -239,6 +256,22 @@ function App() {
                   } 
                 />
               </Route>
+                <Route 
+                  path="purchases" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                      <PurchaseOrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="purchase-orders" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                      <PurchaseOrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
               
               {/* Redirect old admin routes to new /admin/* structure */}
               <Route path="/login" element={<Navigate to="/admin/login" replace />} />

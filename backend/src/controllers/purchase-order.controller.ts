@@ -85,7 +85,7 @@ export const receiveGoods = asyncHandler(async (req: Request, res: Response) => 
     throw new ApiError(400, 'Items array is required');
   }
 
-  const order = await purchaseOrderService.receiveGoods(id, items);
+  const order = await purchaseOrderService.receiveGoods(id, items, req.user?.id);
 
   res.status(200).json(
     new ApiResponse(200, order, 'Goods received successfully')

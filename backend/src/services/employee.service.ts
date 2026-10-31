@@ -477,7 +477,7 @@ export const employeeService = {
   },
 
   // Update payroll status
-  async updatePayrollStatus(id: string, status: PayrollStatus) {
+  async updatePayrollStatus(id: string, status: PayrollStatus, managerId?: string) {
     const payroll = await prisma.payroll.update({
       where: { id },
       data: {
@@ -489,6 +489,7 @@ export const employeeService = {
           include: {
             user: {
               select: {
+                id: true,
                 firstName: true,
                 lastName: true,
                 email: true,
@@ -498,6 +499,43 @@ export const employeeService = {
         },
       },
     });
+
+    // Automatically record payroll expense in the financial ledger
+    if (status === 'PAID') {
+      try {
+        let expenseUserId = managerId;
+        if (!expenseUserId) {
+          const adminOrManager = await prisma.user.findFirst({
+            where: {
+              role: {
+                name: { in: ['Manager', 'Admin', 'Owner', 'Super Admin'] },
+              },
+            },
+            select: { id: true },
+          });
+          expenseUserId = adminOrManager?.id || payroll.employee.userId;
+        }
+
+        const employeeName = payroll.employee?.user
+          ? `${payroll.employee.user.firstName} ${payroll.employee.user.lastName}`
+          : 'Staff';
+        const periodStr = payroll.period ? new Date(payroll.period).toISOString().slice(0, 7) : '';
+
+        await prisma.expense.create({
+          data: {
+            category: 'Payroll',
+            amount: payroll.netSalary,
+            description: `Salary payout: ${employeeName} (${periodStr})`,
+            reference: `PAY-${payroll.id.slice(-6).toUpperCase()}`,
+            date: new Date(),
+            status: 'APPROVED',
+            userId: expenseUserId,
+          },
+        });
+      } catch (expErr) {
+        console.error('Failed to auto-create expense for paid payroll:', expErr);
+      }
+    }
 
     return payroll;
   },

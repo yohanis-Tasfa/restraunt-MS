@@ -103,7 +103,7 @@ export const employeeController = {
   async updatePayrollStatus(req: Request, res: Response) {
     try {
       const { status } = req.body;
-      const payroll = await employeeService.updatePayrollStatus(req.params.id, status);
+      const payroll = await employeeService.updatePayrollStatus(req.params.id, status, req.user?.id);
       res.json(payroll);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
