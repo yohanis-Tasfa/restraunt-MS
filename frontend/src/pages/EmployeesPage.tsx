@@ -609,46 +609,48 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
           )}
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center gap-2 border-b border-gray-200">
-          <button
-            onClick={() => setActiveTab('employees')}
-            className={`flex items-center gap-2 pb-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'employees'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            Staff Directory
-            <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
-              {employees.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('payroll')}
-            className={`flex items-center gap-2 pb-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'payroll'
-                ? 'border-emerald-600 text-emerald-700'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <Banknote className="w-4 h-4" />
-            Payroll & Salaries
-            {pendingPayrolls.length > 0 && (
-              <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-800 font-semibold">
-                {pendingPayrolls.length} Pending
+        {/* Tab Switcher (Only shown if not purely payroll) */}
+        {defaultTab !== 'payroll' && (
+          <div className="flex items-center gap-2 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('employees')}
+              className={`flex items-center gap-2 pb-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'employees'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Staff Directory
+              <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
+                {employees.length}
               </span>
-            )}
-          </button>
-        </div>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('payroll')}
+              className={`flex items-center gap-2 pb-3 px-3 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'payroll'
+                  ? 'border-emerald-600 text-emerald-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Banknote className="w-4 h-4" />
+              Payroll & Salaries
+              {pendingPayrolls.length > 0 && (
+                <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-800 font-semibold">
+                  {pendingPayrolls.length} Pending
+                </span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ========================================================================= */}
       {/* TAB 1: STAFF DIRECTORY */}
       {/* ========================================================================= */}
-      {activeTab === 'employees' && (
+      {activeTab === 'employees' && defaultTab !== 'payroll' && (
         <>
           {loading ? (
             <div className="flex justify-center items-center h-64">

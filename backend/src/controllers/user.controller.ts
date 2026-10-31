@@ -4,7 +4,8 @@ import { UserService } from '../services/user.service';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
-import { UserStatus } from '@prisma/client';
+export const VALID_USER_STATUSES = ['ACTIVE', 'INACTIVE', 'LOCKED'] as const;
+export type UserStatus = typeof VALID_USER_STATUSES[number];
 
 const userService = new UserService();
 
@@ -37,6 +38,21 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 
   if (!data.email || !data.password || !data.firstName || !data.lastName) {
     throw new ApiError(400, 'Email, password, first name, and last name are required');
+  }
+
+  // Fallback restaurantId and branchId from authenticated user or first restaurant
+  if (!data.restaurantId) {
+    const authUser = (req as any).user;
+    if (authUser?.restaurantId) {
+      data.restaurantId = authUser.restaurantId;
+    } else {
+      const defaultRestaurant = await prisma.restaurant.findFirst();
+      if (defaultRestaurant) data.restaurantId = defaultRestaurant.id;
+    }
+  }
+
+  if (!data.branchId && (req as any).user?.branchId) {
+    data.branchId = (req as any).user.branchId;
   }
 
   if (!data.roleId || !data.restaurantId) {
@@ -106,8 +122,8 @@ export const updateUserStatus = asyncHandler(async (req: Request, res: Response)
     throw new ApiError(400, 'Status is required');
   }
 
-  if (!Object.values(UserStatus).includes(status)) {
-    throw new ApiError(400, 'Invalid status value');
+  if (!VALID_USER_STATUSES.includes(status as any)) {
+    throw new ApiError(400, 'Invalid status value. Must be ACTIVE, INACTIVE, or LOCKED');
   }
 
   const result = await userService.updateStatus(id, status);

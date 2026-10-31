@@ -29,6 +29,7 @@ import {
   DollarSign,
   PackagePlus,
   Truck,
+  Banknote,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -221,10 +222,11 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
   // Business Section Items
   const businessItems: NavItem[] = [
+    { label: 'Users & Staff', icon: Users, path: '/admin/users', roles: ['Owner', 'Manager', 'Super Admin', 'Admin'] },
+    { label: 'Payroll', icon: Banknote, path: '/admin/payroll', roles: ['Owner', 'Manager', 'Super Admin', 'Admin'] },
     { label: 'Expenses', icon: Wallet, path: '/admin/expenses', roles: ['Owner', 'Manager'] },
     { label: 'Tips Management', icon: DollarSign, path: '/admin/tips-management', roles: ['Owner', 'Manager'] },
     { label: 'Reports', icon: BarChart3, path: '/admin/reports', roles: ['Owner', 'Manager'] },
-    { label: 'Employees', icon: Users, path: '/admin/employees', roles: ['Owner', 'Manager'] },
   ];
 
   const isActive = (path: string) => location.pathname === path;

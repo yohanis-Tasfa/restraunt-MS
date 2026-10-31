@@ -16,6 +16,8 @@ import InventoryPage from './pages/InventoryPage';
 import ExpensesPage from './pages/ExpensesPage';
 import ReportsPage from './pages/ReportsPage';
 import EmployeesPage from './pages/EmployeesPage';
+import UsersPage from './pages/UsersPage';
+import PayrollPage from './pages/PayrollPage';
 import ProfilePage from './pages/ProfilePage';
 import CustomerMenuPage from './pages/CustomerMenuPage';
 import WaiterCallsPage from './pages/WaiterCallsPage';
@@ -240,20 +242,24 @@ function App() {
                   } 
                 />
                 <Route 
-                  path="employees" 
+                  path="users" 
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
-                      <EmployeesPage />
+                      <UsersPage />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
                   path="payroll" 
                   element={
-                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
-                      <EmployeesPage defaultTab="payroll" />
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Super Admin', 'Admin']}>
+                      <PayrollPage />
                     </ProtectedRoute>
                   } 
+                />
+                <Route 
+                  path="employees" 
+                  element={<Navigate to="/admin/users" replace />} 
                 />
                 <Route 
                   path="profile" 

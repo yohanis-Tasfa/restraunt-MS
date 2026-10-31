@@ -25,31 +25,31 @@ router.use(authenticate);
 // ============ USER ROUTES ============
 
 // GET /api/users/stats - Get user statistics
-router.get('/stats', authorize(['Super Admin', 'Admin']), getUserStats);
+router.get('/stats', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), getUserStats);
 
 // GET /api/users - Get all users
-router.get('/', authorize(['Super Admin', 'Admin', 'Manager']), getAllUsers);
+router.get('/', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), getAllUsers);
 
 // GET /api/users/:id - Get user by ID
-router.get('/:id', authorize(['Super Admin', 'Admin', 'Manager']), getUserById);
+router.get('/:id', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), getUserById);
 
 // POST /api/users - Create new user
-router.post('/', authorize(['Super Admin', 'Admin']), createUser);
+router.post('/', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), createUser);
 
 // PUT /api/users/:id - Update user
-router.put('/:id', authorize(['Super Admin', 'Admin']), updateUser);
+router.put('/:id', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), updateUser);
 
 // DELETE /api/users/:id - Delete user
-router.delete('/:id', authorize(['Super Admin', 'Admin']), deleteUser);
+router.delete('/:id', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), deleteUser);
 
 // POST /api/users/:id/change-password - Change own password
 router.post('/:id/change-password', changePassword);
 
 // POST /api/users/:id/reset-password - Reset user password (Admin only)
-router.post('/:id/reset-password', authorize(['Super Admin', 'Admin']), resetPassword);
+router.post('/:id/reset-password', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), resetPassword);
 
 // PATCH /api/users/:id/status - Update user status
-router.patch('/:id/status', authorize(['Super Admin', 'Admin']), updateUserStatus);
+router.patch('/:id/status', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), updateUserStatus);
 
 // ============ ROLE ROUTES ============
 

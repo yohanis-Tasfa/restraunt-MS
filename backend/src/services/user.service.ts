@@ -1,8 +1,6 @@
-import { PrismaClient, UserStatus } from '@prisma/client';
+import prisma from '../config/database';
 import bcrypt from 'bcrypt';
 import { ApiError } from '../utils/ApiError';
-
-const prisma = new PrismaClient();
 
 interface GetAllUsersParams {
   page?: number;
@@ -11,11 +9,12 @@ interface GetAllUsersParams {
   restaurantId?: string;
   branchId?: string;
   roleId?: string;
-  status?: UserStatus;
+  status?: string;
 }
 
 interface CreateUserData {
   email: string;
+  username?: string;
   password: string;
   firstName: string;
   lastName: string;
@@ -23,17 +22,20 @@ interface CreateUserData {
   roleId: string;
   restaurantId: string;
   branchId?: string;
-  status?: UserStatus;
+  isActive?: boolean;
+  isLocked?: boolean;
 }
 
 interface UpdateUserData {
   email?: string;
+  username?: string;
   firstName?: string;
   lastName?: string;
   phone?: string;
   roleId?: string;
   branchId?: string;
-  status?: UserStatus;
+  isActive?: boolean;
+  isLocked?: boolean;
 }
 
 interface ChangePasswordData {
@@ -45,7 +47,7 @@ export class UserService {
   async getAll(params: GetAllUsersParams = {}) {
     const {
       page = 1,
-      limit = 10,
+      limit = 50,
       search = '',
       restaurantId,
       branchId,
@@ -61,6 +63,7 @@ export class UserService {
     if (search) {
       where.OR = [
         { email: { contains: search, mode: 'insensitive' } },
+        { username: { contains: search, mode: 'insensitive' } },
         { firstName: { contains: search, mode: 'insensitive' } },
         { lastName: { contains: search, mode: 'insensitive' } },
         { phone: { contains: search, mode: 'insensitive' } },
@@ -83,8 +86,13 @@ export class UserService {
     }
 
     // Status filter
-    if (status) {
-      where.status = status;
+    if (status === 'ACTIVE') {
+      where.isActive = true;
+      where.isLocked = false;
+    } else if (status === 'INACTIVE') {
+      where.isActive = false;
+    } else if (status === 'LOCKED') {
+      where.isLocked = true;
     }
 
     const [users, total] = await Promise.all([
@@ -95,11 +103,13 @@ export class UserService {
         select: {
           id: true,
           email: true,
+          username: true,
           firstName: true,
           lastName: true,
           phone: true,
-          status: true,
-          lastLoginAt: true,
+          isActive: true,
+          isLocked: true,
+          lastLogin: true,
           createdAt: true,
           updatedAt: true,
           role: {
@@ -119,6 +129,15 @@ export class UserService {
             select: {
               id: true,
               name: true,
+            },
+          },
+          employee: {
+            select: {
+              id: true,
+              employeeCode: true,
+              position: true,
+              department: true,
+              salary: true,
             },
           },
         },
@@ -144,11 +163,13 @@ export class UserService {
       select: {
         id: true,
         email: true,
+        username: true,
         firstName: true,
         lastName: true,
         phone: true,
-        status: true,
-        lastLoginAt: true,
+        isActive: true,
+        isLocked: true,
+        lastLogin: true,
         createdAt: true,
         updatedAt: true,
         role: {
@@ -176,6 +197,15 @@ export class UserService {
             phone: true,
           },
         },
+        employee: {
+          select: {
+            id: true,
+            employeeCode: true,
+            position: true,
+            department: true,
+            salary: true,
+          },
+        },
       },
     });
 
@@ -194,6 +224,16 @@ export class UserService {
 
     if (existingUser) {
       throw new ApiError(400, 'Email already exists');
+    }
+
+    // Auto-generate username if not provided
+    const baseUsername = data.username?.trim() || data.email.split('@')[0];
+    let finalUsername = baseUsername;
+    const existingUsername = await prisma.user.findUnique({
+      where: { username: finalUsername },
+    });
+    if (existingUsername) {
+      finalUsername = `${baseUsername}_${Math.floor(Math.random() * 899 + 100)}`;
     }
 
     // Verify role exists
@@ -235,23 +275,27 @@ export class UserService {
 
     const user = await prisma.user.create({
       data: {
-        email: data.email,
+        email: data.email.trim().toLowerCase(),
+        username: finalUsername,
         password: hashedPassword,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        phone: data.phone?.trim() || null,
         roleId: data.roleId,
         restaurantId: data.restaurantId,
-        branchId: data.branchId,
-        status: data.status || UserStatus.ACTIVE,
+        branchId: data.branchId || null,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+        isLocked: data.isLocked !== undefined ? data.isLocked : false,
       },
       select: {
         id: true,
         email: true,
+        username: true,
         firstName: true,
         lastName: true,
         phone: true,
-        status: true,
+        isActive: true,
+        isLocked: true,
         createdAt: true,
         role: {
           select: {
@@ -326,24 +370,29 @@ export class UserService {
       }
     }
 
+    const updatePayload: any = {};
+    if (data.email) updatePayload.email = data.email.trim().toLowerCase();
+    if (data.username) updatePayload.username = data.username.trim();
+    if (data.firstName) updatePayload.firstName = data.firstName.trim();
+    if (data.lastName) updatePayload.lastName = data.lastName.trim();
+    if (data.phone !== undefined) updatePayload.phone = data.phone?.trim() || null;
+    if (data.roleId) updatePayload.roleId = data.roleId;
+    if (data.branchId !== undefined) updatePayload.branchId = data.branchId || null;
+    if (data.isActive !== undefined) updatePayload.isActive = data.isActive;
+    if (data.isLocked !== undefined) updatePayload.isLocked = data.isLocked;
+
     const user = await prisma.user.update({
       where: { id },
-      data: {
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        roleId: data.roleId,
-        branchId: data.branchId,
-        status: data.status,
-      },
+      data: updatePayload,
       select: {
         id: true,
         email: true,
+        username: true,
         firstName: true,
         lastName: true,
         phone: true,
-        status: true,
+        isActive: true,
+        isLocked: true,
         updatedAt: true,
         role: {
           select: {
@@ -389,12 +438,12 @@ export class UserService {
       // Soft delete - deactivate the user instead
       await prisma.user.update({
         where: { id },
-        data: { status: UserStatus.INACTIVE },
+        data: { isActive: false },
       });
 
       return {
         success: true,
-        message: `User deactivated (has ${ordersCount} orders). User status set to INACTIVE.`,
+        message: `User deactivated (has ${ordersCount} orders). User active status set to false.`,
       };
     }
 
@@ -462,7 +511,7 @@ export class UserService {
     };
   }
 
-  async updateStatus(id: string, status: UserStatus) {
+  async updateStatus(id: string, status: string) {
     const user = await prisma.user.findUnique({
       where: { id },
     });
@@ -471,9 +520,23 @@ export class UserService {
       throw new ApiError(404, 'User not found');
     }
 
+    let isActive = user.isActive;
+    let isLocked = user.isLocked;
+
+    if (status === 'ACTIVE') {
+      isActive = true;
+      isLocked = false;
+    } else if (status === 'INACTIVE') {
+      isActive = false;
+    } else if (status === 'LOCKED') {
+      isLocked = true;
+    } else if (status === 'UNLOCKED') {
+      isLocked = false;
+    }
+
     await prisma.user.update({
       where: { id },
-      data: { status },
+      data: { isActive, isLocked },
     });
 
     return {
@@ -489,13 +552,13 @@ export class UserService {
       totalUsers,
       activeUsers,
       inactiveUsers,
-      suspendedUsers,
+      lockedUsers,
       usersByRole,
     ] = await Promise.all([
       prisma.user.count({ where }),
-      prisma.user.count({ where: { ...where, status: UserStatus.ACTIVE } }),
-      prisma.user.count({ where: { ...where, status: UserStatus.INACTIVE } }),
-      prisma.user.count({ where: { ...where, status: UserStatus.SUSPENDED } }),
+      prisma.user.count({ where: { ...where, isActive: true, isLocked: false } }),
+      prisma.user.count({ where: { ...where, isActive: false } }),
+      prisma.user.count({ where: { ...where, isLocked: true } }),
       prisma.user.groupBy({
         by: ['roleId'],
         where,
@@ -523,7 +586,7 @@ export class UserService {
       totalUsers,
       activeUsers,
       inactiveUsers,
-      suspendedUsers,
+      suspendedUsers: lockedUsers,
       usersByRole: usersByRoleWithNames,
     };
   }

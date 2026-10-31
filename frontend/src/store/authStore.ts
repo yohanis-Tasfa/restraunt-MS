@@ -70,6 +70,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   hasRole: (roles) => {
     const { user } = get();
     if (!user) return false;
+    if (user.role?.name === 'Super Admin' || user.role?.name === 'Owner') return true;
     return roles.includes(user.role.name);
   },
 }));
