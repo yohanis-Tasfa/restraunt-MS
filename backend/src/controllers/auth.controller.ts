@@ -15,10 +15,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const email = req.body.email || req.body.username;
+  const { password } = req.body;
 
   if (!email || !password) {
-    throw new ApiError(400, 'Email and password are required');
+    throw new ApiError(400, 'Email/Username and password are required');
   }
 
   const result = await authService.login({ email, password });

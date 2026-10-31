@@ -1,6 +1,7 @@
 import type { PurchaseOrder, POStatus } from '../api/purchaseOrders';
 import type { Expense } from '../api/expenses';
 import type { InventoryItem } from '../api/inventory';
+import type { Payroll } from '../api/employees';
 
 export interface PredefinedIngredient {
   id: string;
@@ -439,7 +440,234 @@ const STORAGE_KEYS = {
   PURCHASE_ORDERS: 'rms_purchase_orders',
   EXPENSES: 'rms_expenses',
   INVENTORY: 'rms_inventory_items',
+  PAYROLLS: 'rms_payrolls',
 };
+
+export const INITIAL_MOCK_PAYROLLS: Payroll[] = [
+  {
+    id: 'pay-101',
+    employeeId: 'emp-1',
+    period: '2026-10-01T00:00:00.000Z',
+    basicSalary: 10000.0,
+    allowances: 1500.0,
+    deductions: 500.0,
+    overtime: 1000.0,
+    netSalary: 12000.0,
+    status: 'PENDING',
+    notes: 'Monthly salary for October 2026',
+    createdAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    employee: {
+      id: 'emp-1',
+      employeeCode: 'W1',
+      user: {
+        firstName: 'Malkitu',
+        lastName: 'Tasfa',
+        email: 'malkitutasfa@gmail.com',
+      },
+    },
+  },
+  {
+    id: 'pay-102',
+    employeeId: 'emp-2',
+    period: '2026-10-01T00:00:00.000Z',
+    basicSalary: 12000.0,
+    allowances: 1500.0,
+    deductions: 1000.0,
+    overtime: 0.0,
+    netSalary: 12500.0,
+    status: 'PAID',
+    paymentMethod: 'CBE Birr Transfer',
+    transactionRef: 'CBE-TX-998231',
+    paidAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+    notes: 'Disbursed via CBE Birr direct bank transfer',
+    createdAt: new Date(Date.now() - 6 * 24 * 3600 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+    employee: {
+      id: 'emp-2',
+      employeeCode: 'W2',
+      user: {
+        firstName: 'Sara',
+        lastName: 'Wolde',
+        email: 'sara.w@rms.com',
+      },
+    },
+  },
+  {
+    id: 'pay-103',
+    employeeId: 'emp-3',
+    period: '2026-10-01T00:00:00.000Z',
+    basicSalary: 13500.0,
+    allowances: 1200.0,
+    deductions: 700.0,
+    overtime: 0.0,
+    netSalary: 14000.0,
+    status: 'PAID',
+    paymentMethod: 'Telebirr Mobile Transfer',
+    transactionRef: 'TB-928174',
+    paidAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+    notes: 'Disbursed via Telebirr mobile payout',
+    createdAt: new Date(Date.now() - 6 * 24 * 3600 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+    employee: {
+      id: 'emp-3',
+      employeeCode: 'K1',
+      user: {
+        firstName: 'Yonas',
+        lastName: 'Kebede',
+        email: 'yonas.k@rms.com',
+      },
+    },
+  },
+  {
+    id: 'pay-104',
+    employeeId: 'emp-4',
+    period: '2026-10-01T00:00:00.000Z',
+    basicSalary: 9000.0,
+    allowances: 1000.0,
+    deductions: 500.0,
+    overtime: 500.0,
+    netSalary: 10000.0,
+    status: 'PENDING',
+    notes: 'Overtime added for banquet night coverage',
+    createdAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(),
+    employee: {
+      id: 'emp-4',
+      employeeCode: 'K2',
+      user: {
+        firstName: 'Betelhem',
+        lastName: 'Desta',
+        email: 'betelhem.d@rms.com',
+      },
+    },
+  },
+];
+
+// 6. Payrolls Persistence
+export function getStoredPayrolls(): Payroll[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.PAYROLLS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to parse stored payrolls:', e);
+  }
+  localStorage.setItem(STORAGE_KEYS.PAYROLLS, JSON.stringify(INITIAL_MOCK_PAYROLLS));
+  return INITIAL_MOCK_PAYROLLS;
+}
+
+export function saveStoredPayrolls(payrolls: Payroll[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.PAYROLLS, JSON.stringify(payrolls));
+    window.dispatchEvent(new Event('rms_storage_change'));
+  } catch (e) {
+    console.warn('Failed to save payrolls to localStorage:', e);
+  }
+}
+
+// 7. Auto-record Expense when Payroll is Marked as PAID
+export function generateSampleTransferProof(
+  employeeName: string,
+  amount: number,
+  method: string,
+  ref: string
+): string {
+  const dateStr = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="520" viewBox="0 0 400 520">
+    <defs>
+      <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#059669"/>
+        <stop offset="100%" stop-color="#047857"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="520" rx="16" fill="#f8fafc"/>
+    <rect width="400" height="120" rx="16" fill="url(#headerGrad)"/>
+    <circle cx="200" cy="46" r="24" fill="#ffffff" fill-opacity="0.25"/>
+    <path d="M190 46 L197 53 L210 39" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <text x="200" y="88" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="bold">TRANSFER SUCCESSFUL</text>
+    <text x="200" y="106" text-anchor="middle" fill="#d1fae5" font-family="system-ui, -apple-system, sans-serif" font-size="11">Official Mobile &amp; Bank Transfer Receipt</text>
+    
+    <rect x="24" y="138" width="352" height="72" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <text x="200" y="162" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" font-weight="600">AMOUNT TRANSFERRED</text>
+    <text x="200" y="194" text-anchor="middle" fill="#0f172a" font-family="system-ui, sans-serif" font-size="22" font-weight="bold">Br ${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</text>
+
+    <rect x="24" y="224" width="352" height="230" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    
+    <text x="44" y="256" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Recipient Staff:</text>
+    <text x="356" y="256" text-anchor="end" fill="#0f172a" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">${employeeName}</text>
+    
+    <text x="44" y="292" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Payment Channel:</text>
+    <text x="356" y="292" text-anchor="end" fill="#059669" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">${method}</text>
+
+    <text x="44" y="328" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transaction Reference:</text>
+    <text x="356" y="328" text-anchor="end" fill="#0f172a" font-family="monospace" font-size="12" font-weight="bold">${ref}</text>
+
+    <text x="44" y="364" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transfer Status:</text>
+    <text x="356" y="364" text-anchor="end" fill="#059669" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">COMPLETED / DISBURSED</text>
+
+    <text x="44" y="400" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Timestamp:</text>
+    <text x="356" y="400" text-anchor="end" fill="#64748b" font-family="system-ui, sans-serif" font-size="11">${dateStr}</text>
+
+    <text x="44" y="434" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Authorized By:</text>
+    <text x="356" y="434" text-anchor="end" fill="#0f172a" font-family="system-ui, sans-serif" font-size="12" font-weight="600">RMS Restaurant Finance</text>
+
+    <text x="200" y="485" text-anchor="middle" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10">Verified digital payroll disbursement voucher &bull; RMS Accounting</text>
+  </svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+export function recordExpenseFromPaidPayroll(payroll: Payroll, user?: any): Expense {
+  const currentExpenses = getStoredExpenses();
+  const refCode = `PAY-${payroll.id.slice(-5).toUpperCase()}`;
+
+  // Check if expense with this reference already exists
+  const existingIdx = currentExpenses.findIndex(
+    (e) => (e.reference === refCode || e.reference === `PAY-${payroll.id}`) && e.category === 'Payroll'
+  );
+
+  const empName = payroll.employee?.user
+    ? `${payroll.employee.user.firstName} ${payroll.employee.user.lastName}`
+    : 'Staff Member';
+
+  const periodStr = payroll.period ? new Date(payroll.period).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Current Month';
+  const methodDetail = payroll.paymentMethod ? ` via ${payroll.paymentMethod}` : '';
+  const txnDetail = payroll.transactionRef ? ` [Ref: ${payroll.transactionRef}]` : '';
+
+  const newExpense: Expense = {
+    id: `exp-pay-${payroll.id}-${Date.now()}`,
+    category: 'Payroll',
+    amount: payroll.netSalary,
+    description: `Salary Payout: ${empName} (${periodStr})${methodDetail}${txnDetail}`,
+    reference: payroll.transactionRef ? `${refCode} / ${payroll.transactionRef}` : refCode,
+    attachment: payroll.receiptImage || payroll.transferProofUrl,
+    date: new Date().toISOString(),
+    status: 'APPROVED',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    user: {
+      id: user?.id || 'usr-1',
+      firstName: user?.firstName || 'Solomon',
+      lastName: user?.lastName || 'Kassa',
+      email: user?.email || 'manager@rms.com',
+    },
+  };
+
+  let updatedExpenses: Expense[];
+  if (existingIdx >= 0) {
+    updatedExpenses = [...currentExpenses];
+    updatedExpenses[existingIdx] = newExpense;
+  } else {
+    updatedExpenses = [newExpense, ...currentExpenses];
+  }
+
+  saveStoredExpenses(updatedExpenses);
+  return newExpense;
+}
 
 // 1. Purchase Orders Persistence
 export function getStoredPurchaseOrders(): PurchaseOrder[] {

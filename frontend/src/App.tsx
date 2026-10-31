@@ -248,6 +248,14 @@ function App() {
                   } 
                 />
                 <Route 
+                  path="payroll" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                      <EmployeesPage defaultTab="payroll" />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
                   path="profile" 
                   element={
                     <ProtectedRoute>

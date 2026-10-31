@@ -48,12 +48,17 @@ export interface Payroll {
   netSalary: number;
   status: 'PENDING' | 'APPROVED' | 'PAID' | 'CANCELLED';
   paidAt?: string;
+  paymentMethod?: string;
+  transactionRef?: string;
+  receiptImage?: string;
+  transferProofUrl?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
   employee?: {
     id: string;
     employeeCode: string;
+    bankAccount?: string;
     user: {
       firstName: string;
       lastName: string;
