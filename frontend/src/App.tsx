@@ -117,7 +117,14 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
-                <Route path="orders" element={<OrdersPage />} />
+                <Route 
+                  path="orders" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier', 'Waiter']}>
+                      <OrdersPage />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="bill-requests" 
                   element={

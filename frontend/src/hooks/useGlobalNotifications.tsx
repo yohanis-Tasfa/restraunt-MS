@@ -13,15 +13,88 @@ export function useGlobalNotifications() {
     if (!socket || !isConnected || !user) return;
 
     const userRole = user.role?.name || '';
-    const isWaiter = userRole === 'Waiter';
-    const isStaffOrAdmin = ['Waiter', 'Kitchen Staff', 'Manager', 'Admin', 'Owner', 'Cashier'].includes(userRole);
+    const isStaffOrAdmin = ['Waiter', 'Kitchen Staff', 'Manager', 'Admin', 'Owner', 'Cashier', 'Super Admin'].includes(userRole);
 
     if (!isStaffOrAdmin) return;
 
-    // 1. Waiter Call Created (Customer called waiter / ready to order / bill)
+    // 1. Kitchen Ingredient Requisition Created
+    // STRICT RBAC: ONLY Managers, Admins, Owners. NEVER Waiters or Cashiers!
+    const handleIngredientRequestCreated = (data: any) => {
+      if (!['Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole)) {
+        // Waiters and Cashiers are strictly forbidden from seeing ingredient requests!
+        return;
+      }
+
+      const req = data.request || data;
+      const isUrgent = req.priority === 'URGENT';
+      const inventoryName = req.inventoryName || 'Kitchen stock';
+      const quantityText = `${req.quantity} ${req.unit || ''}`.trim();
+      const requestedBy = req.requestedByName || 'Kitchen Staff';
+
+      addNotification({
+        type: 'INGREDIENT_REQUEST',
+        title: `Kitchen Requisition${isUrgent ? ' (URGENT)' : ''}`,
+        message: `${requestedBy} requested ${quantityText} of ${inventoryName}`,
+        link: '/admin/ingredient-requests',
+        targetRoles: ['Manager', 'Admin', 'Owner', 'Super Admin'],
+        priority: isUrgent ? 'urgent' : 'high',
+      });
+
+      // Show Toast only for Manager / Owner
+      toast.custom(
+        (t) => (
+          <div
+            onClick={() => {
+              toast.dismiss(t.id);
+              window.location.href = '/admin/ingredient-requests';
+            }}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 ${
+              isUrgent ? 'border-rose-500' : 'border-amber-500'
+            } transition-all ${t.visible ? 'animate-enter' : 'animate-leave'}`}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{isUrgent ? '🚨' : '📦'}</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold text-gray-900">Kitchen Ingredient Requisition</p>
+                  {isUrgent && (
+                    <span className="text-[10px] font-black bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded">
+                      URGENT
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  {requestedBy} requested <strong className="text-gray-900">{quantityText} of {inventoryName}</strong>
+                </p>
+                <p className="text-[11px] text-amber-600 font-bold mt-1">Click to Review & Issue to Kitchen →</p>
+              </div>
+            </div>
+          </div>
+        ),
+        { duration: 9000, position: 'top-right' }
+      );
+    };
+
+    // 2. Kitchen Ingredient Requisition Updated (Approved / Rejected)
+    // STRICT RBAC: ONLY Kitchen Staff who requested the ingredients
+    const handleIngredientRequestUpdated = (data: any) => {
+      if (userRole !== 'Kitchen Staff') return;
+
+      const req = data.request || data;
+      const isApproved = req.status === 'APPROVED';
+      toast.success(
+        data.message || `Requisition for ${req.inventoryName} was ${isApproved ? 'Approved & Issued' : 'Rejected'}`,
+        {
+          duration: 6000,
+          icon: isApproved ? '✅' : '❌',
+        }
+      );
+    };
+
+    // 3. Waiter Call Created (Customer called waiter / assistance / bill)
+    // STRICT RBAC: Waiters, Managers, Admins. NEVER Cashier or Kitchen Staff!
     const handleWaiterCallCreated = (call: any) => {
-      // Role check: Waiters, Managers, Admins
-      if (!['Waiter', 'Manager', 'Admin', 'Owner'].includes(userRole)) return;
+      if (!['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole)) return;
 
       const tableNum = call.table?.number ? String(call.table.number).replace(/^T/i, '') : 'N/A';
       const reqType = call.requestType;
@@ -35,7 +108,6 @@ export function useGlobalNotifications() {
         ? ` (${call.selectedItems.length} items chosen)`
         : '';
 
-      // Add to unified header notification store
       addNotification({
         type: 'WAITER_CALL',
         title: `Table ${tableNum} Call`,
@@ -43,10 +115,10 @@ export function useGlobalNotifications() {
         tableNumber: tableNum,
         callId: call.id,
         link: '/admin/waiter-calls',
+        targetRoles: ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'],
         priority: 'high',
       });
 
-      // Show toast
       toast.custom(
         (t) => (
           <div
@@ -72,10 +144,10 @@ export function useGlobalNotifications() {
       );
     };
 
-    // 2. Kitchen Order Ready for Waiter Pickup
+    // 4. Kitchen Order Ready for Waiter Pickup
+    // STRICT RBAC: Waiters, Managers, Admins. NEVER Cashier or Kitchen Staff!
     const handleOrderReady = (data: any) => {
-      // Role check: Waiters, Managers, Admins
-      if (!['Waiter', 'Manager', 'Admin', 'Owner'].includes(userRole)) return;
+      if (!['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole)) return;
 
       const order = data.order || data;
       const tableNum = order.table?.number ? String(order.table.number).replace(/^T/i, '') : 'N/A';
@@ -91,10 +163,10 @@ export function useGlobalNotifications() {
         orderNumber: orderShortNum,
         orderId: order.id,
         link: '/admin/orders',
+        targetRoles: ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'],
         priority: 'high',
       });
 
-      // Show Toast
       toast.custom(
         (t) => (
           <div
@@ -120,9 +192,9 @@ export function useGlobalNotifications() {
       );
     };
 
-    // 3. Order Ready Reminder
+    // 5. Order Ready Reminder
     const handleOrderReadyReminder = (data: any) => {
-      if (!['Waiter', 'Manager', 'Admin', 'Owner'].includes(userRole)) return;
+      if (!['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole)) return;
 
       const order = data.order || data;
       const tableNum = order.table?.number ? String(order.table.number).replace(/^T/i, '') : 'N/A';
@@ -136,13 +208,14 @@ export function useGlobalNotifications() {
         orderNumber: order.orderNumber?.slice(-6),
         orderId: order.id,
         link: '/admin/orders',
+        targetRoles: ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'],
         priority: 'urgent',
       });
     };
 
-    // 4. Order Ready Escalation
+    // 6. Order Ready Escalation
     const handleOrderReadyEscalation = (data: any) => {
-      if (!['Waiter', 'Manager', 'Admin', 'Owner'].includes(userRole)) return;
+      if (!['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole)) return;
 
       const order = data.order || data;
       const tableNum = order.table?.number ? String(order.table.number).replace(/^T/i, '') : 'N/A';
@@ -155,21 +228,73 @@ export function useGlobalNotifications() {
         orderNumber: order.orderNumber?.slice(-6),
         orderId: order.id,
         link: '/admin/orders',
+        targetRoles: ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'],
         priority: 'urgent',
       });
     };
 
-    // Register socket listeners
+    // 7. Bill Request Created
+    // STRICT RBAC: Cashiers, Managers, Owners, Waiters. NEVER Kitchen Staff!
+    const handleBillRequestCreated = (data: any) => {
+      if (!['Cashier', 'Manager', 'Admin', 'Owner', 'Super Admin', 'Waiter'].includes(userRole)) return;
+
+      const billReq = data.billRequest || data;
+      const tableNum = billReq.table?.number ? String(billReq.table.number).replace(/^T/i, '') : 'Counter';
+
+      addNotification({
+        type: 'BILL_REQUEST',
+        title: `Bill Requested — Table ${tableNum}`,
+        message: `Table ${tableNum} requested bill settlement`,
+        tableNumber: tableNum,
+        link: '/admin/bill-requests',
+        targetRoles: ['Cashier', 'Manager', 'Admin', 'Owner', 'Super Admin', 'Waiter'],
+        priority: 'high',
+      });
+
+      if (['Cashier', 'Manager', 'Owner', 'Admin', 'Super Admin'].includes(userRole)) {
+        toast.custom(
+          (t) => (
+            <div
+              onClick={() => {
+                toast.dismiss(t.id);
+                window.location.href = '/admin/bill-requests';
+              }}
+              className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-emerald-500 transition-all ${
+                t.visible ? 'animate-enter' : 'animate-leave'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🧾</span>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Bill Request — Table {tableNum}</p>
+                  <p className="text-xs text-gray-600 mt-0.5">Guest requested payment receipt</p>
+                  <p className="text-[11px] text-emerald-600 font-bold mt-1">Open Bill Requests →</p>
+                </div>
+              </div>
+            </div>
+          ),
+          { duration: 8000, position: 'top-right' }
+        );
+      }
+    };
+
+    // Register all socket listeners
+    socket.on('ingredientRequest:created', handleIngredientRequestCreated);
+    socket.on('ingredientRequest:updated', handleIngredientRequestUpdated);
     socket.on('waiter-call:created', handleWaiterCallCreated);
     socket.on('order:ready', handleOrderReady);
     socket.on('order:ready:reminder', handleOrderReadyReminder);
     socket.on('order:ready:escalation', handleOrderReadyEscalation);
+    socket.on('billRequest:created', handleBillRequestCreated);
 
     return () => {
+      socket.off('ingredientRequest:created', handleIngredientRequestCreated);
+      socket.off('ingredientRequest:updated', handleIngredientRequestUpdated);
       socket.off('waiter-call:created', handleWaiterCallCreated);
       socket.off('order:ready', handleOrderReady);
       socket.off('order:ready:reminder', handleOrderReadyReminder);
       socket.off('order:ready:escalation', handleOrderReadyEscalation);
+      socket.off('billRequest:created', handleBillRequestCreated);
     };
   }, [socket, isConnected, user, addNotification]);
 }

@@ -1,9 +1,11 @@
 import apiClient from './client';
 
-export enum TipStatus {
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-}
+export const TipStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+} as const;
+
+export type TipStatus = (typeof TipStatus)[keyof typeof TipStatus];
 
 export interface Tip {
   id: string;

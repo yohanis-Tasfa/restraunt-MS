@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 import { waiterCallsApi } from '../../api/waiter-calls';
 import { useWebSocket } from '../../contexts/WebSocketContext';
 import { billRequestsApi } from '../../api/billRequests';
+import { ingredientRequestsApi } from '../../api/ingredientRequests';
 import logo from '../../assets/image.png';
 import {
   LayoutDashboard,
@@ -54,6 +55,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
   // Check if current user role can view waiter calls & bill requests
   const canSeeWaiterCalls = ['Owner', 'Manager', 'Waiter', 'Super Admin', 'Admin'].includes(user?.role?.name || '');
   const canSeeBillRequests = ['Owner', 'Manager', 'Cashier', 'Super Admin', 'Admin'].includes(user?.role?.name || '');
+  const canSeeIngredientRequests = ['Owner', 'Manager', 'Super Admin', 'Admin', 'Kitchen Staff'].includes(user?.role?.name || '');
 
   // Query active waiter calls count for real-time red notification badge with fast fallback polling
   const { data: activeCalls = [] } = useQuery({
@@ -138,11 +140,49 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
     };
   }, [socket, canSeeBillRequests, queryClient]);
 
+  // Query pending ingredient requests count for Manager / Owner / Kitchen Staff
+  const { data: pendingIngredientRequestsCount = 0 } = useQuery({
+    queryKey: ['ingredient-requests', 'pending-count', user?.branch?.id],
+    queryFn: async () => {
+      try {
+        const requests = await ingredientRequestsApi.getAll({ branchId: user?.branch?.id, status: 'PENDING' });
+        return Array.isArray(requests) ? requests.length : 0;
+      } catch (err) {
+        return 0;
+      }
+    },
+    enabled: !!user && canSeeIngredientRequests,
+    refetchInterval: 6000,
+  });
+
+  // Listen for real-time WebSocket events to update ingredient requests count
+  useEffect(() => {
+    if (!socket || !canSeeIngredientRequests) return;
+
+    const handleIngredientRequestUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredient-requests'] });
+    };
+
+    socket.on('ingredientRequest:created', handleIngredientRequestUpdate);
+    socket.on('ingredientRequest:updated', handleIngredientRequestUpdate);
+    socket.on('ingredientRequest:approved', handleIngredientRequestUpdate);
+    socket.on('ingredientRequest:rejected', handleIngredientRequestUpdate);
+    socket.on('ingredientRequest:cancelled', handleIngredientRequestUpdate);
+
+    return () => {
+      socket.off('ingredientRequest:created', handleIngredientRequestUpdate);
+      socket.off('ingredientRequest:updated', handleIngredientRequestUpdate);
+      socket.off('ingredientRequest:approved', handleIngredientRequestUpdate);
+      socket.off('ingredientRequest:rejected', handleIngredientRequestUpdate);
+      socket.off('ingredientRequest:cancelled', handleIngredientRequestUpdate);
+    };
+  }, [socket, canSeeIngredientRequests, queryClient]);
+
   // Overview Section Items
   const overviewItems: NavItem[] = [
-    { label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+    { label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard', roles: ['Owner', 'Manager', 'Cashier', 'Waiter', 'Super Admin', 'Admin'] },
     { label: 'POS', icon: ShoppingCart, path: '/admin/pos', roles: ['Owner', 'Manager', 'Waiter'] },
-    { label: 'Orders', icon: ListOrdered, path: '/admin/orders' },
+    { label: 'Orders', icon: ListOrdered, path: '/admin/orders', roles: ['Owner', 'Manager', 'Cashier', 'Waiter', 'Super Admin', 'Admin'] },
     { label: 'Kitchen', icon: ChefHat, path: '/admin/kitchen', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
   ];
 
@@ -167,7 +207,13 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
     { label: 'Reservations', icon: ClipboardList, path: '/admin/reservations', roles: ['Owner', 'Manager', 'Cashier', 'Waiter'] },
     { label: 'Menu', icon: UtensilsCrossed, path: '/admin/menu', roles: ['Owner', 'Manager'] },
     { label: 'Recipes', icon: Beef, path: '/admin/recipes', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
-    { label: 'Ingredient Requests', icon: PackagePlus, path: '/admin/ingredient-requests', roles: ['Owner', 'Manager', 'Kitchen Staff'] },
+    { 
+      label: 'Ingredient Requests', 
+      icon: PackagePlus, 
+      path: '/admin/ingredient-requests', 
+      badge: pendingIngredientRequestsCount > 0 ? pendingIngredientRequestsCount : undefined,
+      roles: ['Owner', 'Manager', 'Kitchen Staff'] 
+    },
     { label: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['Owner', 'Manager'] },
   ];
 

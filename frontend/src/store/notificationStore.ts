@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { soundManager } from '../utils/sound';
 
-export type NotificationType = 'WAITER_CALL' | 'ORDER_READY' | 'BILL_REQUEST' | 'TIP' | 'SYSTEM';
+export type NotificationType = 'WAITER_CALL' | 'ORDER_READY' | 'BILL_REQUEST' | 'TIP' | 'SYSTEM' | 'INGREDIENT_REQUEST';
 
 export interface AppNotification {
   id: string;
@@ -13,6 +13,7 @@ export interface AppNotification {
   orderNumber?: string;
   callId?: string;
   orderId?: string;
+  targetRoles?: string[]; // Allowed roles that can see this notification (e.g. ['Manager', 'Owner'])
   link: string; // URL to navigate to when clicked (e.g. '/admin/waiter-calls' or '/admin/orders')
   createdAt: string; // ISO date string
   isRead: boolean;

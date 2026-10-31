@@ -70,27 +70,17 @@ export default function IngredientRequestsPage() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleCreated = (payload: any) => {
+    const handleCreated = () => {
       queryClient.invalidateQueries({ queryKey: ['ingredient-requests'] });
-      toast.custom((t) => (
-        <div
-          className={`${
-            t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-md bg-amber-600 text-white p-4 rounded-xl shadow-xl flex items-center gap-3`}
-        >
-          <PackagePlus className="w-6 h-6 text-white shrink-0" />
-          <div>
-            <p className="text-xs font-bold uppercase text-amber-100">Ingredient Requisition</p>
-            <p className="text-sm font-semibold">{payload.message}</p>
-          </div>
-        </div>
-      ));
     };
 
     const handleUpdated = (payload: any) => {
       queryClient.invalidateQueries({ queryKey: ['ingredient-requests'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-dropdown'] });
-      toast.success(payload.message || 'Ingredient request updated');
+      // Kitchen Staff who requested sees update toast
+      if (user?.role?.name === 'Kitchen Staff') {
+        toast.success(payload.message || 'Ingredient request updated');
+      }
     };
 
     socket.on('ingredientRequest:created', handleCreated);
@@ -100,7 +90,7 @@ export default function IngredientRequestsPage() {
       socket.off('ingredientRequest:created', handleCreated);
       socket.off('ingredientRequest:updated', handleUpdated);
     };
-  }, [socket, queryClient]);
+  }, [socket, queryClient, user]);
 
   // Create mutation
   const createMutation = useMutation({

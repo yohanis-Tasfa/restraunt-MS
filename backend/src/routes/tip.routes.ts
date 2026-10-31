@@ -25,7 +25,7 @@ router.get('/my-tips/summary', authorize('orders.read'), tipController.getMyTipS
 // Get single tip (Manager/Owner+)
 router.get('/:id', authorize('reports.read'), tipController.getById);
 
-// Mark tip as paid (Manager/Cashier+)
-router.patch('/:id/mark-paid', authorize('payments.create'), tipController.markAsPaid);
+// Mark tip as paid (Manager/Cashier/Admin/Owner)
+router.patch('/:id/mark-paid', authorize(['Manager', 'Cashier', 'Admin', 'Owner', 'payments.create']), tipController.markAsPaid);
 
 export default router;

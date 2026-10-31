@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   CheckCheck,
-  Trash2,
   Volume2,
   VolumeX,
   Mic,
@@ -13,20 +12,21 @@ import {
   Clock,
   ArrowRight,
   X,
-  ExternalLink,
+  PackagePlus,
+  FileText,
 } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 import { useNotificationStore, type AppNotification } from '../../store/notificationStore';
-import { soundManager } from '../../utils/sound';
 
 export default function NotificationBellDropdown() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'calls' | 'orders'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'requests' | 'calls' | 'orders' | 'bills'>('all');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const {
     notifications,
-    unreadCount,
     soundEnabled,
     voiceEnabled,
     markAsRead,
@@ -36,6 +36,11 @@ export default function NotificationBellDropdown() {
     toggleSound,
     toggleVoice,
   } = useNotificationStore();
+
+  const userRole = user?.role?.name || '';
+  const isManagerOrAdmin = ['Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole);
+  const isCashier = userRole === 'Cashier';
+  const isWaiter = userRole === 'Waiter';
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -53,14 +58,56 @@ export default function NotificationBellDropdown() {
     };
   }, [isOpen]);
 
-  // Filter notifications based on tab
-  const filteredNotifications = notifications.filter((notif) => {
+  // STRICT RBAC: Filter notifications so user sees ONLY notifications allowed for their role
+  const canUserSeeNotification = (notif: AppNotification) => {
+    if (['Super Admin', 'Owner'].includes(userRole)) return true;
+
+    if (notif.targetRoles && notif.targetRoles.length > 0) {
+      return notif.targetRoles.includes(userRole);
+    }
+
+    switch (notif.type) {
+      case 'INGREDIENT_REQUEST':
+        // STRICT: ONLY Managers and Admin/Owner! NEVER Waiter, NEVER Cashier!
+        return isManagerOrAdmin;
+
+      case 'WAITER_CALL':
+        return ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole);
+
+      case 'ORDER_READY':
+        return ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole);
+
+      case 'BILL_REQUEST':
+        return ['Cashier', 'Manager', 'Admin', 'Owner', 'Super Admin', 'Waiter'].includes(userRole);
+
+      case 'TIP':
+        return ['Waiter', 'Manager', 'Admin', 'Owner', 'Super Admin'].includes(userRole);
+
+      default:
+        return false;
+    }
+  };
+
+  // Only notifications visible to the logged-in role
+  const visibleNotifications = notifications.filter(canUserSeeNotification);
+  const unreadCount = visibleNotifications.filter((n) => !n.isRead).length;
+
+  // Tab counts
+  const reqCount = visibleNotifications.filter((n) => n.type === 'INGREDIENT_REQUEST').length;
+  const callsCount = visibleNotifications.filter((n) => n.type === 'WAITER_CALL').length;
+  const ordersCount = visibleNotifications.filter((n) => n.type === 'ORDER_READY' || n.type === 'BILL_REQUEST').length;
+  const billsCount = visibleNotifications.filter((n) => n.type === 'BILL_REQUEST').length;
+
+  // Filter based on active tab
+  const filteredNotifications = visibleNotifications.filter((notif) => {
+    if (activeTab === 'requests') return notif.type === 'INGREDIENT_REQUEST';
     if (activeTab === 'calls') return notif.type === 'WAITER_CALL';
-    if (activeTab === 'orders') return notif.type === 'ORDER_READY';
+    if (activeTab === 'orders') return notif.type === 'ORDER_READY' || notif.type === 'BILL_REQUEST';
+    if (activeTab === 'bills') return notif.type === 'BILL_REQUEST';
     return true;
   });
 
-  // Handle clicking an item: mark as read (reduces badge count!) and navigate
+  // Handle clicking an item: mark as read and navigate
   const handleItemClick = (notification: AppNotification) => {
     if (!notification.isRead) {
       markAsRead(notification.id);
@@ -69,10 +116,14 @@ export default function NotificationBellDropdown() {
 
     if (notification.link) {
       navigate(notification.link);
+    } else if (notification.type === 'INGREDIENT_REQUEST') {
+      navigate('/admin/ingredient-requests');
     } else if (notification.type === 'WAITER_CALL') {
       navigate('/admin/waiter-calls');
     } else if (notification.type === 'ORDER_READY') {
       navigate('/admin/orders');
+    } else if (notification.type === 'BILL_REQUEST') {
+      navigate('/admin/bill-requests');
     }
   };
 
@@ -109,7 +160,7 @@ export default function NotificationBellDropdown() {
       >
         <Bell className={`w-5 h-5 ${unreadCount > 0 ? 'text-gray-800' : 'text-gray-600'}`} />
 
-        {/* Dynamic Badge Counter */}
+        {/* Dynamic Badge Counter (counts ONLY role-allowed unread notifications!) */}
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold text-white shadow-md animate-pulse">
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -119,14 +170,14 @@ export default function NotificationBellDropdown() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Header */}
-          <div className="p-4 border-b border-gray-100 bg-white">
+          <div className="p-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-gray-900 text-base">Notifications</h3>
+                <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
                 {unreadCount > 0 && (
-                  <span className="px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-700 rounded-full">
+                  <span className="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
                     {unreadCount} unread
                   </span>
                 )}
@@ -165,31 +216,61 @@ export default function NotificationBellDropdown() {
               </div>
             </div>
 
-            {/* Quick Filter Tabs */}
-            <div className="flex gap-1.5 mt-3 bg-gray-100/80 p-1 rounded-xl text-xs font-medium text-gray-600">
+            {/* Role-Specific Quick Filter Tabs */}
+            <div className="flex gap-1.5 mt-3 bg-gray-100/80 p-1 rounded-xl text-xs font-medium text-gray-600 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
+                className={`flex-1 py-1 px-2 rounded-lg transition-all whitespace-nowrap ${
                   activeTab === 'all' ? 'bg-white text-gray-900 shadow-sm font-semibold' : 'hover:text-gray-900'
                 }`}
               >
-                All ({notifications.length})
+                All ({visibleNotifications.length})
               </button>
-              <button
-                onClick={() => setActiveTab('calls')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
-                  activeTab === 'calls' ? 'bg-white text-amber-700 shadow-sm font-semibold' : 'hover:text-gray-900'
-                }`}
-              >
-                Calls ({notifications.filter((n) => n.type === 'WAITER_CALL').length})
-              </button>
+
+              {/* Kitchen Requisitions Tab: ONLY visible to Manager / Admin / Owner */}
+              {isManagerOrAdmin && (
+                <button
+                  onClick={() => setActiveTab('requests')}
+                  className={`flex-1 py-1 px-2 rounded-lg transition-all whitespace-nowrap ${
+                    activeTab === 'requests' ? 'bg-white text-amber-800 shadow-sm font-semibold' : 'hover:text-gray-900'
+                  }`}
+                >
+                  Kitchen ({reqCount})
+                </button>
+              )}
+
+              {/* Calls Tab (Waiters & Managers) */}
+              {!isCashier && (
+                <button
+                  onClick={() => setActiveTab('calls')}
+                  className={`flex-1 py-1 px-2 rounded-lg transition-all whitespace-nowrap ${
+                    activeTab === 'calls' ? 'bg-white text-amber-700 shadow-sm font-semibold' : 'hover:text-gray-900'
+                  }`}
+                >
+                  Calls ({callsCount})
+                </button>
+              )}
+
+              {/* Bills Tab (Cashiers) */}
+              {isCashier && (
+                <button
+                  onClick={() => setActiveTab('bills')}
+                  className={`flex-1 py-1 px-2 rounded-lg transition-all whitespace-nowrap ${
+                    activeTab === 'bills' ? 'bg-white text-emerald-700 shadow-sm font-semibold' : 'hover:text-gray-900'
+                  }`}
+                >
+                  Bills ({billsCount})
+                </button>
+              )}
+
+              {/* Orders Tab */}
               <button
                 onClick={() => setActiveTab('orders')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
+                className={`flex-1 py-1 px-2 rounded-lg transition-all whitespace-nowrap ${
                   activeTab === 'orders' ? 'bg-white text-green-700 shadow-sm font-semibold' : 'hover:text-gray-900'
                 }`}
               >
-                Ready ({notifications.filter((n) => n.type === 'ORDER_READY').length})
+                Orders ({ordersCount})
               </button>
             </div>
           </div>
@@ -201,17 +282,23 @@ export default function NotificationBellDropdown() {
                 <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
                   <Bell className="w-6 h-6" />
                 </div>
-                <p className="text-sm font-medium text-gray-800">No notifications yet</p>
+                <p className="text-sm font-medium text-gray-800">No notifications</p>
                 <p className="text-xs text-gray-400 mt-1">
                   {activeTab === 'all'
-                    ? "You're all caught up with your orders and calls!"
-                    : `No ${activeTab === 'calls' ? 'waiter calls' : 'ready orders'} in queue.`}
+                    ? "You're all caught up with your tasks!"
+                    : activeTab === 'requests'
+                    ? 'No pending kitchen ingredient requisitions.'
+                    : activeTab === 'calls'
+                    ? 'No waiter calls in queue.'
+                    : 'No order alerts in queue.'}
                 </p>
               </div>
             ) : (
               filteredNotifications.map((item) => {
+                const isIngredientRequest = item.type === 'INGREDIENT_REQUEST';
                 const isWaiterCall = item.type === 'WAITER_CALL';
                 const isOrderReady = item.type === 'ORDER_READY';
+                const isBillRequest = item.type === 'BILL_REQUEST';
 
                 return (
                   <div
@@ -229,15 +316,23 @@ export default function NotificationBellDropdown() {
                     {/* Icon Badge */}
                     <div
                       className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                        isWaiterCall
+                        isIngredientRequest
+                          ? 'bg-amber-100 text-amber-700'
+                          : isWaiterCall
                           ? 'bg-amber-100 text-amber-600'
+                          : isBillRequest
+                          ? 'bg-emerald-100 text-emerald-700'
                           : isOrderReady
                           ? 'bg-green-100 text-green-600'
                           : 'bg-blue-100 text-blue-600'
                       }`}
                     >
-                      {isWaiterCall ? (
+                      {isIngredientRequest ? (
+                        <PackagePlus className="w-4 h-4 text-amber-700" />
+                      ) : isWaiterCall ? (
                         <PhoneCall className="w-4 h-4" />
+                      ) : isBillRequest ? (
+                        <FileText className="w-4 h-4 text-emerald-700" />
                       ) : isOrderReady ? (
                         <ChefHat className="w-4 h-4" />
                       ) : (
@@ -248,9 +343,16 @@ export default function NotificationBellDropdown() {
                     {/* Content */}
                     <div className="flex-1 min-w-0 pr-4">
                       <div className="flex items-center justify-between gap-1 mb-0.5">
-                        <span className="text-xs font-bold text-gray-900 truncate">
-                          {item.title}
-                        </span>
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="text-xs font-bold text-gray-900 truncate">
+                            {item.title}
+                          </span>
+                          {item.priority === 'urgent' && (
+                            <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-rose-100 text-rose-700">
+                              Urgent
+                            </span>
+                          )}
+                        </div>
                         <span className="text-[10px] text-gray-400 whitespace-nowrap flex items-center gap-1">
                           <Clock className="w-2.5 h-2.5" />
                           {formatTimeAgo(item.createdAt)}
@@ -264,8 +366,12 @@ export default function NotificationBellDropdown() {
                       <div className="flex items-center justify-between mt-2 pt-1">
                         <span className="text-[11px] font-medium text-blue-600 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                           <span>
-                            {isWaiterCall
+                            {isIngredientRequest
+                              ? 'Review Requisition'
+                              : isWaiterCall
                               ? 'Go to Waiter Calls'
+                              : isBillRequest
+                              ? 'Process Bill'
                               : isOrderReady
                               ? 'View Orders'
                               : 'Open'}
@@ -298,38 +404,18 @@ export default function NotificationBellDropdown() {
             )}
           </div>
 
-          {/* Footer Actions */}
-          {notifications.length > 0 && (
-            <div className="p-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between text-xs">
+          {/* Footer */}
+          {visibleNotifications.length > 0 && (
+            <div className="p-3 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between text-xs">
+              <span className="text-gray-500 font-medium">
+                {visibleNotifications.length} total alerts
+              </span>
               <button
                 onClick={clearAll}
-                className="text-gray-500 hover:text-red-600 flex items-center gap-1 transition-colors px-1 py-0.5 font-medium"
+                className="text-gray-500 hover:text-red-600 transition-colors font-medium"
               >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Clear history</span>
+                Clear all
               </button>
-
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate('/admin/waiter-calls');
-                  }}
-                  className="text-gray-600 hover:text-gray-900 font-medium"
-                >
-                  Calls
-                </button>
-                <span className="text-gray-300">•</span>
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate('/admin/orders');
-                  }}
-                  className="text-blue-600 hover:text-blue-700 font-semibold"
-                >
-                  Orders →
-                </button>
-              </div>
             </div>
           )}
         </div>
@@ -337,4 +423,3 @@ export default function NotificationBellDropdown() {
     </div>
   );
 }
-
