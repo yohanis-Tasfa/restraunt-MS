@@ -4,6 +4,7 @@ import { UserService } from '../services/user.service';
 import { ApiResponse } from '../utils/ApiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
+import emailService from '../services/email.service';
 export const VALID_USER_STATUSES = ['ACTIVE', 'INACTIVE', 'LOCKED'] as const;
 export type UserStatus = typeof VALID_USER_STATUSES[number];
 
@@ -40,6 +41,22 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, 'Email, password, first name, and last name are required');
   }
 
+  // Clean empty string branchId
+  if (!data.branchId || data.branchId === '' || data.branchId === 'undefined') {
+    data.branchId = undefined;
+  }
+
+  // If a branch is provided, automatically align restaurantId to the branch's restaurant
+  if (data.branchId) {
+    const branch = await prisma.branch.findUnique({
+      where: { id: data.branchId },
+      select: { id: true, restaurantId: true },
+    });
+    if (branch?.restaurantId) {
+      data.restaurantId = branch.restaurantId;
+    }
+  }
+
   // Fallback restaurantId and branchId from authenticated user or first restaurant
   if (!data.restaurantId) {
     const authUser = (req as any).user;
@@ -65,7 +82,8 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = await userService.create(data);
-  res.status(201).json(new ApiResponse(201, user, 'User created successfully'));
+  const emailSent = emailService.isReady();
+  res.status(201).json(new ApiResponse(201, { ...user, emailSent }, emailSent ? 'User created & credentials email sent' : 'User created (SMTP unconfigured, logged in console)'));
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
@@ -100,17 +118,21 @@ export const changePassword = asyncHandler(async (req: Request, res: Response) =
 
 export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { newPassword } = req.body;
+  const { newPassword, sendEmail } = req.body;
 
-  if (!newPassword) {
-    throw new ApiError(400, 'New password is required');
-  }
-
-  if (newPassword.length < 6) {
+  if (newPassword && newPassword.length < 6) {
     throw new ApiError(400, 'New password must be at least 6 characters long');
   }
 
-  const result = await userService.resetPassword(id, newPassword);
+  const result = await userService.resetPassword(id, newPassword, sendEmail !== false);
+  res.json(new ApiResponse(200, result, result.message));
+});
+
+export const resendCredentials = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { tempPassword } = req.body || {};
+
+  const result = await userService.resendCredentials(id, tempPassword);
   res.json(new ApiResponse(200, result, result.message));
 });
 

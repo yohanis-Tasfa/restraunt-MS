@@ -5,10 +5,18 @@ export const employeeController = {
   // Create employee
   async createEmployee(req: Request, res: Response) {
     try {
-      const employee = await employeeService.createEmployee(req.body);
+      const data = { ...req.body };
+      if (!data.branchId || data.branchId === '' || data.branchId === 'undefined') {
+        data.branchId = undefined;
+      }
+      if (!data.restaurantId && (req as any).user?.restaurantId) {
+        data.restaurantId = (req as any).user.restaurantId;
+      }
+      const employee = await employeeService.createEmployee(data);
       res.status(201).json(employee);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      console.error('Error in createEmployee:', error);
+      res.status(400).json({ error: error.message, message: error.message });
     }
   },
 

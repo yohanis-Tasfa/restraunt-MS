@@ -1,5 +1,6 @@
 import { PrismaClient, EmploymentType, EmployeeStatus, PayrollStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import emailService from './email.service';
 
 const prisma = new PrismaClient();
 
@@ -26,8 +27,38 @@ export const employeeService = {
     emergencyPhone?: string;
     bankAccount?: string;
     taxNumber?: string;
+    sendEmail?: boolean;
   }) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    // Clean branchId
+    const cleanBranchId = data.branchId && data.branchId.trim() ? data.branchId.trim() : undefined;
+
+    // Check if email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email.trim().toLowerCase() },
+    });
+    if (existingUser) {
+      throw new Error(`Email ${data.email} is already registered`);
+    }
+
+    // Auto-resolve unique username
+    let finalUsername = data.username?.trim() || data.email.split('@')[0];
+    const existingUsername = await prisma.user.findUnique({
+      where: { username: finalUsername },
+    });
+    if (existingUsername) {
+      finalUsername = `${finalUsername}_${Math.floor(Math.random() * 899 + 100)}`;
+    }
+
+    // Auto-resolve unique employee code
+    let finalCode = data.employeeCode?.trim() || `EMP-${Date.now().toString().slice(-4)}${Math.floor(Math.random() * 90 + 10)}`;
+    const existingCode = await prisma.employee.findUnique({
+      where: { employeeCode: finalCode },
+    });
+    if (existingCode) {
+      finalCode = `EMP-${Date.now().toString().slice(-6)}`;
+    }
 
     // Convert date strings to Date objects
     const hireDate = typeof data.hireDate === 'string' ? new Date(data.hireDate) : data.hireDate;
@@ -39,22 +70,22 @@ export const employeeService = {
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
-          email: data.email,
-          username: data.username,
+          email: data.email.trim().toLowerCase(),
+          username: finalUsername,
           password: hashedPassword,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phone: data.phone,
+          firstName: data.firstName.trim(),
+          lastName: data.lastName.trim(),
+          phone: data.phone?.trim() || null,
           roleId: data.roleId,
-          restaurantId: data.restaurantId,
-          branchId: data.branchId,
+          restaurantId: data.restaurantId || null,
+          branchId: cleanBranchId || null,
         },
       });
 
       const employee = await tx.employee.create({
         data: {
           userId: user.id,
-          employeeCode: data.employeeCode,
+          employeeCode: finalCode,
           department: data.department,
           position: data.position,
           employmentType: data.employmentType,
@@ -95,6 +126,20 @@ export const employeeService = {
 
       return employee;
     });
+
+    if (data.sendEmail !== false && result?.user?.email) {
+      emailService
+        .sendWelcomeCredentials({
+          email: result.user.email,
+          name: `${result.user.firstName} ${result.user.lastName}`.trim(),
+          username: result.user.username,
+          password: data.password,
+          roleName: result.user.role?.name || data.position || 'Staff',
+          branchName: result.user.branch?.name || null,
+          restaurantName: null,
+        })
+        .catch((err) => console.error('[EmployeeService] Error sending welcome email:', err));
+    }
 
     return result;
   },

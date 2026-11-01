@@ -20,6 +20,7 @@ import {
   Mail,
   UserCheck,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 import { usersApi } from '../api/users';
 import type { AppUser, Role, CreateUserData, Branch } from '../api/users';
@@ -60,6 +61,7 @@ export default function UsersPage() {
     salary: 10000,
     bankProvider: 'Telebirr',
     bankAccountNumber: '',
+    sendEmail: true,
   });
 
   const [editFormData, setEditFormData] = useState({
@@ -80,6 +82,8 @@ export default function UsersPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [copiedSuccess, setCopiedSuccess] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [sendEmailOnReset, setSendEmailOnReset] = useState(true);
+  const [sendingEmailId, setSendingEmailId] = useState<string | null>(null);
 
   // Load data
   const loadData = async () => {
@@ -138,6 +142,8 @@ export default function UsersPage() {
         ? `${formData.bankProvider}: ${formData.bankAccountNumber.trim()}`
         : undefined;
 
+      const cleanBranchId = formData.branchId && formData.branchId.trim() ? formData.branchId.trim() : undefined;
+
       const payload: CreateUserData = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
@@ -146,37 +152,30 @@ export default function UsersPage() {
         password: formData.password.trim(),
         phone: formData.phone.trim() || undefined,
         roleId: formData.roleId,
-        branchId: formData.branchId || undefined,
+        branchId: cleanBranchId,
         bankAccount: finalBankAccount,
-        salary: Number(formData.salary) || 10000,
-        employeeCode: formData.employeeCode?.trim() || undefined,
+        salary: formData.enrollPayroll ? Number(formData.salary) || 10000 : undefined,
+        employeeCode: formData.enrollPayroll
+          ? (formData.employeeCode?.trim() || `EMP-${Date.now().toString().slice(-4)}${Math.floor(Math.random() * 90 + 10)}`)
+          : undefined,
+        sendEmail: formData.sendEmail,
       };
 
-      // If user also checked enroll in payroll, create via employee endpoint so both are linked
-      if (formData.enrollPayroll) {
-        const selectedRoleObj = roles.find((r) => r.id === formData.roleId);
-        await employeesApi.createEmployee({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          username: formData.username || formData.email.split('@')[0],
-          password: formData.password,
-          phone: formData.phone,
-          roleId: formData.roleId,
-          branchId: formData.branchId,
-          employeeCode: formData.employeeCode || `EMP-${Date.now().toString().slice(-4)}`,
-          department: selectedRoleObj?.name || 'General',
-          position: selectedRoleObj?.name || 'Staff',
-          employmentType: 'FULL_TIME',
-          salary: Number(formData.salary) || 10000,
-          hireDate: new Date().toISOString().split('T')[0],
-          bankAccount: finalBankAccount,
-        });
-      } else {
-        await usersApi.create(payload);
-      }
+      const res: any = await usersApi.create(payload);
+      const isEmailSent = res?.data?.emailSent ?? res?.emailSent;
 
-      toast.success(`User ${formData.firstName} created successfully!`);
+      if (formData.sendEmail) {
+        if (isEmailSent) {
+          toast.success(`User created & login credentials emailed to ${formData.email}!`);
+        } else {
+          toast(
+            `User created! ⚠️ Real email not sent because SMTP is unconfigured in backend/.env. Credentials were simulated in the server terminal console.`,
+            { icon: 'ℹ️', duration: 7000 }
+          );
+        }
+      } else {
+        toast.success(`User ${formData.firstName} created successfully!`);
+      }
       setShowAddModal(false);
       setFormData({
         firstName: '',
@@ -192,11 +191,18 @@ export default function UsersPage() {
         salary: 10000,
         bankProvider: 'Telebirr',
         bankAccountNumber: '',
+        sendEmail: true,
       });
       loadData();
     } catch (err: any) {
       console.error('Error creating user:', err);
-      toast.error(err.response?.data?.message || err.message || 'Failed to create user');
+      const errorMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        (typeof err.response?.data === 'string' ? err.response?.data : null) ||
+        err.message ||
+        'Failed to create user';
+      toast.error(errorMsg);
     } finally {
       setActionLoading(false);
     }
@@ -270,6 +276,7 @@ export default function UsersPage() {
     setSelectedUser(user);
     setNewPassword(generateRandomPassword());
     setCopiedSuccess(false);
+    setSendEmailOnReset(true);
     setShowResetModal(true);
   };
 
@@ -279,12 +286,45 @@ export default function UsersPage() {
 
     try {
       setActionLoading(true);
-      await usersApi.resetPassword(selectedUser.id, newPassword.trim());
-      toast.success(`Password reset for ${selectedUser.firstName}!`);
+      await usersApi.resetPassword(selectedUser.id, newPassword.trim(), sendEmailOnReset);
+      if (sendEmailOnReset) {
+        toast.success(`Password reset & new credentials emailed to ${selectedUser.email}!`);
+      } else {
+        toast.success(`Password reset for ${selectedUser.firstName}!`);
+      }
+      setShowResetModal(false);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to reset password');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  // Resend Credentials Email Directly
+  const handleResendCredentials = async (user: AppUser) => {
+    if (
+      !window.confirm(
+        `Regenerate a temporary password and dispatch login credentials to ${user.firstName} ${user.lastName} (${user.email})?`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setSendingEmailId(user.id);
+      const res = await usersApi.sendCredentials(user.id);
+      if (res?.simulated) {
+        toast(
+          `Temporary password generated! ⚠️ Real email not sent because SMTP is unconfigured in backend/.env. Preview logged to server terminal.`,
+          { icon: 'ℹ️', duration: 7000 }
+        );
+      } else {
+        toast.success(res.message || `Credentials successfully dispatched to ${user.email}`);
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to dispatch credentials email');
+    } finally {
+      setSendingEmailId(null);
     }
   };
 
@@ -601,6 +641,20 @@ export default function UsersPage() {
                       {/* Actions */}
                       <td className="py-3.5 px-4 text-right">
                         <div className="inline-flex items-center gap-1">
+                          {/* Resend Credentials Email */}
+                          <button
+                            onClick={() => handleResendCredentials(u)}
+                            disabled={sendingEmailId === u.id}
+                            title="Resend Login Credentials via Email"
+                            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition disabled:opacity-50"
+                          >
+                            {sendingEmailId === u.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                            ) : (
+                              <Mail className="w-4 h-4" />
+                            )}
+                          </button>
+
                           {/* Reset Password */}
                           <button
                             onClick={() => handleOpenReset(u)}
@@ -904,6 +958,26 @@ export default function UsersPage() {
                 )}
               </div>
 
+              {/* Email Credentials Delivery Toggle */}
+              <div className="flex items-start gap-3 p-3.5 bg-blue-50/70 border border-blue-200/80 rounded-xl">
+                <input
+                  type="checkbox"
+                  id="sendEmailAdd"
+                  checked={formData.sendEmail}
+                  onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
+                  className="mt-0.5 h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                />
+                <div className="flex-1">
+                  <label htmlFor="sendEmailAdd" className="text-xs font-bold text-blue-950 flex items-center gap-1.5 cursor-pointer">
+                    <Mail className="h-3.5 w-3.5 text-blue-600" />
+                    Email login credentials to staff member
+                  </label>
+                  <p className="text-[11px] text-blue-700/80 mt-0.5 leading-relaxed">
+                    Sends a welcome email with their login ID, temporary password, role info, and direct link to the staff login portal.
+                  </p>
+                </div>
+              </div>
+
               <div className="pt-3 border-t border-gray-200 flex justify-end gap-2">
                 <button
                   type="button"
@@ -986,6 +1060,25 @@ export default function UsersPage() {
                 <div className="text-gray-800 font-semibold">Username: {selectedUser.username}</div>
                 <div className="text-emerald-700 font-bold">Password: {newPassword}</div>
               </div>
+
+              {/* Email Notification Option */}
+              <label className="flex items-start gap-2.5 p-3 bg-blue-50/70 border border-blue-200/80 rounded-xl cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={sendEmailOnReset}
+                  onChange={(e) => setSendEmailOnReset(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                />
+                <div className="flex-1">
+                  <div className="text-xs font-bold text-blue-950 flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Email new credentials to {selectedUser.email}</span>
+                  </div>
+                  <p className="text-[11px] text-blue-700/80 mt-0.5 leading-relaxed">
+                    Sends an automated security alert containing the new temporary password to the staff member.
+                  </p>
+                </div>
+              </label>
 
               <div className="flex items-center justify-between pt-2">
                 <button

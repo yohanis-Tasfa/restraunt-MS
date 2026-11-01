@@ -8,6 +8,7 @@ import {
   deleteUser,
   changePassword,
   resetPassword,
+  resendCredentials,
   updateUserStatus,
   getUserStats,
   getAllRoles,
@@ -47,6 +48,9 @@ router.post('/:id/change-password', changePassword);
 
 // POST /api/users/:id/reset-password - Reset user password (Admin only)
 router.post('/:id/reset-password', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), resetPassword);
+
+// POST /api/users/:id/send-credentials - Resend login credentials email
+router.post('/:id/send-credentials', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), resendCredentials);
 
 // PATCH /api/users/:id/status - Update user status
 router.patch('/:id/status', authorize(['Super Admin', 'Admin', 'Manager', 'Owner']), updateUserStatus);

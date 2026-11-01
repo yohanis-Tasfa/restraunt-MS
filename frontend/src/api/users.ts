@@ -56,6 +56,7 @@ export interface CreateUserData {
   bankAccount?: string;
   salary?: number;
   employeeCode?: string;
+  sendEmail?: boolean;
 }
 
 export interface UpdateUserData {
@@ -71,6 +72,7 @@ export interface UpdateUserData {
   bankAccount?: string;
   salary?: number;
   employeeCode?: string;
+  sendEmail?: boolean;
 }
 
 export const usersApi = {
@@ -112,8 +114,13 @@ export const usersApi = {
     return res?.data || res;
   },
 
-  resetPassword: async (id: string, newPassword: string) => {
-    const res: any = await apiClient.post(`/users/${id}/reset-password`, { newPassword });
+  resetPassword: async (id: string, newPassword?: string, sendEmail: boolean = true) => {
+    const res: any = await apiClient.post(`/users/${id}/reset-password`, { newPassword, sendEmail });
+    return res?.data || res;
+  },
+
+  sendCredentials: async (id: string, tempPassword?: string) => {
+    const res: any = await apiClient.post(`/users/${id}/send-credentials`, { tempPassword });
     return res?.data || res;
   },
 

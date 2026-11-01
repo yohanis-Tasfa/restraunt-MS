@@ -1,6 +1,7 @@
 import prisma from '../config/database';
 import bcrypt from 'bcrypt';
 import { ApiError } from '../utils/ApiError';
+import emailService from './email.service';
 
 interface GetAllUsersParams {
   page?: number;
@@ -27,6 +28,7 @@ interface CreateUserData {
   bankAccount?: string;
   salary?: number;
   employeeCode?: string;
+  sendEmail?: boolean;
 }
 
 interface UpdateUserData {
@@ -42,6 +44,7 @@ interface UpdateUserData {
   bankAccount?: string;
   salary?: number;
   employeeCode?: string;
+  sendEmail?: boolean;
 }
 
 interface ChangePasswordData {
@@ -263,19 +266,23 @@ export class UserService {
     }
 
     // Verify branch exists if provided
-    if (data.branchId) {
+    const cleanBranchId = data.branchId?.trim();
+    if (cleanBranchId) {
       const branch = await prisma.branch.findUnique({
-        where: { id: data.branchId },
+        where: { id: cleanBranchId },
       });
 
       if (!branch) {
-        throw new ApiError(404, 'Branch not found');
+        throw new ApiError(404, 'Selected branch not found');
       }
 
-      // Verify branch belongs to restaurant
-      if (branch.restaurantId !== data.restaurantId) {
-        throw new ApiError(400, 'Branch does not belong to the specified restaurant');
+      // Automatically align restaurantId to the branch's restaurant
+      if (branch.restaurantId) {
+        data.restaurantId = branch.restaurantId;
       }
+      data.branchId = cleanBranchId;
+    } else {
+      data.branchId = undefined;
     }
 
     // Hash password
@@ -340,10 +347,20 @@ export class UserService {
     // If bankAccount or salary or employeeCode is provided, create linked Employee record
     if (data.bankAccount || data.salary || data.employeeCode) {
       try {
+        let finalEmpCode = data.employeeCode?.trim();
+        if (!finalEmpCode) {
+          finalEmpCode = `EMP-${Date.now().toString().slice(-4)}${Math.floor(Math.random() * 90 + 10)}`;
+        }
+        // Ensure unique employee code
+        const existingCode = await prisma.employee.findUnique({ where: { employeeCode: finalEmpCode } });
+        if (existingCode) {
+          finalEmpCode = `EMP-${Date.now().toString().slice(-6)}`;
+        }
+
         await prisma.employee.create({
           data: {
             userId: user.id,
-            employeeCode: data.employeeCode?.trim() || `EMP-${Date.now().toString().slice(-4)}`,
+            employeeCode: finalEmpCode,
             department: role.name || 'General',
             position: role.name || 'Staff',
             salary: Number(data.salary) || 10000,
@@ -354,6 +371,21 @@ export class UserService {
       } catch (err) {
         console.error('Error creating linked employee profile:', err);
       }
+    }
+
+    // Send welcome credentials email if requested (default is true)
+    if (data.sendEmail !== false) {
+      emailService
+        .sendWelcomeCredentials({
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          username: user.username,
+          password: data.password,
+          roleName: user.role?.name || role.name || 'Staff',
+          branchName: user.branch?.name || null,
+          restaurantName: user.restaurant?.name || restaurant.name || null,
+        })
+        .catch((err) => console.error('[UserService] Error sending welcome email:', err));
     }
 
     return user;
@@ -567,7 +599,7 @@ export class UserService {
     };
   }
 
-  async resetPassword(id: string, newPassword: string) {
+  async resetPassword(id: string, newPassword?: string, sendEmail: boolean = true) {
     const user = await prisma.user.findUnique({
       where: { id },
     });
@@ -576,17 +608,74 @@ export class UserService {
       throw new ApiError(404, 'User not found');
     }
 
+    const effectivePassword = newPassword?.trim() || `RMS@${Math.floor(100000 + Math.random() * 900000)}`;
+
     // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(effectivePassword, 10);
 
     await prisma.user.update({
       where: { id },
       data: { password: hashedPassword },
     });
 
+    // Send email notification if enabled
+    if (sendEmail !== false) {
+      emailService
+        .sendPasswordReset({
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          username: user.username,
+          newPassword: effectivePassword,
+        })
+        .catch((err) => console.error('[UserService] Error sending reset password email:', err));
+    }
+
     return {
       success: true,
       message: 'Password reset successfully',
+      temporaryPassword: effectivePassword,
+    };
+  }
+
+  async resendCredentials(id: string, tempPassword?: string) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        role: true,
+        branch: true,
+        restaurant: true,
+      },
+    });
+
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    const effectivePassword = tempPassword?.trim() || `RMS@${Math.floor(100000 + Math.random() * 900000)}`;
+    const hashedPassword = await bcrypt.hash(effectivePassword, 10);
+
+    await prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    });
+
+    const emailResult = await emailService.sendWelcomeCredentials({
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+      username: user.username,
+      password: effectivePassword,
+      roleName: user.role?.name || 'Staff',
+      branchName: user.branch?.name || null,
+      restaurantName: user.restaurant?.name || null,
+    });
+
+    return {
+      success: true,
+      message: emailResult.simulated
+        ? `Credentials regenerated and logged to server console (simulation mode)`
+        : `Login credentials dispatched to ${user.email}`,
+      temporaryPassword: effectivePassword,
+      simulated: emailResult.simulated,
     };
   }
 

@@ -106,6 +106,7 @@ export interface CreateEmployeeData {
   emergencyPhone?: string;
   bankAccount?: string;
   taxNumber?: string;
+  sendEmail?: boolean;
 }
 
 export interface UpdateEmployeeData {
