@@ -58,6 +58,8 @@ export default function UsersPage() {
     enrollPayroll: false,
     employeeCode: '',
     salary: 10000,
+    bankProvider: 'Telebirr',
+    bankAccountNumber: '',
   });
 
   const [editFormData, setEditFormData] = useState({
@@ -68,6 +70,10 @@ export default function UsersPage() {
     phone: '',
     roleId: '',
     branchId: '',
+    salary: 10000,
+    employeeCode: '',
+    bankProvider: 'Telebirr',
+    bankAccountNumber: '',
   });
 
   const [newPassword, setNewPassword] = useState('');
@@ -128,6 +134,10 @@ export default function UsersPage() {
 
     try {
       setActionLoading(true);
+      const finalBankAccount = formData.bankAccountNumber.trim()
+        ? `${formData.bankProvider}: ${formData.bankAccountNumber.trim()}`
+        : undefined;
+
       const payload: CreateUserData = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
@@ -137,6 +147,9 @@ export default function UsersPage() {
         phone: formData.phone.trim() || undefined,
         roleId: formData.roleId,
         branchId: formData.branchId || undefined,
+        bankAccount: finalBankAccount,
+        salary: Number(formData.salary) || 10000,
+        employeeCode: formData.employeeCode?.trim() || undefined,
       };
 
       // If user also checked enroll in payroll, create via employee endpoint so both are linked
@@ -157,6 +170,7 @@ export default function UsersPage() {
           employmentType: 'FULL_TIME',
           salary: Number(formData.salary) || 10000,
           hireDate: new Date().toISOString().split('T')[0],
+          bankAccount: finalBankAccount,
         });
       } else {
         await usersApi.create(payload);
@@ -173,9 +187,11 @@ export default function UsersPage() {
         phone: '',
         roleId: '',
         branchId: '',
-        enrollPayroll: false,
+        enrollPayroll: true,
         employeeCode: '',
         salary: 10000,
+        bankProvider: 'Telebirr',
+        bankAccountNumber: '',
       });
       loadData();
     } catch (err: any) {
@@ -189,6 +205,17 @@ export default function UsersPage() {
   // Edit User
   const handleOpenEdit = (user: AppUser) => {
     setSelectedUser(user);
+    const rawBank = user.employee?.bankAccount || '';
+    let provider = 'Telebirr';
+    let accNum = rawBank;
+    if (rawBank.includes(':')) {
+      const parts = rawBank.split(':');
+      provider = parts[0].trim();
+      accNum = parts.slice(1).join(':').trim();
+    } else if (rawBank.startsWith('1000')) {
+      provider = 'Commercial Bank of Ethiopia (CBE)';
+    }
+
     setEditFormData({
       firstName: user.firstName,
       lastName: user.lastName,
@@ -197,6 +224,10 @@ export default function UsersPage() {
       phone: user.phone || '',
       roleId: user.role?.id || '',
       branchId: user.branch?.id || '',
+      salary: user.employee?.salary || 10000,
+      employeeCode: user.employee?.employeeCode || '',
+      bankProvider: provider,
+      bankAccountNumber: accNum,
     });
     setShowEditModal(true);
   };
@@ -207,6 +238,10 @@ export default function UsersPage() {
 
     try {
       setActionLoading(true);
+      const finalBankAccount = editFormData.bankAccountNumber.trim()
+        ? `${editFormData.bankProvider}: ${editFormData.bankAccountNumber.trim()}`
+        : '';
+
       await usersApi.update(selectedUser.id, {
         firstName: editFormData.firstName,
         lastName: editFormData.lastName,
@@ -215,6 +250,9 @@ export default function UsersPage() {
         phone: editFormData.phone,
         roleId: editFormData.roleId,
         branchId: editFormData.branchId,
+        bankAccount: finalBankAccount,
+        salary: Number(editFormData.salary) || undefined,
+        employeeCode: editFormData.employeeCode || undefined,
       });
 
       toast.success('User updated successfully');
@@ -418,6 +456,7 @@ export default function UsersPage() {
                 <th className="py-3 px-4 sm:px-6">User / Identity</th>
                 <th className="py-3 px-4">Contact</th>
                 <th className="py-3 px-4">Role</th>
+                <th className="py-3 px-4">Bank / Payout Account</th>
                 <th className="py-3 px-4">Branch</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4">Last Login</th>
@@ -427,14 +466,14 @@ export default function UsersPage() {
             <tbody className="divide-y divide-gray-100 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-gray-400">
+                  <td colSpan={8} className="py-12 text-center text-gray-400">
                     <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-emerald-600" />
                     Loading system users...
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-gray-400">
+                  <td colSpan={8} className="py-12 text-center text-gray-400">
                     No users found matching your filters.
                   </td>
                 </tr>
@@ -442,6 +481,7 @@ export default function UsersPage() {
                 users.map((u) => {
                   const isCurrent = currentUser?.id === u.id;
                   const initials = `${u.firstName?.[0] || ''}${u.lastName?.[0] || ''}`.toUpperCase() || 'U';
+                  const bankAcc = u.employee?.bankAccount;
 
                   return (
                     <tr key={u.id} className="hover:bg-gray-50/70 transition group">
@@ -491,6 +531,32 @@ export default function UsersPage() {
                         </span>
                       </td>
 
+                      {/* Bank / Payout Account */}
+                      <td className="py-3.5 px-4">
+                        {bankAcc ? (
+                          <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            {bankAcc.toLowerCase().includes('telebirr') || bankAcc.startsWith('09') || bankAcc.startsWith('07') ? (
+                              <span>📱</span>
+                            ) : bankAcc.toLowerCase().includes('cash') ? (
+                              <span>💵</span>
+                            ) : (
+                              <span>🏦</span>
+                            )}
+                            <span className="truncate max-w-[170px]" title={bankAcc}>
+                              {bankAcc}
+                            </span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleOpenEdit(u)}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs text-gray-400 hover:text-emerald-700 hover:bg-emerald-50 transition border border-dashed border-gray-300"
+                            title="Click to add payout account"
+                          >
+                            + Add Account
+                          </button>
+                        )}
+                      </td>
+
                       {/* Branch */}
                       <td className="py-3.5 px-4 text-xs text-gray-600">
                         {u.branch ? (
@@ -524,11 +590,11 @@ export default function UsersPage() {
                       <td className="py-3.5 px-4 text-xs text-gray-500">
                         {u.lastLogin
                           ? new Date(u.lastLogin).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
                           : 'Never'}
                       </td>
 
@@ -548,11 +614,10 @@ export default function UsersPage() {
                           <button
                             onClick={() => handleToggleLock(u)}
                             title={u.isLocked ? 'Unlock Account' : 'Lock Account'}
-                            className={`p-1.5 rounded-lg transition ${
-                              u.isLocked
-                                ? 'text-red-600 hover:bg-red-50'
-                                : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
-                            }`}
+                            className={`p-1.5 rounded-lg transition ${u.isLocked
+                              ? 'text-red-600 hover:bg-red-50'
+                              : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                              }`}
                           >
                             {u.isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
                           </button>
@@ -735,6 +800,68 @@ export default function UsersPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Payout & Bank Account for Payroll */}
+              <div className="p-3.5 bg-gray-50 rounded-xl border border-gray-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                    <span>🏦</span>
+                    <span>Payout & Bank Account (For Payroll Disbursal)</span>
+                  </label>
+                  {formData.phone && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          bankProvider: 'Telebirr',
+                          bankAccountNumber: formData.phone,
+                        })
+                      }
+                      className="text-[11px] text-emerald-700 hover:text-emerald-800 font-medium underline flex items-center gap-1"
+                    >
+                      📱 Use Phone for Telebirr
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-0.5">
+                      Bank / Wallet Provider
+                    </label>
+                    <select
+                      value={formData.bankProvider}
+                      onChange={(e) => setFormData({ ...formData, bankProvider: e.target.value })}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <option value="Telebirr">Telebirr Mobile Money</option>
+                      <option value="Commercial Bank of Ethiopia (CBE)">Commercial Bank of Ethiopia (CBE)</option>
+                      <option value="Awash Bank">Awash Bank</option>
+                      <option value="Bank of Abyssinia">Bank of Abyssinia (BOA)</option>
+                      <option value="Dashen Bank">Dashen Bank</option>
+                      <option value="Cash in Hand">Cash in Hand</option>
+                      <option value="Other">Other Wallet / Bank</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-0.5">
+                      Account / Mobile Number
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.bankAccountNumber}
+                      onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                      placeholder="e.g. 0912345678 or 100012345678"
+                    />
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-500">
+                  Autofills during monthly payroll disbursals and records on official transfer receipts.
+                </p>
               </div>
 
               {/* Optional: Enroll in Payroll */}
@@ -993,6 +1120,88 @@ export default function UsersPage() {
                       </option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              {/* Payout & Bank Account for Payroll */}
+              <div className="p-3.5 bg-gray-50 rounded-xl border border-gray-200 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                    <span>🏦</span>
+                    <span>Payout & Bank Account (For Payroll Disbursal)</span>
+                  </label>
+                  {editFormData.phone && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEditFormData({
+                          ...editFormData,
+                          bankProvider: 'Telebirr',
+                          bankAccountNumber: editFormData.phone,
+                        })
+                      }
+                      className="text-[11px] text-emerald-700 hover:text-emerald-800 font-medium underline flex items-center gap-1"
+                    >
+                      📱 Use Phone for Telebirr
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-0.5">
+                      Bank / Wallet Provider
+                    </label>
+                    <select
+                      value={editFormData.bankProvider}
+                      onChange={(e) => setEditFormData({ ...editFormData, bankProvider: e.target.value })}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <option value="Telebirr">Telebirr Mobile Money</option>
+                      <option value="Commercial Bank of Ethiopia (CBE)">Commercial Bank of Ethiopia (CBE)</option>
+                      <option value="Awash Bank">Awash Bank</option>
+                      <option value="Bank of Abyssinia">Bank of Abyssinia (BOA)</option>
+                      <option value="Dashen Bank">Dashen Bank</option>
+                      <option value="Cash">Cash in Hand</option>
+                      <option value="Other">Other Wallet / Bank</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-0.5">
+                      Account / Mobile Number
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.bankAccountNumber}
+                      onChange={(e) => setEditFormData({ ...editFormData, bankAccountNumber: e.target.value })}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                      placeholder="e.g. 0912345678 or 100012345678"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 pt-1 border-t border-gray-200">
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-0.5">Staff Code</label>
+                    <input
+                      type="text"
+                      value={editFormData.employeeCode}
+                      onChange={(e) => setEditFormData({ ...editFormData, employeeCode: e.target.value })}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-gray-300 rounded-lg outline-none font-mono"
+                      placeholder="EMP-101"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-0.5">Base Monthly Salary (ETB)</label>
+                    <input
+                      type="number"
+                      value={editFormData.salary}
+                      onChange={(e) => setEditFormData({ ...editFormData, salary: Number(e.target.value) })}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-gray-300 rounded-lg outline-none font-semibold text-emerald-800"
+                      placeholder="10000"
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -22,6 +22,7 @@ export interface UserEmployee {
   position: string;
   department: string;
   salary: number;
+  bankAccount?: string | null;
 }
 
 export interface AppUser {
@@ -52,6 +53,9 @@ export interface CreateUserData {
   roleId: string;
   restaurantId?: string;
   branchId?: string;
+  bankAccount?: string;
+  salary?: number;
+  employeeCode?: string;
 }
 
 export interface UpdateUserData {
@@ -64,6 +68,9 @@ export interface UpdateUserData {
   branchId?: string;
   isActive?: boolean;
   isLocked?: boolean;
+  bankAccount?: string;
+  salary?: number;
+  employeeCode?: string;
 }
 
 export const usersApi = {

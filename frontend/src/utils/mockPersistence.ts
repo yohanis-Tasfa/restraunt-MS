@@ -575,17 +575,19 @@ export function generateSampleTransferProof(
   employeeName: string,
   amount: number,
   method: string,
-  ref: string
+  ref: string,
+  accountInfo?: string
 ): string {
   const dateStr = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="520" viewBox="0 0 400 520">
+  const accText = accountInfo ? accountInfo : 'Verified Staff Account';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="540" viewBox="0 0 400 540">
     <defs>
       <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="#059669"/>
         <stop offset="100%" stop-color="#047857"/>
       </linearGradient>
     </defs>
-    <rect width="400" height="520" rx="16" fill="#f8fafc"/>
+    <rect width="400" height="540" rx="16" fill="#f8fafc"/>
     <rect width="400" height="120" rx="16" fill="url(#headerGrad)"/>
     <circle cx="200" cy="46" r="24" fill="#ffffff" fill-opacity="0.25"/>
     <path d="M190 46 L197 53 L210 39" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -596,27 +598,30 @@ export function generateSampleTransferProof(
     <text x="200" y="162" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" font-weight="600">AMOUNT TRANSFERRED</text>
     <text x="200" y="194" text-anchor="middle" fill="#0f172a" font-family="system-ui, sans-serif" font-size="22" font-weight="bold">Br ${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</text>
 
-    <rect x="24" y="224" width="352" height="230" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <rect x="24" y="224" width="352" height="255" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
     
-    <text x="44" y="256" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Recipient Staff:</text>
-    <text x="356" y="256" text-anchor="end" fill="#0f172a" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">${employeeName}</text>
+    <text x="44" y="254" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Recipient Staff:</text>
+    <text x="356" y="254" text-anchor="end" fill="#0f172a" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">${employeeName}</text>
     
-    <text x="44" y="292" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Payment Channel:</text>
-    <text x="356" y="292" text-anchor="end" fill="#059669" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">${method}</text>
+    <text x="44" y="288" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Destination Account:</text>
+    <text x="356" y="288" text-anchor="end" fill="#0369a1" font-family="monospace" font-size="11" font-weight="bold">${accText}</text>
 
-    <text x="44" y="328" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transaction Reference:</text>
-    <text x="356" y="328" text-anchor="end" fill="#0f172a" font-family="monospace" font-size="12" font-weight="bold">${ref}</text>
+    <text x="44" y="322" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Payment Channel:</text>
+    <text x="356" y="322" text-anchor="end" fill="#059669" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">${method}</text>
 
-    <text x="44" y="364" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transfer Status:</text>
-    <text x="356" y="364" text-anchor="end" fill="#059669" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">COMPLETED / DISBURSED</text>
+    <text x="44" y="356" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transaction Reference:</text>
+    <text x="356" y="356" text-anchor="end" fill="#0f172a" font-family="monospace" font-size="12" font-weight="bold">${ref}</text>
 
-    <text x="44" y="400" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Timestamp:</text>
-    <text x="356" y="400" text-anchor="end" fill="#64748b" font-family="system-ui, sans-serif" font-size="11">${dateStr}</text>
+    <text x="44" y="390" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Transfer Status:</text>
+    <text x="356" y="390" text-anchor="end" fill="#059669" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">COMPLETED / DISBURSED</text>
 
-    <text x="44" y="434" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Authorized By:</text>
-    <text x="356" y="434" text-anchor="end" fill="#0f172a" font-family="system-ui, sans-serif" font-size="12" font-weight="600">RMS Restaurant Finance</text>
+    <text x="44" y="424" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Timestamp:</text>
+    <text x="356" y="424" text-anchor="end" fill="#64748b" font-family="system-ui, sans-serif" font-size="11">${dateStr}</text>
 
-    <text x="200" y="485" text-anchor="middle" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10">Verified digital payroll disbursement voucher &bull; RMS Accounting</text>
+    <text x="44" y="456" fill="#64748b" font-family="system-ui, sans-serif" font-size="12">Authorized By:</text>
+    <text x="356" y="456" text-anchor="end" fill="#0f172a" font-family="system-ui, sans-serif" font-size="12" font-weight="600">RMS Restaurant Finance</text>
+
+    <text x="200" y="510" text-anchor="middle" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10">Verified digital payroll disbursement voucher &bull; RMS Accounting</text>
   </svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }

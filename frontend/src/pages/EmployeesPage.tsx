@@ -98,6 +98,8 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [payingPayroll, setPayingPayroll] = useState<Payroll | null>(null);
   const [paymentChannel, setPaymentChannel] = useState('Telebirr Mobile Transfer');
+  const [destinationAccount, setDestinationAccount] = useState('');
+  const [autoFilledFromProfile, setAutoFilledFromProfile] = useState(false);
   const [transactionRef, setTransactionRef] = useState('');
   const [paymentNotes, setPaymentNotes] = useState('');
   const [receiptImage, setReceiptImage] = useState<string>('');
@@ -352,7 +354,52 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
   const openPaymentModal = (payroll: Payroll) => {
     const defaultTxn = `TXN-${Date.now().toString().slice(-6)}`;
     setPayingPayroll(payroll);
-    setPaymentChannel('Telebirr Mobile Transfer');
+
+    // Look up saved bank account from employee profile
+    const emp = employees.find(
+      (e) => e.id === payroll.employeeId || e.id === payroll.employee?.id
+    );
+    const profileBank =
+      payroll.employee?.bankAccount ||
+      emp?.bankAccount ||
+      (emp as any)?.user?.bankAccount ||
+      '';
+
+    if (profileBank && profileBank.trim()) {
+      setDestinationAccount(profileBank.trim());
+      setAutoFilledFromProfile(true);
+
+      const lower = profileBank.toLowerCase();
+      if (lower.includes('cbe') || profileBank.startsWith('1000')) {
+        setPaymentChannel('Commercial Bank of Ethiopia (CBE) Direct');
+      } else if (
+        lower.includes('telebirr') ||
+        profileBank.startsWith('09') ||
+        profileBank.startsWith('07') ||
+        profileBank.startsWith('+251')
+      ) {
+        setPaymentChannel('Telebirr Mobile Transfer');
+      } else if (lower.includes('awash')) {
+        setPaymentChannel('Awash Bank (Awash Pay)');
+      } else if (lower.includes('abyssinia') || lower.includes('boa')) {
+        setPaymentChannel('Bank of Abyssinia (BOA)');
+      } else if (lower.includes('cash')) {
+        setPaymentChannel('Cash in Hand');
+      } else {
+        setPaymentChannel('Telebirr Mobile Transfer');
+      }
+    } else {
+      const fallbackPhone = payroll.employee?.user?.phone || emp?.user?.phone;
+      if (fallbackPhone) {
+        setDestinationAccount(`Telebirr: ${fallbackPhone}`);
+        setAutoFilledFromProfile(true);
+      } else {
+        setDestinationAccount('');
+        setAutoFilledFromProfile(false);
+      }
+      setPaymentChannel('Telebirr Mobile Transfer');
+    }
+
     setTransactionRef(defaultTxn);
     setPaymentNotes('Monthly salary payout disbursed');
     setReceiptImage('');
@@ -379,7 +426,8 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
       empName,
       payingPayroll.netSalary,
       paymentChannel,
-      transactionRef || `TXN-${Date.now().toString().slice(-6)}`
+      transactionRef || `TXN-${Date.now().toString().slice(-6)}`,
+      destinationAccount || undefined
     );
     setReceiptImage(sampleImage);
   };
@@ -394,31 +442,33 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
         ? `${payingPayroll.employee.user.firstName} ${payingPayroll.employee.user.lastName}`
         : 'Employee';
 
+      const targetAccount = destinationAccount.trim() || 'Direct Disbursal';
       const finalProofImage =
         receiptImage ||
         generateSampleTransferProof(
           empName,
           payingPayroll.netSalary,
           paymentChannel,
-          transactionRef || `PAY-${payingPayroll.id.slice(-5).toUpperCase()}`
+          transactionRef || `PAY-${payingPayroll.id.slice(-5).toUpperCase()}`,
+          targetAccount
         );
 
       const updatedPayroll: Payroll = {
         ...payingPayroll,
         status: 'PAID',
         paidAt: nowIso,
-        paymentMethod: paymentChannel,
+        paymentMethod: `${paymentChannel} (${targetAccount})`,
         transactionRef: transactionRef || `TXN-${payingPayroll.id.slice(-5).toUpperCase()}`,
         receiptImage: finalProofImage,
         transferProofUrl: finalProofImage,
-        notes: paymentNotes || payingPayroll.notes,
+        notes: paymentNotes || `Paid to ${targetAccount}`,
       };
 
       const updatedList = payrolls.map((p) => (p.id === payingPayroll.id ? updatedPayroll : p));
       setPayrolls(updatedList);
       saveStoredPayrolls(updatedList);
 
-      // Auto-record to Financial Expense Ledger with the attached transfer screenshot
+      // Auto-record to Financial Expense Ledger with the attached transfer screenshot and destination account
       recordExpenseFromPaidPayroll(updatedPayroll, user);
 
       // Backend sync
@@ -564,7 +614,7 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
   const paidOutAmount = paidPayrolls.reduce((sum, p) => sum + (p.netSalary || 0), 0);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 w-full">
+    <div className="p-3 sm:p-5 lg:p-6 w-full max-w-full">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-5 right-5 z-50 flex items-center gap-2 bg-emerald-700 text-white px-5 py-3 rounded-lg shadow-xl text-sm font-medium animate-in fade-in slide-in-from-top-4">
@@ -576,283 +626,27 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
         </div>
       )}
 
-      {/* Header & Tabs */}
+      {/* Header */}
       <div className="mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {activeTab === 'employees' ? 'Employee Management' : 'Payroll & Salary Management'}
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Payroll & Salary Management</h1>
             <p className="text-gray-600 text-sm mt-0.5">
-              {activeTab === 'employees'
-                ? 'Manage your staff, employee records, roles, and compensation'
-                : 'Track monthly employee payroll, attach transfer screenshots, and sync with Expenses'}
+              Track monthly employee payroll, attach transfer screenshots, and sync with Expenses
             </p>
           </div>
 
-          {activeTab === 'employees' ? (
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm shadow-sm"
-            >
-              <UserPlus className="w-4 h-4" />
-              Add Employee
-            </button>
-          ) : (
-            <button
-              onClick={() => openProcessModalForEmployee()}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium text-sm shadow-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Process Monthly Payroll
-            </button>
-          )}
+          <button
+            onClick={() => openProcessModalForEmployee()}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium text-sm shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Process Monthly Payroll
+          </button>
         </div>
-
-        {/* Tab Switcher (Only shown if not purely payroll) */}
-        {defaultTab !== 'payroll' && (
-          <div className="flex items-center gap-2 border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab('employees')}
-              className={`flex items-center gap-2 pb-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'employees'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              Staff Directory
-              <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
-                {employees.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('payroll')}
-              className={`flex items-center gap-2 pb-3 px-3 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'payroll'
-                  ? 'border-emerald-600 text-emerald-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Banknote className="w-4 h-4" />
-              Payroll & Salaries
-              {pendingPayrolls.length > 0 && (
-                <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-800 font-semibold">
-                  {pendingPayrolls.length} Pending
-                </span>
-              )}
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* ========================================================================= */}
-      {/* TAB 1: STAFF DIRECTORY */}
-      {/* ========================================================================= */}
-      {activeTab === 'employees' && defaultTab !== 'payroll' && (
-        <>
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : employees.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-              <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No employees found</h3>
-              <p className="text-gray-600 mb-4 text-sm">Get started by adding your first employee to the system</p>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-              >
-                Add Employee
-              </button>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              {/* Integrated Toolbar inside the table card */}
-              <div className="px-4 py-3 border-b border-gray-200 bg-white flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-gray-900">Staff Records</h3>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
-                    {employees.length} employees
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  {/* Reduced size search */}
-                  <div className="relative w-56 sm:w-64">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <input
-                      type="text"
-                      placeholder="Search staff by name, code..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-8 pr-3 py-1.5 text-xs bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-                    />
-                  </div>
-
-                  <select
-                    value={departmentFilter}
-                    onChange={(e) => setDepartmentFilter(e.target.value)}
-                    className="px-2.5 py-1.5 text-xs bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">All Departments</option>
-                    {departments.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {dept}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-2.5 py-1.5 text-xs bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">All Statuses</option>
-                    {statuses.map((status) => (
-                      <option key={status.value} value={status.value}>
-                        {status.label}
-                      </option>
-                    ))}
-                  </select>
-
-                  {(searchTerm || departmentFilter || statusFilter) && (
-                    <button
-                      onClick={() => {
-                        setSearchTerm('');
-                        setDepartmentFilter('');
-                        setStatusFilter('');
-                      }}
-                      className="px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                    >
-                      Reset
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Employee
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Code
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Role
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Position
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Type
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Monthly Salary
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {employees.map((employee) => (
-                      <tr key={employee.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-4 py-3.5 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold text-sm">
-                              {employee.user.firstName?.[0] || 'E'}
-                              {employee.user.lastName?.[0] || ''}
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {employee.user.firstName} {employee.user.lastName}
-                              </div>
-                              <div className="text-xs text-gray-500">{employee.user.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3.5 whitespace-nowrap text-sm font-mono text-gray-800 font-semibold">
-                          {employee.employeeCode}
-                        </td>
-                        <td className="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700">
-                          {employee.user.role.name}
-                        </td>
-                        <td className="px-4 py-3.5 whitespace-nowrap text-sm text-gray-700">
-                          {employee.position}
-                        </td>
-                        <td className="px-4 py-3.5 whitespace-nowrap text-xs font-medium text-gray-600">
-                          <span className="px-2.5 py-1 bg-gray-100 rounded-md">
-                            {employee.employmentType.replace('_', ' ')}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3.5 whitespace-nowrap text-sm font-semibold text-gray-900">
-                          {formatCurrency(employee.salary)}
-                          <span className="text-xs text-gray-400 font-normal ml-1">/mo</span>
-                        </td>
-                        <td className="px-4 py-3.5 whitespace-nowrap">{getStatusBadge(employee.status)}</td>
-                        <td className="px-4 py-3.5 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => {
-                                setActiveTab('payroll');
-                                setPayrollSearch(employee.employeeCode || employee.user.lastName);
-                              }}
-                              title="View & Manage Payroll for this Employee"
-                              className="p-1.5 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors"
-                            >
-                              <Banknote className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedEmployee(employee);
-                                setShowViewModal(true);
-                              }}
-                              title="View Profile Details"
-                              className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-                            >
-                              <Eye className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => openEditModal(employee)}
-                              title="Edit Employee"
-                              className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                            >
-                              <Edit2 className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteEmployee(employee.id)}
-                              title="Delete Employee"
-                              className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ========================================================================= */}
-      {/* TAB 2: PAYROLL & SALARIES */}
-      {/* ========================================================================= */}
-      {activeTab === 'payroll' && (
-        <>
-          {/* Payroll KPI Cards */}
+      {/* Payroll KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex items-center justify-between">
@@ -1161,8 +955,6 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
               </div>
             )}
           </div>
-        </>
-      )}
 
       {/* ========================================================================= */}
       {/* MODAL 1: DISBURSE PAYROLL & ATTACH TRANSFER SCREENSHOT */}
@@ -1253,6 +1045,87 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
                     placeholder="e.g. TB-892182 or CBE-10938"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 font-mono"
                   />
+                </div>
+              </div>
+
+              {/* Dynamic Destination Bank / Mobile Money Account */}
+              <div className="bg-emerald-50/60 border border-emerald-200 rounded-xl p-3.5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-gray-800 uppercase flex items-center gap-1.5">
+                    <span>🏦</span>
+                    <span>Destination Bank / Mobile Account *</span>
+                  </label>
+                  {autoFilledFromProfile ? (
+                    <span className="text-[11px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      Auto-filled from Profile
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-gray-500 italic">
+                      Manual / Dynamic entry
+                    </span>
+                  )}
+                </div>
+
+                <input
+                  type="text"
+                  required
+                  value={destinationAccount}
+                  onChange={(e) => {
+                    setDestinationAccount(e.target.value);
+                    setAutoFilledFromProfile(false);
+                  }}
+                  placeholder="e.g. Telebirr: 0912345678 or CBE: 100012345678"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 font-mono bg-white"
+                />
+
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[11px] text-gray-500">Quick format:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentChannel('Telebirr Mobile Transfer');
+                      const phone = payingPayroll.employee?.user?.phone || '09...';
+                      setDestinationAccount(`Telebirr: ${destinationAccount.replace(/^[^:]+:\s*/, '') || phone}`);
+                      setAutoFilledFromProfile(false);
+                    }}
+                    className="text-[11px] px-2 py-0.5 bg-white hover:bg-emerald-50 hover:text-emerald-700 rounded border border-gray-200 transition"
+                  >
+                    📱 Telebirr
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentChannel('Commercial Bank of Ethiopia (CBE) Direct');
+                      setDestinationAccount(`CBE: ${destinationAccount.replace(/^[^:]+:\s*/, '') || '1000...'}`);
+                      setAutoFilledFromProfile(false);
+                    }}
+                    className="text-[11px] px-2 py-0.5 bg-white hover:bg-emerald-50 hover:text-emerald-700 rounded border border-gray-200 transition"
+                  >
+                    🏦 CBE Direct
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentChannel('Awash Bank (Awash Pay)');
+                      setDestinationAccount(`Awash Bank: ${destinationAccount.replace(/^[^:]+:\s*/, '') || '0132...'}`);
+                      setAutoFilledFromProfile(false);
+                    }}
+                    className="text-[11px] px-2 py-0.5 bg-white hover:bg-emerald-50 hover:text-emerald-700 rounded border border-gray-200 transition"
+                  >
+                    🏦 Awash
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentChannel('Cash in Hand');
+                      setDestinationAccount('Cash in Hand (Physical Disbursal)');
+                      setAutoFilledFromProfile(false);
+                    }}
+                    className="text-[11px] px-2 py-0.5 bg-white hover:bg-emerald-50 hover:text-emerald-700 rounded border border-gray-200 transition"
+                  >
+                    💵 Cash
+                  </button>
                 </div>
               </div>
 

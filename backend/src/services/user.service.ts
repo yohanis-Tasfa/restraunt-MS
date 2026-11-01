@@ -24,6 +24,9 @@ interface CreateUserData {
   branchId?: string;
   isActive?: boolean;
   isLocked?: boolean;
+  bankAccount?: string;
+  salary?: number;
+  employeeCode?: string;
 }
 
 interface UpdateUserData {
@@ -36,6 +39,9 @@ interface UpdateUserData {
   branchId?: string;
   isActive?: boolean;
   isLocked?: boolean;
+  bankAccount?: string;
+  salary?: number;
+  employeeCode?: string;
 }
 
 interface ChangePasswordData {
@@ -138,6 +144,7 @@ export class UserService {
               position: true,
               department: true,
               salary: true,
+              bankAccount: true,
             },
           },
         },
@@ -204,6 +211,7 @@ export class UserService {
             position: true,
             department: true,
             salary: true,
+            bankAccount: true,
           },
         },
       },
@@ -316,8 +324,37 @@ export class UserService {
             name: true,
           },
         },
+        employee: {
+          select: {
+            id: true,
+            employeeCode: true,
+            position: true,
+            department: true,
+            salary: true,
+            bankAccount: true,
+          },
+        },
       },
     });
+
+    // If bankAccount or salary or employeeCode is provided, create linked Employee record
+    if (data.bankAccount || data.salary || data.employeeCode) {
+      try {
+        await prisma.employee.create({
+          data: {
+            userId: user.id,
+            employeeCode: data.employeeCode?.trim() || `EMP-${Date.now().toString().slice(-4)}`,
+            department: role.name || 'General',
+            position: role.name || 'Staff',
+            salary: Number(data.salary) || 10000,
+            hireDate: new Date(),
+            bankAccount: data.bankAccount?.trim() || null,
+          },
+        });
+      } catch (err) {
+        console.error('Error creating linked employee profile:', err);
+      }
+    }
 
     return user;
   }
@@ -413,8 +450,50 @@ export class UserService {
             name: true,
           },
         },
+        employee: {
+          select: {
+            id: true,
+            employeeCode: true,
+            position: true,
+            department: true,
+            salary: true,
+            bankAccount: true,
+          },
+        },
       },
     });
+
+    // Update or create linked Employee record if bankAccount or salary or employeeCode provided
+    if (data.bankAccount !== undefined || data.salary !== undefined || data.employeeCode !== undefined) {
+      try {
+        const existingEmp = await prisma.employee.findUnique({ where: { userId: id } });
+        if (existingEmp) {
+          await prisma.employee.update({
+            where: { id: existingEmp.id },
+            data: {
+              bankAccount: data.bankAccount !== undefined ? (data.bankAccount?.trim() || null) : existingEmp.bankAccount,
+              salary: data.salary !== undefined ? Number(data.salary) : existingEmp.salary,
+              employeeCode: data.employeeCode !== undefined ? (data.employeeCode?.trim() || existingEmp.employeeCode) : existingEmp.employeeCode,
+            },
+          });
+        } else if (data.bankAccount || data.salary) {
+          const userRole = await prisma.role.findUnique({ where: { id: user.roleId || existingUser.roleId } });
+          await prisma.employee.create({
+            data: {
+              userId: id,
+              employeeCode: data.employeeCode?.trim() || `EMP-${Date.now().toString().slice(-4)}`,
+              department: userRole?.name || 'General',
+              position: userRole?.name || 'Staff',
+              salary: Number(data.salary) || 10000,
+              hireDate: new Date(),
+              bankAccount: data.bankAccount?.trim() || null,
+            },
+          });
+        }
+      } catch (err) {
+        console.error('Error syncing employee bankAccount:', err);
+      }
+    }
 
     return user;
   }
