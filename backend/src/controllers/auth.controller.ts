@@ -66,3 +66,30 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
     new ApiResponse(200, userWithoutPassword, 'User details fetched successfully')
   );
 });
+
+export const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { identifier, email } = req.body;
+  const target = identifier || email;
+
+  if (!target) {
+    throw new ApiError(400, 'Email or username is required');
+  }
+
+  const result = await authService.forgotPassword(target);
+  res.status(200).json(
+    new ApiResponse(200, result, result.message)
+  );
+});
+
+export const resetPasswordWithToken = asyncHandler(async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    throw new ApiError(400, 'Reset token and new password are required');
+  }
+
+  const result = await authService.resetPasswordWithToken(token, newPassword);
+  res.status(200).json(
+    new ApiResponse(200, result, result.message)
+  );
+});

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import LoginPage from './pages/LoginPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import CashierDashboardPage from './pages/CashierDashboardPage';
 import WaiterDashboardPage from './pages/WaiterDashboardPage';
@@ -87,13 +88,15 @@ function App() {
               {/* Public routes - NO authentication required */}
               <Route path="/" element={<PublicLandingPage />} />
               <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
-              
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/admin/reset-password" element={<ResetPasswordPage />} />
+
               {/* Admin login route */}
-              <Route 
-                path="/admin/login" 
-                element={isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <LoginPage />} 
+              <Route
+                path="/admin/login"
+                element={isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <LoginPage />}
               />
-              
+
               {/* Protected admin routes with persistent layout */}
               <Route
                 path="/admin"
@@ -104,80 +107,80 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<RoleBasedDashboard />} />
-                <Route 
-                  path="pos" 
+                <Route
+                  path="pos"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier', 'Waiter']}>
                       <POSPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="kitchen" 
+                <Route
+                  path="kitchen"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
                       <KitchenPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="orders" 
+                <Route
+                  path="orders"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier', 'Waiter']}>
                       <OrdersPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="bill-requests" 
+                <Route
+                  path="bill-requests"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Cashier']}>
                       <BillRequestQueuePage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="my-tips" 
+                <Route
+                  path="my-tips"
                   element={
                     <ProtectedRoute allowedRoles={['Waiter']}>
                       <WaiterTipsPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="tips-management" 
+                <Route
+                  path="tips-management"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <TipsManagementPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="tables" 
+                <Route
+                  path="tables"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Waiter']}>
                       <TablesPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="waiter-calls" 
+                <Route
+                  path="waiter-calls"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Waiter']}>
                       <WaiterCallsPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
                 <Route path="reservations" element={<ReservationsPage />} />
-                <Route 
-                  path="menu" 
+                <Route
+                  path="menu"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <MenuManagementPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
+                <Route
                   path="ingredients"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
@@ -185,7 +188,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route 
+                <Route
                   path="ingredient-requests"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
@@ -193,106 +196,106 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route 
-                  path="recipes" 
+                <Route
+                  path="recipes"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Kitchen Staff']}>
                       <RecipesPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="inventory" 
+                <Route
+                  path="inventory"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <InventoryPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="purchases" 
+                <Route
+                  path="purchases"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <PurchaseOrdersPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="purchase-orders" 
+                <Route
+                  path="purchase-orders"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <PurchaseOrdersPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="expenses" 
+                <Route
+                  path="expenses"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <ExpensesPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="reports" 
+                <Route
+                  path="reports"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <ReportsPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="users" 
+                <Route
+                  path="users"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
                       <UsersPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="payroll" 
+                <Route
+                  path="payroll"
                   element={
                     <ProtectedRoute allowedRoles={['Owner', 'Manager', 'Super Admin', 'Admin']}>
                       <PayrollPage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="employees" 
-                  element={<Navigate to="/admin/users" replace />} 
+                <Route
+                  path="employees"
+                  element={<Navigate to="/admin/users" replace />}
                 />
-                <Route 
-                  path="profile" 
+                <Route
+                  path="profile"
                   element={
                     <ProtectedRoute>
                       <ProfilePage />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
               </Route>
-                <Route 
-                  path="purchases" 
-                  element={
-                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
-                      <PurchaseOrdersPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="purchase-orders" 
-                  element={
-                    <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
-                      <PurchaseOrdersPage />
-                    </ProtectedRoute>
-                  } 
-                />
-              
+              <Route
+                path="purchases"
+                element={
+                  <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                    <PurchaseOrdersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="purchase-orders"
+                element={
+                  <ProtectedRoute allowedRoles={['Owner', 'Manager']}>
+                    <PurchaseOrdersPage />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Redirect old admin routes to new /admin/* structure */}
               <Route path="/login" element={<Navigate to="/admin/login" replace />} />
               <Route path="/orders" element={<Navigate to="/admin/orders" replace />} />
               <Route path="/pos" element={<Navigate to="/admin/pos" replace />} />
               <Route path="/tables" element={<Navigate to="/admin/tables" replace />} />
-              
+
               {/* Catch all - redirect to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError';
 import prisma from '../config/database';
+import emailService from './email.service';
 
 interface RegisterData {
   email: string;
@@ -200,6 +201,110 @@ export class AuthService {
     await prisma.refreshToken.deleteMany({
       where: { token },
     });
+  }
+
+  async forgotPassword(identifier: string) {
+    if (!identifier || !identifier.trim()) {
+      throw new ApiError(400, 'Email or username is required');
+    }
+
+    const cleanId = identifier.trim();
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: cleanId.toLowerCase() },
+          { username: cleanId },
+        ],
+      },
+    });
+
+    // If user not found, don't leak user existence - return generic success
+    if (!user) {
+      return {
+        success: true,
+        message: 'If an account matches that email or username, password reset instructions have been sent.',
+      };
+    }
+
+    // Generate signed 15-minute reset token
+    const resetToken = jwt.sign(
+      { userId: user.id, email: user.email, type: 'PASSWORD_RESET' },
+      process.env.JWT_SECRET!,
+      { expiresIn: '15m' }
+    );
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${frontendUrl}/reset-password?token=${encodeURIComponent(resetToken)}`;
+
+    await emailService.sendPasswordResetLink({
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`.trim() || user.username,
+      resetUrl,
+      expiresInMinutes: 15,
+    });
+
+    return {
+      success: true,
+      message: `Password reset instructions have been dispatched to ${user.email}.`,
+    };
+  }
+
+  async resetPasswordWithToken(token: string, newPassword: string) {
+    if (!token || !token.trim()) {
+      throw new ApiError(400, 'Reset token is required');
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      throw new ApiError(400, 'New password must be at least 6 characters long');
+    }
+
+    let decoded: any;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    } catch (err: any) {
+      if (err.name === 'TokenExpiredError') {
+        throw new ApiError(400, 'Your password reset link has expired. Please request a new one.');
+      }
+      throw new ApiError(400, 'Invalid password reset link.');
+    }
+
+    if (decoded.type !== 'PASSWORD_RESET' || !decoded.userId) {
+      throw new ApiError(400, 'Invalid token purpose.');
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+    });
+
+    if (!user) {
+      throw new ApiError(404, 'User account not found.');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword.trim(), 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    // Invalidate any active refresh tokens to enforce re-login
+    await prisma.refreshToken.deleteMany({
+      where: { userId: user.id },
+    });
+
+    // Send confirmation alert
+    emailService
+      .sendPasswordChangedAlert({
+        email: user.email,
+        name: user.firstName,
+      })
+      .catch((e) => console.error('[AuthService] Error sending password changed alert:', e));
+
+    return {
+      success: true,
+      message: 'Password reset successfully! You can now log in with your new password.',
+    };
   }
 
   private generateAccessToken(userId: string, email: string, roleId: string): string {

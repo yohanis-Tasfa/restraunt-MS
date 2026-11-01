@@ -266,6 +266,155 @@ Please log in and update your password immediately.
     });
   }
 
+  public async sendPasswordResetLink(params: {
+    email: string;
+    name: string;
+    resetUrl: string;
+    expiresInMinutes?: number;
+  }) {
+    const subject = `Reset Your Password - Yoni Restaurant RMS`;
+    const expiresIn = params.expiresInMinutes || 15;
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Your Password</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+    <!-- Header -->
+    <tr>
+      <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 32px 36px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0 0 8px 0; font-size: 24px; font-weight: 700;">
+          Yoni Restaurant
+        </h1>
+        <p style="color: #94a3b8; margin: 0; font-size: 14px;">
+          Restaurant Management System
+        </p>
+      </td>
+    </tr>
+
+    <!-- Body Content -->
+    <tr>
+      <td style="padding: 36px;">
+        <h2 style="color: #0f172a; font-size: 19px; margin-top: 0; margin-bottom: 12px;">
+          Password Reset Request
+        </h2>
+        <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 16px;">
+          Hello ${params.name},
+        </p>
+        <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 24px;">
+          We received a request to reset the password for your staff account (<strong>${params.email}</strong>). Click the button below to choose a new password:
+        </p>
+
+        <!-- CTA Button -->
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 28px 0;">
+          <tr>
+            <td align="center">
+              <a href="${params.resetUrl}" target="_blank" style="background-color: #10b981; color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 8px; font-size: 15px; font-weight: 700; display: inline-block; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);">
+                Reset Password &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Security Expiry Note -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-top: 24px;">
+          <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">
+            ⏳ <strong>Security Notice:</strong> This reset link is valid for <strong>${expiresIn} minutes</strong> and can only be used once. If you did not request this password reset, you can safely ignore this email — your password will not be changed.
+          </p>
+        </div>
+
+        <p style="color: #94a3b8; font-size: 12px; margin-top: 24px; word-break: break-all;">
+          If the button above does not work, copy and paste this link into your browser:<br/>
+          <a href="${params.resetUrl}" style="color: #0284c7; text-decoration: underline;">${params.resetUrl}</a>
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="background-color: #f8fafc; border-top: 1px solid #f1f5f9; padding: 20px 36px; text-align: center; color: #94a3b8; font-size: 12px;">
+        <p style="margin: 0;">Yoni Restaurant Management System &bull; Automated Security Alert</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+
+    const text = `
+Password Reset Request - Yoni Restaurant RMS
+
+Hello ${params.name},
+We received a request to reset the password for your staff account (${params.email}).
+
+Click or copy this link into your browser to reset your password:
+${params.resetUrl}
+
+This link is valid for ${expiresIn} minutes. If you did not request this, please ignore this email.
+    `.trim();
+
+    return this.sendEmail({
+      to: params.email,
+      subject,
+      html,
+      text,
+    });
+  }
+
+  public async sendPasswordChangedAlert(params: { email: string; name: string }) {
+    const subject = `Password Changed - Yoni Restaurant RMS`;
+    const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login`;
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Password Changed</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <tr>
+      <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 28px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px;">Yoni Restaurant RMS</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 32px;">
+        <h2 style="color: #0f172a; font-size: 18px; margin-top: 0;">Password Successfully Updated</h2>
+        <p style="color: #475569; font-size: 14px; line-height: 1.6;">
+          Hello ${params.name}, the password for your staff account was recently updated. You can now log in using your new credentials.
+        </p>
+        <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 4px; margin: 20px 0;">
+          <p style="color: #b45309; font-size: 13px; margin: 0;">
+            If you did not perform this action, please alert your restaurant manager or system administrator immediately.
+          </p>
+        </div>
+        <div style="text-align: center; margin-top: 24px;">
+          <a href="${loginUrl}" style="background-color: #10b981; color: #ffffff; text-decoration: none; padding: 10px 28px; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">
+            Sign In to Staff Portal &rarr;
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+
+    return this.sendEmail({
+      to: params.email,
+      subject,
+      html,
+      text: `Hello ${params.name}, the password for your staff account was successfully changed. If you did not make this change, please contact your manager immediately.`,
+    });
+  }
+
   public async sendPasswordReset(params: PasswordResetParams) {
     const loginUrl = params.loginUrl || `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login`;
     const subject = `Your Password Has Been Reset - Yoni Restaurant RMS`;
@@ -378,6 +527,155 @@ Please log in and update your password.
       subject,
       html,
       text,
+    });
+  }
+
+  public async sendPasswordResetLink(params: {
+    email: string;
+    name: string;
+    resetUrl: string;
+    expiresInMinutes?: number;
+  }) {
+    const subject = `Reset Your Password - Yoni Restaurant RMS`;
+    const expiresIn = params.expiresInMinutes || 15;
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Your Password</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+    <!-- Header -->
+    <tr>
+      <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 32px 36px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0 0 8px 0; font-size: 24px; font-weight: 700;">
+          Yoni Restaurant
+        </h1>
+        <p style="color: #94a3b8; margin: 0; font-size: 14px;">
+          Restaurant Management System
+        </p>
+      </td>
+    </tr>
+
+    <!-- Body Content -->
+    <tr>
+      <td style="padding: 36px;">
+        <h2 style="color: #0f172a; font-size: 19px; margin-top: 0; margin-bottom: 12px;">
+          Password Reset Request
+        </h2>
+        <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 16px;">
+          Hello ${params.name},
+        </p>
+        <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 24px;">
+          We received a request to reset the password for your staff account (<strong>${params.email}</strong>). Click the button below to choose a new password:
+        </p>
+
+        <!-- CTA Button -->
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 28px 0;">
+          <tr>
+            <td align="center">
+              <a href="${params.resetUrl}" target="_blank" style="background-color: #10b981; color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 8px; font-size: 15px; font-weight: 700; display: inline-block; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);">
+                Reset Password &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Security Expiry Note -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-top: 24px;">
+          <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">
+            ⏳ <strong>Security Notice:</strong> This reset link is valid for <strong>${expiresIn} minutes</strong> and can only be used once. If you did not request this password reset, you can safely ignore this email — your password will not be changed.
+          </p>
+        </div>
+
+        <p style="color: #94a3b8; font-size: 12px; margin-top: 24px; word-break: break-all;">
+          If the button above does not work, copy and paste this link into your browser:<br/>
+          <a href="${params.resetUrl}" style="color: #0284c7; text-decoration: underline;">${params.resetUrl}</a>
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="background-color: #f8fafc; border-top: 1px solid #f1f5f9; padding: 20px 36px; text-align: center; color: #94a3b8; font-size: 12px;">
+        <p style="margin: 0;">Yoni Restaurant Management System &bull; Automated Security Alert</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+
+    const text = `
+Password Reset Request - Yoni Restaurant RMS
+
+Hello ${params.name},
+We received a request to reset the password for your staff account (${params.email}).
+
+Click or copy this link into your browser to reset your password:
+${params.resetUrl}
+
+This link is valid for ${expiresIn} minutes. If you did not request this, please ignore this email.
+    `.trim();
+
+    return this.sendEmail({
+      to: params.email,
+      subject,
+      html,
+      text,
+    });
+  }
+
+  public async sendPasswordChangedAlert(params: { email: string; name: string }) {
+    const subject = `Password Changed - Yoni Restaurant RMS`;
+    const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login`;
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Password Changed</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
+    <tr>
+      <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 28px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px;">Yoni Restaurant RMS</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 32px;">
+        <h2 style="color: #0f172a; font-size: 18px; margin-top: 0;">Password Successfully Updated</h2>
+        <p style="color: #475569; font-size: 14px; line-height: 1.6;">
+          Hello ${params.name}, the password for your staff account was recently updated. You can now log in using your new credentials.
+        </p>
+        <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 4px; margin: 20px 0;">
+          <p style="color: #b45309; font-size: 13px; margin: 0;">
+            If you did not perform this action, please alert your restaurant manager or system administrator immediately.
+          </p>
+        </div>
+        <div style="text-align: center; margin-top: 24px;">
+          <a href="${loginUrl}" style="background-color: #10b981; color: #ffffff; text-decoration: none; padding: 10px 28px; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">
+            Sign In to Staff Portal &rarr;
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+
+    return this.sendEmail({
+      to: params.email,
+      subject,
+      html,
+      text: `Hello ${params.name}, the password for your staff account was successfully changed. If you did not make this change, please contact your manager immediately.`,
     });
   }
 }
