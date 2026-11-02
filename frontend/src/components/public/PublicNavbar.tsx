@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Phone, Clock, Sun, Moon } from 'lucide-react';
+import { Menu, X, Phone, ChefHat, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useTheme } from '../../contexts/ThemeContext';
-import logo from '../../assets/image.png';
 
 interface NavItem {
   label: string;
   href: string;
-  section?: string; // For scroll-to-section navigation
+  section?: string;
 }
 
 interface PublicNavbarProps {
@@ -19,12 +17,11 @@ interface PublicNavbarProps {
 export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   // Detect scroll for sticky navbar styling
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -32,19 +29,18 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
 
   const navItems: NavItem[] = [
     { label: 'Home', href: '#home', section: 'home' },
-    { label: 'Menu', href: '#menu', section: 'menu' },
-    { label: 'About', href: '#about', section: 'about' },
-    { label: 'Contact', href: '#contact', section: 'contact' },
+    { label: 'Menu & Ordering', href: '#menu', section: 'menu' },
+    { label: 'About Us', href: '#about', section: 'about' },
+    { label: 'Contact & Location', href: '#contact', section: 'contact' },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, section: string) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
-    
+
     if (onNavigate) {
       onNavigate(section);
     } else {
-      // Default scroll behavior
       const element = document.getElementById(section);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -56,159 +52,113 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        theme === 'dark' 
-          ? 'bg-black/95 backdrop-blur-md shadow-lg shadow-black/20'
-          : 'bg-white/95 backdrop-blur-md shadow-lg shadow-gray-200/50'
+        isScrolled
+          ? 'bg-[#040c08]/95 backdrop-blur-xl border-b border-[#1b3d2e] shadow-2xl py-3'
+          : 'bg-gradient-to-b from-black/90 to-transparent py-4 sm:py-5 border-b border-transparent'
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="w-full max-w-[95%] xl:max-w-[1650px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <img 
-              src={logo} 
-              alt="Restaurant Logo" 
-              className="w-10 h-10 rounded-lg object-cover"
-            />
-            <div className="hidden sm:block">
-              <h1 className={cn("font-bold text-xl", theme === 'dark' ? 'text-white' : 'text-gray-900')}>
-                Yoni Restaurant
-              </h1>
-              <p className={cn("text-xs", theme === 'dark' ? 'text-gray-300' : 'text-gray-600')}>
-                Authentic Ethiopian Cuisine
-              </p>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10 rounded-xl bg-[#00e676]/10 border border-[#00e676]/40 flex items-center justify-center text-[#00e676] shadow-[0_0_15px_rgba(0,230,118,0.3)] group-hover:shadow-[0_0_22px_rgba(0,230,118,0.5)] transition duration-200">
+              <ChefHat className="w-6 h-6 text-[#00e676]" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="font-serif italic font-bold text-xl sm:text-2xl text-white tracking-wide">
+                Yoni
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#00e676] drop-shadow-[0_0_8px_rgba(0,230,118,0.5)]">
+                Restaurant
+              </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <a
-                key={item.section}
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item.section!)}
-                className={cn(
-                  'text-sm font-medium transition-colors relative',
-                  activeSection === item.section
-                    ? 'text-green-400'
-                    : theme === 'dark' 
-                      ? 'text-gray-200 hover:text-green-400'
-                      : 'text-gray-700 hover:text-green-600'
-                )}
-              >
-                {item.label}
-                {activeSection === item.section && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-green-400" />
-                )}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const isActive = activeSection === item.section;
+              return (
+                <a
+                  key={item.section}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.section!)}
+                  className={cn(
+                    'text-sm font-medium transition-all relative py-1 cursor-pointer',
+                    isActive
+                      ? 'text-[#00e676] font-semibold'
+                      : 'text-gray-300 hover:text-[#00e676]'
+                  )}
+                >
+                  {item.label}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#00e676] rounded-full shadow-[0_0_8px_#00e676]" />
+                  )}
+                </a>
+              );
+            })}
           </div>
 
-          {/* Contact Info & CTA */}
+          {/* Actions & Staff Login */}
           <div className="hidden lg:flex items-center gap-4">
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              className={cn(
-                "p-2 rounded-lg transition-all duration-300 hover:scale-110",
-                theme === 'dark' 
-                  ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-              )}
-              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300">
+              <Phone className="w-3.5 h-3.5 text-[#00e676]" />
+              <span className="font-mono">+251 911 123 456</span>
+            </div>
 
             <Link
               to="/admin/login"
-              className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold rounded-xl text-xs sm:text-sm shadow-[0_0_15px_rgba(0,230,118,0.3)] hover:shadow-[0_0_25px_rgba(0,230,118,0.5)] transition duration-200"
             >
-              Staff Login
+              Staff Portal
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
-            {/* Mobile Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className={cn(
-                "p-2 rounded-lg transition-all duration-300",
-                theme === 'dark' 
-                  ? 'hover:bg-white/10 text-yellow-400'
-                  : 'hover:bg-gray-200 text-gray-700'
-              )}
-              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            <Link
+              to="/admin/login"
+              className="px-3 py-1.5 bg-[#00e676] text-[#032314] font-bold rounded-lg text-xs"
             >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-            
+              Staff Login
+            </Link>
+
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={cn(
-                "p-2 rounded-lg transition-colors",
-                theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
-              )}
+              className="p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors"
             >
-              {isMobileMenuOpen ? (
-                <X className={cn("w-6 h-6", theme === 'dark' ? 'text-white' : 'text-gray-900')} />
-              ) : (
-                <Menu className={cn("w-6 h-6", theme === 'dark' ? 'text-white' : 'text-gray-900')} />
-              )}
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className={cn(
-          "md:hidden border-t backdrop-blur-md",
-          theme === 'dark' 
-            ? 'border-gray-700 bg-black/95'
-            : 'border-gray-200 bg-white/95'
-        )}>
-          <div className="px-4 py-4 space-y-3">
+        <div className="md:hidden border-t border-[#1b3d2e] bg-[#040c08]/98 backdrop-blur-2xl shadow-2xl animate-in slide-in-from-top-2 duration-150">
+          <div className="px-5 py-5 space-y-3">
             {navItems.map((item) => (
               <a
                 key={item.section}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.section!)}
                 className={cn(
-                  'block px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                  'block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors',
                   activeSection === item.section
-                    ? 'bg-green-600 text-white'
-                    : theme === 'dark'
-                      ? 'text-gray-200 hover:bg-white/10'
-                      : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-[#00e676] text-[#032314] font-bold shadow-md'
+                    : 'text-gray-300 hover:bg-white/5 hover:text-[#00e676]'
                 )}
               >
                 {item.label}
               </a>
             ))}
-            <div className={cn("pt-3 border-t", theme === 'dark' ? 'border-gray-700' : 'border-gray-200')}>
-              <div className={cn(
-                "flex items-center gap-2 px-4 py-2 text-sm",
-                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              )}>
-                <Phone className="w-4 h-4" />
-                <span>+251 911 123 456</span>
+
+            <div className="pt-3 border-t border-[#1b3d2e] flex items-center justify-between text-xs text-gray-400">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-[#00e676]" />
+                <span className="font-mono">+251 911 123 456</span>
               </div>
-              <Link
-                to="/admin/login"
-                className="block mt-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium text-center hover:bg-green-700 transition-colors"
-              >
-                Staff Login
-              </Link>
+              <span className="text-[#00e676]">Bole, Addis Ababa</span>
             </div>
           </div>
         </div>

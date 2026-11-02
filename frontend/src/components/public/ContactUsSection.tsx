@@ -1,10 +1,8 @@
-import { Phone, Mail, MapPin, Clock, Send, ChevronRight } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, ChevronRight, Navigation } from 'lucide-react';
 import { useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import toast from 'react-hot-toast';
 
 export default function ContactUsSection() {
-  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,9 +15,8 @@ export default function ContactUsSection() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
     setTimeout(() => {
-      toast.success('Message sent! We\'ll get back to you soon.');
+      toast.success("Message sent! We'll get back to you soon.");
       setFormData({ name: '', email: '', phone: '', message: '' });
       setIsSubmitting(false);
     }, 1000);
@@ -33,308 +30,217 @@ export default function ContactUsSection() {
   };
 
   return (
-    <section id="contact" className={`py-16 relative overflow-hidden ${
-      theme === 'dark' ? 'bg-black' : 'bg-gray-50'
-    }`}>
+    <section id="contact" className="py-20 relative overflow-hidden bg-[#040c08] text-white border-t border-[#12281d]">
       {/* Decorative Background */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-yellow-500 rounded-full blur-3xl" />
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-[#00e676]/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-[#00e676]/10 rounded-full blur-[140px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 backdrop-blur-sm border rounded-full mb-4 ${
-            theme === 'dark'
-              ? 'bg-green-900/50 border-green-700/50'
-              : 'bg-green-100/80 border-green-300/50'
-          }`}>
-            <span className={`font-semibold text-sm uppercase tracking-wider ${
-              theme === 'dark' ? 'text-green-400' : 'text-green-700'
-            }`}>
-              Contact Us
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 backdrop-blur-sm border border-[#00e676]/30 bg-[#00e676]/10 rounded-full mb-3">
+            <span className="font-bold text-xs uppercase tracking-[0.2em] text-[#00e676]">
+              Contact & Location
             </span>
           </div>
-          <h2 className={`text-3xl md:text-4xl font-bold mb-4 drop-shadow-2xl ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-500">Touch</span>
+          <h2 className="text-3xl md:text-5xl font-serif font-black mb-3 tracking-tight text-white drop-shadow-2xl">
+            Get in <span className="text-[#00e676] drop-shadow-[0_0_25px_rgba(0,230,118,0.45)]">Touch</span>
           </h2>
-          <p className={`text-lg max-w-2xl mx-auto drop-shadow-md ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Have questions or want to make a reservation? We'd love to hear from you
+          <p className="text-sm sm:text-base max-w-xl mx-auto text-gray-300 leading-relaxed">
+            Have questions or want to make a reservation? Visit our dining hall or reach out anytime.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Contact Information */}
-          <div className="space-y-6">
-            {/* Contact Cards */}
-            <div className={`backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 ${
-              theme === 'dark'
-                ? 'bg-black/40 border-white/10 hover:border-green-500/50'
-                : 'bg-white/60 border-gray-200 hover:border-green-500/50'
-            }`}>
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-600/20 rounded-lg border border-green-600/30">
-                  <Phone className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h3 className={`text-lg font-semibold mb-1 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Phone
-                  </h3>
-                  <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                    Call us for reservations
-                  </p>
-                  <a
-                    href="tel:+251911123456"
-                    className="text-green-400 hover:text-green-300 font-medium mt-2 inline-block"
-                  >
-                    +251 911 123 456
-                  </a>
-                </div>
-              </div>
+        {/* 4 Sleek Info Cards in a standard grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Phone */}
+          <div className="rounded-2xl p-4 bg-[#091712]/90 border border-[#1b3d2e] hover:border-[#00e676]/50 transition flex items-center gap-3.5 shadow-lg">
+            <div className="p-2.5 bg-[#00e676]/15 rounded-xl border border-[#00e676]/30 text-[#00e676] flex-shrink-0">
+              <Phone className="w-5 h-5" />
             </div>
-
-            <div className={`backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 ${
-              theme === 'dark'
-                ? 'bg-black/40 border-white/10 hover:border-green-500/50'
-                : 'bg-white/60 border-gray-200 hover:border-green-500/50'
-            }`}>
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-600/20 rounded-lg border border-green-600/30">
-                  <Mail className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h3 className={`text-lg font-semibold mb-1 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Email
-                  </h3>
-                  <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                    Send us a message
-                  </p>
-                  <a
-                    href="mailto:info@yonirestaurant.com"
-                    className="text-green-400 hover:text-green-300 font-medium mt-2 inline-block"
-                  >
-                    info@yonirestaurant.com
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className={`backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 ${
-              theme === 'dark'
-                ? 'bg-black/40 border-white/10 hover:border-green-500/50'
-                : 'bg-white/60 border-gray-200 hover:border-green-500/50'
-            }`}>
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-600/20 rounded-lg border border-green-600/30">
-                  <MapPin className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h3 className={`text-lg font-semibold mb-1 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Location
-                  </h3>
-                  <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                    Visit our restaurant
-                  </p>
-                  <p className="text-green-400 font-medium mt-2">
-                    Bole Road, Addis Ababa, Ethiopia
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 ${
-              theme === 'dark'
-                ? 'bg-black/40 border-white/10 hover:border-green-500/50'
-                : 'bg-white/60 border-gray-200 hover:border-green-500/50'
-            }`}>
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-green-600/20 rounded-lg border border-green-600/30">
-                  <Clock className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                  <h3 className={`text-lg font-semibold mb-1 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Opening Hours
-                  </h3>
-                  <div className={`space-y-1 mt-2 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    <p>Monday - Friday: 11:00 AM - 11:00 PM</p>
-                    <p>Saturday - Sunday: 10:00 AM - 12:00 AM</p>
-                  </div>
-                </div>
-              </div>
+            <div className="min-w-0">
+              <div className="text-[11px] uppercase tracking-wider font-bold text-gray-400">Phone & Call</div>
+              <a href="tel:+251911123456" className="text-sm font-semibold text-white hover:text-[#00e676] transition truncate block">
+                +251 911 123 456
+              </a>
             </div>
           </div>
 
-          {/* Contact Form */}
-          <div className={`backdrop-blur-md rounded-2xl p-8 border ${
-            theme === 'dark'
-              ? 'bg-black/40 border-white/10'
-              : 'bg-white/60 border-gray-200'
-          }`}>
-            <h3 className={`text-2xl font-bold mb-6 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Send us a Message
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="name" className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className={`w-full px-4 py-3 border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    theme === 'dark'
-                      ? 'bg-black/50 border-white/20 text-white placeholder-gray-500'
-                      : 'bg-white/70 border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
-                  placeholder="Your name"
-                />
-              </div>
+          {/* Email */}
+          <div className="rounded-2xl p-4 bg-[#091712]/90 border border-[#1b3d2e] hover:border-[#00e676]/50 transition flex items-center gap-3.5 shadow-lg">
+            <div className="p-2.5 bg-[#00e676]/15 rounded-xl border border-[#00e676]/30 text-[#00e676] flex-shrink-0">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] uppercase tracking-wider font-bold text-gray-400">Email Support</div>
+              <a href="mailto:info@yonirestaurant.com" className="text-sm font-semibold text-white hover:text-[#00e676] transition truncate block">
+                info@yonirestaurant.com
+              </a>
+            </div>
+          </div>
 
-              <div>
-                <label htmlFor="email" className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className={`w-full px-4 py-3 border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    theme === 'dark'
-                      ? 'bg-black/50 border-white/20 text-white placeholder-gray-500'
-                      : 'bg-white/70 border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
-                  placeholder="your.email@example.com"
-                />
-              </div>
+          {/* Location */}
+          <div className="rounded-2xl p-4 bg-[#091712]/90 border border-[#1b3d2e] hover:border-[#00e676]/50 transition flex items-center gap-3.5 shadow-lg">
+            <div className="p-2.5 bg-[#00e676]/15 rounded-xl border border-[#00e676]/30 text-[#00e676] flex-shrink-0">
+              <MapPin className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] uppercase tracking-wider font-bold text-gray-400">Dining Hall</div>
+              <p className="text-xs font-semibold text-white truncate">
+                Bole Road, Near Edna Mall
+              </p>
+            </div>
+          </div>
 
-              <div>
-                <label htmlFor="phone" className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    theme === 'dark'
-                      ? 'bg-black/50 border-white/20 text-white placeholder-gray-500'
-                      : 'bg-white/70 border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
-                  placeholder="+251 911 123 456"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={4}
-                  className={`w-full px-4 py-3 border rounded-lg transition-all resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    theme === 'dark'
-                      ? 'bg-black/50 border-white/20 text-white placeholder-gray-500'
-                      : 'bg-white/70 border-gray-300 text-gray-900 placeholder-gray-500'
-                  }`}
-                  placeholder="Tell us how we can help you..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`w-full px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  theme === 'dark' ? 'focus:ring-offset-black' : 'focus:ring-offset-white'
-                }`}
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Send Message
-                  </>
-                )}
-              </button>
-            </form>
+          {/* Opening Hours */}
+          <div className="rounded-2xl p-4 bg-[#091712]/90 border border-[#1b3d2e] hover:border-[#00e676]/50 transition flex items-center gap-3.5 shadow-lg">
+            <div className="p-2.5 bg-[#00e676]/15 rounded-xl border border-[#00e676]/30 text-[#00e676] flex-shrink-0">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] uppercase tracking-wider font-bold text-gray-400">Service Hours</div>
+              <p className="text-xs font-semibold text-white truncate">
+                Daily: 11:00 AM &ndash; 11:30 PM
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Map Section */}
-        <div className={`mt-12 backdrop-blur-md rounded-2xl p-4 border overflow-hidden ${
-          theme === 'dark'
-            ? 'bg-black/40 border-white/10'
-            : 'bg-white/60 border-gray-200'
-        }`}>
-          <div className="aspect-video rounded-lg overflow-hidden">
-           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.7283682323223!2d38.78410537478007!3d8.997123291062934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b8502fe44f345%3A0x209cbe597069517f!2sEdna%20Mall!5e0!3m2!1sen!2set!4v1791090507035!5m2!1sen!2set" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="w-full h-full"
-              title="Restaurant Location Map"
-            />
+        {/* 2-Column Side-by-Side: Form on Left, Integrated Map on Right */}
+        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+          {/* Contact Form - 6 cols */}
+          <div className="lg:col-span-6 rounded-3xl p-6 sm:p-8 bg-[#091712]/90 border border-[#1b3d2e] shadow-2xl flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold mb-1.5 text-white">
+                Send us a Message
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-400 mb-6">
+                Fill out the form below and our team will get back to you shortly.
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2.5 bg-[#040c08] border border-[#1b3d2e] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00e676]/30 focus:border-[#00e676] transition text-sm"
+                      placeholder="Your name"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2.5 bg-[#040c08] border border-[#1b3d2e] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00e676]/30 focus:border-[#00e676] transition text-sm"
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2.5 bg-[#040c08] border border-[#1b3d2e] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00e676]/30 focus:border-[#00e676] transition text-sm"
+                    placeholder="+251 911 123 456"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={4}
+                    className="w-full px-4 py-2.5 bg-[#040c08] border border-[#1b3d2e] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00e676]/30 focus:border-[#00e676] transition resize-none text-sm"
+                    placeholder="Tell us how we can assist you..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 px-6 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold rounded-xl shadow-lg shadow-[#00e676]/25 transition duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-sm"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-[#032314] border-t-transparent rounded-full animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 text-[#032314]" />
+                      <span>Send Message</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
-          <div className="mt-4 text-center">
-            <p className={`text-sm ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              <MapPin className="w-4 h-4 inline-block mr-1" />
-              Bole Road, Addis Ababa, Ethiopia
-            </p>
-            <a
-              href="https://www.google.com/maps/dir//Bole+Road,+Addis+Ababa,+Ethiopia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-2 text-green-400 hover:text-green-300 text-sm font-medium transition-colors"
-            >
-              Get Directions
-              <ChevronRight className="w-4 h-4" />
-            </a>
+
+          {/* Integrated Interactive Map - 6 cols, matching height */}
+          <div className="lg:col-span-6 rounded-3xl overflow-hidden bg-[#091712]/90 border border-[#1b3d2e] shadow-2xl flex flex-col relative min-h-[420px]">
+            <div className="relative flex-1 w-full h-full min-h-[340px]">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.7283682323223!2d38.78410537478007!3d8.997123291062934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b8502fe44f345%3A0x209cbe597069517f!2sEdna%20Mall!5e0!3m2!1sen!2set!4v1791090507035!5m2!1sen!2set"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full min-h-[340px] filter grayscale-[25%] contrast-[1.05]"
+                title="Restaurant Location Map"
+              />
+            </div>
+
+            {/* Map footer strip with quick direction link */}
+            <div className="p-4 bg-[#081510] border-t border-[#1b3d2e] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#00e676] animate-pulse" />
+                <span className="font-semibold text-white">Yoni Restaurant</span>
+                <span className="text-gray-400">&bull; Bole Road, Addis Ababa</span>
+              </div>
+              <a
+                href="https://www.google.com/maps/dir//Bole+Road,+Addis+Ababa,+Ethiopia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#00e676]/15 text-[#00e676] border border-[#00e676]/30 hover:bg-[#00e676] hover:text-[#032314] font-bold text-xs transition duration-200"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                <span>Get Directions</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

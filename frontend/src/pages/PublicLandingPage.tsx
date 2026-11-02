@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 import PublicNavbar from '../components/public/PublicNavbar';
 import Footer from '../components/public/Footer';
 import HeroSection from '../components/public/HeroSection';
@@ -11,8 +10,7 @@ import ContactUsSection from '../components/public/ContactUsSection';
 export default function PublicLandingPage() {
   const [searchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState('home');
-  const { theme } = useTheme();
-  
+
   // Get table and section from URL params (for QR code integration)
   const tableParam = searchParams.get('table');
   const sectionParam = searchParams.get('section');
@@ -22,7 +20,6 @@ export default function PublicLandingPage() {
     if (sectionParam) {
       const element = document.getElementById(sectionParam);
       if (element) {
-        // Delay scroll to ensure page is fully rendered
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
@@ -34,7 +31,7 @@ export default function PublicLandingPage() {
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['home', 'menu', 'about', 'contact'];
-      const scrollPosition = window.scrollY + 100; // Offset for navbar
+      const scrollPosition = window.scrollY + 120; // Offset for navbar
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -60,18 +57,17 @@ export default function PublicLandingPage() {
   };
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen bg-[#040c08] text-white selection:bg-[#00e676] selection:text-black overflow-x-hidden">
       {/* Navigation */}
-      <PublicNavbar 
-        activeSection={activeSection} 
+      <PublicNavbar
+        activeSection={activeSection}
         onNavigate={handleNavigate}
       />
 
-      {/* Main Content - Sections will be added in next phases */}
-      <div className="pt-16"> {/* Padding for fixed navbar */}
-        
+      {/* Main Content Sections */}
+      <main>
         {/* Home/Hero Section */}
-        <HeroSection 
+        <HeroSection
           tableNumber={tableParam}
           onViewMenu={() => handleNavigate('menu')}
           onBookTable={() => handleNavigate('contact')}
@@ -85,7 +81,7 @@ export default function PublicLandingPage() {
 
         {/* Contact Section */}
         <ContactUsSection />
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer />

@@ -1,5 +1,5 @@
-import { ArrowRight, Sparkles } from 'lucide-react';
-import bannerImage from '../../assets/banner.png';
+import { ArrowRight, UtensilsCrossed, Info } from 'lucide-react';
+import banner1 from '../../assets/banner1.png';
 
 interface HeroSectionProps {
   onViewMenu?: () => void;
@@ -9,126 +9,95 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: HeroSectionProps) {
   return (
-    <section id="home" className="relative h-[85vh] flex items-center overflow-hidden bg-black">
-      {/* Full Background Image with Lighter Overlay */}
-      <div className="absolute inset-0">
-        {/* Banner background image */}
-        <div className="absolute inset-0">
-          <img 
-            src={bannerImage} 
-            alt="Traditional Ethiopian Restaurant" 
-            className="w-full h-full object-cover object-center"
-          />
-        </div>
+    <section id="home" className="relative min-h-[92vh] lg:min-h-screen flex items-center overflow-hidden bg-[#040c08] pt-24 pb-16">
+      {/* ================= BACKGROUND BANNER IMAGE (VIBRANT & UNBLOCKED) ================= */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={banner1}
+          alt="Yoni Restaurant Sizzling Steak & Fine Dining"
+          className="w-full h-full object-cover object-center select-none"
+        />
 
-        {/* Lighter gradient overlay to keep original colors visible */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
+        {/* Directional left gradient overlay: Keeps text on the left readable while leaving the steak, lamps & right side 100% bright and clear */}
+        <div className="absolute inset-y-0 left-0 w-full md:w-3/5 lg:w-1/2 bg-gradient-to-r from-black/75 via-black/35 to-transparent pointer-events-none" />
+
+        {/* Soft top gradient for navbar contrast */}
+        <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none" />
+
+        {/* Soft bottom edge feathering into the menu section */}
+        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#040c08] to-transparent pointer-events-none" />
+
+        {/* Ambient subtle glows matching the green foliage and warm dining lamps */}
+        <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-72 h-72 bg-[#00e676]/15 rounded-full blur-[120px] pointer-events-none" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">
-        <div className="grid lg:grid-cols-2 gap-6 items-center">
-          {/* Left side - Text content with better contrast */}
-          <div className="text-white">
-            {/* Welcome badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-900/60 backdrop-blur-md border border-green-700/50 rounded-full mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-green-400" />
-              <span className="text-xs font-semibold text-green-300">Welcome to Yoni Restaurant</span>
+      {/* ================= HERO CONTENT ================= */}
+        <div className="relative z-10 w-full max-w-[95%] xl:max-w-[1650px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 lg:px-12 my-auto">
+          <div className="max-w-2xl text-left space-y-6">
+            {/* Top Subtitle with decorative divider bars */}
+            <div className="inline-flex items-center gap-3">
+              <span className="w-8 sm:w-12 h-px bg-[#00e676] shadow-[0_0_8px_#00e676]" />
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-[#00e676] drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                Welcome to Yoni Restaurant
+              </span>
+              <span className="w-8 sm:w-12 h-px bg-[#00e676] shadow-[0_0_8px_#00e676]" />
             </div>
 
-            {/* Main heading with text shadow for better visibility */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 leading-tight drop-shadow-2xl">
-              <span className="text-white block drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">Great Food,</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 block drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                Better
-              </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 block drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                Experience
+            {/* Main Hero Headline */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black tracking-tight leading-[1.05] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+              <span className="block text-white">Good Food.</span>
+              <span className="block text-[#00e676] drop-shadow-[0_0_35px_rgba(0,230,118,0.5)]">
+                Great Mood.
               </span>
             </h1>
 
-            {/* Description with background for better readability */}
-            <div className="bg-black/40 backdrop-blur-sm rounded-lg p-3 mb-4 inline-block">
-              <p className="text-sm md:text-base text-gray-200 leading-relaxed max-w-xl">
-                Experience the perfect blend of traditional Ethiopian taste and modern dining. 
-                Every dish tells a story of culture, passion, and authentic flavors.
-              </p>
-            </div>
+            {/* Description */}
+            <p className="text-base sm:text-lg lg:text-xl text-white/95 leading-relaxed max-w-xl font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+              Enjoy delicious Ethiopian and international dishes prepared with fresh ingredients and love.
+            </p>
 
-            {/* Table badge if from QR scan */}
+            {/* QR Table badge if scanned from physical table */}
             {tableNumber && (
-              <div className="mb-3 inline-block">
-                <div className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold shadow-lg shadow-green-600/30 animate-pulse flex items-center gap-2">
-                  <span className="text-lg">🔥</span>
-                  <span className="text-sm">Table {tableNumber} - Ready to Order!</span>
+              <div className="inline-block pt-1">
+                <div className="px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-[#00e676] text-[#00e676] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_20px_rgba(0,230,118,0.3)] animate-pulse">
+                  <span>🔥</span>
+                  <span>Table {tableNumber} &bull; Ready to Order Live</span>
                 </div>
               </div>
             )}
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              {/* Explore Menu button: Solid vibrant green pill */}
               <button
                 onClick={onViewMenu}
-                className="group px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg font-semibold hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-105 text-sm"
+                className="group px-8 py-4 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-sm sm:text-base rounded-full shadow-[0_4px_25px_rgba(0,230,118,0.5)] hover:shadow-[0_6px_35px_rgba(0,230,118,0.7)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2.5 cursor-pointer"
               >
-                <span>🍽️ View Our Menu</span>
+                <UtensilsCrossed className="w-5 h-5 text-[#032314]" />
+                <span>Explore Our Menu</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
+
+              {/* Learn More button: Glass outline pill */}
               <button
                 onClick={onBookTable}
-                className="px-5 py-2.5 bg-transparent text-white border-2 border-green-600 rounded-lg font-semibold hover:bg-green-600/20 transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm text-sm"
+                className="px-8 py-4 bg-black/50 hover:bg-white/15 text-white font-semibold text-sm sm:text-base border border-white/40 hover:border-white/80 rounded-full backdrop-blur-md transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xl"
               >
-                <span>Order Now</span>
+                <Info className="w-4 h-4 text-white" />
+                <span>Learn More</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Stats Row with better contrast */}
-            <div className="grid grid-cols-3 gap-3 pt-6 mt-4">
-              <div className="text-center lg:text-left">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-8 h-8 rounded-full bg-yellow-600/30 backdrop-blur-sm border border-yellow-600/50 flex items-center justify-center flex-shrink-0">
-                    <span className="text-base">🍽️</span>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-white drop-shadow-lg">50+</p>
-                    <p className="text-[10px] text-gray-200 drop-shadow-md">Delicious Dishes</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center lg:text-left px-1.5">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-8 h-8 rounded-full bg-green-600/30 backdrop-blur-sm border border-green-600/50 flex items-center justify-center flex-shrink-0">
-                    <span className="text-base">👥</span>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-white drop-shadow-lg">10K+</p>
-                    <p className="text-[10px] text-gray-200 drop-shadow-md">Happy Customers</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center lg:text-left">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-8 h-8 rounded-full bg-yellow-600/30 backdrop-blur-sm border border-yellow-600/50 flex items-center justify-center flex-shrink-0">
-                    <span className="text-base">⭐</span>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-white drop-shadow-lg">4.8</p>
-                    <p className="text-[10px] text-gray-200 drop-shadow-md">Average Rating</p>
-                  </div>
-                </div>
-              </div>
+            {/* Slider Pagination Dots */}
+            <div className="flex items-center gap-2.5 pt-4">
+              <span className="w-8 h-2.5 rounded-full bg-[#00e676] shadow-[0_0_12px_#00e676]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white/40 shadow-sm" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white/40 shadow-sm" />
             </div>
           </div>
-
-          {/* Right side - Keep space for balance but no separate image */}
-          <div className="hidden lg:block"></div>
         </div>
-
-        {/* Feature Cards - Full Width at Bottom */}
-      </div>
     </section>
   );
 }
