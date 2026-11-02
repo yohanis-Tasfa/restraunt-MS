@@ -57,7 +57,7 @@ export default function PublicLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#040c08] text-white selection:bg-[#00e676] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-base-100 text-base-content dark:bg-[#040c08] dark:text-white selection:bg-[#00e676] selection:text-black overflow-x-hidden transition-colors duration-300">
       {/* Navigation */}
       <PublicNavbar
         activeSection={activeSection}

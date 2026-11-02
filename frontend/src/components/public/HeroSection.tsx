@@ -9,7 +9,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: HeroSectionProps) {
   return (
-    <section id="home" className="relative min-h-[92vh] lg:min-h-screen flex items-center overflow-hidden bg-[#040c08] pt-24 pb-16">
+    <section id="home" className="relative min-h-[92vh] lg:min-h-screen flex items-center overflow-hidden bg-base-100 dark:bg-[#040c08] pt-24 pb-16">
       {/* ================= BACKGROUND BANNER IMAGE (VIBRANT & UNBLOCKED) ================= */}
       <div className="absolute inset-0 z-0">
         <img
@@ -24,8 +24,8 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
         {/* Soft top gradient for navbar contrast */}
         <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none" />
 
-        {/* Soft bottom edge feathering into the menu section */}
-        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#040c08] to-transparent pointer-events-none" />
+        {/* Soft bottom edge feathering cleanly into the menu section */}
+        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#f5f8f6] dark:from-[#030a07] to-transparent pointer-events-none" />
 
         {/* Ambient subtle glows matching the green foliage and warm dining lamps */}
         <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />

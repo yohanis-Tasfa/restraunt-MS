@@ -442,9 +442,9 @@ export default function MenuPreviewSection() {
   };
 
   return (
-    <section id="menu" className="py-20 relative overflow-hidden bg-[#030a07] text-white">
+    <section id="menu" className="py-20 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-40 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
         <div className="absolute bottom-40 left-20 w-72 h-72 bg-yellow-500 rounded-full blur-3xl" />
       </div>
@@ -453,13 +453,13 @@ export default function MenuPreviewSection() {
         {/* Section Header */}
         <div className="text-center mb-10 max-w-2xl mx-auto space-y-2">
           {/* Main Title: Our Menu */}
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif italic font-black tracking-tight drop-shadow-2xl">
-            <span className="text-white">Our </span>
-            <span className="text-[#00e676] drop-shadow-[0_0_30px_rgba(0,230,118,0.55)]">Menu</span>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif italic font-black tracking-tight drop-shadow-sm dark:drop-shadow-2xl">
+            <span className="text-base-content">Our </span>
+            <span className="text-[#00c853] dark:text-[#00e676] drop-shadow-[0_0_30px_rgba(0,230,118,0.4)]">Menu</span>
           </h2>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg md:text-xl font-serif italic text-gray-300 tracking-wide">
+          <p className="text-base sm:text-lg md:text-xl font-serif italic text-base-content/75 tracking-wide">
             Delicious food, made with love
           </p>
 
@@ -497,12 +497,12 @@ export default function MenuPreviewSection() {
                 placeholder="Search by dish name, ingredients, or category..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-12 py-3.5 bg-[#091712]/90 backdrop-blur-xl border border-[#1b3d2e] focus:border-[#00e676] text-white placeholder-gray-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e676]/25 transition shadow-inner text-sm"
+                className="w-full pl-12 pr-12 py-3.5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] focus:border-[#00e676] text-base-content placeholder-gray-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e676]/25 transition shadow-sm dark:shadow-inner text-sm"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-white rounded-full transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-base-content rounded-full transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -516,7 +516,7 @@ export default function MenuPreviewSection() {
               onClick={() => setSelectedCategory('all')}
               className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${selectedCategory === 'all'
                   ? 'bg-[#00e676] text-[#032314] shadow-[0_0_15px_rgba(0,230,118,0.35)]'
-                  : 'bg-[#091712] border border-[#1b3d2e] text-gray-300 hover:border-[#00e676]/60 hover:text-[#00e676]'
+                  : 'bg-base-100 border border-base-300 dark:border-[#1b3d2e] text-base-content hover:border-[#00e676]/60 hover:text-[#00c853] dark:hover:text-[#00e676] shadow-sm'
                 }`}
             >
               All Dishes
@@ -527,7 +527,7 @@ export default function MenuPreviewSection() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${selectedCategory === category.id
                     ? 'bg-[#00e676] text-[#032314] shadow-[0_0_15px_rgba(0,230,118,0.35)]'
-                    : 'bg-[#091712] border border-[#1b3d2e] text-gray-300 hover:border-[#00e676]/60 hover:text-[#00e676]'
+                    : 'bg-base-100 border border-base-300 dark:border-[#1b3d2e] text-base-content hover:border-[#00e676]/60 hover:text-[#00c853] dark:hover:text-[#00e676] shadow-sm'
                   }`}
               >
                 {category.name}
@@ -538,9 +538,9 @@ export default function MenuPreviewSection() {
           {/* Results Count */}
           {(searchQuery || selectedCategory !== 'all') && (
             <div className="text-center">
-              <p className="text-xs sm:text-sm text-gray-400">
-                Found <span className="text-[#00e676] font-bold">{filteredItems.length}</span> {filteredItems.length === 1 ? 'dish' : 'dishes'}
-                {searchQuery && <> matching "<span className="text-white font-medium">{searchQuery}</span>"</>}
+              <p className="text-xs sm:text-sm text-base-content/70">
+                Found <span className="text-[#00c853] dark:text-[#00e676] font-bold">{filteredItems.length}</span> {filteredItems.length === 1 ? 'dish' : 'dishes'}
+                {searchQuery && <> matching "<span className="text-base-content font-medium">{searchQuery}</span>"</>}
               </p>
             </div>
           )}
@@ -550,21 +550,21 @@ export default function MenuPreviewSection() {
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="rounded-3xl p-5 bg-[#091712]/80 border border-[#1b3d2e] animate-pulse">
-                <div className="w-full h-56 sm:h-64 rounded-2xl mb-4 bg-gray-800/50" />
-                <div className="h-6 rounded w-3/4 mb-2 bg-gray-800/50" />
-                <div className="h-4 rounded w-full mb-2 bg-gray-800/50" />
-                <div className="h-4 rounded w-2/3 bg-gray-800/50" />
+              <div key={i} className="rounded-3xl p-5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] animate-pulse">
+                <div className="w-full h-56 sm:h-64 rounded-2xl mb-4 bg-base-200" />
+                <div className="h-6 rounded w-3/4 mb-2 bg-base-200" />
+                <div className="h-4 rounded w-full mb-2 bg-base-200" />
+                <div className="h-4 rounded w-2/3 bg-base-200" />
               </div>
             ))}
           </div>
         ) : currentItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🍽️</div>
-            <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className="text-lg text-base-content/70">
               No menu items available at the moment.
             </p>
-            <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+            <p className="text-sm mt-2 text-base-content/50">
               Please check back later or contact us for assistance.
             </p>
           </div>
@@ -574,7 +574,7 @@ export default function MenuPreviewSection() {
               {currentItems.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative rounded-3xl overflow-hidden bg-[#091712]/90 backdrop-blur-md border border-[#1b3d2e] hover:border-[#00e676]/70 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_-5px_rgba(0,230,118,0.25)] flex flex-col justify-between"
+                  className="group relative rounded-3xl overflow-hidden bg-base-100 border border-base-300 dark:border-[#1b3d2e] hover:border-[#00e676]/70 transition-all duration-300 hover:-translate-y-2 shadow-sm hover:shadow-xl dark:shadow-none hover:dark:shadow-[0_20px_40px_-5px_rgba(0,230,118,0.25)] flex flex-col justify-between"
                 >
                   <div>
                     {/* Image */}
@@ -586,11 +586,11 @@ export default function MenuPreviewSection() {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-black/60 flex items-center justify-center">
+                        <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-gray-200 dark:to-black/60 flex items-center justify-center">
                           <span className="text-6xl">🍽️</span>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#091712] via-transparent to-transparent opacity-60" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#091712] via-transparent to-transparent opacity-60" />
 
                       {/* Category Badge */}
                       {item.category && (
@@ -609,21 +609,21 @@ export default function MenuPreviewSection() {
 
                     {/* Content */}
                     <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2 text-white group-hover:text-[#00e676] transition-colors duration-200">
+                      <h3 className="text-xl font-bold mb-2 text-base-content group-hover:text-[#00c853] dark:group-hover:text-[#00e676] transition-colors duration-200">
                         {item.name}
                       </h3>
-                      <p className="text-sm text-gray-400 mb-5 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-base-content/70 mb-5 line-clamp-2 leading-relaxed">
                         {item.description || 'Delicious Ethiopian dish prepared with authentic spices and fresh ingredients.'}
                       </p>
 
                       {/* Price and Rating */}
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-2xl font-extrabold text-[#00e676]">{formatPrice(item.price)}</span>
+                          <span className="text-2xl font-extrabold text-[#00a844] dark:text-[#00e676]">{formatPrice(item.price)}</span>
                         </div>
                         <div className="flex items-center gap-1 px-3 py-1 bg-yellow-500/10 rounded-full border border-yellow-500/30">
-                          <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                          <span className="text-xs font-bold text-yellow-400">4.8</span>
+                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-400" />
+                          <span className="text-xs font-bold text-yellow-600 dark:text-yellow-400">4.8</span>
                         </div>
                       </div>
                     </div>
@@ -649,10 +649,7 @@ export default function MenuPreviewSection() {
                 <button
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 backdrop-blur-md border rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${theme === 'dark'
-                    ? 'bg-black/40 text-white border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
-                    : 'bg-white/60 text-gray-900 border-gray-200 hover:bg-green-100/70 hover:border-green-500/50'
-                    }`}
+                  className="px-4 py-2 bg-base-100 text-base-content border border-base-300 dark:border-white/10 hover:border-[#00e676] rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Previous</span>
@@ -664,11 +661,9 @@ export default function MenuPreviewSection() {
                     <button
                       key={page}
                       onClick={() => goToPage(page)}
-                      className={`w-10 h-10 rounded-lg font-semibold transition-all duration-300 ${currentPage === page
-                        ? 'bg-green-600 text-white border-2 border-green-500'
-                        : theme === 'dark'
-                          ? 'bg-black/40 backdrop-blur-md text-gray-300 border border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
-                          : 'bg-white/60 backdrop-blur-md text-gray-700 border border-gray-200 hover:bg-green-100/70 hover:border-green-500/50'
+                      className={`w-10 h-10 rounded-xl font-bold transition-all duration-200 cursor-pointer ${currentPage === page
+                        ? 'bg-[#00e676] text-[#032314] shadow-md shadow-[#00e676]/30'
+                        : 'bg-base-100 text-base-content border border-base-300 dark:border-white/10 hover:border-[#00e676] hover:text-[#00c853]'
                         }`}
                     >
                       {page}
@@ -679,10 +674,7 @@ export default function MenuPreviewSection() {
                 <button
                   onClick={goToNextPage}
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 backdrop-blur-md border rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${theme === 'dark'
-                    ? 'bg-black/40 text-white border-white/10 hover:bg-green-600/20 hover:border-green-500/50'
-                    : 'bg-white/60 text-gray-900 border-gray-200 hover:bg-green-100/70 hover:border-green-500/50'
-                    }`}
+                  className="px-4 py-2 bg-base-100 text-base-content border border-base-300 dark:border-white/10 hover:border-[#00e676] rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <span>Next</span>
                   <ChevronRight className="w-4 h-4" />
