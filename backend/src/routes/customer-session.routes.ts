@@ -15,6 +15,10 @@ router.post('/', customerSessionController.createSession);
 // Get session by QR code (for customer to check their session)
 router.get('/qr/:qrCode', customerSessionController.getSessionByQRCode);
 
+// Get active order for a table (public for customers to track order & bill)
+router.get('/by-table/:tableIdentifier/active-order', customerSessionController.getActiveOrderByTable);
+router.get('/table/:tableIdentifier/active-order', customerSessionController.getActiveOrderByTable);
+
 // Protected routes (for staff)
 router.use(authenticate);
 

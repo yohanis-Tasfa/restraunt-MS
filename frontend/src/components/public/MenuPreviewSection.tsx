@@ -7,6 +7,7 @@ import MenuItemModal from './MenuItemModal';
 import FloatingCart, { type CartItem } from './FloatingCart';
 import OrderTypeDialog from './OrderTypeDialog';
 import BillRequestDialog from './BillRequestDialog';
+import LiveOrderStatusTracker from './LiveOrderStatusTracker';
 import toast from 'react-hot-toast';
 import apiClient from '../../api/client';
 
@@ -86,122 +87,80 @@ export default function MenuPreviewSection() {
     fetchMenuItems();
     fetchCategories();
 
-    // Check if customer has an active order for bill requests
+    // Check if customer has an active order for bill requests & live tracking
     if (tableNumber) {
       checkForActiveOrder();
-    }
+      // Poll active order status every 8 seconds for real-time kitchen & service updates
+      const pollTimer = setInterval(() => {
+        checkForActiveOrder();
+      }, 8000);
 
-    // Cleanup interval on unmount
-    return () => {
+      return () => {
+        clearInterval(pollTimer);
         if (checkOrderIntervalRef.current) {
           clearInterval(checkOrderIntervalRef.current);
           checkOrderIntervalRef.current = null;
         }
       };
-}, [tableNumber]);
+    }
+  }, [tableNumber]);
 
-// Filter items based on search and category
-useEffect(() => {
-  let filtered = allItems;
+  // Filter items based on search and category
+  useEffect(() => {
+    let filtered = allItems;
 
-  // Filter by category
-  if (selectedCategory !== 'all') {
-    filtered = filtered.filter(item => item.category?.id === selectedCategory);
-  }
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(item => item.category?.id === selectedCategory);
+    }
 
-  // Filter by search query
-  if (searchQuery.trim()) {
-    const query = searchQuery.toLowerCase();
-    filtered = filtered.filter(item =>
-      item.name.toLowerCase().includes(query) ||
-      item.description?.toLowerCase().includes(query) ||
-      item.category?.name.toLowerCase().includes(query)
-    );
-  }
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(query) ||
+        item.description?.toLowerCase().includes(query) ||
+        item.category?.name.toLowerCase().includes(query)
+      );
+    }
 
-  setFilteredItems(filtered);
-}, [allItems, selectedCategory, searchQuery]);
+    setFilteredItems(filtered);
+  }, [allItems, selectedCategory, searchQuery]);
 
-const fetchCategories = async () => {
-  try {
-    const cats = await menuApi.getCategories();
-    setCategories(cats);
-  } catch (error) {
-    console.error('Failed to fetch categories:', error);
-  }
-};
+  const fetchCategories = async () => {
+    try {
+      const cats = await menuApi.getCategories();
+      setCategories(cats);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  };
 
-const checkForActiveOrder = async () => {
-  try {
-    console.log('🔍 Checking for active order...');
+  const checkForActiveOrder = async () => {
+    if (!tableNumber) return;
+    try {
+      // Fetch public active order status for this table (no 401 redirect)
+      const res = await fetch(`/api/customer-sessions/by-table/${encodeURIComponent(tableNumber)}/active-order`);
+      if (res.ok) {
+        const json = await res.json();
+        const order = json.data;
 
-    // Get customer session
-    const sessionResponse = await fetch('/api/customer-sessions/by-table', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tableNumber,
-        guestCount: 1,
-      }),
-    });
-
-    if (sessionResponse.ok) {
-      const session = await sessionResponse.json();
-      setSessionData(session);
-      console.log('📋 Session data:', session);
-
-      // Get table ID from session
-      const tableId = session.tableId || session.table?.id;
-      console.log('🏷️ Table ID:', tableId);
-
-      if (!tableId) {
-        console.error('❌ No table ID found in session');
-        return;
-      }
-
-      // Check for unpaid orders on this table using tableId
-      console.log(`🔎 Fetching orders for table: ${tableId}`);
-      const ordersResponse = await apiClient.get(`/orders?tableId=${tableId}`);
-      console.log('📦 Orders response:', ordersResponse.data);
-
-      if (ordersResponse.data?.data && ordersResponse.data.data.length > 0) {
-        console.log(`✅ Found ${ordersResponse.data.data.length} orders`);
-
-        // Filter for unpaid orders with active status
-        const unpaidOrders = ordersResponse.data.data.filter(
-          (order: any) => {
-            const isUnpaid = order.paymentStatus === 'UNPAID';
-            const isActive = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'].includes(order.status);
-            console.log(`Order ${order.orderNumber}: paymentStatus=${order.paymentStatus}, status=${order.status}, isUnpaid=${isUnpaid}, isActive=${isActive}`);
-            return isUnpaid && isActive;
-          }
-        );
-
-        console.log(`💰 Found ${unpaidOrders.length} unpaid active orders`);
-
-        if (unpaidOrders.length > 0) {
-          // Get the most recent unpaid order
-          const order = unpaidOrders[0];
+        if (order) {
           setActiveOrder(order);
-          console.log('🎯 Set active order:', order);
-
-          // Stop polling once we find an order
-            if (checkOrderIntervalRef.current) {
-              clearInterval(checkOrderIntervalRef.current);
-              checkOrderIntervalRef.current = null;
-              console.log('⏸️ Stopped polling - order found');
-            }
-          } else {
-            console.log('⚠️ No unpaid active orders found');
+          // Set session data if not already set
+          if (order.table) {
+            setSessionData((prev: any) => prev || {
+              id: order.sessionId || `session-${order.table.id}`,
+              tableId: order.table.id,
+              table: order.table,
+            });
           }
         } else {
-          console.log('⚠️ No orders found for this table');
+          setActiveOrder(null);
         }
-      } else {
-        console.error('❌ Failed to get session:', await sessionResponse.text());
       }
     } catch (error) {
-      console.error('❌ Failed to check for active order:', error);
+      console.error('Failed to check for active order:', error);
     }
   };
 
@@ -797,31 +756,13 @@ const checkForActiveOrder = async () => {
         />
       )}
 
-      {/* Floating Request Bill Button */}
+      {/* Live Order Status Tracker */}
       {activeOrder && tableNumber && (
-        <button
-          onClick={handleRequestBill}
-          className="fixed bottom-24 right-6 z-50 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2 border-2 border-blue-500/50 animate-bounce"
-        >
-          <Receipt className="w-5 h-5" />
-          <span className="font-semibold">Request Bill</span>
-        </button>
-      )}
-
-      {/* Waiting for Order Message - Shows after calling waiter but before order is ready */}
-      {!activeOrder && tableNumber && cart.length === 0 && (
-        <div className="fixed bottom-24 right-6 z-50 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl shadow-2xl border-2 border-green-500/50">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-3 h-3 bg-white rounded-full animate-ping absolute"></div>
-              <div className="w-3 h-3 bg-white rounded-full"></div>
-            </div>
-            <div>
-              <p className="font-semibold text-sm">Waiting for Order</p>
-              <p className="text-xs opacity-90">Bill request available after order is sent to kitchen</p>
-            </div>
-          </div>
-        </div>
+        <LiveOrderStatusTracker
+          order={activeOrder}
+          tableNumber={tableNumber}
+          onRequestBill={handleRequestBill}
+        />
       )}
 
       {/* Floating Cart */}

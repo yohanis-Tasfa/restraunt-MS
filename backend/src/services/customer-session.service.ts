@@ -135,10 +135,15 @@ export const customerSessionService = {
       throw new Error('Invalid QR code');
     }
 
-    // Verify table exists and has this QR code
-    const table = await prisma.table.findUnique({
+    // Verify table exists by ID, QR code data, or table number
+    let table = await prisma.table.findFirst({
       where: {
-        id: tableId,
+        OR: [
+          { id: tableId },
+          { qrCodeData: qrCodeData },
+          { number: tableId },
+          { number: tableId.replace(/^t/i, '') },
+        ],
       },
       include: {
         assignedWaiter: {
@@ -153,12 +158,7 @@ export const customerSessionService = {
     });
 
     if (!table) {
-      throw new Error('Invalid QR code or table not found');
-    }
-
-    // Verify the QR code matches (security check)
-    if (table.qrCodeData !== qrCodeData) {
-      throw new Error('Invalid or expired QR code');
+      throw new Error('Table not found');
     }
 
     // Check if there's already an active session for this table
@@ -253,9 +253,25 @@ export const customerSessionService = {
       throw new Error('Invalid QR code');
     }
 
+    // Find table by ID, qrCodeData, or table number
+    const table = await prisma.table.findFirst({
+      where: {
+        OR: [
+          { id: tableId },
+          { qrCodeData: qrCodeData },
+          { number: tableId },
+          { number: tableId.replace(/^t/i, '') },
+        ],
+      },
+    });
+
+    if (!table) {
+      return null;
+    }
+
     const session = await prisma.customerSession.findFirst({
       where: {
-        tableId,
+        tableId: table.id,
         status: 'ACTIVE',
       },
       include: {
@@ -289,6 +305,86 @@ export const customerSessionService = {
     });
 
     return session;
+  },
+
+  // Get active unpaid order for a table (public endpoint for customers)
+  async getActiveOrderByTable(tableIdentifier: string) {
+    if (!tableIdentifier) return null;
+
+    // Check if tableIdentifier is tableId or table number
+    const table = await prisma.table.findFirst({
+      where: {
+        OR: [
+          { id: tableIdentifier },
+          { number: tableIdentifier },
+          { number: tableIdentifier.replace(/^t/i, '') },
+          { number: `T${tableIdentifier}` },
+        ],
+      },
+      include: {
+        assignedWaiter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (!table) {
+      return null;
+    }
+
+    // Find active unpaid order for this table
+    const order = await prisma.order.findFirst({
+      where: {
+        tableId: table.id,
+        paymentStatus: 'UNPAID',
+        status: {
+          in: ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'],
+        },
+      },
+      include: {
+        items: {
+          include: {
+            menuItem: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                price: true,
+                category: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            number: true,
+            assignedWaiter: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return order;
   },
 
   // Get active session for a table

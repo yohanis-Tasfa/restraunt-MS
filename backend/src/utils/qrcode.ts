@@ -147,9 +147,10 @@ const extractPublicIdFromUrl = (url: string): string | null => {
  * @returns Boolean indicating if valid
  */
 export const validateQRCodeData = (qrCodeData: string): boolean => {
-  // Format: table_{tableId}_{uuid}
-  const pattern = /^table_[a-f0-9-]+_[a-f0-9-]+$/;
-  return pattern.test(qrCodeData);
+  if (!qrCodeData) return false;
+  // Format: table_{tableId}_{uuid} or table_{id} or standard string
+  const pattern = /^table_[a-f0-9-]+(_[a-f0-9-]+)?$/i;
+  return pattern.test(qrCodeData) || qrCodeData.length > 0;
 };
 
 /**
@@ -159,16 +160,18 @@ export const validateQRCodeData = (qrCodeData: string): boolean => {
  */
 export const extractTableIdFromQRCode = (qrCodeData: string): string | null => {
   try {
-    if (!validateQRCodeData(qrCodeData)) {
-      return null;
-    }
+    if (!qrCodeData) return null;
     
     // Format: table_{tableId}_{uuid}
-    const parts = qrCodeData.split('_');
-    if (parts.length >= 2) {
-      return parts[1];
+    if (qrCodeData.startsWith('table_')) {
+      const parts = qrCodeData.split('_');
+      if (parts.length >= 2) {
+        return parts[1];
+      }
     }
-    return null;
+    
+    // Fallback: return raw string (tableId or tableNumber)
+    return qrCodeData;
   } catch (error) {
     return null;
   }

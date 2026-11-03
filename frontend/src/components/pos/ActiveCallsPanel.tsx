@@ -44,17 +44,45 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
   const acknowledgedCalls = calls.filter((call) => call.status === 'ACKNOWLEDGED');
 
   const handleProcessOrder = (call: any) => {
-    if (call.selectedItems && call.selectedItems.items) {
+    const rawItems: any[] = Array.isArray(call.selectedItems)
+      ? call.selectedItems
+      : Array.isArray(call.selectedItems?.items)
+      ? call.selectedItems.items
+      : [];
+
+    if (rawItems.length > 0) {
       // Close the panel first
       onOpenChange(false);
-      
-      // Navigate to POS with prefilled cart
+
+      const customerCart = {
+        sessionId: call.sessionId,
+        tableId: call.tableId,
+        tableNumber: call.table?.number,
+        items: rawItems.map((item: any, idx: number) => ({
+          menuItemId: item.menuItemId || item.id || `item-pos-${idx}-${Date.now()}`,
+          name: item.name || 'Selected Dish',
+          price: Number(item.price || 0),
+          quantity: Number(item.quantity || 1),
+          subtotal: Number(item.subtotal || Number(item.price || 0) * Number(item.quantity || 1)),
+          image: item.image,
+          notes: item.notes,
+        })),
+        total: rawItems.reduce(
+          (sum: number, it: any) => sum + Number(it.price || 0) * Number(it.quantity || 1),
+          0
+        ),
+        orderType: call.selectedItems?.orderType || 'DINE_IN',
+      };
+
+      // Navigate to POS with prefilled cart and auto-open checkout
       navigate('/admin/pos', {
         state: {
-          customerCart: call.selectedItems,
-          tableNumber: call.table.number,
-          orderType: call.selectedItems.orderType,
+          tableId: call.tableId,
+          tableNumber: call.table?.number,
+          orderType: customerCart.orderType,
           callId: call.id,
+          customerCart,
+          autoOpenCheckout: true,
         },
       });
     }
@@ -141,16 +169,16 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          {call.selectedItems && call.selectedItems.items ? (
+                          {(Array.isArray(call.selectedItems) && call.selectedItems.length > 0) || (call.selectedItems?.items && call.selectedItems.items.length > 0) ? (
                             <Button
                               size="sm"
                               onClick={() => handleProcessOrder(call)}
                               className="flex-1 bg-green-600 hover:bg-green-700"
                             >
                               <ShoppingCart className="w-4 h-4 mr-2" />
-                              Process Order ({call.selectedItems.totalItems} items)
+                              Process Order ({Array.isArray(call.selectedItems) ? call.selectedItems.length : call.selectedItems?.items?.length || 0} items)
                             </Button>
-                          ) : call.requestType === 'BILL_REQUEST' && call.selectedItems ? (
+                          ) : call.requestType === 'BILL_REQUEST' ? (
                             <>
                               <Button
                                 size="sm"
@@ -242,16 +270,16 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          {call.selectedItems && call.selectedItems.items ? (
+                          {(Array.isArray(call.selectedItems) && call.selectedItems.length > 0) || (call.selectedItems?.items && call.selectedItems.items.length > 0) ? (
                             <Button
                               size="sm"
                               onClick={() => handleProcessOrder(call)}
                               className="flex-1 bg-green-600 hover:bg-green-700"
                             >
                               <ShoppingCart className="w-4 h-4 mr-2" />
-                              Process Order ({call.selectedItems.totalItems} items)
+                              Process Order ({Array.isArray(call.selectedItems) ? call.selectedItems.length : call.selectedItems?.items?.length || 0} items)
                             </Button>
-                          ) : call.requestType === 'BILL_REQUEST' && call.selectedItems ? (
+                          ) : call.requestType === 'BILL_REQUEST' ? (
                             <Button
                               size="sm"
                               onClick={() => handleCollectPayment(call)}

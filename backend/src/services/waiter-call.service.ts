@@ -112,6 +112,45 @@ export const waiterCallService = {
       );
     }
 
+    // If requestType is BILL_REQUEST, check for active order and create a billRequest in queue
+    if (requestType === 'BILL_REQUEST') {
+      try {
+        const orderId = (selectedItems as any)?.orderId;
+        const activeOrder = orderId
+          ? await prisma.order.findUnique({ where: { id: orderId } })
+          : await prisma.order.findFirst({
+              where: {
+                tableId: session.tableId,
+                paymentStatus: 'UNPAID',
+                status: { in: ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'] },
+              },
+            });
+
+        if (activeOrder) {
+          const existingBillRequest = await prisma.billRequest.findFirst({
+            where: {
+              orderId: activeOrder.id,
+              status: { in: ['PENDING', 'PROCESSING'] },
+            },
+          });
+
+          if (!existingBillRequest) {
+            await prisma.billRequest.create({
+              data: {
+                orderId: activeOrder.id,
+                tableId: session.tableId,
+                requestedById: waiterId,
+                status: 'PENDING',
+                notes: (selectedItems as any)?.notes || 'Customer requested bill via digital table menu',
+              },
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to auto-create bill request for queue:', err);
+      }
+    }
+
     return call;
   },
 

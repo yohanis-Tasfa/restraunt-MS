@@ -78,6 +78,22 @@ export const customerSessionController = {
     }
   },
 
+  // Get active unpaid order for a table (public for customers)
+  async getActiveOrderByTable(req: Request, res: Response, next: NextFunction) {
+    try {
+      const paramVal = req.params.tableIdentifier || req.params.tableNumber || req.params.tableId;
+      const tableIdentifier = Array.isArray(paramVal) ? paramVal[0] : String(paramVal || '');
+      const order = await customerSessionService.getActiveOrderByTable(tableIdentifier);
+
+      res.json({
+        success: true,
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Get active session for a table
   async getActiveSessionByTable(req: Request, res: Response, next: NextFunction) {
     try {
