@@ -19,6 +19,10 @@ router.get('/qr/:qrCode', customerSessionController.getSessionByQRCode);
 router.get('/by-table/:tableIdentifier/active-order', customerSessionController.getActiveOrderByTable);
 router.get('/table/:tableIdentifier/active-order', customerSessionController.getActiveOrderByTable);
 
+// Cancel active order for a table (public for table customers before cooking starts)
+router.post('/by-table/:tableIdentifier/cancel-active-order', customerSessionController.cancelActiveOrderByTable);
+router.post('/table/:tableIdentifier/cancel-active-order', customerSessionController.cancelActiveOrderByTable);
+
 // Protected routes (for staff)
 router.use(authenticate);
 

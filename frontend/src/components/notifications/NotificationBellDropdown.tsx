@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   CheckCheck,
+  Check,
   Volume2,
   VolumeX,
   Mic,
@@ -319,22 +320,40 @@ export default function NotificationBellDropdown() {
                         isIngredientRequest
                           ? 'bg-amber-100 text-amber-700'
                           : isWaiterCall
-                          ? 'bg-amber-100 text-amber-600'
+                          ? item.status === 'COMPLETED'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-amber-100 text-amber-600'
                           : isBillRequest
-                          ? 'bg-emerald-100 text-emerald-700'
+                          ? item.status === 'COMPLETED'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-emerald-100 text-emerald-700'
                           : isOrderReady
-                          ? 'bg-green-100 text-green-600'
+                          ? item.status === 'SERVED'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-green-100 text-green-600'
                           : 'bg-blue-100 text-blue-600'
                       }`}
                     >
                       {isIngredientRequest ? (
                         <PackagePlus className="w-4 h-4 text-amber-700" />
                       ) : isWaiterCall ? (
-                        <PhoneCall className="w-4 h-4" />
+                        item.status === 'COMPLETED' ? (
+                          <CheckCheck className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <PhoneCall className="w-4 h-4" />
+                        )
                       ) : isBillRequest ? (
-                        <FileText className="w-4 h-4 text-emerald-700" />
+                        item.status === 'COMPLETED' ? (
+                          <CheckCheck className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <FileText className="w-4 h-4 text-emerald-700" />
+                        )
                       ) : isOrderReady ? (
-                        <ChefHat className="w-4 h-4" />
+                        item.status === 'SERVED' ? (
+                          <CheckCheck className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <ChefHat className="w-4 h-4" />
+                        )
                       ) : (
                         <Bell className="w-4 h-4" />
                       )}
@@ -343,11 +362,31 @@ export default function NotificationBellDropdown() {
                     {/* Content */}
                     <div className="flex-1 min-w-0 pr-4">
                       <div className="flex items-center justify-between gap-1 mb-0.5">
-                        <div className="flex items-center gap-1.5 truncate">
+                        <div className="flex items-center gap-1.5 truncate flex-wrap">
                           <span className="text-xs font-bold text-gray-900 truncate">
                             {item.title}
                           </span>
-                          {item.priority === 'urgent' && (
+                          {item.status === 'SERVED' && (
+                            <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5 shadow-2xs">
+                              <Check className="w-2.5 h-2.5 text-emerald-600 stroke-[3]" /> Served
+                            </span>
+                          )}
+                          {item.status === 'COMPLETED' && (
+                            <span className="text-[10px] font-semibold bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5">
+                              <Check className="w-2.5 h-2.5 text-blue-600" /> Completed
+                            </span>
+                          )}
+                          {item.status === 'CANCELLED' && (
+                            <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                              Cancelled
+                            </span>
+                          )}
+                          {item.status === 'READY' && !item.isRead && (
+                            <span className="text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 rounded-full animate-pulse">
+                              Ready
+                            </span>
+                          )}
+                          {item.priority === 'urgent' && item.status !== 'SERVED' && (
                             <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-rose-100 text-rose-700">
                               Urgent
                             </span>
@@ -369,11 +408,17 @@ export default function NotificationBellDropdown() {
                             {isIngredientRequest
                               ? 'Review Requisition'
                               : isWaiterCall
-                              ? 'Go to Waiter Calls'
+                              ? item.status === 'COMPLETED'
+                                ? 'View Call History'
+                                : 'Go to Waiter Calls'
                               : isBillRequest
-                              ? 'Process Bill'
+                              ? item.status === 'COMPLETED'
+                                ? 'View Bill'
+                                : 'Process Bill'
                               : isOrderReady
-                              ? 'View Orders'
+                              ? item.status === 'SERVED'
+                                ? 'View Served Order'
+                                : 'Serve Order'
                               : 'Open'}
                           </span>
                           <ArrowRight className="w-3 h-3" />

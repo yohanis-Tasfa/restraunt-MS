@@ -1,5 +1,6 @@
 import prisma from '../config/database';
 import { extractTableIdFromQRCode } from '../utils/qrcode';
+import { websocketService } from './websocket.service';
 
 interface CreateSessionData {
   qrCodeData: string;
@@ -385,6 +386,69 @@ export const customerSessionService = {
     });
 
     return order;
+  },
+
+  // Cancel active order for a table (e.g. from table QR customer request)
+  async cancelActiveOrderByTable(tableIdentifier: string, reason?: string) {
+    if (!tableIdentifier) throw new Error('Table identifier is required');
+
+    const table = await prisma.table.findFirst({
+      where: {
+        OR: [
+          { id: tableIdentifier },
+          { number: tableIdentifier },
+          { number: tableIdentifier.replace(/^t/i, '') },
+          { number: `T${tableIdentifier}` },
+        ],
+      },
+    });
+
+    if (!table) {
+      throw new Error('Table not found');
+    }
+
+    const order = await prisma.order.findFirst({
+      where: {
+        tableId: table.id,
+        paymentStatus: 'UNPAID',
+        status: {
+          in: ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'],
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    if (!order) {
+      throw new Error('No active order found for this table');
+    }
+
+    // The customer can only delete/cancel the order if it has NOT been sent to the kitchen yet ('PENDING')
+    if (order.status !== 'PENDING') {
+      throw new Error(
+        'This order has already been sent to the kitchen and cannot be deleted directly. Please call your waiter for assistance.'
+      );
+    }
+
+    const cancelled = await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        status: 'CANCELLED',
+        notes: reason
+          ? `${order.notes || ''}\nCancelled by customer: ${reason}`
+          : `${order.notes || ''}\nCancelled by customer at table`,
+      },
+      include: {
+        table: true,
+      },
+    });
+
+    websocketService.cancelOrderNotifications(order.id);
+    const branchId = order.branchId || '';
+    websocketService.emitOrderStatusUpdated(cancelled, branchId);
+
+    return cancelled;
   },
 
   // Get active session for a table

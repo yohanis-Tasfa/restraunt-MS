@@ -16,7 +16,8 @@ import {
   X, 
   Search,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Home
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '../components/ui/button';
@@ -389,31 +390,41 @@ export default function CustomerMenuPage() {
     <div className="min-h-screen bg-[#040c08] text-white pb-24 selection:bg-[#00e676] selection:text-black">
       {/* Sticky Table Header */}
       <header className="sticky top-0 z-40 bg-[#042417]/95 backdrop-blur-xl border-b border-[#0e442d] shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex flex-col leading-none">
+        <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link to={`/?table=${session.table.number}`} className="flex flex-col leading-none hover:opacity-85 transition-opacity flex-shrink-0" title="Back to Restaurant Landing Page">
               <span className="font-serif italic font-black text-lg text-white">Yoni</span>
               <span className="text-[9px] uppercase font-bold text-[#00e676] tracking-wider">Restaurant</span>
             </Link>
-            <span className="h-6 w-px bg-white/20" />
-            <div>
+            <span className="h-6 w-px bg-white/20 flex-shrink-0" />
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm sm:text-base font-extrabold text-[#00e676]">
+                <span className="text-sm sm:text-base font-extrabold text-[#00e676] truncate">
                   Table {session.table.number}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#083a26] border border-[#145d3e] text-white/80 font-semibold">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#083a26] border border-[#145d3e] text-white/80 font-semibold flex-shrink-0">
                   {session.guestCount} {session.guestCount === 1 ? 'Guest' : 'Guests'}
                 </span>
               </div>
               {session.table.assignedWaiter && (
-                <p className="text-[11px] text-white/60">
+                <p className="text-[11px] text-white/60 truncate">
                   Waiter: <span className="text-white font-medium">{session.table.assignedWaiter.firstName}</span>
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Direct Button to Restaurant Landing Page */}
+            <Link
+              to={`/?table=${session.table.number}`}
+              className="px-3 py-2 rounded-xl bg-[#083a26] hover:bg-[#0c4d33] border border-[#145d3e] hover:border-[#00e676]/60 text-white hover:text-[#00e676] text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+              title="Visit Restaurant Landing Page, Story & About"
+            >
+              <Home className="w-4 h-4 text-[#00e676]" />
+              <span className="hidden sm:inline">Restaurant Home</span>
+            </Link>
+
             {/* Call Waiter General Button */}
             <button
               onClick={() => setIsCallWaiterOpen(true)}
@@ -554,6 +565,29 @@ export default function CustomerMenuPage() {
             ))}
           </div>
         )}
+
+        {/* Restaurant Heritage & Story Section link */}
+        <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#042417] via-[#083a26] to-[#031d13] border border-[#145d3e] text-center space-y-3 shadow-2xl">
+          <p className="text-[11px] uppercase tracking-widest font-extrabold text-[#00e676]">
+            Authentic Ethiopian Fine Dining
+          </p>
+          <h3 className="text-xl sm:text-2xl font-serif font-black text-white italic">
+            Experience the Heritage of Yoni Restaurant
+          </h3>
+          <p className="text-xs sm:text-sm text-white/70 max-w-xl mx-auto leading-relaxed">
+            Discover our culinary story, chef philosophy, dining atmosphere, and operating hours.
+          </p>
+          <div className="pt-2">
+            <Link
+              to={`/?table=${session.table.number}`}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-extrabold text-xs sm:text-sm transition-all shadow-[0_4px_20px_rgba(0,230,118,0.3)] hover:scale-105 active:scale-95 cursor-pointer"
+            >
+              <Home className="w-4 h-4" />
+              <span>Explore Restaurant Home & Story</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
       </main>
 
       {/* Item Customization Modal */}
@@ -727,6 +761,7 @@ export default function CustomerMenuPage() {
           order={activeOrder}
           tableNumber={session.table.number}
           onRequestBill={() => setIsBillDialogOpen(true)}
+          onOrderCancelled={() => setActiveOrder(null)}
         />
       )}
 

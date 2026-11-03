@@ -3,6 +3,7 @@ import { waiterCallsApi, type WaiterCall, type WaiterCallsQueryParams } from '..
 import { useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useWebSocket } from '../contexts/WebSocketContext';
+import { useNotificationStore } from '../store/notificationStore';
 
 // Hook for real-time waiter calls with auto-refresh
 export function useWaiterCalls(params?: WaiterCallsQueryParams, enableSound = false) {
@@ -271,9 +272,10 @@ export function useWaiterCallActions() {
   const acknowledgeMutation = useMutation({
     mutationFn: ({ id, notes }: { id: string; notes?: string }) =>
       waiterCallsApi.acknowledgeCall(id, notes),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['waiter-calls'] });
       queryClient.invalidateQueries({ queryKey: ['waiter-calls-active'] });
+      useNotificationStore.getState().resolveWaiterCallNotifications(variables.id, { newStatus: 'ACKNOWLEDGED' });
       toast.success('Call acknowledged');
     },
     onError: (error: any) => {
@@ -284,9 +286,10 @@ export function useWaiterCallActions() {
   const completeMutation = useMutation({
     mutationFn: ({ id, notes }: { id: string; notes?: string }) =>
       waiterCallsApi.completeCall(id, notes),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['waiter-calls'] });
       queryClient.invalidateQueries({ queryKey: ['waiter-calls-active'] });
+      useNotificationStore.getState().resolveWaiterCallNotifications(variables.id, { newStatus: 'COMPLETED' });
       toast.success('Call completed');
     },
     onError: (error: any) => {
@@ -297,9 +300,10 @@ export function useWaiterCallActions() {
   const cancelMutation = useMutation({
     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
       waiterCallsApi.cancelCall(id, reason),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['waiter-calls'] });
       queryClient.invalidateQueries({ queryKey: ['waiter-calls-active'] });
+      useNotificationStore.getState().resolveWaiterCallNotifications(variables.id, { newStatus: 'CANCELLED' });
       toast.success('Call cancelled');
     },
     onError: (error: any) => {

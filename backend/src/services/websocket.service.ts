@@ -303,6 +303,9 @@ class WebSocketService {
     if (restaurantId) {
       this.io.to(`restaurant:${restaurantId}`).emit('order:status_updated', data);
     }
+    if (order.createdById) {
+      this.io.to(`user:${order.createdById}`).emit('order:status_updated', data);
+    }
     console.log(`Emitted order:status_updated to branch:${branchId} - Order #${order.orderNumber} -> ${order.status}`);
   }
 

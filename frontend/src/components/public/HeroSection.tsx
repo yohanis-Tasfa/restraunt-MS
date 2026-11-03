@@ -75,7 +75,7 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
                   className="group px-8 py-4 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-sm sm:text-base rounded-full shadow-[0_4px_25px_rgba(0,230,118,0.5)] hover:shadow-[0_6px_35px_rgba(0,230,118,0.7)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2.5 cursor-pointer"
                 >
                   <UtensilsCrossed className="w-5 h-5 text-[#032314]" />
-                  <span>Explore Our Menu</span>
+                  <span>{tableNumber ? `Order for Table ${tableNumber}` : 'Explore Our Menu'}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 

@@ -94,6 +94,25 @@ export const customerSessionController = {
     }
   },
 
+  // Cancel active order for a table (public for table QR customers if before cooking)
+  async cancelActiveOrderByTable(req: Request, res: Response, next: NextFunction) {
+    try {
+      const paramVal = req.params.tableIdentifier || req.params.tableNumber || req.params.tableId;
+      const tableIdentifier = Array.isArray(paramVal) ? paramVal[0] : String(paramVal || '');
+      const { reason } = req.body || {};
+
+      const result = await customerSessionService.cancelActiveOrderByTable(tableIdentifier, reason);
+
+      res.json({
+        success: true,
+        message: 'Order cancelled successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Get active session for a table
   async getActiveSessionByTable(req: Request, res: Response, next: NextFunction) {
     try {

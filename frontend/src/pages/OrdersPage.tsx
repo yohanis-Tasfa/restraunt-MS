@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, OrderStatus, OrderType, type Order } from '../api/orders';
 import { billRequestsApi } from '../api/billRequests';
 import { useAuthStore } from '../store/authStore';
+import { useNotificationStore } from '../store/notificationStore';
 import { useBillRequestNotifications } from '../hooks/useBillRequestNotifications';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -53,6 +54,8 @@ export default function OrdersPage() {
   const [paymentFilter, setPaymentFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const limit = 20;
+
+  const { resolveOrderNotifications, markOrderAsRead, syncOrdersStatus } = useNotificationStore();
 
   // Enable real-time bill request notifications
   useBillRequestNotifications();
@@ -108,6 +111,13 @@ export default function OrdersPage() {
   const orders = data?.data || [];
   const pagination = data?.pagination || null;
 
+  // Auto-sync any existing order notifications with current orders status
+  useEffect(() => {
+    if (orders && orders.length > 0) {
+      syncOrdersStatus(orders);
+    }
+  }, [orders, syncOrdersStatus]);
+
   // Filter orders by search term, status, payment status, and waiter scope (client-side safety check)
   const filteredOrders = (orders || []).filter((order: Order) => {
     const matchesWaiterScope =
@@ -162,8 +172,9 @@ export default function OrdersPage() {
   // Cancel order mutation
   const cancelOrderMutation = useMutation({
     mutationFn: (id: string) => ordersApi.cancelOrder(id),
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      resolveOrderNotifications(id, { newStatus: 'CANCELLED' });
       toast.success('Order cancelled');
       setIsDetailsModalOpen(false);
     },
@@ -189,8 +200,10 @@ export default function OrdersPage() {
   // Mark order as SERVED mutation (when waiter delivers food to customer)
   const markAsServedMutation = useMutation({
     mutationFn: (orderId: string) => ordersApi.updateOrderStatus(orderId, OrderStatus.SERVED),
-    onSuccess: () => {
+    onSuccess: (_data, orderId) => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      // Instantly mark notification as SERVED & decrease unread badge counter
+      resolveOrderNotifications(orderId, { newStatus: 'SERVED' });
       toast.success('Order marked as served!');
     },
     onError: (error: any) => {
@@ -200,6 +213,8 @@ export default function OrdersPage() {
 
   const handleViewDetails = async (order: Order) => {
     try {
+      // Mark notification as read when waiter inspects order
+      markOrderAsRead(order.id);
       // Fetch full order details with all items
       const fullOrder = await ordersApi.getOrder(order.id);
       setSelectedOrder(fullOrder);
@@ -211,6 +226,9 @@ export default function OrdersPage() {
   };
 
   const handleStatusChange = (orderId: string, status: OrderStatus) => {
+    if (['SERVED', 'COMPLETED', 'CANCELLED'].includes(status)) {
+      resolveOrderNotifications(orderId, { newStatus: status });
+    }
     updateStatusMutation.mutate({ id: orderId, status });
   };
 
@@ -695,6 +713,18 @@ export default function OrdersPage() {
                         >
                           <MoreVertical className="w-4 h-4 text-gray-400" />
                         </button>
+
+                        {order.status !== OrderStatus.CANCELLED &&
+                          order.status !== OrderStatus.COMPLETED &&
+                          (isWaiter || isManagerOrOwner) && (
+                            <button
+                              onClick={() => handleCancelOrder(order.id)}
+                              className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors"
+                              title="Cancel / Void Order"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
                       </>
                     );
                   })()}
