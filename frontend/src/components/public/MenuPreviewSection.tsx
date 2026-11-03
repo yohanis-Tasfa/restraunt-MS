@@ -80,7 +80,7 @@ export default function MenuPreviewSection() {
   const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
   const [activeOrder, setActiveOrder] = useState<any>(null);
   const [sessionData, setSessionData] = useState<any>(null);
-  const [checkOrderInterval, setCheckOrderInterval] = useState<NodeJS.Timeout | null>(null);
+  const checkOrderIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     fetchMenuItems();
@@ -93,101 +93,102 @@ export default function MenuPreviewSection() {
 
     // Cleanup interval on unmount
     return () => {
-      if (checkOrderInterval) {
-        clearInterval(checkOrderInterval);
-      }
-    };
-  }, [tableNumber, checkOrderInterval]);
-
-  // Filter items based on search and category
-  useEffect(() => {
-    let filtered = allItems;
-
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(item => item.category?.id === selectedCategory);
-    }
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(query) ||
-        item.description?.toLowerCase().includes(query) ||
-        item.category?.name.toLowerCase().includes(query)
-      );
-    }
-
-    setFilteredItems(filtered);
-  }, [allItems, selectedCategory, searchQuery]);
-
-  const fetchCategories = async () => {
-    try {
-      const cats = await menuApi.getCategories();
-      setCategories(cats);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-  };
-
-  const checkForActiveOrder = async () => {
-    try {
-      console.log('🔍 Checking for active order...');
-
-      // Get customer session
-      const sessionResponse = await fetch('/api/customer-sessions/by-table', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tableNumber,
-          guestCount: 1,
-        }),
-      });
-
-      if (sessionResponse.ok) {
-        const session = await sessionResponse.json();
-        setSessionData(session);
-        console.log('📋 Session data:', session);
-
-        // Get table ID from session
-        const tableId = session.tableId || session.table?.id;
-        console.log('🏷️ Table ID:', tableId);
-
-        if (!tableId) {
-          console.error('❌ No table ID found in session');
-          return;
+        if (checkOrderIntervalRef.current) {
+          clearInterval(checkOrderIntervalRef.current);
+          checkOrderIntervalRef.current = null;
         }
+      };
+}, [tableNumber]);
 
-        // Check for unpaid orders on this table using tableId
-        console.log(`🔎 Fetching orders for table: ${tableId}`);
-        const ordersResponse = await apiClient.get(`/orders?tableId=${tableId}`);
-        console.log('📦 Orders response:', ordersResponse.data);
+// Filter items based on search and category
+useEffect(() => {
+  let filtered = allItems;
 
-        if (ordersResponse.data?.data && ordersResponse.data.data.length > 0) {
-          console.log(`✅ Found ${ordersResponse.data.data.length} orders`);
+  // Filter by category
+  if (selectedCategory !== 'all') {
+    filtered = filtered.filter(item => item.category?.id === selectedCategory);
+  }
 
-          // Filter for unpaid orders with active status
-          const unpaidOrders = ordersResponse.data.data.filter(
-            (order: any) => {
-              const isUnpaid = order.paymentStatus === 'UNPAID';
-              const isActive = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'].includes(order.status);
-              console.log(`Order ${order.orderNumber}: paymentStatus=${order.paymentStatus}, status=${order.status}, isUnpaid=${isUnpaid}, isActive=${isActive}`);
-              return isUnpaid && isActive;
-            }
-          );
+  // Filter by search query
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter(item =>
+      item.name.toLowerCase().includes(query) ||
+      item.description?.toLowerCase().includes(query) ||
+      item.category?.name.toLowerCase().includes(query)
+    );
+  }
 
-          console.log(`💰 Found ${unpaidOrders.length} unpaid active orders`);
+  setFilteredItems(filtered);
+}, [allItems, selectedCategory, searchQuery]);
 
-          if (unpaidOrders.length > 0) {
-            // Get the most recent unpaid order
-            const order = unpaidOrders[0];
-            setActiveOrder(order);
-            console.log('🎯 Set active order:', order);
+const fetchCategories = async () => {
+  try {
+    const cats = await menuApi.getCategories();
+    setCategories(cats);
+  } catch (error) {
+    console.error('Failed to fetch categories:', error);
+  }
+};
 
-            // Stop polling once we find an order
-            if (checkOrderInterval) {
-              clearInterval(checkOrderInterval);
-              setCheckOrderInterval(null);
+const checkForActiveOrder = async () => {
+  try {
+    console.log('🔍 Checking for active order...');
+
+    // Get customer session
+    const sessionResponse = await fetch('/api/customer-sessions/by-table', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tableNumber,
+        guestCount: 1,
+      }),
+    });
+
+    if (sessionResponse.ok) {
+      const session = await sessionResponse.json();
+      setSessionData(session);
+      console.log('📋 Session data:', session);
+
+      // Get table ID from session
+      const tableId = session.tableId || session.table?.id;
+      console.log('🏷️ Table ID:', tableId);
+
+      if (!tableId) {
+        console.error('❌ No table ID found in session');
+        return;
+      }
+
+      // Check for unpaid orders on this table using tableId
+      console.log(`🔎 Fetching orders for table: ${tableId}`);
+      const ordersResponse = await apiClient.get(`/orders?tableId=${tableId}`);
+      console.log('📦 Orders response:', ordersResponse.data);
+
+      if (ordersResponse.data?.data && ordersResponse.data.data.length > 0) {
+        console.log(`✅ Found ${ordersResponse.data.data.length} orders`);
+
+        // Filter for unpaid orders with active status
+        const unpaidOrders = ordersResponse.data.data.filter(
+          (order: any) => {
+            const isUnpaid = order.paymentStatus === 'UNPAID';
+            const isActive = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED'].includes(order.status);
+            console.log(`Order ${order.orderNumber}: paymentStatus=${order.paymentStatus}, status=${order.status}, isUnpaid=${isUnpaid}, isActive=${isActive}`);
+            return isUnpaid && isActive;
+          }
+        );
+
+        console.log(`💰 Found ${unpaidOrders.length} unpaid active orders`);
+
+        if (unpaidOrders.length > 0) {
+          // Get the most recent unpaid order
+          const order = unpaidOrders[0];
+          setActiveOrder(order);
+          console.log('🎯 Set active order:', order);
+
+          // Stop polling once we find an order
+            if (checkOrderIntervalRef.current) {
+              clearInterval(checkOrderIntervalRef.current);
+              checkOrderIntervalRef.current = null;
               console.log('⏸️ Stopped polling - order found');
             }
           } else {
@@ -439,19 +440,21 @@ export default function MenuPreviewSection() {
         { duration: 6000 }
       );
 
-      // Check for order after waiter has time to process (poll every 3 seconds)
-      const interval = setInterval(() => {
-        checkForActiveOrder();
-      }, 3000);
-      setCheckOrderInterval(interval);
+        // Check for order after waiter has time to process (poll every 5 seconds)
+        if (checkOrderIntervalRef.current) {
+          clearInterval(checkOrderIntervalRef.current);
+        }
+        checkOrderIntervalRef.current = setInterval(() => {
+          checkForActiveOrder();
+      }, 5000);
 
       // Stop checking after 2 minutes
       setTimeout(() => {
-        if (interval) {
-          clearInterval(interval);
-          setCheckOrderInterval(null);
-        }
-      }, 120000);
+          if (checkOrderIntervalRef.current) {
+            clearInterval(checkOrderIntervalRef.current);
+            checkOrderIntervalRef.current = null;
+          }
+        }, 120000);
     } catch (error) {
       console.error('Failed to call waiter:', error);
       toast.error('Failed to notify waiter. Please try again or call for assistance.');
@@ -743,11 +746,10 @@ export default function MenuPreviewSection() {
                     type="button"
                     onClick={() => goToSlide(index)}
                     aria-label={`Go to slide ${index + 1}`}
-                    className={`transition-all duration-300 cursor-pointer ${
-                      currentSlide === index
-                        ? 'w-7 h-2 rounded-full bg-[#00e676] shadow-[0_0_10px_#00e676]'
-                        : 'w-2 h-2 rounded-full bg-base-300 dark:bg-white/25 hover:bg-[#00e676]/60'
-                    }`}
+                    className={`transition-all duration-300 cursor-pointer ${currentSlide === index
+                      ? 'w-7 h-2 rounded-full bg-[#00e676] shadow-[0_0_10px_#00e676]'
+                      : 'w-2 h-2 rounded-full bg-base-300 dark:bg-white/25 hover:bg-[#00e676]/60'
+                      }`}
                   />
                 ))}
               </div>

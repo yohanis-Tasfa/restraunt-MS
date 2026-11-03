@@ -21,9 +21,8 @@ app.use(cors({
   credentials: true,
 }));
 
-// Rate limiting (WebSocket-only implementation, minimal polling)
-// Mostly for initial page loads and manual refreshes
-app.use(rateLimiter(15 * 60 * 1000, 200)); // 200 requests per 15 minutes
+// Rate limiting (disabled in development, configurable via RATE_LIMIT_MAX in production)
+app.use(rateLimiter(15 * 60 * 1000, 5000));
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
