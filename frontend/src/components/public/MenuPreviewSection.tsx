@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, X, Filter, ChevronDown } from 'lucide-react';
 import { menuApi } from '../../api/menu';
 import { useSearchParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -54,10 +54,19 @@ export default function MenuPreviewSection() {
   const [allItems, setAllItems] = useState<MenuItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  // Slide & scroll states
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const isDragging = useRef(false);
+  const hasDragged = useRef(false);
+  const startX = useRef(0);
+  const scrollLeftStart = useRef(0);
 
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -110,7 +119,6 @@ export default function MenuPreviewSection() {
     }
 
     setFilteredItems(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
   }, [allItems, selectedCategory, searchQuery]);
 
   const fetchCategories = async () => {
@@ -209,33 +217,90 @@ export default function MenuPreviewSection() {
     }
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentItems = filteredItems.slice(startIndex, endIndex);
+  // Split filteredItems into slides of 8 items (2 rows x 4 columns = 2x4 per slide)
+  const slides: MenuItem[][] = [];
+  for (let i = 0; i < filteredItems.length; i += ITEMS_PER_PAGE) {
+    slides.push(filteredItems.slice(i, i + ITEMS_PER_PAGE));
+  }
+  const totalSlides = Math.max(1, slides.length);
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-      // Scroll to menu section
-      document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
+  // Horizontal scroll buttons
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const scrollAmount = container.clientWidth;
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
     }
   };
 
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
+  // Jump to specific slide
+  const goToSlide = (slideIndex: number) => {
+    setCurrentSlide(slideIndex);
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      container.scrollTo({
+        left: slideIndex * container.clientWidth,
+        behavior: 'smooth',
+      });
     }
   };
 
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-    document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
+  // Track scroll position to update arrow states & active dot indicator (ooo)
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    setCanScrollLeft(scrollLeft > 20);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 20);
+
+    if (clientWidth > 0 && totalSlides > 1) {
+      const newSlide = Math.min(
+        totalSlides - 1,
+        Math.max(0, Math.round(scrollLeft / clientWidth))
+      );
+      if (newSlide !== currentSlide) {
+        setCurrentSlide(newSlide);
+      }
+    }
   };
+
+  // Mouse drag to scroll
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    isDragging.current = true;
+    hasDragged.current = false;
+    startX.current = e.pageX - scrollContainerRef.current.offsetLeft;
+    scrollLeftStart.current = scrollContainerRef.current.scrollLeft;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !scrollContainerRef.current) return;
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.3;
+    if (Math.abs(walk) > 6) {
+      hasDragged.current = true;
+    }
+    scrollContainerRef.current.scrollLeft = scrollLeftStart.current - walk;
+  };
+
+  const handleMouseUpOrLeave = () => {
+    isDragging.current = false;
+  };
+
+  // Reset scroll when category or search changes
+  useEffect(() => {
+    setCurrentSlide(0);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = 0;
+      setCanScrollLeft(false);
+      setCanScrollRight(filteredItems.length > ITEMS_PER_PAGE);
+    }
+  }, [filteredItems, selectedCategory]);
 
   const handleAddToOrder = (item: MenuItem) => {
+    if (hasDragged.current) return;
     // Open modal for item customization
     setSelectedItem(item);
     setIsModalOpen(true);
@@ -442,7 +507,7 @@ export default function MenuPreviewSection() {
   };
 
   return (
-    <section id="menu" className="py-20 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
+    <section id="menu" className="py-12 sm:py-16 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-40 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
@@ -451,21 +516,21 @@ export default function MenuPreviewSection() {
 
       <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-10 max-w-2xl mx-auto space-y-2">
+        <div className="text-center mb-6 max-w-2xl mx-auto space-y-1.5">
           {/* Main Title: Our Menu */}
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif italic font-black tracking-tight drop-shadow-sm dark:drop-shadow-2xl">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic font-black tracking-tight drop-shadow-sm dark:drop-shadow-2xl">
             <span className="text-base-content">Our </span>
             <span className="text-[#00c853] dark:text-[#00e676] drop-shadow-[0_0_30px_rgba(0,230,118,0.4)]">Menu</span>
           </h2>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg md:text-xl font-serif italic text-base-content/75 tracking-wide">
+          <p className="text-sm sm:text-base font-serif italic text-base-content/75 tracking-wide">
             Delicious food, made with love
           </p>
 
           {/* Elegant Green Curved Accent Line */}
           <div className="flex justify-center pt-0.5">
-            <svg className="w-56 sm:w-72 h-3.5 text-[#00e676] overflow-visible" viewBox="0 0 200 12" fill="none">
+            <svg className="w-48 sm:w-60 h-3 text-[#00e676] overflow-visible" viewBox="0 0 200 12" fill="none">
               <defs>
                 <linearGradient id="menuWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#00e676" stopOpacity="0" />
@@ -486,202 +551,208 @@ export default function MenuPreviewSection() {
           </div>
         </div>
 
-        {/* Search and Filter Bar */}
-        <div className="mb-10 space-y-6">
-          {/* Search Bar */}
-          <div className="relative max-w-xl mx-auto">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        {/* Search and Category Filter Dropdown (Side-by-Side) */}
+        <div className="mb-6">
+          <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-3">
+            {/* Search Bar */}
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by dish name, ingredients, or category..."
+                placeholder="Search by dish name, ingredients..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-12 py-3.5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] focus:border-[#00e676] text-base-content placeholder-gray-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00e676]/25 transition shadow-sm dark:shadow-inner text-sm"
+                className="w-full pl-10 pr-10 py-2.5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] focus:border-[#00e676] text-base-content placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00e676]/25 transition shadow-sm text-sm"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-base-content rounded-full transition-colors"
+                  aria-label="Clear search"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-base-content rounded-full transition-colors cursor-pointer"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
-          </div>
 
-          {/* Category Filters */}
-          <div className="flex items-center justify-center gap-2.5 flex-wrap">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${selectedCategory === 'all'
-                  ? 'bg-[#00e676] text-[#032314] shadow-[0_0_15px_rgba(0,230,118,0.35)]'
-                  : 'bg-base-100 border border-base-300 dark:border-[#1b3d2e] text-base-content hover:border-[#00e676]/60 hover:text-[#00c853] dark:hover:text-[#00e676] shadow-sm'
-                }`}
-            >
-              All Dishes
-            </button>
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${selectedCategory === category.id
-                    ? 'bg-[#00e676] text-[#032314] shadow-[0_0_15px_rgba(0,230,118,0.35)]'
-                    : 'bg-base-100 border border-base-300 dark:border-[#1b3d2e] text-base-content hover:border-[#00e676]/60 hover:text-[#00c853] dark:hover:text-[#00e676] shadow-sm'
-                  }`}
+            {/* Category Filter Dropdown */}
+            <div className="relative w-full sm:w-56 flex-shrink-0">
+              <Filter className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#00c853] dark:text-[#00e676] pointer-events-none" />
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                aria-label="Filter dishes by category"
+                className="w-full appearance-none pl-10 pr-9 py-2.5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] focus:border-[#00e676] text-base-content font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00e676]/25 transition shadow-sm text-sm cursor-pointer"
               >
-                {category.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Results Count */}
-          {(searchQuery || selectedCategory !== 'all') && (
-            <div className="text-center">
-              <p className="text-xs sm:text-sm text-base-content/70">
-                Found <span className="text-[#00c853] dark:text-[#00e676] font-bold">{filteredItems.length}</span> {filteredItems.length === 1 ? 'dish' : 'dishes'}
-                {searchQuery && <> matching "<span className="text-base-content font-medium">{searchQuery}</span>"</>}
-              </p>
+                <option value="all">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Popular Items Grid */}
+        {/* Dish Items Content */}
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-max items-start content-start gap-4 sm:gap-5">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="rounded-3xl p-5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] animate-pulse">
-                <div className="w-full h-56 sm:h-64 rounded-2xl mb-4 bg-base-200" />
-                <div className="h-6 rounded w-3/4 mb-2 bg-base-200" />
-                <div className="h-4 rounded w-full mb-2 bg-base-200" />
-                <div className="h-4 rounded w-2/3 bg-base-200" />
+              <div key={i} className="rounded-2xl p-3.5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] animate-pulse space-y-2.5">
+                <div className="w-full h-36 sm:h-40 rounded-xl bg-base-200" />
+                <div className="h-5 rounded w-3/4 bg-base-200" />
+                <div className="h-4 rounded w-1/2 bg-base-200" />
+                <div className="h-9 rounded-xl w-full bg-base-200" />
               </div>
             ))}
           </div>
-        ) : currentItems.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🍽️</div>
-            <p className="text-lg text-base-content/70">
+        ) : filteredItems.length === 0 ? (
+          <div className="text-center py-10">
+            <div className="text-5xl mb-3">🍽️</div>
+            <p className="text-base text-base-content/70">
               No menu items available at the moment.
             </p>
-            <p className="text-sm mt-2 text-base-content/50">
+            <p className="text-xs mt-1.5 text-base-content/50">
               Please check back later or contact us for assistance.
             </p>
           </div>
         ) : (
-          <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-              {currentItems.map((item) => (
+          <div className="relative group/carousel px-1">
+            {/* Left Floating Arrow Button */}
+            {totalSlides > 1 && (
+              <button
+                type="button"
+                onClick={() => scroll('left')}
+                disabled={!canScrollLeft}
+                aria-label="Previous slide"
+                className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-base-100/95 dark:bg-[#091712]/95 border border-base-300 dark:border-white/15 text-base-content hover:text-[#032314] hover:bg-[#00e676] hover:border-[#00e676] shadow-lg backdrop-blur-md transition-all duration-200 flex items-center justify-center cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-105 active:scale-95"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+
+            {/* Right Floating Arrow Button */}
+            {totalSlides > 1 && (
+              <button
+                type="button"
+                onClick={() => scroll('right')}
+                disabled={!canScrollRight}
+                aria-label="Next slide"
+                className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-base-100/95 dark:bg-[#091712]/95 border border-base-300 dark:border-white/15 text-base-content hover:text-[#032314] hover:bg-[#00e676] hover:border-[#00e676] shadow-lg backdrop-blur-md transition-all duration-200 flex items-center justify-center cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-105 active:scale-95"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
+
+            {/* Horizontally scrollable container for 2x4 slides */}
+            <div
+              ref={scrollContainerRef}
+              onScroll={handleScroll}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUpOrLeave}
+              onMouseLeave={handleMouseUpOrLeave}
+              className="flex items-start gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 px-1 no-scrollbar cursor-grab active:cursor-grabbing select-none"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {slides.map((slideItems, slideIdx) => (
                 <div
-                  key={item.id}
-                  className="group relative rounded-3xl overflow-hidden bg-base-100 border border-base-300 dark:border-[#1b3d2e] hover:border-[#00e676]/70 transition-all duration-300 hover:-translate-y-2 shadow-sm hover:shadow-xl dark:shadow-none hover:dark:shadow-[0_20px_40px_-5px_rgba(0,230,118,0.25)] flex flex-col justify-between"
+                  key={slideIdx}
+                  className="w-full flex-shrink-0 snap-start grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-max content-start items-start gap-4 sm:gap-5"
                 >
-                  <div>
-                    {/* Image */}
-                    <div className="relative h-56 sm:h-64 overflow-hidden">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-gray-200 dark:to-black/60 flex items-center justify-center">
-                          <span className="text-6xl">🍽️</span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#091712] via-transparent to-transparent opacity-60" />
-
-                      {/* Category Badge */}
-                      {item.category && (
-                        <div className="absolute top-3.5 left-3.5 px-3 py-1 bg-black/75 backdrop-blur-md rounded-full border border-white/20">
-                          <span className="text-xs font-semibold text-white">
-                            {item.category.name}
-                          </span>
-                        </div>
-                      )}
-                      {/* Popular Badge */}
-                      <div className="absolute top-3.5 right-3.5 px-3.5 py-1 bg-[#00e676] text-[#032314] rounded-full font-bold text-xs flex items-center gap-1 shadow-md">
-                        <TrendingUp className="w-3.5 h-3.5" />
-                        <span>Popular</span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2 text-base-content group-hover:text-[#00c853] dark:group-hover:text-[#00e676] transition-colors duration-200">
-                        {item.name}
-                      </h3>
-                      <p className="text-sm text-base-content/70 mb-5 line-clamp-2 leading-relaxed">
-                        {item.description || 'Delicious Ethiopian dish prepared with authentic spices and fresh ingredients.'}
-                      </p>
-
-                      {/* Price and Rating */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-2xl font-extrabold text-[#00a844] dark:text-[#00e676]">{formatPrice(item.price)}</span>
-                        </div>
-                        <div className="flex items-center gap-1 px-3 py-1 bg-yellow-500/10 rounded-full border border-yellow-500/30">
-                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-400" />
-                          <span className="text-xs font-bold text-yellow-600 dark:text-yellow-400">4.8</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 pt-0">
-                    {/* Order Button */}
-                    <button
-                      onClick={() => handleAddToOrder(item)}
-                      className="w-full py-3.5 px-4 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-sm sm:text-base rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-[0_0_25px_rgba(0,230,118,0.4)]"
+                  {slideItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="group relative rounded-2xl overflow-hidden bg-base-100 border border-base-300 dark:border-[#1b3d2e] hover:border-[#00e676]/70 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg dark:shadow-none hover:dark:shadow-[0_12px_24px_-4px_rgba(0,230,118,0.25)] flex flex-col h-auto"
                     >
-                      <span>Add to Order</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                      {/* Image */}
+                      <div className="relative h-36 sm:h-40 md:h-44 overflow-hidden">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            draggable={false}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none select-none"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-gray-200 dark:to-black/60 flex items-center justify-center">
+                            <span className="text-4xl">🍽️</span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#091712] via-transparent to-transparent opacity-60 pointer-events-none" />
+
+                        {/* Category Badge */}
+                        {item.category && (
+                          <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 bg-black/75 backdrop-blur-md rounded-full border border-white/20">
+                            <span className="text-[11px] font-semibold text-white">
+                              {item.category.name}
+                            </span>
+                          </div>
+                        )}
+                        {/* Popular Badge */}
+                        <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 bg-[#00e676] text-[#032314] rounded-full font-bold text-[11px] flex items-center gap-1 shadow-md">
+                          <TrendingUp className="w-3 h-3" />
+                          <span>Popular</span>
+                        </div>
+                      </div>
+
+                      {/* Content: Title, Amount & Add to Order tightly grouped as one compact box */}
+                      <div className="p-3 sm:p-3.5 space-y-2">
+                        {/* Title */}
+                        <h3
+                          className="text-base sm:text-lg font-bold text-base-content group-hover:text-[#00c853] dark:group-hover:text-[#00e676] transition-colors duration-200 line-clamp-1"
+                          title={item.name}
+                        >
+                          {item.name}
+                        </h3>
+
+                        {/* Price & Rating */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-base sm:text-lg font-extrabold text-[#00a844] dark:text-[#00e676] leading-none">
+                            {formatPrice(item.price)}
+                          </span>
+                          <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 rounded-full border border-yellow-500/30">
+                            <Star className="w-3 h-3 text-yellow-500 fill-yellow-400" />
+                            <span className="text-[11px] font-bold text-yellow-600 dark:text-yellow-400">4.8</span>
+                          </div>
+                        </div>
+
+                        {/* Order Button */}
+                        <button
+                          onClick={() => handleAddToOrder(item)}
+                          className="w-full py-2.5 px-3 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs sm:text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:shadow-[0_0_16px_rgba(0,230,118,0.4)] active:scale-[0.98]"
+                        >
+                          <span>Add to Order</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-2">
-                <button
-                  onClick={goToPreviousPage}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 bg-base-100 text-base-content border border-base-300 dark:border-white/10 hover:border-[#00e676] rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-sm"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Previous</span>
-                </button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={`w-10 h-10 rounded-xl font-bold transition-all duration-200 cursor-pointer ${currentPage === page
-                        ? 'bg-[#00e676] text-[#032314] shadow-md shadow-[#00e676]/30'
-                        : 'bg-base-100 text-base-content border border-base-300 dark:border-white/10 hover:border-[#00e676] hover:text-[#00c853]'
-                        }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={goToNextPage}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-base-100 text-base-content border border-base-300 dark:border-white/10 hover:border-[#00e676] rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-sm"
-                >
-                  <span>Next</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+            {/* Bottom Dots Indicator (ooo) */}
+            {totalSlides > 1 && (
+              <div className="mt-6 sm:mt-7 flex items-center justify-center gap-2">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => goToSlide(index)}
+                    aria-label={`Go to slide ${index + 1}`}
+                    className={`transition-all duration-300 cursor-pointer ${
+                      currentSlide === index
+                        ? 'w-7 h-2 rounded-full bg-[#00e676] shadow-[0_0_10px_#00e676]'
+                        : 'w-2 h-2 rounded-full bg-base-300 dark:bg-white/25 hover:bg-[#00e676]/60'
+                    }`}
+                  />
+                ))}
               </div>
             )}
-          </>
+          </div>
         )}
 
       </div>
