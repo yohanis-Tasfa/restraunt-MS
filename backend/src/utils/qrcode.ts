@@ -31,9 +31,9 @@ export const generateTableQRCode = async (
     // Generate unique QR code identifier (kept for backward compatibility)
     const qrCodeData = `table_${tableId}_${uuidv4()}`;
     
-    // Construct the PUBLIC LANDING PAGE URL with table number
+    // Construct the DEDICATED TABLE ORDERING MENU URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const menuUrl = `${frontendUrl}/?table=${tableNumber}`;
+    const menuUrl = `${frontendUrl}/menu/table/${qrCodeData}`;
     
     // Generate QR code as data URL
     const qrCodeDataUrl = await QRCode.toDataURL(menuUrl, {

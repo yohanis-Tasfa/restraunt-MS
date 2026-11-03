@@ -4,10 +4,9 @@ import banner1 from '../../assets/banner1.png';
 interface HeroSectionProps {
   onViewMenu?: () => void;
   onBookTable?: () => void;
-  tableNumber?: string | null;
 }
 
-export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: HeroSectionProps) {
+export default function HeroSection({ onViewMenu, onBookTable }: HeroSectionProps) {
   return (
     <section id="home" className="relative min-h-[92vh] lg:min-h-screen flex items-center overflow-hidden bg-base-100 dark:bg-[#040c08] pt-24 pb-16">
       {/* ================= BACKGROUND BANNER IMAGE (VIBRANT & UNBLOCKED) ================= */}
@@ -45,7 +44,7 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
           </div>
 
           {/* Main Hero Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-black tracking-tight leading-[1.08] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.1] drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
               <span className="block text-white">Good Food.</span>
               <span className="block text-[#00e676] drop-shadow-[0_0_35px_rgba(0,230,118,0.5)]">
                 Great Mood.
@@ -53,19 +52,9 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
             </h1>
 
             {/* Description */}
-              <p className="text-sm sm:text-base lg:text-lg text-white/95 leading-relaxed max-w-xl font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+              <p className="text-sm sm:text-base text-white/90 leading-relaxed max-w-lg font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
                 Enjoy delicious Ethiopian and international dishes prepared with fresh ingredients and love.
               </p>
-
-              {/* QR Table badge if scanned from physical table */}
-              {tableNumber && (
-                <div className="inline-block pt-1">
-                  <div className="px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-[#00e676] text-[#00e676] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_20px_rgba(0,230,118,0.3)] animate-pulse">
-                    <span>🔥</span>
-                    <span>Table {tableNumber} &bull; Ready to Order Live</span>
-                  </div>
-                </div>
-              )}
 
               {/* CTA Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -75,7 +64,7 @@ export default function HeroSection({ onViewMenu, onBookTable, tableNumber }: He
                   className="group px-8 py-4 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-sm sm:text-base rounded-full shadow-[0_4px_25px_rgba(0,230,118,0.5)] hover:shadow-[0_6px_35px_rgba(0,230,118,0.7)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2.5 cursor-pointer"
                 >
                   <UtensilsCrossed className="w-5 h-5 text-[#032314]" />
-                  <span>{tableNumber ? `Order for Table ${tableNumber}` : 'Explore Our Menu'}</span>
+                  <span>Explore Our Menu</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 

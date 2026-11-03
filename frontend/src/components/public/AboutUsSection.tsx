@@ -3,7 +3,7 @@ import restaurantImage from '../../assets/reartaunt image.png';
 
 export default function AboutUsSection() {
   return (
-    <section id="about" className="py-20 relative overflow-hidden bg-base-100 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
+    <section id="about" className="py-20 scroll-mt-20 relative overflow-hidden bg-base-100 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute top-20 left-20 w-96 h-96 bg-[#00e676]/10 rounded-full blur-[140px]" />

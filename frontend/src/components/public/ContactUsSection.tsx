@@ -30,7 +30,7 @@ export default function ContactUsSection() {
   };
 
   return (
-    <section id="contact" className="py-20 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
+    <section id="contact" className="py-20 scroll-mt-20 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
       {/* Decorative Background */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute top-20 left-20 w-96 h-96 bg-[#00e676]/10 rounded-full blur-[140px]" />

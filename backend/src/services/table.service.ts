@@ -652,7 +652,7 @@ export class TableService {
       throw new ApiError(400, 'Table does not have a QR code. Generate one first.');
     }
 
-    // Construct menu URL
+    // Construct menu URL pointing directly to dedicated customer table menu
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const menuUrl = `${frontendUrl}/menu/table/${table.qrCodeData}`;
 

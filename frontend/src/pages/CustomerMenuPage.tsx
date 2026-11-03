@@ -392,7 +392,7 @@ export default function CustomerMenuPage() {
       <header className="sticky top-0 z-40 bg-[#042417]/95 backdrop-blur-xl border-b border-[#0e442d] shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <Link to={`/?table=${session.table.number}`} className="flex flex-col leading-none hover:opacity-85 transition-opacity flex-shrink-0" title="Back to Restaurant Landing Page">
+            <Link to="/" className="flex flex-col leading-none hover:opacity-85 transition-opacity flex-shrink-0" title="Back to Restaurant Landing Page">
               <span className="font-serif italic font-black text-lg text-white">Yoni</span>
               <span className="text-[9px] uppercase font-bold text-[#00e676] tracking-wider">Restaurant</span>
             </Link>
@@ -417,7 +417,7 @@ export default function CustomerMenuPage() {
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* Direct Button to Restaurant Landing Page */}
             <Link
-              to={`/?table=${session.table.number}`}
+              to="/"
               className="px-3 py-2 rounded-xl bg-[#083a26] hover:bg-[#0c4d33] border border-[#145d3e] hover:border-[#00e676]/60 text-white hover:text-[#00e676] text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
               title="Visit Restaurant Landing Page, Story & About"
             >
@@ -579,7 +579,7 @@ export default function CustomerMenuPage() {
           </p>
           <div className="pt-2">
             <Link
-              to={`/?table=${session.table.number}`}
+              to="/"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-extrabold text-xs sm:text-sm transition-all shadow-[0_4px_20px_rgba(0,230,118,0.3)] hover:scale-105 active:scale-95 cursor-pointer"
             >
               <Home className="w-4 h-4" />

@@ -7,7 +7,6 @@ import MenuItemModal from './MenuItemModal';
 import FloatingCart, { type CartItem } from './FloatingCart';
 import OrderTypeDialog from './OrderTypeDialog';
 import BillRequestDialog from './BillRequestDialog';
-import LiveOrderStatusTracker from './LiveOrderStatusTracker';
 import toast from 'react-hot-toast';
 import apiClient from '../../api/client';
 
@@ -399,21 +398,21 @@ export default function MenuPreviewSection() {
         { duration: 6000 }
       );
 
-        // Check for order after waiter has time to process (poll every 5 seconds)
-        if (checkOrderIntervalRef.current) {
-          clearInterval(checkOrderIntervalRef.current);
-        }
-        checkOrderIntervalRef.current = setInterval(() => {
-          checkForActiveOrder();
+      // Check for order after waiter has time to process (poll every 5 seconds)
+      if (checkOrderIntervalRef.current) {
+        clearInterval(checkOrderIntervalRef.current);
+      }
+      checkOrderIntervalRef.current = setInterval(() => {
+        checkForActiveOrder();
       }, 5000);
 
       // Stop checking after 2 minutes
       setTimeout(() => {
-          if (checkOrderIntervalRef.current) {
-            clearInterval(checkOrderIntervalRef.current);
-            checkOrderIntervalRef.current = null;
-          }
-        }, 120000);
+        if (checkOrderIntervalRef.current) {
+          clearInterval(checkOrderIntervalRef.current);
+          checkOrderIntervalRef.current = null;
+        }
+      }, 120000);
     } catch (error) {
       console.error('Failed to call waiter:', error);
       toast.error('Failed to notify waiter. Please try again or call for assistance.');
@@ -426,11 +425,6 @@ export default function MenuPreviewSection() {
       return;
     }
 
-    // Debug logging
-    console.log('📋 Active Order:', activeOrder);
-    console.log('📋 Session Data:', sessionData);
-
-    // Check if we have all required data
     if (!sessionData?.id) {
       toast.error('Session not found. Please refresh the page.');
       return;
@@ -442,14 +436,10 @@ export default function MenuPreviewSection() {
       return;
     }
 
-    // Try to get waiter from multiple sources
     const waiterId =
       sessionData?.table?.assignedWaiterId ||
       activeOrder?.table?.assignedWaiterId ||
-      activeOrder?.createdById; // Fallback to the person who created the order
-
-    console.log('🏷️ Table ID:', tableId);
-    console.log('👤 Waiter ID:', waiterId);
+      activeOrder?.createdById;
 
     if (!waiterId) {
       toast.error('No staff member available. Please call for assistance.');
@@ -459,17 +449,12 @@ export default function MenuPreviewSection() {
     setIsBillDialogOpen(true);
   };
 
-  const handleViewFullMenu = () => {
-    // Scroll to top of menu section
-    document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const formatPrice = (price: number) => {
     return `${price.toFixed(2)} ETB`;
   };
 
   return (
-    <section id="menu" className="py-12 sm:py-16 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
+    <section id="menu" className="py-12 sm:py-16 scroll-mt-20 relative overflow-hidden bg-base-200 text-base-content border-t border-base-300 dark:border-[#12281d] transition-colors duration-300">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-40 right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl" />
@@ -558,7 +543,7 @@ export default function MenuPreviewSection() {
           </div>
         </div>
 
-        {/* Dish Items Content */}
+        {/* Dish Items Content - Restored 8-Item Horizontal Slider */}
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-max items-start content-start gap-4 sm:gap-5">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
@@ -608,7 +593,7 @@ export default function MenuPreviewSection() {
               </button>
             )}
 
-            {/* Horizontally scrollable container for 2x4 slides */}
+            {/* Horizontally scrollable container for 2x4 slides (8 items per slide) */}
             <div
               ref={scrollContainerRef}
               onScroll={handleScroll}
@@ -715,7 +700,6 @@ export default function MenuPreviewSection() {
             )}
           </div>
         )}
-
       </div>
 
       {/* Menu Item Modal */}
@@ -753,15 +737,6 @@ export default function MenuPreviewSection() {
             activeOrder.createdById ||
             ''
           }
-        />
-      )}
-
-      {/* Live Order Status Tracker */}
-      {activeOrder && tableNumber && (
-        <LiveOrderStatusTracker
-          order={activeOrder}
-          tableNumber={tableNumber}
-          onRequestBill={handleRequestBill}
         />
       )}
 
