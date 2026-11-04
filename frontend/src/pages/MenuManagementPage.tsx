@@ -1070,15 +1070,15 @@ function MenuItemModal({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-        <h2 className="text-xl font-bold mb-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
           {item ? 'Edit Menu Item' : 'Add New Menu Item'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Dish Name *
               </label>
               <input
@@ -1088,13 +1088,13 @@ function MenuItemModal({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="e.g., Doro Wat"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Category *
               </label>
               
@@ -1105,9 +1105,9 @@ function MenuItemModal({
                   <button
                     type="button"
                     onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left flex items-center justify-between bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left flex items-center justify-between bg-white dark:bg-[#071a12] text-gray-900 dark:text-white cursor-pointer"
                   >
-                    <span className={formData.categoryId ? 'text-gray-900' : 'text-gray-500'}>
+                    <span className={formData.categoryId ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}>
                       {formData.categoryId
                         ? categories.find(c => c.id === formData.categoryId)?.name
                         : 'Select category'}
@@ -1124,7 +1124,7 @@ function MenuItemModal({
                         className="fixed inset-0 z-10" 
                         onClick={() => setShowCategoryDropdown(false)}
                       />
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#091a13] border border-gray-300 dark:border-[#143225] rounded-lg shadow-xl z-20 max-h-64 overflow-y-auto">
                         {/* Select category option */}
                         <button
                           type="button"
@@ -1132,7 +1132,7 @@ function MenuItemModal({
                             setFormData({ ...formData, categoryId: '' });
                             setShowCategoryDropdown(false);
                           }}
-                          className="w-full px-3 py-2 text-left text-gray-500 hover:bg-gray-50 text-sm border-b border-gray-100 bg-white"
+                          className="w-full px-3 py-2 text-left text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#0c2219] text-sm border-b border-gray-100 dark:border-[#143225] bg-white dark:bg-[#091a13] cursor-pointer"
                         >
                           Select category
                         </button>
@@ -1141,8 +1141,8 @@ function MenuItemModal({
                         {categories.map((cat) => (
                           <div
                             key={cat.id}
-                            className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 group bg-white ${
-                              formData.categoryId === cat.id ? 'bg-green-50' : ''
+                            className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-[#123627] border-b border-gray-100 dark:border-[#143225] last:border-b-0 group bg-white dark:bg-[#091a13] ${
+                              formData.categoryId === cat.id ? 'bg-green-50 dark:bg-[#123627]' : ''
                             }`}
                           >
                             <button
@@ -1151,7 +1151,7 @@ function MenuItemModal({
                                 setFormData({ ...formData, categoryId: cat.id });
                                 setShowCategoryDropdown(false);
                               }}
-                              className="flex-1 text-left text-sm text-gray-900"
+                              className="flex-1 text-left text-sm text-gray-900 dark:text-white cursor-pointer"
                             >
                               {cat.name}
                             </button>
@@ -1162,7 +1162,7 @@ function MenuItemModal({
                                 handleDeleteCategory(cat.id, cat.name);
                               }}
                               disabled={deletingCategoryId === cat.id}
-                              className="ml-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-100 rounded transition-colors disabled:opacity-50 opacity-0 group-hover:opacity-100"
+                              className="ml-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-950/40 rounded transition-colors disabled:opacity-50 opacity-0 group-hover:opacity-100 cursor-pointer"
                               title="Delete category"
                             >
                               {deletingCategoryId === cat.id ? (
@@ -1181,7 +1181,7 @@ function MenuItemModal({
                 <button
                   type="button"
                   onClick={() => setShowCategoryForm(true)}
-                  className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 whitespace-nowrap text-sm"
+                  className="px-3 py-2 bg-emerald-600 dark:bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 whitespace-nowrap text-sm font-semibold cursor-pointer"
                   title="Add new category"
                 >
                   + New
@@ -1191,7 +1191,7 @@ function MenuItemModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Description
             </label>
             <textarea
@@ -1201,13 +1201,13 @@ function MenuItemModal({
               }
               placeholder="Describe the dish..."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Price (Birr) *
               </label>
               <input
@@ -1218,13 +1218,13 @@ function MenuItemModal({
                 onChange={(e) =>
                   setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Prep Time (minutes)
               </label>
               <input
@@ -1237,13 +1237,13 @@ function MenuItemModal({
                     preparationTime: parseInt(e.target.value) || 0,
                   })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Dish Image
             </label>
             
@@ -1252,10 +1252,10 @@ function MenuItemModal({
               <button
                 type="button"
                 onClick={() => setUploadMethod('url')}
-                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors ${
+                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
                   uploadMethod === 'url'
-                    ? 'bg-green-50 border-green-500 text-green-700'
-                    : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
+                    ? 'bg-green-50 dark:bg-[#123627] border-green-500 dark:border-[#00e676] text-green-700 dark:text-[#00e676]'
+                    : 'bg-gray-50 dark:bg-[#071a12] border-gray-300 dark:border-[#143225] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#0c2219]'
                 }`}
               >
                 URL
@@ -1263,10 +1263,10 @@ function MenuItemModal({
               <button
                 type="button"
                 onClick={() => setUploadMethod('file')}
-                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors ${
+                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
                   uploadMethod === 'file'
-                    ? 'bg-green-50 border-green-500 text-green-700'
-                    : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
+                    ? 'bg-green-50 dark:bg-[#123627] border-green-500 dark:border-[#00e676] text-green-700 dark:text-[#00e676]'
+                    : 'bg-gray-50 dark:bg-[#071a12] border-gray-300 dark:border-[#143225] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#0c2219]'
                 }`}
               >
                 Upload File
@@ -1284,7 +1284,7 @@ function MenuItemModal({
                     setImagePreview(e.target.value);
                   }}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
                   {sampleImages.map((img, idx) => (
@@ -1295,7 +1295,7 @@ function MenuItemModal({
                         setFormData({ ...formData, image: img });
                         setImagePreview(img);
                       }}
-                      className="w-16 h-16 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-green-500 flex-shrink-0 transition-colors"
+                      className="w-16 h-16 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-[#143225] hover:border-green-500 dark:hover:border-[#00e676] flex-shrink-0 transition-colors cursor-pointer"
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
@@ -1308,20 +1308,20 @@ function MenuItemModal({
             {uploadMethod === 'file' && (
               <div className="space-y-3">
                 <div className="flex items-center justify-center w-full">
-                  <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                  <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-[#143225] border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-[#071a12] hover:bg-gray-100 dark:hover:bg-[#0c2219] transition-colors ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       {isUploading ? (
                         <>
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mb-2"></div>
-                          <p className="text-sm text-gray-500">Uploading to Cloudinary...</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Uploading to Cloudinary...</p>
                         </>
                       ) : (
                         <>
-                          <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                          <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
+                          <Upload className="w-8 h-8 mb-2 text-gray-400 dark:text-gray-500" />
+                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold text-gray-700 dark:text-gray-300">Click to upload</span> or drag and drop
                           </p>
-                          <p className="text-xs text-gray-500">PNG, JPG, JPEG, GIF, WEBP (MAX. 5MB)</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, JPEG, GIF, WEBP (MAX. 5MB)</p>
                         </>
                       )}
                     </div>
@@ -1335,8 +1335,8 @@ function MenuItemModal({
                   </label>
                 </div>
                 {imageFile && (
-                  <div className="text-sm text-gray-600 flex items-center gap-2">
-                    <span className="font-medium">Selected:</span>
+                  <div className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                    <span className="font-medium text-gray-900 dark:text-white">Selected:</span>
                     <span>{imageFile.name}</span>
                     <span className="text-gray-400">({(imageFile.size / 1024).toFixed(1)} KB)</span>
                   </div>
@@ -1347,8 +1347,8 @@ function MenuItemModal({
             {/* Image Preview */}
             {imagePreview && (
               <div className="mt-3">
-                <p className="text-sm text-gray-600 mb-2">Preview:</p>
-                <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Preview:</p>
+                <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200 dark:border-[#143225]">
                   <img
                     src={imagePreview}
                     alt="Preview"
@@ -1361,7 +1361,7 @@ function MenuItemModal({
                       setImageFile(null);
                       setFormData({ ...formData, image: '' });
                     }}
-                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1381,7 +1381,7 @@ function MenuItemModal({
                 }
                 className="w-4 h-4 text-green-500 rounded focus:ring-green-500"
               />
-              <label htmlFor="isAvailable" className="text-sm text-gray-700">
+              <label htmlFor="isAvailable" className="text-sm text-gray-700 dark:text-gray-300">
                 Available
               </label>
             </div>
@@ -1396,7 +1396,7 @@ function MenuItemModal({
                 }
                 className="w-4 h-4 text-green-500 rounded focus:ring-green-500"
               />
-              <label htmlFor="isVegetarian" className="text-sm text-gray-700">
+              <label htmlFor="isVegetarian" className="text-sm text-gray-700 dark:text-gray-300">
                 Vegetarian 🌱
               </label>
             </div>
@@ -1411,7 +1411,7 @@ function MenuItemModal({
                 }
                 className="w-4 h-4 text-green-500 rounded focus:ring-green-500"
               />
-              <label htmlFor="isSpicy" className="text-sm text-gray-700">
+              <label htmlFor="isSpicy" className="text-sm text-gray-700 dark:text-gray-300">
                 Spicy 🌶️
               </label>
             </div>
@@ -1421,13 +1421,13 @@ function MenuItemModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg cursor-pointer"
             >
               {item ? 'Update Item' : 'Create Item'}
             </button>
@@ -1436,10 +1436,10 @@ function MenuItemModal({
 
         {/* Add Category Modal */}
         {showCategoryForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] rounded-xl max-w-md w-full p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">Add New Category</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Add New Category</h3>
                 <button
                   type="button"
                   onClick={() => {
@@ -1447,7 +1447,7 @@ function MenuItemModal({
                     setNewCategoryName('');
                     setNewCategoryDescription('');
                   }}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -1460,7 +1460,7 @@ function MenuItemModal({
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
                     placeholder="hot drinks"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     autoFocus
                   />
                 </div>
@@ -1470,14 +1470,14 @@ function MenuItemModal({
                     onChange={(e) => setNewCategoryDescription(e.target.value)}
                     placeholder="Description (optional)"
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={handleCreateCategory}
                   disabled={createCategoryMutation.isPending || !newCategoryName.trim()}
-                  className="w-full px-4 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  className="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold cursor-pointer"
                 >
                   {createCategoryMutation.isPending ? 'Creating...' : 'Create Category'}
                 </button>

@@ -102,78 +102,78 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[80vh]">
+        <DialogContent className="max-w-2xl max-h-[85vh] bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] text-gray-900 dark:text-gray-100">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-green-600" />
+            <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+              <Bell className="w-5 h-5 text-emerald-600 dark:text-[#00e676]" />
               Active Calls
-              <Badge className="bg-green-100 text-green-700">
+              <Badge className="bg-emerald-100 text-emerald-800 dark:bg-[#123627] dark:text-[#00e676] dark:border dark:border-[#1a4a35]">
                 {calls.length}
               </Badge>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">
               Manage pending customer requests and orders
             </DialogDescription>
           </DialogHeader>
 
-          <div className="overflow-y-auto max-h-[60vh] space-y-4 pr-2">
+          <div className="overflow-y-auto max-h-[65vh] space-y-4 pr-1">
             {isLoading ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 Loading calls...
               </div>
             ) : calls.length === 0 ? (
-              <div className="text-center py-8">
-                <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No active calls</p>
+              <div className="text-center py-10">
+                <Bell className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 font-medium">No active calls</p>
               </div>
             ) : (
               <>
                 {/* Pending Calls */}
                 {pendingCalls.length > 0 && (
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-600 uppercase flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                       Pending ({pendingCalls.length})
                     </h4>
                     {pendingCalls.map((call) => (
                       <div
                         key={call.id}
-                        className="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 space-y-3"
+                        className="bg-red-50/80 dark:bg-[#190a0d] border border-red-200/80 dark:border-[#3d1820] border-l-4 border-l-red-500 dark:border-l-red-500 rounded-xl p-4 space-y-3 shadow-sm transition-colors"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-2xl">
+                            <div className="flex items-center gap-2.5 mb-2">
+                              <span className="text-2xl p-1.5 rounded-lg bg-red-100 dark:bg-[#2b1016] border border-red-200/50 dark:border-[#4d1f29]">
                                 {requestTypeIcons[call.requestType]}
                               </span>
                               <div>
-                                <p className="font-semibold text-gray-900">
+                                <p className="font-bold text-gray-900 dark:text-white text-base">
                                   Table {call.table.number}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm font-medium text-red-700 dark:text-red-400">
                                   {requestTypeLabels[call.requestType]}
                                 </p>
                               </div>
                             </div>
                             {call.notes && (
-                              <p className="text-sm text-gray-700 italic bg-white/50 rounded px-2 py-1 mb-2">
+                              <p className="text-sm text-gray-700 dark:text-gray-200 italic bg-white/70 dark:bg-[#250d12] border border-red-100 dark:border-[#3d1820] rounded-lg px-2.5 py-1.5 mb-2">
                                 "{call.notes}"
                               </p>
                             )}
-                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                              <Clock className="w-3 h-3" />
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                              <Clock className="w-3.5 h-3.5" />
                               {formatDistanceToNow(new Date(call.createdAt), {
                                 addSuffix: true,
                               })}
                             </div>
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 pt-1">
                           {(Array.isArray(call.selectedItems) && call.selectedItems.length > 0) || (call.selectedItems?.items && call.selectedItems.items.length > 0) ? (
                             <Button
                               size="sm"
                               onClick={() => handleProcessOrder(call)}
-                              className="flex-1 bg-green-600 hover:bg-green-700"
+                              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm cursor-pointer"
                             >
                               <ShoppingCart className="w-4 h-4 mr-2" />
                               Process Order ({Array.isArray(call.selectedItems) ? call.selectedItems.length : call.selectedItems?.items?.length || 0} items)
@@ -184,14 +184,14 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                                 size="sm"
                                 onClick={() => acknowledge({ id: call.id })}
                                 variant="outline"
-                                className="flex-1"
+                                className="flex-1 border-gray-300 dark:border-[#3d1820] text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-[#250d12] cursor-pointer"
                               >
                                 I'm Going
                               </Button>
                               <Button
                                 size="sm"
                                 onClick={() => handleCollectPayment(call)}
-                                className="flex-1 bg-green-600 hover:bg-green-700"
+                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm cursor-pointer"
                               >
                                 <Receipt className="w-4 h-4 mr-2" />
                                 Collect Payment
@@ -202,14 +202,14 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                               <Button
                                 size="sm"
                                 onClick={() => acknowledge({ id: call.id })}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer"
                               >
                                 Acknowledge
                               </Button>
                               <Button
                                 size="sm"
                                 onClick={() => complete({ id: call.id })}
-                                className="flex-1 bg-green-600 hover:bg-green-700"
+                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer"
                               >
                                 Complete
                               </Button>
@@ -224,37 +224,37 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                 {/* Acknowledged Calls */}
                 {acknowledgedCalls.length > 0 && (
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-600 uppercase flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                       In Progress ({acknowledgedCalls.length})
                     </h4>
                     {acknowledgedCalls.map((call) => (
                       <div
                         key={call.id}
-                        className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 space-y-3"
+                        className="bg-blue-50/80 dark:bg-[#071524] border border-blue-200/80 dark:border-[#102d47] border-l-4 border-l-blue-500 dark:border-l-blue-500 rounded-xl p-4 space-y-3 shadow-sm transition-colors"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-2xl">
+                            <div className="flex items-center gap-2.5 mb-2">
+                              <span className="text-2xl p-1.5 rounded-lg bg-blue-100 dark:bg-[#0d2238] border border-blue-200/50 dark:border-[#14395c]">
                                 {requestTypeIcons[call.requestType]}
                               </span>
                               <div>
-                                <p className="font-semibold text-gray-900">
+                                <p className="font-bold text-gray-900 dark:text-white text-base">
                                   Table {call.table.number}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm font-medium text-blue-700 dark:text-blue-400">
                                   {requestTypeLabels[call.requestType]}
                                 </p>
                               </div>
                             </div>
                             {call.notes && (
-                              <p className="text-sm text-gray-700 italic bg-white/50 rounded px-2 py-1 mb-2">
+                              <p className="text-sm text-gray-700 dark:text-gray-200 italic bg-white/70 dark:bg-[#0c1f33] border border-blue-100 dark:border-[#102d47] rounded-lg px-2.5 py-1.5 mb-2">
                                 "{call.notes}"
                               </p>
                             )}
-                            <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                              <Clock className="w-3 h-3" />
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 mb-1">
+                              <Clock className="w-3.5 h-3.5" />
                               Acknowledged{' '}
                               {call.acknowledgedAt &&
                                 formatDistanceToNow(new Date(call.acknowledgedAt), {
@@ -262,19 +262,19 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                                 })}
                             </div>
                             {call.assignedWaiter && (
-                              <p className="text-xs text-gray-600">
+                              <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">
                                 Waiter: {call.assignedWaiter.firstName}{' '}
                                 {call.assignedWaiter.lastName}
                               </p>
                             )}
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 pt-1">
                           {(Array.isArray(call.selectedItems) && call.selectedItems.length > 0) || (call.selectedItems?.items && call.selectedItems.items.length > 0) ? (
                             <Button
                               size="sm"
                               onClick={() => handleProcessOrder(call)}
-                              className="flex-1 bg-green-600 hover:bg-green-700"
+                              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm cursor-pointer"
                             >
                               <ShoppingCart className="w-4 h-4 mr-2" />
                               Process Order ({Array.isArray(call.selectedItems) ? call.selectedItems.length : call.selectedItems?.items?.length || 0} items)
@@ -283,7 +283,7 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                             <Button
                               size="sm"
                               onClick={() => handleCollectPayment(call)}
-                              className="w-full bg-green-600 hover:bg-green-700"
+                              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm cursor-pointer"
                             >
                               <Receipt className="w-4 h-4 mr-2" />
                               Collect Payment
@@ -292,7 +292,7 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                             <Button
                               size="sm"
                               onClick={() => complete({ id: call.id })}
-                              className="w-full bg-green-600 hover:bg-green-700"
+                              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm cursor-pointer"
                             >
                               Mark Complete
                             </Button>

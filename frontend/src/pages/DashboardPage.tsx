@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
+import { ordersApi, OrderStatus } from '../api/orders';
+import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -47,7 +50,9 @@ interface RecentOrder {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const [timeframe, setTimeframe] = useState<'7d' | '30d' | '90d'>('7d');
+  const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'all' | 'custom'>('today');
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [timeframe, setTimeframe] = useState<'1d' | '7d' | '30d' | '90d'>('1d');
   const [orderChannelFilter, setOrderChannelFilter] = useState<'ALL' | 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY'>('ALL');
   const [selectedOrder, setSelectedOrder] = useState<RecentOrder | null>(null);
   const [isPoModalOpen, setIsPoModalOpen] = useState(false);
@@ -59,8 +64,163 @@ export default function DashboardPage() {
   const managerName = user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Branch Manager';
   const branchName = user?.branch?.name || 'Main Branch';
 
+  // Calculate start & end ISO dates based on active date filter preset or custom date picker
+  const dateParams = useMemo(() => {
+    if (dateFilter === 'all') {
+      return { startDate: undefined, endDate: undefined };
+    }
+
+    const now = new Date();
+
+    if (dateFilter === 'today') {
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    if (dateFilter === 'week') {
+      const start = new Date(now);
+      start.setDate(now.getDate() - 6);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    if (dateFilter === 'month') {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    if (dateFilter === 'custom' && selectedDate) {
+      const parts = selectedDate.split('-');
+      if (parts.length === 3) {
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const d = parseInt(parts[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+          const start = new Date(y, m - 1, d, 0, 0, 0, 0);
+          const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+          return {
+            startDate: start.toISOString(),
+            endDate: end.toISOString(),
+          };
+        }
+      }
+    }
+
+    return { startDate: undefined, endDate: undefined };
+  }, [dateFilter, selectedDate]);
+
+  const handlePresetChange = (preset: 'today' | 'week' | 'month' | 'all') => {
+    setDateFilter(preset);
+    setSelectedDate('');
+    if (preset === 'today') setTimeframe('1d');
+    else if (preset === 'week') setTimeframe('7d');
+    else if (preset === 'month') setTimeframe('30d');
+    else if (preset === 'all') setTimeframe('90d');
+  };
+
+  const handleDateSelect = (dateStr: string) => {
+    setSelectedDate(dateStr);
+    if (dateStr) {
+      setDateFilter('custom');
+      setTimeframe('1d');
+    } else {
+      setDateFilter('today');
+      setTimeframe('1d');
+    }
+  };
+
+  const handleClearDate = () => {
+    setSelectedDate('');
+    setDateFilter('today');
+    setTimeframe('1d');
+  };
+
+  const periodLabel = useMemo(() => {
+    if (dateFilter === 'today') return 'Today';
+    if (dateFilter === 'week') return 'This Week';
+    if (dateFilter === 'month') return 'This Month';
+    if (dateFilter === 'all') return 'All Time';
+    if (dateFilter === 'custom' && selectedDate) {
+      try {
+        const [y, m, d] = selectedDate.split('-').map(Number);
+        return format(new Date(y, m - 1, d), 'MMM d, yyyy');
+      } catch {
+        return selectedDate;
+      }
+    }
+    return 'Today';
+  }, [dateFilter, selectedDate]);
+
+  const subtitleText = useMemo(() => {
+    if (dateFilter === 'today') {
+      return `${greeting}, ${managerName} — here's what's happening at ${branchName} today.`;
+    }
+    if (dateFilter === 'week') {
+      return `${greeting}, ${managerName} — here's performance at ${branchName} this week.`;
+    }
+    if (dateFilter === 'month') {
+      return `${greeting}, ${managerName} — here's performance at ${branchName} this month.`;
+    }
+    if (dateFilter === 'all') {
+      return `${greeting}, ${managerName} — overall business overview for ${branchName}.`;
+    }
+    if (dateFilter === 'custom' && selectedDate) {
+      return `${greeting}, ${managerName} — operational records for ${branchName} on ${periodLabel}.`;
+    }
+    return `${greeting}, ${managerName} — here's what's happening at ${branchName}.`;
+  }, [dateFilter, greeting, managerName, branchName, periodLabel, selectedDate]);
+
+  // Fetch real orders from database matching branch and date filter
+  const { data: ordersResponse } = useQuery({
+    queryKey: ['dashboard-orders', user?.branch?.id, dateParams.startDate, dateParams.endDate],
+    queryFn: () =>
+      ordersApi.getOrders({
+        branchId: user?.branch?.id,
+        startDate: dateParams.startDate,
+        endDate: dateParams.endDate,
+        limit: 100,
+      }),
+    enabled: !!user?.branch?.id,
+  });
+
+  const realOrders = ordersResponse?.data || [];
+
   // Dynamic timeframe data
   const timeframeData = {
+    '1d': {
+      sales: 48250.0,
+      salesChange: '+14.2%',
+      orders: 184,
+      ordersChange: '+8.5%',
+      profit: 16887.5,
+      profitMargin: '35.0%',
+      aov: 262.23,
+      chartPoints: [
+        { x: 0, yRev: 140, yExp: 160, label: '10 AM', revenue: 3200, expense: 2100 },
+        { x: 100, yRev: 80, yExp: 130, label: '12 PM', revenue: 9800, expense: 5600 },
+        { x: 200, yRev: 100, yExp: 140, label: '2 PM', revenue: 7500, expense: 4800 },
+        { x: 300, yRev: 125, yExp: 155, label: '4 PM', revenue: 4900, expense: 3200 },
+        { x: 400, yRev: 60, yExp: 120, label: '6 PM', revenue: 11400, expense: 6900 },
+        { x: 500, yRev: 50, yExp: 115, label: '8 PM', revenue: 12500, expense: 7400 },
+        { x: 600, yRev: 130, yExp: 150, label: '10 PM', revenue: 4200, expense: 2700 },
+      ],
+      revPoly: '0,140 100,80 200,100 300,125 400,60 500,50 600,130 600,200 0,200',
+      expPoly: '0,160 100,130 200,140 300,155 400,120 500,115 600,150 600,200 0,200',
+      revLine: '0,140 100,80 200,100 300,125 400,60 500,50 600,130',
+      expLine: '0,160 100,130 200,140 300,155 400,120 500,115 600,150',
+    },
     '7d': {
       sales: 342800.0,
       salesChange: '+12.4%',
@@ -239,10 +399,114 @@ export default function DashboardPage() {
     },
   ];
 
-  const filteredOrders = recentOrders.filter((order) => {
-    if (orderChannelFilter === 'ALL') return true;
-    return order.type === orderChannelFilter;
-  });
+  // Dynamic stats based on dateFilter and real orders
+  const statsSummary = useMemo(() => {
+    const hasRealOrders = realOrders.length > 0;
+
+    let baseSales = 48250.0;
+    let baseOrders = 184;
+    let baseProfit = 16887.5;
+    let growth = '+14.2%';
+
+    if (dateFilter === 'today') {
+      baseSales = 48250.0;
+      baseOrders = 184;
+      baseProfit = 16887.5;
+      growth = '+14.2%';
+    } else if (dateFilter === 'week') {
+      baseSales = 342800.0;
+      baseOrders = 1284;
+      baseProfit = 119980.0;
+      growth = '+12.4%';
+    } else if (dateFilter === 'month') {
+      baseSales = 1482000.0;
+      baseOrders = 5420;
+      baseProfit = 518700.0;
+      growth = '+15.8%';
+    } else if (dateFilter === 'all') {
+      baseSales = 4320500.0;
+      baseOrders = 16350;
+      baseProfit = 1512175.0;
+      growth = '+9.4%';
+    } else if (dateFilter === 'custom') {
+      baseSales = 45000.0;
+      baseOrders = 172;
+      baseProfit = 15750.0;
+      growth = '+5.1%';
+    }
+
+    if (hasRealOrders) {
+      const realSales = realOrders
+        .filter((o: any) => o.status !== OrderStatus.CANCELLED)
+        .reduce((sum: number, o: any) => sum + (o.total || 0), 0);
+      const realOrderCount = realOrders.length;
+      const realProfit = realSales * 0.35; // 35% margin
+
+      return {
+        sales: realSales,
+        orders: realOrderCount,
+        profit: realProfit,
+        growth: '+10.5%',
+        isLive: true,
+      };
+    }
+
+    return {
+      sales: baseSales,
+      orders: baseOrders,
+      profit: baseProfit,
+      growth,
+      isLive: false,
+    };
+  }, [realOrders, dateFilter]);
+
+  // Map real backend orders to RecentOrder shape
+  const mappedRealOrders: RecentOrder[] = useMemo(() => {
+    return (realOrders || []).map((o: any) => ({
+      id: o.id,
+      orderNumber: o.orderNumber,
+      type: (o.type || 'DINE_IN') as any,
+      customer: o.customer ? `${o.customer.firstName || ''} ${o.customer.lastName || ''}`.trim() : 'Guest Customer',
+      table: o.table?.number ? `T-${o.table.number}` : undefined,
+      waiter: o.table?.assignedWaiter
+        ? `${o.table.assignedWaiter.firstName || ''} ${o.table.assignedWaiter.lastName || ''}`.trim()
+        : o.createdBy
+        ? `${o.createdBy.firstName || ''} ${o.createdBy.lastName || ''}`.trim()
+        : 'Server',
+      items: (o.items || []).map((it: any) => ({
+        name: it.menuItem?.name || 'Menu Item',
+        quantity: it.quantity || 1,
+        price: it.price || 0,
+      })),
+      subtotal: o.subtotal || o.total || 0,
+      vat: o.vat || 0,
+      serviceCharge: o.serviceCharge || 0,
+      total: o.total || 0,
+      status: (o.status === 'COMPLETED' || o.paymentStatus === 'PAID')
+        ? 'Paid'
+        : o.status === 'PREPARING'
+        ? 'Preparing'
+        : o.status === 'SERVED'
+        ? 'Served'
+        : o.status === 'CANCELLED'
+        ? 'Cancelled'
+        : 'Pending',
+      paymentMethod: o.paymentMethod || (o.paymentStatus === 'PAID' ? 'Paid' : 'Unpaid'),
+      time: o.createdAt ? format(new Date(o.createdAt), 'HH:mm') : 'Recently',
+    }));
+  }, [realOrders]);
+
+  const displayOrders = useMemo(() => {
+    if (mappedRealOrders.length > 0) return mappedRealOrders;
+    return dateFilter === 'today' || dateFilter === 'all' ? recentOrders : [];
+  }, [mappedRealOrders, dateFilter, recentOrders]);
+
+  const filteredOrders = useMemo(() => {
+    return displayOrders.filter((order) => {
+      if (orderChannelFilter === 'ALL') return true;
+      return order.type === orderChannelFilter;
+    });
+  }, [displayOrders, orderChannelFilter]);
 
   // Authentic low stock inventory items
   const lowStockItems = [
@@ -261,6 +525,124 @@ export default function DashboardPage() {
     { name: 'Shiro Tegabino Claypot', percentage: 15, orders: 72, revenue: 14400, color: 'bg-yellow-500' },
     { name: 'Beyaynetu Veggie Platter', percentage: 11, orders: 54, revenue: 9720, color: 'bg-purple-500' },
   ];
+
+  // Dynamically calculate popular dishes from real orders or fallback
+  const dynamicPopularDishes = useMemo(() => {
+    const counts: Record<string, { name: string; count: number; revenue: number }> = {};
+    realOrders.forEach((o: any) => {
+      o.items?.forEach((it: any) => {
+        const name = it.menuItem?.name || 'Special Dish';
+        if (!counts[name]) counts[name] = { name, count: 0, revenue: 0 };
+        counts[name].count += it.quantity || 1;
+        counts[name].revenue += (it.price || 0) * (it.quantity || 1);
+      });
+    });
+
+    const items = Object.values(counts).sort((a, b) => b.revenue - a.revenue);
+    if (items.length === 0) return popularFoods;
+
+    const totalRevenue = items.reduce((sum, item) => sum + item.revenue, 0) || 1;
+    const colors = ['bg-emerald-500', 'bg-amber-500', 'bg-blue-500', 'bg-yellow-500', 'bg-purple-500'];
+
+    return items.slice(0, 5).map((item, idx) => ({
+      name: item.name,
+      percentage: Math.round((item.revenue / totalRevenue) * 100),
+      orders: item.count,
+      revenue: item.revenue,
+      color: colors[idx % colors.length],
+    }));
+  }, [realOrders, popularFoods]);
+
+  const totalDishesSold = useMemo(() => {
+    return dynamicPopularDishes.reduce((sum, d) => sum + d.orders, 0);
+  }, [dynamicPopularDishes]);
+
+  // Dynamic breakdown for the middle sales trend card based on dateFilter
+  const salesTrendData = useMemo(() => {
+    if (dateFilter === 'today' || dateFilter === 'custom') {
+      return {
+        title: `Sales Breakdown (${periodLabel})`,
+        subtitle: `Hourly distribution for ${periodLabel}`,
+        yLabels: ['15k', '10k', '5k', '0k'],
+        points: [
+          { x: 0, y: 115, label: '10 AM', sales: 3200 },
+          { x: 45, y: 55, label: '12 PM', sales: 9800 },
+          { x: 90, y: 75, label: '2 PM', sales: 7500 },
+          { x: 135, y: 105, label: '4 PM', sales: 4900 },
+          { x: 180, y: 40, label: '6 PM', sales: 11400 },
+          { x: 225, y: 30, label: '8 PM', sales: 12500 },
+          { x: 270, y: 110, label: '10 PM', sales: 4200 },
+        ],
+        polyline: '0,115 45,55 90,75 135,105 180,40 225,30 270,110',
+      };
+    }
+    if (dateFilter === 'month') {
+      return {
+        title: `Sales This Month`,
+        subtitle: `Weekly totals across current month`,
+        yLabels: ['450k', '300k', '150k', '0k'],
+        points: [
+          { x: 0, y: 95, label: 'Wk 1', sales: 320000 },
+          { x: 90, y: 65, label: 'Wk 2', sales: 365000 },
+          { x: 180, y: 45, label: 'Wk 3', sales: 392000 },
+          { x: 270, y: 35, label: 'Wk 4', sales: 405000 },
+        ],
+        polyline: '0,95 90,65 180,45 270,35',
+      };
+    }
+    if (dateFilter === 'all') {
+      return {
+        title: `Sales Trend (All Time)`,
+        subtitle: `Monthly revenue progression`,
+        yLabels: ['1.5M', '1.0M', '0.5M', '0k'],
+        points: [
+          { x: 0, y: 100, label: 'M1', sales: 1380000 },
+          { x: 135, y: 70, label: 'M2', sales: 1458000 },
+          { x: 270, y: 50, label: 'M3', sales: 1482500 },
+        ],
+        polyline: '0,100 135,70 270,50',
+      };
+    }
+    // Default: 'week'
+    return {
+      title: `Sales This Week`,
+      subtitle: `Daily totals across current week`,
+      yLabels: ['50k', '35k', '20k', '0k'],
+      points: [
+        { x: 0, y: 110, label: 'Mon', sales: 22400 },
+        { x: 45, y: 95, label: 'Tue', sales: 25100 },
+        { x: 90, y: 98, label: 'Wed', sales: 24800 },
+        { x: 135, y: 70, label: 'Thu', sales: 29500 },
+        { x: 180, y: 30, label: 'Fri', sales: 41200 },
+        { x: 225, y: 18, label: 'Sat', sales: 48200 },
+        { x: 270, y: 45, label: 'Sun', sales: 38600 },
+      ],
+      polyline: '0,110 45,95 90,98 135,70 180,30 225,18 270,45',
+    };
+  }, [dateFilter, periodLabel]);
+
+  // Dynamic peak hours scaling based on the filtered orders volume
+  const peakHoursData = useMemo(() => {
+    const factor = Math.max(0.2, statsSummary.orders / 184);
+
+    return [
+      { hour: '11a', orders: Math.round(14 * factor), isRush: false },
+      { hour: '12p', orders: Math.round(42 * factor), isRush: true },
+      { hour: '1p', orders: Math.round(58 * factor), isRush: true },
+      { hour: '2p', orders: Math.round(36 * factor), isRush: false },
+      { hour: '3p', orders: Math.round(20 * factor), isRush: false },
+      { hour: '4p', orders: Math.round(24 * factor), isRush: false },
+      { hour: '5p', orders: Math.round(32 * factor), isRush: false },
+      { hour: '6p', orders: Math.round(50 * factor), isRush: true },
+      { hour: '7p', orders: Math.round(74 * factor), isRush: true },
+      { hour: '8p', orders: Math.round(82 * factor), isRush: true },
+      { hour: '9p', orders: Math.round(52 * factor), isRush: false },
+    ];
+  }, [statsSummary.orders]);
+
+  const maxPeakOrders = useMemo(() => {
+    return Math.max(...peakHoursData.map((h) => h.orders), 1);
+  }, [peakHoursData]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -281,17 +663,96 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dashboard</h1>
-        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">
-          {greeting}, {managerName} — here's what's happening at <strong className="text-gray-800 dark:text-gray-200 font-semibold">{branchName}</strong> today.
-        </p>
+      {/* Welcome Header with Date Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dashboard</h1>
+          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">
+            {subtitleText}
+          </p>
+        </div>
+
+        {/* Date Filter & Date Picker (Top Right) */}
+        <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-auto">
+          {/* Preset Buttons */}
+          <div className="inline-flex items-center rounded-xl bg-gray-100 dark:bg-[#071a12] p-1 border border-gray-200 dark:border-[#143225]">
+            <button
+              type="button"
+              onClick={() => handlePresetChange('today')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                dateFilter === 'today'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePresetChange('week')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                dateFilter === 'week'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              This Week
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePresetChange('month')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                dateFilter === 'month'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              This Month
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePresetChange('all')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                dateFilter === 'all'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              All Time
+            </button>
+          </div>
+
+          {/* Individual Date Picker */}
+          <div className="relative flex items-center">
+            <Calendar className="w-3.5 h-3.5 text-gray-400 dark:text-[#00e676]/70 absolute left-2.5 pointer-events-none" />
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => handleDateSelect(e.target.value)}
+              title="Pick an individual date"
+              className={`pl-8 pr-7 py-1.5 text-xs rounded-xl border transition-all cursor-pointer [color-scheme:light] dark:[color-scheme:dark] ${
+                dateFilter === 'custom' && selectedDate
+                  ? 'border-emerald-500 bg-emerald-50/60 dark:bg-[#0f2d1e] text-emerald-900 dark:text-[#00e676] font-semibold ring-2 ring-emerald-500/20'
+                  : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-[#1a4231]'
+              } focus:outline-none focus:ring-2 focus:ring-emerald-500/40 shadow-sm`}
+            />
+            {selectedDate && (
+              <button
+                type="button"
+                onClick={handleClearDate}
+                title="Clear selected date"
+                className="absolute right-2 p-0.5 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#143225] transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        {/* Today's Sales */}
+        {/* Sales Card */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
@@ -300,15 +761,19 @@ export default function DashboardPage() {
               </div>
               <span className="text-xs sm:text-sm font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
-                +14.2%
+                {statsSummary.growth}
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Br 48,250.00</h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Today's sales</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              Br {statsSummary.sales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
+              Sales ({periodLabel})
+            </p>
           </CardContent>
         </Card>
 
-        {/* Orders Today */}
+        {/* Orders Card */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
@@ -320,12 +785,16 @@ export default function DashboardPage() {
                 +8.5%
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">184</h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Orders today</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              {statsSummary.orders.toLocaleString()}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
+              Orders ({periodLabel})
+            </p>
           </CardContent>
         </Card>
 
-        {/* Profit */}
+        {/* Profit Card */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
@@ -337,8 +806,12 @@ export default function DashboardPage() {
                 +12.4%
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Br 119,980.00</h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Profit [7d]</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              Br {statsSummary.profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
+              Est. Profit ({periodLabel})
+            </p>
           </CardContent>
         </Card>
 
@@ -354,8 +827,12 @@ export default function DashboardPage() {
                 2 urgent
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">4 items</h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Inventory alerts</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              {lowStockItems.length} items
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
+              Inventory alerts
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -369,7 +846,7 @@ export default function DashboardPage() {
               <div>
                 <CardTitle className="text-lg font-bold text-gray-900 dark:text-white">Sales overview</CardTitle>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Revenue vs. expenses - {timeframe === '7d' ? 'last 7 days' : timeframe === '30d' ? 'last 30 days' : 'last 90 days'}
+                  Revenue vs. expenses - {timeframe === '1d' ? `today (${periodLabel})` : timeframe === '7d' ? 'last 7 days' : timeframe === '30d' ? 'last 30 days' : 'last 90 days'}
                 </p>
               </div>
 
@@ -386,7 +863,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex bg-gray-100 dark:bg-[#071a12] p-0.5 rounded-md border border-gray-200 dark:border-[#143225] text-xs font-medium">
-                  {(['7d', '30d', '90d'] as const).map((period) => (
+                  {(['1d', '7d', '30d', '90d'] as const).map((period) => (
                     <button
                       key={period}
                       onClick={() => setTimeframe(period)}
@@ -512,7 +989,7 @@ export default function DashboardPage() {
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-bold text-gray-900 dark:text-white">Popular dishes</CardTitle>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Top selling menu items by volume & revenue</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Top selling menu items by volume & revenue ({periodLabel})</p>
           </CardHeader>
           <CardContent>
             {/* Visual Donut Chart */}
@@ -527,7 +1004,7 @@ export default function DashboardPage() {
                     fill="none"
                     stroke="#10b981"
                     strokeWidth="15"
-                    strokeDasharray={`${32 * 2.51} ${100 * 2.51}`}
+                    strokeDasharray={`${(dynamicPopularDishes[0]?.percentage || 32) * 2.51} ${100 * 2.51}`}
                     strokeDashoffset="0"
                   />
                   {/* Tibs - 24% */}
@@ -538,8 +1015,8 @@ export default function DashboardPage() {
                     fill="none"
                     stroke="#f59e0b"
                     strokeWidth="15"
-                    strokeDasharray={`${24 * 2.51} ${100 * 2.51}`}
-                    strokeDashoffset={`-${32 * 2.51}`}
+                    strokeDasharray={`${(dynamicPopularDishes[1]?.percentage || 24) * 2.51} ${100 * 2.51}`}
+                    strokeDashoffset={`-${(dynamicPopularDishes[0]?.percentage || 32) * 2.51}`}
                   />
                   {/* Kitfo - 18% */}
                   <circle
@@ -549,8 +1026,8 @@ export default function DashboardPage() {
                     fill="none"
                     stroke="#3b82f6"
                     strokeWidth="15"
-                    strokeDasharray={`${18 * 2.51} ${100 * 2.51}`}
-                    strokeDashoffset={`-${(32 + 24) * 2.51}`}
+                    strokeDasharray={`${(dynamicPopularDishes[2]?.percentage || 18) * 2.51} ${100 * 2.51}`}
+                    strokeDashoffset={`-${((dynamicPopularDishes[0]?.percentage || 32) + (dynamicPopularDishes[1]?.percentage || 24)) * 2.51}`}
                   />
                   {/* Shiro - 15% */}
                   <circle
@@ -560,8 +1037,8 @@ export default function DashboardPage() {
                     fill="none"
                     stroke="#eab308"
                     strokeWidth="15"
-                    strokeDasharray={`${15 * 2.51} ${100 * 2.51}`}
-                    strokeDashoffset={`-${(32 + 24 + 18) * 2.51}`}
+                    strokeDasharray={`${(dynamicPopularDishes[3]?.percentage || 15) * 2.51} ${100 * 2.51}`}
+                    strokeDashoffset={`-${((dynamicPopularDishes[0]?.percentage || 32) + (dynamicPopularDishes[1]?.percentage || 24) + (dynamicPopularDishes[2]?.percentage || 18)) * 2.51}`}
                   />
                   {/* Beyaynetu - 11% */}
                   <circle
@@ -571,12 +1048,12 @@ export default function DashboardPage() {
                     fill="none"
                     stroke="#a855f7"
                     strokeWidth="15"
-                    strokeDasharray={`${11 * 2.51} ${100 * 2.51}`}
-                    strokeDashoffset={`-${(32 + 24 + 18 + 15) * 2.51}`}
+                    strokeDasharray={`${(dynamicPopularDishes[4]?.percentage || 11) * 2.51} ${100 * 2.51}`}
+                    strokeDashoffset={`-${((dynamicPopularDishes[0]?.percentage || 32) + (dynamicPopularDishes[1]?.percentage || 24) + (dynamicPopularDishes[2]?.percentage || 18) + (dynamicPopularDishes[3]?.percentage || 15)) * 2.51}`}
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">472</span>
+                  <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">{totalDishesSold}</span>
                   <span className="text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Dishes</span>
                 </div>
               </div>
@@ -584,7 +1061,7 @@ export default function DashboardPage() {
 
             {/* Dish Rankings List */}
             <div className="space-y-2.5 mt-4">
-              {popularFoods.map((food, i) => (
+              {dynamicPopularDishes.map((food, i) => (
                 <div key={i} className="flex items-center justify-between text-xs sm:text-sm py-1.5 border-b border-gray-100 dark:border-[#143225] last:border-0">
                   <div className="flex items-center gap-2.5">
                     <div className={`w-3 h-3 rounded-full ${food.color}`} />
@@ -603,19 +1080,18 @@ export default function DashboardPage() {
 
       {/* Operational Breakdown Row - Sales by Day, Peak Hours, Staffing */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sales This Week */}
+        {/* Sales Trend (Filtered by Date Filter) */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-gray-900 dark:text-white">Sales this week</CardTitle>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Daily totals across current week</p>
+            <CardTitle className="text-base font-bold text-gray-900 dark:text-white">{salesTrendData.title}</CardTitle>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{salesTrendData.subtitle}</p>
           </CardHeader>
           <CardContent>
             <div className="h-52 relative">
               <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[11px] font-mono text-gray-400 dark:text-gray-500 pr-1">
-                <span>50k</span>
-                <span>35k</span>
-                <span>20k</span>
-                <span>0k</span>
+                {salesTrendData.yLabels.map((yl, idx) => (
+                  <span key={idx}>{yl}</span>
+                ))}
               </div>
               <div className="ml-9 h-full relative pb-2">
                 <svg className="w-full h-full" viewBox="0 0 280 140" preserveAspectRatio="none">
@@ -624,7 +1100,7 @@ export default function DashboardPage() {
                   <line x1="0" y1="92" x2="280" y2="92" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
                   <line x1="0" y1="138" x2="280" y2="138" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
                   <polyline
-                    points="0,110 45,95 90,98 135,70 180,30 225,18 270,45"
+                    points={salesTrendData.polyline}
                     fill="none"
                     stroke="#10b981"
                     strokeWidth="3.5"
@@ -633,15 +1109,7 @@ export default function DashboardPage() {
                   />
                 </svg>
 
-                {[
-                  { x: 0, y: 110, day: 'Mon', sales: 22400 },
-                  { x: 45, y: 95, day: 'Tue', sales: 25100 },
-                  { x: 90, y: 98, day: 'Wed', sales: 24800 },
-                  { x: 135, y: 70, day: 'Thu', sales: 29500 },
-                  { x: 180, y: 30, day: 'Fri', sales: 41200 },
-                  { x: 225, y: 18, day: 'Sat', sales: 48200 },
-                  { x: 270, y: 45, day: 'Sun', sales: 38600 },
-                ].map((pt, i) => (
+                {salesTrendData.points.map((pt, i) => (
                   <div
                     key={i}
                     className="absolute group/pt"
@@ -654,7 +1122,7 @@ export default function DashboardPage() {
                     <div className="w-3 h-3 rounded-full bg-emerald-600 border-2 border-white cursor-pointer hover:scale-150 transition-transform shadow-xs" />
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover/pt:opacity-100 transition-opacity pointer-events-none z-20">
                       <div className="bg-gray-900 text-white rounded-md px-2 py-1 text-[11px] whitespace-nowrap">
-                        <span className="font-bold">{pt.day}:</span> Br {pt.sales.toLocaleString()}
+                        <span className="font-bold">{pt.label}:</span> Br {pt.sales.toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -662,13 +1130,9 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 mt-2 ml-9">
-              <span>Mon</span>
-              <span>Tue</span>
-              <span>Wed</span>
-              <span>Thu</span>
-              <span>Fri</span>
-              <span>Sat</span>
-              <span>Sun</span>
+              {salesTrendData.points.map((pt, idx) => (
+                <span key={idx}>{pt.label}</span>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -677,29 +1141,17 @@ export default function DashboardPage() {
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-bold text-gray-900 dark:text-white">Peak hours</CardTitle>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Orders by hour - today</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Orders distribution - {periodLabel}</p>
           </CardHeader>
           <CardContent>
             <div className="h-52 flex items-end justify-between gap-1.5 px-1 pb-2">
-              {[
-                { hour: '11a', orders: 14, isRush: false },
-                { hour: '12p', orders: 42, isRush: true },
-                { hour: '1p', orders: 58, isRush: true },
-                { hour: '2p', orders: 36, isRush: false },
-                { hour: '3p', orders: 20, isRush: false },
-                { hour: '4p', orders: 24, isRush: false },
-                { hour: '5p', orders: 32, isRush: false },
-                { hour: '6p', orders: 50, isRush: true },
-                { hour: '7p', orders: 74, isRush: true },
-                { hour: '8p', orders: 82, isRush: true },
-                { hour: '9p', orders: 52, isRush: false },
-              ].map((item, i) => (
+              {peakHoursData.map((item, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center group/bar relative">
                   <div
                     className={`w-full rounded-t transition-all cursor-pointer ${
                       item.isRush ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-200 dark:bg-[#143225] hover:bg-gray-300 dark:hover:bg-[#1b3d2e]'
                     }`}
-                    style={{ height: `${(item.orders / 82) * 155}px` }}
+                    style={{ height: `${Math.max(8, (item.orders / maxPeakOrders) * 155)}px` }}
                   >
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none z-20 whitespace-nowrap">
                       <div className="bg-gray-900 text-white rounded-md px-2 py-1 text-[10px]">
@@ -818,55 +1270,73 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-[#143225] text-xs sm:text-sm">
-                  {filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/40 transition-colors">
-                      <td className="py-3.5 px-3">
-                        <span className="font-mono font-bold text-gray-900 dark:text-white">{order.orderNumber}</span>
-                        <div className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-0.5">
-                          <Clock className="w-3 h-3" /> {order.time}
-                        </div>
-                      </td>
-
-                      <td className="py-3.5 px-3">
-                        <div className="font-semibold text-gray-800 dark:text-gray-200">{order.customer}</div>
-                        <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-300 border border-transparent dark:border-[#143225] mt-0.5">
-                          {order.type}
-                        </span>
-                      </td>
-
-                      <td className="py-3.5 px-3">
-                        <div className="font-medium text-gray-900 dark:text-gray-200">{order.table || 'Counter'}</div>
-                        <div className="text-xs text-gray-400 dark:text-gray-500">{order.waiter}</div>
-                      </td>
-
-                      <td className="py-3.5 px-3 text-right font-mono font-bold text-gray-900 dark:text-[#00e676] text-sm">
-                        Br {order.total.toFixed(2)}
-                      </td>
-
-                      <td className="py-3.5 px-3 text-center">
-                        <span className={`inline-block px-3 py-1 text-xs rounded-full border ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
-                      </td>
-
-                      <td className="py-3.5 px-3 text-right">
+                  {filteredOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-gray-500 dark:text-gray-400">
+                        <ShoppingBag className="w-8 h-8 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+                        <p className="font-semibold text-sm text-gray-700 dark:text-gray-300">No orders recorded for {periodLabel}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Try selecting another date or switch to All Time</p>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
-                          onClick={() => setSelectedOrder(order)}
-                          className="h-8 text-xs font-bold text-emerald-700 dark:text-[#00e676] hover:text-emerald-800 dark:hover:text-[#69f0ae] hover:bg-emerald-50 dark:hover:bg-[#0c2f21] px-3 cursor-pointer"
+                          onClick={() => handlePresetChange('all')}
+                          className="mt-3 text-xs dark:border-[#143225] dark:text-[#00e676] cursor-pointer"
                         >
-                          Invoice
+                          View All Orders
                         </Button>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredOrders.map((order) => (
+                      <tr key={order.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/40 transition-colors">
+                        <td className="py-3.5 px-3">
+                          <span className="font-mono font-bold text-gray-900 dark:text-white">{order.orderNumber}</span>
+                          <div className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-0.5">
+                            <Clock className="w-3 h-3" /> {order.time}
+                          </div>
+                        </td>
+
+                        <td className="py-3.5 px-3">
+                          <div className="font-semibold text-gray-800 dark:text-gray-200">{order.customer}</div>
+                          <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-300 border border-transparent dark:border-[#143225] mt-0.5">
+                            {order.type}
+                          </span>
+                        </td>
+
+                        <td className="py-3.5 px-3">
+                          <div className="font-medium text-gray-900 dark:text-gray-200">{order.table || 'Counter'}</div>
+                          <div className="text-xs text-gray-400 dark:text-gray-500">{order.waiter}</div>
+                        </td>
+
+                        <td className="py-3.5 px-3 text-right font-mono font-bold text-gray-900 dark:text-[#00e676] text-sm">
+                          Br {order.total.toFixed(2)}
+                        </td>
+
+                        <td className="py-3.5 px-3 text-center">
+                          <span className={`inline-block px-3 py-1 text-xs rounded-full border ${getStatusColor(order.status)}`}>
+                            {order.status}
+                          </span>
+                        </td>
+
+                        <td className="py-3.5 px-3 text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedOrder(order)}
+                            className="h-8 text-xs font-bold text-emerald-700 dark:text-[#00e676] hover:text-emerald-800 dark:hover:text-[#69f0ae] hover:bg-emerald-50 dark:hover:bg-[#0c2f21] px-3 cursor-pointer"
+                          >
+                            Invoice
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
 
             <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#143225] flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-              <span>Showing {filteredOrders.length} recent orders</span>
+              <span>Showing {filteredOrders.length} recent orders ({periodLabel})</span>
               <Button
                 variant="link"
                 size="sm"

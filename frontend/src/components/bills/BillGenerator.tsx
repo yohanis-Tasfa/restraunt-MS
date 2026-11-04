@@ -75,18 +75,18 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
         <DialogHeader>
-          <DialogTitle>Generate Bill</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-900 dark:text-white">Generate Bill</DialogTitle>
+          <DialogDescription className="text-gray-500 dark:text-gray-400">
             Review and print the bill for {billRequest.table?.number ? `Table ${billRequest.table.number}` : 'this order'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Bill Preview */}
-          <div className="border rounded-lg p-4 bg-gray-50">
-            <div ref={billRef} className="bg-white p-8 max-w-2xl mx-auto">
+          <div className="border border-gray-200 dark:border-[#143225] rounded-xl p-4 bg-gray-50 dark:bg-[#071a12]">
+            <div ref={billRef} className="bg-white p-8 max-w-2xl mx-auto rounded-lg shadow-sm text-gray-900">
               {/* Restaurant Header */}
               <div className="text-center border-b-2 border-gray-800 pb-4 mb-4">
                 {restaurant?.logo && (
@@ -215,11 +215,11 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-4 border-t">
+          <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-[#143225]">
             <Button
               onClick={handlePrint}
               disabled={isPrinting || completeMutation.isPending}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
             >
               {isPrinting ? (
                 <>
@@ -238,7 +238,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               onClick={handleDownloadPDF}
               disabled={isPrinting || completeMutation.isPending}
               variant="outline"
-              className="text-gray-700 border-gray-300 hover:bg-gray-50"
+              className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer"
             >
               <Download className="w-4 h-4 mr-2" />
               Save as PDF
@@ -248,7 +248,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
               onClick={handleCompleteWithoutPrint}
               disabled={completeMutation.isPending}
               variant="outline"
-              className="text-gray-700 border-gray-300 hover:bg-gray-50"
+              className="text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer"
             >
               <CheckCircle className="w-4 h-4 mr-2" />
               Complete
@@ -256,7 +256,7 @@ export default function BillGenerator({ billRequest, open, onOpenChange }: BillG
           </div>
 
           {/* Note */}
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
             After printing, you'll be prompted to mark this request as completed
           </p>
         </div>

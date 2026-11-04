@@ -1512,101 +1512,101 @@ export default function WaiterDashboardPage() {
       {/* CASHIER SHIFT HANDOVER SLIP MODAL DIALOG                                  */}
       {/* ========================================================================= */}
       <Dialog open={isHandoverModalOpen} onOpenChange={setIsHandoverModalOpen}>
-        <DialogContent className="max-w-lg p-6" hideCloseButton>
+        <DialogContent className="max-w-lg p-6 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white" hideCloseButton>
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold flex items-center justify-between text-gray-900">
+            <DialogTitle className="text-lg font-bold flex items-center justify-between text-gray-900 dark:text-white">
               <span className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-emerald-600" />
+                <FileCheck className="w-5 h-5 text-emerald-600 dark:text-[#00e676]" />
                 Cashier Shift Handover Slip
               </span>
-              <Badge className="bg-emerald-100 text-emerald-800 border-none font-semibold text-xs">
+              <Badge className="bg-emerald-100 dark:bg-[#123627] text-emerald-800 dark:text-[#00e676] border-none font-semibold text-xs">
                 {periodLabel}
               </Badge>
             </DialogTitle>
-            <DialogDescription className="text-xs text-gray-500">
+            <DialogDescription className="text-xs text-gray-500 dark:text-gray-400">
               Official shift reconciliation slip showing physical cash in hand to surrender to cashier vs. customer transfer confirmations.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 pt-2">
             {/* Meta info */}
-            <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-200 text-xs space-y-1.5">
+            <div className="bg-gray-50 dark:bg-[#071a12] p-3.5 rounded-xl border border-gray-200 dark:border-[#143225] text-xs space-y-1.5">
               <div className="flex justify-between">
-                <span className="text-gray-500 font-medium">Waiter / Server:</span>
-                <span className="font-bold text-gray-900">{user?.firstName || 'Server'} {user?.lastName || 'Waiter'}</span>
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Waiter / Server:</span>
+                <span className="font-bold text-gray-900 dark:text-white">{user?.firstName || 'Server'} {user?.lastName || 'Waiter'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500 font-medium">Branch Location:</span>
-                <span className="font-semibold text-gray-900">{user?.branch?.name || 'Bole Main Branch'}</span>
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Branch Location:</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{user?.branch?.name || 'Bole Main Branch'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500 font-medium">Settlement Time:</span>
-                <span className="font-medium text-gray-800">{format(new Date(), 'EEEE, MMM d, yyyy • h:mm a')}</span>
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Settlement Time:</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">{format(new Date(), 'EEEE, MMM d, yyyy • h:mm a')}</span>
               </div>
             </div>
 
             {/* Reconciliation Breakdown */}
-            <div className="border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100 text-xs">
+            <div className="border border-gray-200 dark:border-[#143225] rounded-xl overflow-hidden divide-y divide-gray-100 dark:divide-[#143225] text-xs">
               {/* Cash Section */}
-              <div className="p-3.5 bg-emerald-50/70 flex items-center justify-between">
+              <div className="p-3.5 bg-emerald-50/70 dark:bg-[#0c2219] flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-200/80 flex items-center justify-center text-emerald-800">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-200/80 dark:bg-[#143d2c] flex items-center justify-center text-emerald-800 dark:text-[#00e676]">
                     <Banknote className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="font-bold text-emerald-950 text-xs">1. Physical Cash in Hand</span>
-                    <p className="text-[11px] text-emerald-700">Must physically surrender to cashier</p>
+                    <span className="font-bold text-emerald-950 dark:text-[#00e676] text-xs">1. Physical Cash in Hand</span>
+                    <p className="text-[11px] text-emerald-700 dark:text-emerald-400">Must physically surrender to cashier</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-extrabold text-base text-emerald-700">
+                  <div className="font-extrabold text-base text-emerald-700 dark:text-[#00e676]">
                     Br {totalCashAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-medium">{cashOrders.length} cash orders</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">{cashOrders.length} cash orders</span>
                 </div>
               </div>
 
               {/* Digital Transfers Section */}
-              <div className="p-3.5 bg-blue-50/70 flex items-center justify-between">
+              <div className="p-3.5 bg-blue-50/70 dark:bg-[#081a2e] flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-blue-200/80 flex items-center justify-center text-blue-800">
+                  <div className="w-8 h-8 rounded-lg bg-blue-200/80 dark:bg-[#0f2d4f] flex items-center justify-center text-blue-800 dark:text-blue-300">
                     <Smartphone className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="font-bold text-blue-950 text-xs">2. Customer Digital Transfers</span>
-                    <p className="text-[11px] text-blue-700">Telebirr, CBE Birr customer screenshots</p>
+                    <span className="font-bold text-blue-950 dark:text-blue-200 text-xs">2. Customer Digital Transfers</span>
+                    <p className="text-[11px] text-blue-700 dark:text-blue-400">Telebirr, CBE Birr customer screenshots</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-extrabold text-base text-blue-700">
+                  <div className="font-extrabold text-base text-blue-700 dark:text-blue-400">
                     Br {totalTransferAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
-                  <span className="text-[10px] text-blue-700 font-medium">{transferOrders.length} transfers verified</span>
+                  <span className="text-[10px] text-blue-700 dark:text-blue-400 font-medium">{transferOrders.length} transfers verified</span>
                 </div>
               </div>
 
               {/* Transfer Details Sub-rows */}
-              <div className="p-3 bg-gray-50/90 pl-6 space-y-1.5 text-[11px] text-gray-600">
+              <div className="p-3 bg-gray-50/90 dark:bg-[#071a12] pl-6 space-y-1.5 text-[11px] text-gray-600 dark:text-gray-400">
                 <div className="flex justify-between items-center">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-[#00A3E0]" />
                     Telebirr Direct Payments:
                   </span>
-                  <span className="font-bold text-gray-900">Br {totalTelebirrAmount.toFixed(2)} ({telebirrOrders.length} orders)</span>
+                  <span className="font-bold text-gray-900 dark:text-white">Br {totalTelebirrAmount.toFixed(2)} ({telebirrOrders.length} orders)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-purple-700" />
                     CBE Birr Direct Payments:
                   </span>
-                  <span className="font-bold text-gray-900">Br {totalCbeAmount.toFixed(2)} ({cbeOrders.length} orders)</span>
+                  <span className="font-bold text-gray-900 dark:text-white">Br {totalCbeAmount.toFixed(2)} ({cbeOrders.length} orders)</span>
                 </div>
               </div>
 
               {/* Total Summary */}
-              <div className="p-3.5 bg-gray-100 flex items-center justify-between font-bold text-sm text-gray-900">
+              <div className="p-3.5 bg-gray-100 dark:bg-[#0c2219] flex items-center justify-between font-bold text-sm text-gray-900 dark:text-white">
                 <span>Total Shift Revenue Reconciled</span>
-                <span className="text-base text-gray-900">
+                <span className="text-base text-emerald-700 dark:text-[#00e676]">
                   Br {(totalCashAmount + totalTransferAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -1614,30 +1614,30 @@ export default function WaiterDashboardPage() {
 
             {/* Signature Block */}
             <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
-              <div className="border border-dashed border-gray-300 rounded-xl p-3 text-center bg-gray-50/50">
-                <div className="h-10 border-b border-gray-300 mb-1.5"></div>
-                <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Waiter Signature</span>
+              <div className="border border-dashed border-gray-300 dark:border-[#143225] rounded-xl p-3 text-center bg-gray-50/50 dark:bg-[#071a12]">
+                <div className="h-10 border-b border-gray-300 dark:border-[#143225] mb-1.5"></div>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Waiter Signature</span>
               </div>
-              <div className="border border-dashed border-gray-300 rounded-xl p-3 text-center bg-gray-50/50">
-                <div className="h-10 border-b border-gray-300 mb-1.5"></div>
-                <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Cashier Received By</span>
+              <div className="border border-dashed border-gray-300 dark:border-[#143225] rounded-xl p-3 text-center bg-gray-50/50 dark:bg-[#071a12]">
+                <div className="h-10 border-b border-gray-300 dark:border-[#143225] mb-1.5"></div>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Cashier Received By</span>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-[#143225]">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsHandoverModalOpen(false)}
-                className="text-xs"
+                className="text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
               >
                 Close
               </Button>
               <Button
                 size="sm"
                 onClick={() => window.print()}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-xs"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-xs cursor-pointer font-bold"
               >
                 <Printer className="w-3.5 h-3.5" />
                 Print Handover Slip
@@ -1651,41 +1651,41 @@ export default function WaiterDashboardPage() {
       {/* PAID ORDER DETAILS POPUP MODAL                                            */}
       {/* ========================================================================= */}
       <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-        <DialogContent className="max-w-md p-6" hideCloseButton>
+        <DialogContent className="max-w-md p-6 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white" hideCloseButton>
           <DialogHeader>
-            <DialogTitle className="text-base font-bold flex items-center justify-between text-gray-900">
+            <DialogTitle className="text-base font-bold flex items-center justify-between text-gray-900 dark:text-white">
               <span className="flex items-center gap-2">
-                <Receipt className="w-4.5 h-4.5 text-emerald-600" />
+                <Receipt className="w-4.5 h-4.5 text-emerald-600 dark:text-[#00e676]" />
                 Table {selectedOrderForDetails?.table?.number || 'Walk-in'} Receipt
               </span>
               {selectedOrderForDetails && getPaymentMethodBadge(selectedOrderForDetails.paymentMethod)}
             </DialogTitle>
-            <DialogDescription className="text-xs text-gray-500">
+            <DialogDescription className="text-xs text-gray-500 dark:text-gray-400">
               Paid ticket • {selectedOrderForDetails?.createdAt ? format(new Date(selectedOrderForDetails.createdAt), 'MMM d, yyyy • h:mm a') : 'Recent'}
             </DialogDescription>
           </DialogHeader>
 
           {selectedOrderForDetails && (
             <div className="space-y-4 pt-2">
-              <div className="border border-gray-200 rounded-xl divide-y divide-gray-100 overflow-hidden text-xs">
+              <div className="border border-gray-200 dark:border-[#143225] rounded-xl divide-y divide-gray-100 dark:divide-[#143225] overflow-hidden text-xs">
                 {(selectedOrderForDetails.items || []).map((item: any, idx: number) => (
-                  <div key={idx} className="p-3 flex items-center justify-between">
+                  <div key={idx} className="p-3 flex items-center justify-between bg-white dark:bg-[#071a12]">
                     <div>
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-gray-900 dark:text-white">
                         {item.quantity}x {item.menuItem?.name || item.name || 'Dish'}
                       </span>
                       {item.price && (
-                        <p className="text-[11px] text-gray-500">Br {Number(item.price).toFixed(2)} each</p>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400">Br {Number(item.price).toFixed(2)} each</p>
                       )}
                     </div>
-                    <span className="font-bold text-gray-900">
+                    <span className="font-bold text-gray-900 dark:text-[#00e676]">
                       Br {(Number(item.quantity || 1) * Number(item.price || (selectedOrderForDetails.total / (selectedOrderForDetails.items?.length || 1)))).toFixed(2)}
                     </span>
                   </div>
                 ))}
-                <div className="p-3 bg-gray-50 flex items-center justify-between font-bold text-sm text-gray-900">
+                <div className="p-3 bg-gray-50 dark:bg-[#0c2219] flex items-center justify-between font-bold text-sm text-gray-900 dark:text-white">
                   <span>Total Settled</span>
-                  <span className="text-base text-emerald-700">Br {Number(selectedOrderForDetails.total).toFixed(2)}</span>
+                  <span className="text-base text-emerald-700 dark:text-[#00e676]">Br {Number(selectedOrderForDetails.total).toFixed(2)}</span>
                 </div>
               </div>
 
@@ -1694,7 +1694,7 @@ export default function WaiterDashboardPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsOrderDetailsOpen(false)}
-                  className="text-xs"
+                  className="text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
                 >
                   Close
                 </Button>
@@ -1704,7 +1704,7 @@ export default function WaiterDashboardPage() {
                     setIsOrderDetailsOpen(false);
                     navigate('/admin/orders');
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 shadow-xs"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 shadow-xs cursor-pointer font-semibold"
                 >
                   All Orders Page &rarr;
                 </Button>

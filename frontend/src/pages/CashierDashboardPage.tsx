@@ -983,32 +983,32 @@ export default function CashierDashboardPage() {
         open={!!selectedReceipt}
         onOpenChange={(open) => !open && setSelectedReceipt(null)}
       >
-        <DialogContent className="max-w-md p-6 bg-white rounded-2xl shadow-2xl">
+        <DialogContent className="max-w-md p-6 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white rounded-2xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-center text-lg font-bold">
+            <DialogTitle className="text-center text-lg font-bold text-gray-900 dark:text-white">
               Customer Payment Receipt
             </DialogTitle>
-            <DialogDescription className="text-center text-xs text-gray-500">
+            <DialogDescription className="text-center text-xs text-gray-500 dark:text-gray-400">
               Official tax invoice &amp; settlement copy
             </DialogDescription>
           </DialogHeader>
 
           {selectedReceipt && (
-            <div className="mt-2 space-y-4 border border-dashed border-gray-300 p-4 rounded-xl bg-gray-50/50 font-mono text-xs">
+            <div className="mt-2 space-y-4 border border-dashed border-gray-300 dark:border-[#143225] p-4 rounded-xl bg-gray-50/50 dark:bg-[#071a12] font-mono text-xs text-gray-800 dark:text-gray-200">
               {/* Receipt Top Header */}
-              <div className="text-center space-y-0.5 border-b border-gray-200 pb-3">
-                <h4 className="font-bold text-sm text-gray-900 tracking-wider">
+              <div className="text-center space-y-0.5 border-b border-gray-200 dark:border-[#143225] pb-3">
+                <h4 className="font-bold text-sm text-gray-900 dark:text-white tracking-wider">
                   YONI RESTAURANT
                 </h4>
-                <p className="text-[11px] text-gray-600">Main Branch • Bole Sub-City, Addis Ababa</p>
-                <p className="text-[10px] text-gray-400">TIN: 0049281920 • VAT Reg: 8492019</p>
+                <p className="text-[11px] text-gray-600 dark:text-gray-400">Main Branch • Bole Sub-City, Addis Ababa</p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500">TIN: 0049281920 • VAT Reg: 8492019</p>
               </div>
 
               {/* Order Meta */}
-              <div className="flex justify-between text-[11px] text-gray-600 border-b border-gray-200 pb-2">
+              <div className="flex justify-between text-[11px] text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-[#143225] pb-2">
                 <div>
-                  <p>Receipt: <strong className="text-gray-900">{selectedReceipt.id}</strong></p>
-                  <p>Table: <strong className="text-gray-900">{selectedReceipt.tableNumber}</strong></p>
+                  <p>Receipt: <strong className="text-gray-900 dark:text-white">{selectedReceipt.id}</strong></p>
+                  <p>Table: <strong className="text-gray-900 dark:text-white">{selectedReceipt.tableNumber}</strong></p>
                   <p>Guest: {selectedReceipt.customerName}</p>
                 </div>
                 <div className="text-right">
@@ -1019,38 +1019,38 @@ export default function CashierDashboardPage() {
               </div>
 
               {/* Items List */}
-              <div className="space-y-1.5 border-b border-gray-200 pb-3">
+              <div className="space-y-1.5 border-b border-gray-200 dark:border-[#143225] pb-3">
                 {selectedReceipt.items.map((item: any, idx: number) => (
                   <div key={idx} className="flex justify-between">
                     <span>
                       {item.qty}x {item.name}
                     </span>
-                    <span className="font-semibold">Br {(item.qty * item.price).toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">Br {(item.qty * item.price).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
 
               {/* Financial Totals */}
               <div className="space-y-1 pt-1">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Subtotal:</span>
                   <span>Br {(selectedReceipt.amount / 1.15).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>VAT (15%):</span>
                   <span>Br {(selectedReceipt.amount - selectedReceipt.amount / 1.15).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between font-bold text-sm text-gray-900 pt-1 border-t border-gray-300">
+                <div className="flex justify-between font-bold text-sm text-gray-900 dark:text-white pt-1 border-t border-gray-300 dark:border-[#143225]">
                   <span>TOTAL PAID:</span>
-                  <span>Br {selectedReceipt.amount.toFixed(2)}</span>
+                  <span className="text-emerald-700 dark:text-[#00e676]">Br {selectedReceipt.amount.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-[11px] text-emerald-700 font-semibold pt-1">
+                <div className="flex justify-between text-[11px] text-emerald-700 dark:text-[#00e676] font-semibold pt-1">
                   <span>Method:</span>
                   <span>{selectedReceipt.method} ({selectedReceipt.refCode})</span>
                 </div>
               </div>
 
-              <div className="text-center pt-3 text-[10px] text-gray-400">
+              <div className="text-center pt-3 text-[10px] text-gray-400 dark:text-gray-500">
                 *** Amesegenalehu! Thank you for dining with us! ***
               </div>
             </div>
@@ -1061,7 +1061,7 @@ export default function CashierDashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => setSelectedReceipt(null)}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
             >
               Close
             </Button>
@@ -1071,7 +1071,7 @@ export default function CashierDashboardPage() {
                 window.print();
                 toast.success('Printing customer receipt...');
               }}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 font-bold cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               Print Receipt
@@ -1087,43 +1087,43 @@ export default function CashierDashboardPage() {
         open={!!selectedBillForPrint}
         onOpenChange={(open) => !open && setSelectedBillForPrint(null)}
       >
-        <DialogContent className="max-w-md p-6 bg-white rounded-2xl shadow-2xl">
+        <DialogContent className="max-w-md p-6 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white rounded-2xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-center text-lg font-bold">
+            <DialogTitle className="text-center text-lg font-bold text-gray-900 dark:text-white">
               Customer Table Pre-Bill
             </DialogTitle>
-            <DialogDescription className="text-center text-xs text-gray-500">
+            <DialogDescription className="text-center text-xs text-gray-500 dark:text-gray-400">
               Print bill receipt to hand to Waiter {selectedBillForPrint?.waiterName} for Table {selectedBillForPrint?.tableNumber}
             </DialogDescription>
           </DialogHeader>
 
           {selectedBillForPrint && (
-            <div className="mt-2 space-y-4 border border-dashed border-gray-300 p-4 rounded-xl bg-gray-50 font-mono text-xs">
-              <div className="text-center border-b border-gray-200 pb-2">
-                <h4 className="font-bold text-sm text-gray-900">YONI RESTAURANT</h4>
-                <p className="text-[11px] text-gray-600">TABLE PRE-BILL</p>
-                <p className="text-sm font-extrabold text-blue-900 mt-1">
+            <div className="mt-2 space-y-4 border border-dashed border-gray-300 dark:border-[#143225] p-4 rounded-xl bg-gray-50 dark:bg-[#071a12] font-mono text-xs text-gray-800 dark:text-gray-200">
+              <div className="text-center border-b border-gray-200 dark:border-[#143225] pb-2">
+                <h4 className="font-bold text-sm text-gray-900 dark:text-white">YONI RESTAURANT</h4>
+                <p className="text-[11px] text-gray-600 dark:text-gray-400">TABLE PRE-BILL</p>
+                <p className="text-sm font-extrabold text-emerald-700 dark:text-[#00e676] mt-1">
                   TABLE {selectedBillForPrint.tableNumber}
                 </p>
-                <p className="text-[10px] text-gray-500">Waiter: {selectedBillForPrint.waiterName}</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400">Waiter: {selectedBillForPrint.waiterName}</p>
               </div>
 
-              <div className="space-y-1.5 border-b border-gray-200 pb-2">
+              <div className="space-y-1.5 border-b border-gray-200 dark:border-[#143225] pb-2">
                 {selectedBillForPrint.items.map((it: any, i: number) => (
                   <div key={i} className="flex justify-between">
                     <span>
                       {it.quantity}x {it.name}
                     </span>
-                    <span>Br {(it.quantity * it.price).toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">Br {(it.quantity * it.price).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex justify-between font-bold text-sm text-gray-900 pt-1">
+              <div className="flex justify-between font-bold text-sm text-gray-900 dark:text-white pt-1">
                 <span>TOTAL TO COLLECT:</span>
-                <span className="text-blue-900">Br {selectedBillForPrint.total.toFixed(2)}</span>
+                <span className="text-emerald-700 dark:text-[#00e676]">Br {selectedBillForPrint.total.toFixed(2)}</span>
               </div>
-              <p className="text-[10px] text-center text-gray-400">
+              <p className="text-[10px] text-center text-gray-400 dark:text-gray-500">
                 Accepted at table: Cash, Telebirr, CBE Birr
               </p>
             </div>
@@ -1134,14 +1134,14 @@ export default function CashierDashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => setSelectedBillForPrint(null)}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               size="sm"
               onClick={() => handlePrintBill(selectedBillForPrint)}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 font-bold cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               Print &amp; Hand to Waiter
@@ -1154,47 +1154,47 @@ export default function CashierDashboardPage() {
       {/* 7. Cash Handover to Manager Modal */}
       {/* ========================================================================= */}
       <Dialog open={isCashDropModalOpen} onOpenChange={setIsCashDropModalOpen}>
-        <DialogContent className="max-w-md p-6 bg-white rounded-2xl shadow-2xl">
+        <DialogContent className="max-w-md p-6 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white rounded-2xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <ArrowDownToLine className="w-5 h-5 text-gray-700" />
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+              <ArrowDownToLine className="w-5 h-5 text-emerald-600 dark:text-[#00e676]" />
               Handover Cash to Manager
             </DialogTitle>
-            <DialogDescription className="text-xs text-gray-500">
+            <DialogDescription className="text-xs text-gray-500 dark:text-gray-400">
               Record physical cash handed over to the manager before logging out or depositing into the safe
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 text-xs mt-2">
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
+              <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
                 Handover Amount (ETB)
               </label>
               <input
                 type="number"
                 value={cashDropAmount}
                 onChange={(e) => setCashDropAmount(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-bold text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-sm font-bold text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="500.00"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
+              <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
                 Handover Note
               </label>
               <input
                 type="text"
                 value={cashDropNote}
                 onChange={(e) => setCashDropNote(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] bg-white dark:bg-[#071a12] text-xs text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="e.g. Cashier handover to manager before leaving"
               />
             </div>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center text-xs">
-              <span className="text-gray-600">Current Cash in Till:</span>
-              <span className="font-bold text-gray-900">Br {drawerStats.expectedInTill.toFixed(2)}</span>
+            <div className="bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-xl p-3 flex justify-between items-center text-xs">
+              <span className="text-gray-600 dark:text-gray-400">Current Cash in Till:</span>
+              <span className="font-bold text-gray-900 dark:text-white">Br {drawerStats.expectedInTill.toFixed(2)}</span>
             </div>
           </div>
 
@@ -1203,14 +1203,14 @@ export default function CashierDashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => setIsCashDropModalOpen(false)}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               size="sm"
               onClick={handleRecordCashDrop}
-              className="flex-1 bg-gray-900 hover:bg-black text-white text-xs gap-1.5 font-semibold"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 font-bold cursor-pointer"
             >
               <Check className="w-3.5 h-3.5" />
               Confirm Handover

@@ -15,9 +15,9 @@ export default function OrderTypeDialog({
 }: OrderTypeDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">
+          <DialogTitle className="text-xl font-bold text-center text-gray-900 dark:text-white">
             Select Order Type
           </DialogTitle>
         </DialogHeader>

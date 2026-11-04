@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, OrderStatus, OrderType, type Order } from '../api/orders';
@@ -32,6 +32,7 @@ import {
   FileText,
   Printer,
   Receipt,
+  Calendar,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -52,8 +53,89 @@ export default function OrdersPage() {
   const [orderToPrint, setOrderToPrint] = useState<{ order: Order; type: 'BILL' | 'RECEIPT' } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [paymentFilter, setPaymentFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all');
+  const [selectedDate, setSelectedDate] = useState<string>('');
   const [page, setPage] = useState(1);
   const limit = 20;
+
+  // Calculate start & end ISO dates based on active date filter preset or custom date picker
+  const dateParams = useMemo(() => {
+    if (dateFilter === 'all') {
+      return { startDate: undefined, endDate: undefined };
+    }
+
+    const now = new Date();
+
+    if (dateFilter === 'today') {
+      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    if (dateFilter === 'week') {
+      const start = new Date(now);
+      start.setDate(now.getDate() - 6);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    if (dateFilter === 'month') {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
+
+    if (dateFilter === 'custom' && selectedDate) {
+      const parts = selectedDate.split('-');
+      if (parts.length === 3) {
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const d = parseInt(parts[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+          const start = new Date(y, m - 1, d, 0, 0, 0, 0);
+          const end = new Date(y, m - 1, d, 23, 59, 59, 999);
+          return {
+            startDate: start.toISOString(),
+            endDate: end.toISOString(),
+          };
+        }
+      }
+    }
+
+    return { startDate: undefined, endDate: undefined };
+  }, [dateFilter, selectedDate]);
+
+  const handlePresetChange = (preset: 'all' | 'today' | 'week' | 'month') => {
+    setDateFilter(preset);
+    setSelectedDate('');
+    setPage(1);
+  };
+
+  const handleDateSelect = (dateStr: string) => {
+    setSelectedDate(dateStr);
+    if (dateStr) {
+      setDateFilter('custom');
+    } else {
+      setDateFilter('all');
+    }
+    setPage(1);
+  };
+
+  const handleClearDate = () => {
+    setSelectedDate('');
+    setDateFilter('all');
+    setPage(1);
+  };
 
   const { resolveOrderNotifications, markOrderAsRead, syncOrdersStatus } = useNotificationStore();
 
@@ -97,13 +179,15 @@ export default function OrdersPage() {
 
   // Fetch orders (Waiters are strictly locked to their own orders at their assigned branch)
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['orders', user?.branch?.id, page, isWaiter ? 'my' : 'all'],
+    queryKey: ['orders', user?.branch?.id, page, isWaiter ? 'my' : 'all', dateParams.startDate, dateParams.endDate],
     queryFn: () =>
       ordersApi.getOrders({
         branchId: user?.branch?.id,
         waiterId: isWaiter ? user?.id : undefined,
         page,
         limit,
+        startDate: dateParams.startDate,
+        endDate: dateParams.endDate,
       }),
     enabled: !!user?.branch?.id,
   });
@@ -118,8 +202,20 @@ export default function OrdersPage() {
     }
   }, [orders, syncOrdersStatus]);
 
+  // Filter orders by date range (client safety check in sync with server parameters)
+  const dateScopedOrders = useMemo(() => {
+    return (orders || []).filter((order: Order) => {
+      if (dateFilter === 'all') return true;
+      if (!order.createdAt) return true;
+      const orderDate = new Date(order.createdAt).getTime();
+      if (dateParams.startDate && orderDate < new Date(dateParams.startDate).getTime()) return false;
+      if (dateParams.endDate && orderDate > new Date(dateParams.endDate).getTime()) return false;
+      return true;
+    });
+  }, [orders, dateFilter, dateParams]);
+
   // Filter orders by search term, status, payment status, and waiter scope (client-side safety check)
-  const filteredOrders = (orders || []).filter((order: Order) => {
+  const filteredOrders = dateScopedOrders.filter((order: Order) => {
     const matchesWaiterScope =
       !isWaiter ||
       order.createdById === user?.id ||
@@ -294,14 +390,14 @@ export default function OrdersPage() {
 
   // Statistics
   const stats = {
-    total: (orders || []).length,
-    pending: (orders || []).filter((o: Order) => o.status === OrderStatus.PENDING).length,
-    ready: (orders || []).filter((o: Order) => o.status === OrderStatus.READY).length,
-    cancelled: (orders || []).filter((o: Order) => o.status === OrderStatus.CANCELLED).length,
-    completed: (orders || []).filter((o: Order) => o.status === OrderStatus.COMPLETED).length,
-    unpaid: (orders || []).filter((o: Order) => o.paymentStatus === 'UNPAID').length,
-    paid: (orders || []).filter((o: Order) => o.paymentStatus === 'PAID').length,
-    totalRevenue: (orders || []).reduce((sum: number, o: Order) => sum + (o.total || 0), 0),
+    total: dateScopedOrders.length,
+    pending: dateScopedOrders.filter((o: Order) => o.status === OrderStatus.PENDING).length,
+    ready: dateScopedOrders.filter((o: Order) => o.status === OrderStatus.READY).length,
+    cancelled: dateScopedOrders.filter((o: Order) => o.status === OrderStatus.CANCELLED).length,
+    completed: dateScopedOrders.filter((o: Order) => o.status === OrderStatus.COMPLETED).length,
+    unpaid: dateScopedOrders.filter((o: Order) => o.paymentStatus === 'UNPAID').length,
+    paid: dateScopedOrders.filter((o: Order) => o.paymentStatus === 'PAID').length,
+    totalRevenue: dateScopedOrders.reduce((sum: number, o: Order) => sum + (o.total || 0), 0),
   };
 
   if (isLoading) {
@@ -323,9 +419,88 @@ export default function OrdersPage() {
   return (
     <div className="p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Orders</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and track all orders</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Orders</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and track all orders</p>
+        </div>
+
+        {/* Date Filters & Date Picker (Top Right above KPI cards) */}
+        <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-auto">
+          {/* Quick preset pills */}
+          <div className="inline-flex items-center rounded-xl bg-gray-100 dark:bg-[#071a12] p-1 border border-gray-200 dark:border-[#143225]">
+            <button
+              type="button"
+              onClick={() => handlePresetChange('all')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
+                dateFilter === 'all'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePresetChange('today')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
+                dateFilter === 'today'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePresetChange('week')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
+                dateFilter === 'week'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              This Week
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePresetChange('month')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
+                dateFilter === 'month'
+                  ? 'bg-emerald-600 text-white shadow-sm font-semibold'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
+              }`}
+            >
+              This Month
+            </button>
+          </div>
+
+          {/* Individual Date Picker */}
+          <div className="relative flex items-center">
+            <Calendar className="w-3.5 h-3.5 text-gray-400 dark:text-[#00e676]/70 absolute left-2.5 pointer-events-none" />
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => handleDateSelect(e.target.value)}
+              title="Pick an individual date"
+              className={`pl-8 pr-7 py-1.5 text-xs rounded-xl border transition-all cursor-pointer [color-scheme:light] dark:[color-scheme:dark] ${
+                dateFilter === 'custom' && selectedDate
+                  ? 'border-emerald-500 bg-emerald-50/60 dark:bg-[#0f2d1e] text-emerald-900 dark:text-[#00e676] font-semibold ring-2 ring-emerald-500/20'
+                  : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-[#1a4231]'
+              } focus:outline-none focus:ring-2 focus:ring-emerald-500/40 shadow-sm`}
+            />
+            {selectedDate && (
+              <button
+                type="button"
+                onClick={handleClearDate}
+                title="Clear selected date"
+                className="absolute right-2 p-0.5 rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#143225] transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -947,8 +1122,8 @@ export default function OrdersPage() {
                     <>
                       {/* Show bill status message */}
                       {billInProgress && (
-                        <div className="w-full mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <p className="text-sm text-blue-800 font-medium">
+                        <div className="w-full mb-2 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg">
+                          <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">
                             {billRequest.status === 'PENDING' && '📄 Bill request sent to cashier'}
                             {billRequest.status === 'PROCESSING' && '⏳ Cashier is processing bill request'}
                           </p>
@@ -956,8 +1131,8 @@ export default function OrdersPage() {
                       )}
 
                       {billReady && (
-                        <div className="w-full mb-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-800 font-medium">
+                        <div className="w-full mb-2 p-3 bg-green-50 dark:bg-emerald-950/30 border border-green-200 dark:border-[#143225] rounded-lg">
+                          <p className="text-sm text-green-800 dark:text-[#00e676] font-medium">
                             ✅ Bill is ready! You can now collect payment from customer
                           </p>
                         </div>
@@ -971,7 +1146,7 @@ export default function OrdersPage() {
                             handleRequestBill(selectedOrder);
                           }}
                           variant="outline"
-                          className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+                          className="flex-1 border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40"
                         >
                           <FileText className="w-4 h-4 mr-2" />
                           Request Bill

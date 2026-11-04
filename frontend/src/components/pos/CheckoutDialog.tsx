@@ -181,47 +181,54 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
     
     return (
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <div className="text-center py-6">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+            <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-10 h-10 text-green-600 dark:text-[#00e676]" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               {isDineIn ? 'Order Sent to Kitchen!' : 'Order Placed!'}
             </h2>
-            <p className="text-gray-600 mb-4">Order #{orderNumber}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">Order #{orderNumber}</p>
             
             {isDineIn ? (
               // Dine-in: Show unpaid status
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-blue-800 font-medium mb-2">Payment Status</p>
-                <Badge className="bg-orange-100 text-orange-700 border-orange-300">
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-xl p-4 mb-6">
+                <p className="text-sm text-blue-800 dark:text-blue-300 font-medium mb-2">Payment Status</p>
+                <Badge className="bg-orange-100 dark:bg-amber-950/60 text-orange-700 dark:text-amber-300 border-orange-300 dark:border-amber-800">
                   UNPAID - Collect After Service
                 </Badge>
-                <p className="text-sm text-blue-700 mt-3">
-                  Order Total: <strong>{total.toFixed(2)} ብር</strong>
+                <p className="text-sm text-blue-700 dark:text-blue-300 mt-3">
+                  Order Total: <strong className="text-gray-900 dark:text-white">{total.toFixed(2)} ብር</strong>
                 </p>
-                <p className="text-xs text-blue-600 mt-1">
+                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                   Payment will be collected when customer requests bill
                 </p>
               </div>
             ) : (
               // Takeaway/Delivery: Show paid status
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600 mb-1">Total Amount</p>
-                <p className="text-3xl font-bold text-green-600">{total.toFixed(2)} ብር</p>
-                <Badge className="bg-green-100 text-green-700 border-green-300 mt-2">
+              <div className="bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-xl p-4 mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Amount</p>
+                <p className="text-3xl font-extrabold text-green-600 dark:text-[#00e676]">{total.toFixed(2)} ብር</p>
+                <Badge className="bg-green-100 dark:bg-[#123627] text-green-700 dark:text-[#00e676] border-green-300 dark:border-[#1a4a35] mt-2">
                   PAID - {paymentMethod}
                 </Badge>
               </div>
             )}
 
             <div className="flex gap-2">
-              <Button variant="outline" className="flex-1" onClick={handleClose}>
+              <Button
+                variant="outline"
+                className="flex-1 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
+                onClick={handleClose}
+              >
                 <Printer className="w-4 h-4 mr-2" />
                 Print {isDineIn ? 'Kitchen Ticket' : 'Receipt'}
               </Button>
-              <Button className="flex-1" onClick={handleClose}>
+              <Button
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
+                onClick={handleClose}
+              >
                 New Order
               </Button>
             </div>

@@ -187,34 +187,34 @@ export default function PaymentCollectionDialog({
   if (isSuccess) {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <div className="text-center py-6">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+            <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-10 h-10 text-green-600 dark:text-[#00e676]" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Payment Collected!
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               Order #{billRequest.selectedItems.orderNumber} - Table {billRequest.table.number}
             </p>
             
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <p className="text-sm text-gray-600 mb-1">Amount Collected</p>
-              <p className="text-3xl font-bold text-green-600">{amount} ብር</p>
-              <Badge className="mt-2 bg-green-100 text-green-700 border-green-300">
+            <div className="bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-xl p-4 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Amount Collected</p>
+              <p className="text-3xl font-extrabold text-green-600 dark:text-[#00e676]">{amount} ብር</p>
+              <Badge className="mt-2 bg-green-100 text-green-700 border-green-300 dark:bg-[#123627] dark:text-[#00e676] dark:border-[#1a4a35]">
                 {paymentMethod}
               </Badge>
             </div>
 
             {paymentMethod === 'CASH' && change > 0 && (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
-                <p className="text-sm text-orange-800 font-medium">Change to Return</p>
-                <p className="text-2xl font-bold text-orange-700">{change.toFixed(2)} ብር</p>
+              <div className="bg-orange-50 dark:bg-amber-950/30 border border-orange-200 dark:border-amber-900/50 rounded-xl p-3 mb-4">
+                <p className="text-sm text-orange-800 dark:text-amber-300 font-medium">Change to Return</p>
+                <p className="text-2xl font-bold text-orange-700 dark:text-amber-400">{change.toFixed(2)} ብር</p>
               </div>
             )}
 
-            <Button className="w-full" onClick={handleClose}>
+            <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer" onClick={handleClose}>
               Done
             </Button>
           </div>
@@ -226,58 +226,60 @@ export default function PaymentCollectionDialog({
   // Payment Collection View
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
         <DialogHeader>
-          <DialogTitle>Collect Payment - Table {billRequest.table.number}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-900 dark:text-white">Collect Payment - Table {billRequest.table.number}</DialogTitle>
+          <DialogDescription className="text-gray-500 dark:text-gray-400">
             Order #{billRequest.selectedItems.orderNumber}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Order Summary */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Bill Amount</h3>
+          <div className="bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-xl p-4">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Bill Amount</h3>
             <div className="flex justify-between text-lg font-bold">
-              <span>Total</span>
-              <span className="text-green-600">{billRequest.selectedItems.total.toFixed(2)} ብር</span>
+              <span className="text-gray-800 dark:text-gray-200">Total</span>
+              <span className="text-green-600 dark:text-[#00e676]">{billRequest.selectedItems.total.toFixed(2)} ብር</span>
             </div>
           </div>
 
           {/* Payment Method */}
           <div>
-            <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+            <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">
               Payment Method
             </Label>
             <div className="grid grid-cols-2 gap-2">
               <button
+                type="button"
                 onClick={() => setPaymentMethod('CASH')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 transition-colors cursor-pointer ${
                   paymentMethod === 'CASH'
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
+                    ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
+                    : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#071a12] hover:border-gray-300 dark:hover:border-[#1b4b35]'
                 }`}
               >
-                <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600' : 'text-gray-700'}`} />
-                <span className={`text-sm font-medium ${paymentMethod === 'CASH' ? 'text-gray-900' : 'text-gray-700'}`}>Cash</span>
+                <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-600 dark:text-gray-400'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === 'CASH' ? 'text-green-800 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-300'}`}>Cash</span>
               </button>
               <button
+                type="button"
                 onClick={() => setPaymentMethod('BANK_TRANSFER')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 transition-colors cursor-pointer ${
                   paymentMethod === 'BANK_TRANSFER'
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
+                    ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
+                    : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#071a12] hover:border-gray-300 dark:hover:border-[#1b4b35]'
                 }`}
               >
-                <Upload className={`w-6 h-6 ${paymentMethod === 'BANK_TRANSFER' ? 'text-green-600' : 'text-gray-700'}`} />
-                <span className={`text-sm font-medium ${paymentMethod === 'BANK_TRANSFER' ? 'text-gray-900' : 'text-gray-700'}`}>Transfer</span>
+                <Upload className={`w-6 h-6 ${paymentMethod === 'BANK_TRANSFER' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-600 dark:text-gray-400'}`} />
+                <span className={`text-sm font-medium ${paymentMethod === 'BANK_TRANSFER' ? 'text-green-800 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-300'}`}>Transfer</span>
               </button>
             </div>
           </div>
 
           {/* Payment Amount */}
           <div>
-            <Label htmlFor="amount">Payment Amount (ብር)</Label>
+            <Label htmlFor="amount" className="text-gray-700 dark:text-gray-300">Payment Amount (ብር)</Label>
             <Input
               id="amount"
               type="number"
@@ -285,6 +287,7 @@ export default function PaymentCollectionDialog({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.00"
+              className="mt-1 bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
             />
           </div>
 
@@ -292,7 +295,7 @@ export default function PaymentCollectionDialog({
           {paymentMethod === 'CASH' && (
             <>
               <div>
-                <Label htmlFor="amountReceived">Amount Received (ብር)</Label>
+                <Label htmlFor="amountReceived" className="text-gray-700 dark:text-gray-300">Amount Received (ብር)</Label>
                 <Input
                   id="amountReceived"
                   type="number"
@@ -300,13 +303,14 @@ export default function PaymentCollectionDialog({
                   value={amountReceived}
                   onChange={(e) => setAmountReceived(e.target.value)}
                   placeholder="0.00"
+                  className="mt-1 bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
                 />
               </div>
 
               {amountReceived && parseFloat(amountReceived) >= parseFloat(amount) && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-sm text-green-800 font-medium mb-1">Change</p>
-                  <p className="text-2xl font-bold text-green-700">{change.toFixed(2)} ብር</p>
+                <div className="bg-green-50 dark:bg-[#0c2219] border border-green-200 dark:border-[#143225] rounded-xl p-3">
+                  <p className="text-sm text-green-800 dark:text-emerald-300 font-medium mb-1">Change</p>
+                  <p className="text-2xl font-bold text-green-700 dark:text-[#00e676]">{change.toFixed(2)} ብር</p>
                 </div>
               )}
             </>
@@ -316,26 +320,27 @@ export default function PaymentCollectionDialog({
           {['BANK_TRANSFER', 'MOBILE', 'TELEBIRR', 'CBE_BIRR'].includes(paymentMethod) && (
             <>
               <div>
-                <Label htmlFor="proofImage">Payment Proof (Required)</Label>
+                <Label htmlFor="proofImage" className="text-gray-700 dark:text-gray-300">Payment Proof (Required)</Label>
                 <div className="mt-2">
                   {proofImagePreview ? (
                     <div className="relative">
                       <img
                         src={proofImagePreview}
                         alt="Payment proof"
-                        className="w-full h-48 object-cover rounded-lg border"
+                        className="w-full h-48 object-cover rounded-lg border border-gray-200 dark:border-[#143225]"
                       />
                       <button
+                        type="button"
                         onClick={removeImage}
-                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 cursor-pointer"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors">
-                      <Camera className="w-8 h-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Click to upload photo</span>
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-[#143225] bg-white/50 dark:bg-[#071a12]/50 rounded-xl cursor-pointer hover:border-green-500 dark:hover:border-[#00e676] transition-colors">
+                      <Camera className="w-8 h-8 text-gray-400 dark:text-gray-500 mb-2" />
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Click to upload photo</span>
                       <input
                         id="proofImage"
                         type="file"
@@ -349,13 +354,14 @@ export default function PaymentCollectionDialog({
               </div>
 
               <div>
-                <Label htmlFor="transactionRef">Transaction Reference (Optional)</Label>
+                <Label htmlFor="transactionRef" className="text-gray-700 dark:text-gray-300">Transaction Reference (Optional)</Label>
                 <Input
                   id="transactionRef"
                   type="text"
                   value={transactionRef}
                   onChange={(e) => setTransactionRef(e.target.value)}
                   placeholder="e.g., TXN123456789"
+                  className="mt-1 bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
                 />
               </div>
             </>
@@ -363,13 +369,14 @@ export default function PaymentCollectionDialog({
 
           {/* Notes */}
           <div>
-            <Label htmlFor="notes">Notes (Optional)</Label>
+            <Label htmlFor="notes" className="text-gray-700 dark:text-gray-300">Notes (Optional)</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Additional notes..."
               rows={2}
+              className="mt-1 bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
             />
           </div>
 
@@ -377,14 +384,14 @@ export default function PaymentCollectionDialog({
           <div className="flex gap-2 pt-2">
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
               onClick={handleClose}
               disabled={collectPaymentMutation.isPending || isUploading}
             >
               Cancel
             </Button>
             <Button
-              className="flex-1"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
               onClick={handleCollectPayment}
               disabled={collectPaymentMutation.isPending || isUploading}
             >

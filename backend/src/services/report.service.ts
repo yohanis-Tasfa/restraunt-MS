@@ -66,19 +66,19 @@ export class ReportService {
     });
 
     const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-    const totalTax = orders.reduce((sum, order) => sum + order.taxAmount, 0);
-    const totalServiceCharge = orders.reduce((sum, order) => sum + order.serviceCharge, 0);
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+    const totalTax = orders.reduce((sum, order) => sum + (order.tax || 0), 0);
+    const totalServiceCharge = orders.reduce((sum, order) => sum + (order.serviceCharge || 0), 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
     // Calculate by order type
     const ordersByType = orders.reduce((acc, order) => {
-      const type = order.orderType;
+      const type = order.type;
       if (!acc[type]) {
         acc[type] = { count: 0, revenue: 0 };
       }
       acc[type].count++;
-      acc[type].revenue += order.totalAmount;
+      acc[type].revenue += (order.total || 0);
       return acc;
     }, {} as Record<string, { count: number; revenue: number }>);
 
@@ -102,7 +102,7 @@ export class ReportService {
         acc[status] = { count: 0, revenue: 0 };
       }
       acc[status].count++;
-      acc[status].revenue += order.totalAmount;
+      acc[status].revenue += (order.total || 0);
       return acc;
     }, {} as Record<string, { count: number; revenue: number }>);
 
@@ -170,9 +170,9 @@ export class ReportService {
       }
 
       acc[dateKey].orders++;
-      acc[dateKey].revenue += order.totalAmount;
-      acc[dateKey].tax += order.taxAmount;
-      acc[dateKey].serviceCharge += order.serviceCharge;
+      acc[dateKey].revenue += (order.total || 0);
+      acc[dateKey].tax += (order.tax || 0);
+      acc[dateKey].serviceCharge += (order.serviceCharge || 0);
 
       return acc;
     }, {} as Record<string, any>);
@@ -486,7 +486,7 @@ export class ReportService {
     const customerStats = customers
       .map((customer) => {
         const totalSpent = customer.orders.reduce(
-          (sum, order) => sum + order.totalAmount,
+          (sum, order) => sum + (order.total || 0),
           0
         );
         const orderCount = customer.orders.length;
@@ -553,9 +553,9 @@ export class ReportService {
         };
       }
       acc[branchId].orders++;
-      acc[branchId].revenue += order.totalAmount;
-      acc[branchId].tax += order.taxAmount;
-      acc[branchId].serviceCharge += order.serviceCharge;
+      acc[branchId].revenue += (order.total || 0);
+      acc[branchId].tax += (order.tax || 0);
+      acc[branchId].serviceCharge += (order.serviceCharge || 0);
       return acc;
     }, {} as Record<string, any>);
 

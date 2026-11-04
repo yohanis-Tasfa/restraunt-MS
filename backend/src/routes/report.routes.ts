@@ -22,8 +22,8 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
-// Only Admin, Manager, and Super Admin can access reports
-const reportRoles = ['Super Admin', 'Admin', 'Manager'];
+// Only Admin, Manager, Super Admin, and Owner can access reports
+const reportRoles = ['Super Admin', 'Admin', 'Manager', 'Owner'];
 
 // ============ DASHBOARD ============
 // GET /api/reports/dashboard - Get dashboard statistics
