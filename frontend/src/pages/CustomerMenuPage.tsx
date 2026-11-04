@@ -4,16 +4,16 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { customerSessionApi, waiterCallApi, type CustomerSession } from '../api/customer-session';
 import { menuApi, type MenuItem, type MenuCategory } from '../api/menu';
 import { useCustomerCartStore } from '../store/customerCartStore';
-import {
-  ShoppingCart,
-  Users,
+import { 
+  ShoppingCart, 
+  Users, 
   Loader2,
   AlertCircle,
-  Plus,
-  Minus,
-  Trash2,
-  Bell,
-  X,
+  Plus, 
+  Minus, 
+  Trash2, 
+  Bell, 
+  X, 
   Search,
   Sparkles,
   ArrowRight,
@@ -159,7 +159,7 @@ export default function CustomerMenuPage() {
   // Filter menu items by category and search
   const filteredItems = menuItems.filter((item: MenuItem) => {
     const matchesCategory = selectedCategory === 'all' || item.categoryId === selectedCategory;
-    const matchesSearch = searchQuery === '' ||
+    const matchesSearch = searchQuery === '' || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -314,7 +314,7 @@ export default function CustomerMenuPage() {
             {sessionError.message || 'Please make sure you have scanned a valid table QR code.'}
           </p>
           <div className="pt-2 flex flex-col gap-2">
-            <Button
+            <Button 
               onClick={() => refetchSession()}
               className="bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold rounded-xl"
             >
@@ -469,10 +469,11 @@ export default function CustomerMenuPage() {
         <div className="max-w-6xl mx-auto px-3 sm:px-4 pb-2.5 sm:pb-3 overflow-x-auto no-scrollbar flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${selectedCategory === 'all'
+            className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === 'all'
                 ? 'bg-[#00e676] text-[#032314] shadow-[0_0_12px_rgba(0,230,118,0.4)]'
                 : 'bg-[#083a26] text-white/80 border border-[#145d3e] hover:border-white/30'
-              }`}
+            }`}
           >
             All Dishes
           </button>
@@ -480,10 +481,11 @@ export default function CustomerMenuPage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${selectedCategory === cat.id
+              className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                selectedCategory === cat.id
                   ? 'bg-[#00e676] text-[#032314] shadow-[0_0_12px_rgba(0,230,118,0.4)]'
                   : 'bg-[#083a26] text-white/80 border border-[#145d3e] hover:border-white/30'
-                }`}
+              }`}
             >
               {cat.name}
             </button>

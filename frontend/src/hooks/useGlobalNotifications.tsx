@@ -62,8 +62,9 @@ export function useGlobalNotifications() {
               toast.dismiss(t.id);
               window.location.href = '/admin/ingredient-requests';
             }}
-            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 ${isUrgent ? 'border-rose-500' : 'border-amber-500'
-              } transition-all ${t.visible ? 'animate-enter' : 'animate-leave'}`}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 ${
+              isUrgent ? 'border-rose-500' : 'border-amber-500'
+            } transition-all ${t.visible ? 'animate-enter' : 'animate-leave'}`}
           >
             <div className="flex items-center gap-3">
               <span className="p-2 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
@@ -103,8 +104,9 @@ export function useGlobalNotifications() {
       const isApproved = req.status === 'APPROVED';
       toast.success(
         data.message ||
-        `Requisition for ${req.inventoryName} was ${isApproved ? 'Approved & Issued' : 'Rejected'
-        }`,
+          `Requisition for ${req.inventoryName} was ${
+            isApproved ? 'Approved & Issued' : 'Rejected'
+          }`,
         {
           duration: 6000,
         }
@@ -148,8 +150,9 @@ export function useGlobalNotifications() {
               toast.dismiss(t.id);
               window.location.href = '/admin/waiter-calls';
             }}
-            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-amber-500 transition-all ${t.visible ? 'animate-enter' : 'animate-leave'
-              }`}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-amber-500 transition-all ${
+              t.visible ? 'animate-enter' : 'animate-leave'
+            }`}
           >
             <div className="flex items-center gap-3">
               <span className="p-2 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
@@ -219,8 +222,9 @@ export function useGlobalNotifications() {
               toast.dismiss(t.id);
               window.location.href = '/admin/orders';
             }}
-            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-green-500 transition-all ${t.visible ? 'animate-enter' : 'animate-leave'
-              }`}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-green-500 transition-all ${
+              t.visible ? 'animate-enter' : 'animate-leave'
+            }`}
           >
             <div className="flex items-center gap-3">
               <span className="p-2 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
@@ -335,8 +339,9 @@ export function useGlobalNotifications() {
                 toast.dismiss(t.id);
                 window.location.href = '/admin/bill-requests';
               }}
-              className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-emerald-500 transition-all ${t.visible ? 'animate-enter' : 'animate-leave'
-                }`}
+              className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-emerald-500 transition-all ${
+                t.visible ? 'animate-enter' : 'animate-leave'
+              }`}
             >
               <div className="flex items-center gap-3">
                 <span className="p-2 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">

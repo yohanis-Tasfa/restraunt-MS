@@ -53,8 +53,8 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
     const rawItems: any[] = Array.isArray(call.selectedItems)
       ? call.selectedItems
       : Array.isArray(call.selectedItems?.items)
-        ? call.selectedItems.items
-        : [];
+      ? call.selectedItems.items
+      : [];
 
     if (rawItems.length > 0) {
       // Close the panel first

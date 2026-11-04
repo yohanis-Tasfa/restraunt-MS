@@ -134,10 +134,11 @@ export default function WaiterTipsPage() {
         {/* Card 1: Total Tips */}
         <div
           onClick={() => setStatusFilter('all')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'all'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'all'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20 dark:hover:bg-[#0c2219]'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
@@ -161,10 +162,11 @@ export default function WaiterTipsPage() {
         {/* Card 2: Pending Payout */}
         <div
           onClick={() => setStatusFilter('PENDING')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'PENDING'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'PENDING'
               ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 ring-2 ring-amber-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-amber-300/80 hover:bg-amber-50/20 dark:hover:bg-amber-950/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-400 truncate">
@@ -188,10 +190,11 @@ export default function WaiterTipsPage() {
         {/* Card 3: Paid Out */}
         <div
           onClick={() => setStatusFilter('PAID')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'PAID'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'PAID'
               ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-300/80 hover:bg-blue-50/20 dark:hover:bg-blue-950/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-xs font-semibold text-blue-700 dark:text-blue-400 truncate">
@@ -221,20 +224,22 @@ export default function WaiterTipsPage() {
             <button
               type="button"
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${statusFilter === 'all'
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                statusFilter === 'all'
                   ? 'bg-gray-900 text-white dark:bg-[#00e676] dark:text-[#032314] shadow-xs'
                   : 'bg-gray-100/90 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
-                }`}
+              }`}
             >
               All Tips ({summary?.total.count || 0})
             </button>
             <button
               type="button"
               onClick={() => setStatusFilter('PENDING')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${statusFilter === 'PENDING'
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                statusFilter === 'PENDING'
                   ? 'bg-amber-600 text-white shadow-xs'
                   : 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30'
-                }`}
+              }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               Pending ({summary?.pending.count || 0})
@@ -242,10 +247,11 @@ export default function WaiterTipsPage() {
             <button
               type="button"
               onClick={() => setStatusFilter('PAID')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${statusFilter === 'PAID'
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                statusFilter === 'PAID'
                   ? 'bg-emerald-600 text-white dark:bg-[#00e676] dark:text-[#032314] shadow-xs'
                   : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-[#00e676] hover:bg-emerald-100 dark:hover:bg-[#0c2219]'
-                }`}
+              }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Paid ({summary?.paid.count || 0})
@@ -260,10 +266,11 @@ export default function WaiterTipsPage() {
               key={period}
               type="button"
               onClick={() => setDateRange(period)}
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${dateRange === period
+              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                dateRange === period
                   ? 'bg-emerald-600 text-white dark:bg-[#00e676] dark:text-[#032314] font-bold shadow-2xs'
                   : 'bg-gray-100/80 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
-                }`}
+              }`}
             >
               {period === 'all' && (
                 <>
@@ -323,8 +330,8 @@ export default function WaiterTipsPage() {
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-gray-100 dark:bg-[#071a12] text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-[#143225]">
                       {tip.order?.table?.number
                         ? (tip.order.table.number.toLowerCase().startsWith('t')
-                          ? tip.order.table.number
-                          : `T${tip.order.table.number}`)
+                            ? tip.order.table.number
+                            : `T${tip.order.table.number}`)
                         : 'Takeout'}
                     </span>
                     {tip.order?.total && (

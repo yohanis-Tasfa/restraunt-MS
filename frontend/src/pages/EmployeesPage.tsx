@@ -647,267 +647,280 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
       </div>
 
       {/* Payroll KPI Cards - 2x2 Grid on Mobile */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
-        <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
-              Monthly Payroll
-            </span>
-          </div>
-          <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-[#00e676] mt-1 sm:mt-2 truncate">{formatCurrency(totalPayrollAmount)}</p>
-          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{payrolls.length} payslips recorded</p>
-        </div>
-
-        <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider truncate">
-              Pending Disbursal
-            </span>
-          </div>
-          <p className="text-base sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1 sm:mt-2 truncate">
-            {formatCurrency(pendingDisbursalAmount)}
-          </p>
-          <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-300 mt-1 truncate">
-            {pendingPayrolls.length} slip{pendingPayrolls.length === 1 ? '' : 's'} waiting
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider truncate">
-              Paid Out
-            </span>
-          </div>
-          <p className="text-base sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-1 sm:mt-2 truncate">{formatCurrency(paidOutAmount)}</p>
-          <p className="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-300 mt-1 truncate">Recorded transfers</p>
-        </div>
-
-        <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
-              Staff Enrolled
-            </span>
-          </div>
-          <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-white mt-1 sm:mt-2">{employees.length || 4}</p>
-          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">Active staff</p>
-        </div>
-      </div>
-
-      {/* Payroll Slips Table with Integrated Toolbar */}
-      <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] overflow-hidden">
-        {/* Integrated Toolbar inside the table card */}
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-[#143225] bg-white dark:bg-[#091a13] flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">Payroll Records</h3>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-[#0c2219] text-gray-600 dark:text-gray-300 font-medium">
-              {filteredPayrolls.length} slips
-            </span>
-          </div>
-
-          {/* Reduced size search & filter controls */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="relative w-56 sm:w-64">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search staff, code, slip #..."
-                value={payrollSearch}
-                onChange={(e) => setPayrollSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 placeholder-gray-400 dark:placeholder-gray-500"
-              />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                  Monthly Payroll
+                </span>
+              </div>
+              <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-[#00e676] mt-1 sm:mt-2 truncate">{formatCurrency(totalPayrollAmount)}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{payrolls.length} payslips recorded</p>
             </div>
 
-            <select
-              value={payrollStatusFilter}
-              onChange={(e) => setPayrollStatusFilter(e.target.value)}
-              className="px-2.5 py-1.5 text-xs bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="">All Statuses</option>
-              <option value="PENDING">Pending Disbursal</option>
-              <option value="PAID">Disbursed (Paid)</option>
-            </select>
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider truncate">
+                  Pending Disbursal
+                </span>
+              </div>
+              <p className="text-base sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1 sm:mt-2 truncate">
+                {formatCurrency(pendingDisbursalAmount)}
+              </p>
+              <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-300 mt-1 truncate">
+                {pendingPayrolls.length} slip{pendingPayrolls.length === 1 ? '' : 's'} waiting
+              </p>
+            </div>
 
-            <select
-              value={payrollPeriodFilter}
-              onChange={(e) => setPayrollPeriodFilter(e.target.value)}
-              className="px-2.5 py-1.5 text-xs bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="">All Periods</option>
-              <option value="2026-10">October 2026</option>
-              <option value="2026-09">September 2026</option>
-              <option value="2026-08">August 2026</option>
-            </select>
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider truncate">
+                  Paid Out
+                </span>
+              </div>
+              <p className="text-base sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-1 sm:mt-2 truncate">{formatCurrency(paidOutAmount)}</p>
+              <p className="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-300 mt-1 truncate">Recorded transfers</p>
+            </div>
 
-            {(payrollSearch || payrollStatusFilter || payrollPeriodFilter) && (
-              <button
-                onClick={() => {
-                  setPayrollSearch('');
-                  setPayrollStatusFilter('');
-                  setPayrollPeriodFilter('');
-                }}
-                className="px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-[#0c2219] hover:bg-gray-200 dark:hover:bg-[#12281d] rounded-lg transition-colors cursor-pointer"
-              >
-                Reset
-              </button>
-            )}
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                  Staff Enrolled
+                </span>
+              </div>
+              <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-white mt-1 sm:mt-2">{employees.length || 4}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">Active staff</p>
+            </div>
           </div>
-        </div>
 
-        {filteredPayrolls.length === 0 ? (
-          <div className="p-12 text-center">
-            <Banknote className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No payroll records found</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
-              Generate monthly payslips to disburse staff salaries and track payroll expenses.
-            </p>
-            <button
-              onClick={() => openProcessModalForEmployee()}
-              className="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium cursor-pointer"
-            >
-              + Process Monthly Payroll
-            </button>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full divide-y divide-gray-200 dark:divide-[#143225]">
-              <thead className="bg-gray-50 dark:bg-[#071a12]">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Slip / Period
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Employee
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Basic Salary
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Allowances &amp; OT
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Deductions
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Net Payout
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Status &amp; Channel
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-[#091a13] divide-y divide-gray-200 dark:divide-[#143225]">
-                {filteredPayrolls.map((payroll) => {
-                  const periodDate = payroll.period ? new Date(payroll.period) : new Date();
-                  const periodLabel = periodDate.toLocaleDateString('en-US', {
-                    month: 'short',
-                    year: 'numeric',
-                  });
-                  const empName = payroll.employee?.user
-                    ? `${payroll.employee.user.firstName} ${payroll.employee.user.lastName}`
-                    : 'Staff Member';
-                  const empEmail = payroll.employee?.user?.email || 'staff@rms.com';
-                  const empCode = payroll.employee?.employeeCode || 'EMP';
-                  const allowancesOt = (payroll.allowances || 0) + (payroll.overtime || 0);
+          {/* Payroll Slips Table with Integrated Toolbar */}
+          <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] overflow-hidden">
+            {/* Integrated Toolbar inside the table card */}
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-[#143225] bg-white dark:bg-[#091a13] flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">Payroll Records</h3>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-[#0c2219] text-gray-600 dark:text-gray-300 font-medium">
+                  {filteredPayrolls.length} slips
+                </span>
+              </div>
 
-                  return (
-                    <tr key={payroll.id} className="hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors">
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="font-mono text-xs font-bold text-gray-900 dark:text-white">
-                          PAY-{payroll.id.slice(-5).toUpperCase()}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{periodLabel}</div>
-                      </td>
+              {/* Reduced size search & filter controls */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="relative w-56 sm:w-64">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search staff, code, slip #..."
+                    value={payrollSearch}
+                    onChange={(e) => setPayrollSearch(e.target.value)}
+                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 placeholder-gray-400 dark:placeholder-gray-500"
+                  />
+                </div>
 
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-9 w-9 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-[#00e676] rounded-full flex items-center justify-center font-bold text-xs">
-                            {payroll.employee?.user?.firstName?.[0] || 'E'}
-                            {payroll.employee?.user?.lastName?.[0] || ''}
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1.5">
-                              {empName}
-                              <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-[#0c2219] font-mono text-gray-600 dark:text-gray-300 font-semibold border border-transparent dark:border-[#143225]">
-                                {empCode}
-                              </span>
+                <select
+                  value={payrollStatusFilter}
+                  onChange={(e) => setPayrollStatusFilter(e.target.value)}
+                  className="px-2.5 py-1.5 text-xs bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="PENDING">Pending Disbursal</option>
+                  <option value="PAID">Disbursed (Paid)</option>
+                </select>
+
+                <select
+                  value={payrollPeriodFilter}
+                  onChange={(e) => setPayrollPeriodFilter(e.target.value)}
+                  className="px-2.5 py-1.5 text-xs bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="">All Periods</option>
+                  <option value="2026-10">October 2026</option>
+                  <option value="2026-09">September 2026</option>
+                  <option value="2026-08">August 2026</option>
+                </select>
+
+                {(payrollSearch || payrollStatusFilter || payrollPeriodFilter) && (
+                  <button
+                    onClick={() => {
+                      setPayrollSearch('');
+                      setPayrollStatusFilter('');
+                      setPayrollPeriodFilter('');
+                    }}
+                    className="px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-[#0c2219] hover:bg-gray-200 dark:hover:bg-[#12281d] rounded-lg transition-colors cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {filteredPayrolls.length === 0 ? (
+              <div className="p-12 text-center">
+                <Banknote className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No payroll records found</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+                  Generate monthly payslips to disburse staff salaries and track payroll expenses.
+                </p>
+                <button
+                  onClick={() => openProcessModalForEmployee()}
+                  className="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium cursor-pointer"
+                >
+                  + Process Monthly Payroll
+                </button>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full divide-y divide-gray-200 dark:divide-[#143225]">
+                  <thead className="bg-gray-50 dark:bg-[#071a12]">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Slip / Period
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Employee
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Basic Salary
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Allowances &amp; OT
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Deductions
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Net Payout
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Status &amp; Channel
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-[#091a13] divide-y divide-gray-200 dark:divide-[#143225]">
+                    {filteredPayrolls.map((payroll) => {
+                      const periodDate = payroll.period ? new Date(payroll.period) : new Date();
+                      const periodLabel = periodDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        year: 'numeric',
+                      });
+                      const empName = payroll.employee?.user
+                        ? `${payroll.employee.user.firstName} ${payroll.employee.user.lastName}`
+                        : 'Staff Member';
+                      const empEmail = payroll.employee?.user?.email || 'staff@rms.com';
+                      const empCode = payroll.employee?.employeeCode || 'EMP';
+                      const allowancesOt = (payroll.allowances || 0) + (payroll.overtime || 0);
+
+                      return (
+                        <tr key={payroll.id} className="hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors">
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <div className="font-mono text-xs font-bold text-gray-900 dark:text-white">
+                              PAY-{payroll.id.slice(-5).toUpperCase()}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{empEmail}</div>
-                          </div>
-                        </div>
-                      </td>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{periodLabel}</div>
+                          </td>
 
-                      <td className="px-4 py-3.5 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 font-medium">
-                        {formatCurrency(payroll.basicSalary)}
-                      </td>
-
-                      <td className="px-4 py-3.5 whitespace-nowrap text-sm text-emerald-700 dark:text-[#00e676] font-medium">
-                        +{formatCurrency(allowancesOt)}
-                      </td>
-
-                      <td className="px-4 py-3.5 whitespace-nowrap text-sm text-red-600 dark:text-red-400 font-medium">
-                        -{formatCurrency(payroll.deductions || 0)}
-                      </td>
-
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="text-base font-bold text-gray-900 dark:text-[#00e676]">
-                          {formatCurrency(payroll.netSalary)}
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        {payroll.status === 'PAID' ? (
-                          <div>
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-[#00e676] border border-emerald-300 dark:border-emerald-800/60">
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              Disbursed
-                            </span>
-                            {payroll.paymentMethod && (
-                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">
-                                {payroll.paymentMethod}
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-9 w-9 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-[#00e676] rounded-full flex items-center justify-center font-bold text-xs">
+                                {payroll.employee?.user?.firstName?.[0] || 'E'}
+                                {payroll.employee?.user?.lastName?.[0] || ''}
                               </div>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
-                            <Clock className="w-3.5 h-3.5" />
-                            Pending
-                          </span>
-                        )}
-                      </td>
+                              <div className="ml-3">
+                                <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1.5">
+                                  {empName}
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-[#0c2219] font-mono text-gray-600 dark:text-gray-300 font-semibold border border-transparent dark:border-[#143225]">
+                                    {empCode}
+                                  </span>
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">{empEmail}</div>
+                              </div>
+                            </div>
+                          </td>
 
-                      <td className="px-4 py-3.5 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          {payroll.status !== 'PAID' ? (
-                            <button
-                              onClick={() => openPaymentModal(payroll)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-                            >
-                              <Camera className="w-4 h-4" />
-                              Pay &amp; Attach Proof
-                            </button>
-                          ) : (
-                            <>
-                              {payroll.receiptImage && (
+                          <td className="px-4 py-3.5 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 font-medium">
+                            {formatCurrency(payroll.basicSalary)}
+                          </td>
+
+                          <td className="px-4 py-3.5 whitespace-nowrap text-sm text-emerald-700 dark:text-[#00e676] font-medium">
+                            +{formatCurrency(allowancesOt)}
+                          </td>
+
+                          <td className="px-4 py-3.5 whitespace-nowrap text-sm text-red-600 dark:text-red-400 font-medium">
+                            -{formatCurrency(payroll.deductions || 0)}
+                          </td>
+
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <div className="text-base font-bold text-gray-900 dark:text-[#00e676]">
+                              {formatCurrency(payroll.netSalary)}
+                            </div>
+                          </td>
+
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            {payroll.status === 'PAID' ? (
+                              <div>
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-[#00e676] border border-emerald-300 dark:border-emerald-800/60">
+                                  <CheckCircle2 className="w-3.5 h-3.5" />
+                                  Disbursed
+                                </span>
+                                {payroll.paymentMethod && (
+                                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">
+                                    {payroll.paymentMethod}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
+                                <Clock className="w-3.5 h-3.5" />
+                                Pending
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="px-4 py-3.5 whitespace-nowrap text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {payroll.status !== 'PAID' ? (
                                 <button
-                                  onClick={() => {
-                                    setViewingProof({
-                                      image: payroll.receiptImage!,
-                                      empName,
-                                      amount: payroll.netSalary,
-                                      ref: payroll.transactionRef || `PAY-${payroll.id.slice(-5).toUpperCase()}`,
-                                      channel: payroll.paymentMethod || 'Mobile/Bank Transfer',
-                                    });
-                                    setShowProofViewerModal(true);
-                                  }}
-                                  title="View Uploaded Transfer Screenshot"
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-[#00e676] bg-emerald-50 dark:bg-[#0c2219] hover:bg-emerald-100 dark:hover:bg-[#123627] border border-emerald-200 dark:border-[#143225] rounded-lg transition-colors cursor-pointer"
+                                  onClick={() => openPaymentModal(payroll)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
                                 >
-                                  <ImageIcon className="w-3.5 h-3.5" />
-                                  Screenshot
+                                  <Camera className="w-4 h-4" />
+                                  Pay &amp; Attach Proof
                                 </button>
+                              ) : (
+                                <>
+                                  {payroll.receiptImage && (
+                                    <button
+                                      onClick={() => {
+                                        setViewingProof({
+                                          image: payroll.receiptImage!,
+                                          empName,
+                                          amount: payroll.netSalary,
+                                          ref: payroll.transactionRef || `PAY-${payroll.id.slice(-5).toUpperCase()}`,
+                                          channel: payroll.paymentMethod || 'Mobile/Bank Transfer',
+                                        });
+                                        setShowProofViewerModal(true);
+                                      }}
+                                      title="View Uploaded Transfer Screenshot"
+                                      className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-emerald-700 dark:text-[#00e676] bg-emerald-50 dark:bg-[#0c2219] hover:bg-emerald-100 dark:hover:bg-[#123627] border border-emerald-200 dark:border-[#143225] rounded-lg transition-colors cursor-pointer"
+                                    >
+                                      <ImageIcon className="w-3.5 h-3.5" />
+                                      Screenshot
+                                    </button>
+                                  )}
+
+                                  <button
+                                    onClick={() => {
+                                      setSelectedPayroll(payroll);
+                                      setShowSlipModal(true);
+                                    }}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#0c2219] hover:bg-gray-200 dark:hover:bg-[#12281d] rounded-lg transition-colors cursor-pointer"
+                                  >
+                                    <FileText className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+                                    View Slip
+                                  </button>
+                                </>
                               )}
 
                               <button
@@ -915,34 +928,21 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
                                   setSelectedPayroll(payroll);
                                   setShowSlipModal(true);
                                 }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#0c2219] hover:bg-gray-200 dark:hover:bg-[#12281d] rounded-lg transition-colors cursor-pointer"
+                                title="Full Details"
+                                className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg transition-colors cursor-pointer"
                               >
-                                <FileText className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-                                View Slip
+                                <Eye className="w-4 h-4" />
                               </button>
-                            </>
-                          )}
-
-                          <button
-                            onClick={() => {
-                              setSelectedPayroll(payroll);
-                              setShowSlipModal(true);
-                            }}
-                            title="Full Details"
-                            className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg transition-colors cursor-pointer"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
       {/* ========================================================================= */}
       {/* MODAL 1: DISBURSE PAYROLL & ATTACH TRANSFER SCREENSHOT */}
@@ -981,9 +981,9 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
                       Code: {payingPayroll.employee?.employeeCode || 'EMP'} &bull; Period:{' '}
                       {payingPayroll.period
                         ? new Date(payingPayroll.period).toLocaleDateString('en-US', {
-                          month: 'short',
-                          year: 'numeric',
-                        })
+                            month: 'short',
+                            year: 'numeric',
+                          })
                         : 'Current Month'}
                     </p>
                   </div>
@@ -1439,8 +1439,8 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
                   <span className="font-semibold">
                     {formatCurrency(
                       Number(processForm.basicSalary) +
-                      Number(processForm.allowances || 0) +
-                      Number(processForm.overtime || 0)
+                        Number(processForm.allowances || 0) +
+                        Number(processForm.overtime || 0)
                     )}
                   </span>
                 </div>
@@ -1455,9 +1455,9 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
                   <span className="text-lg font-bold text-emerald-800 dark:text-[#00e676]">
                     {formatCurrency(
                       Number(processForm.basicSalary) +
-                      Number(processForm.allowances || 0) +
-                      Number(processForm.overtime || 0) -
-                      Number(processForm.deductions || 0)
+                        Number(processForm.allowances || 0) +
+                        Number(processForm.overtime || 0) -
+                        Number(processForm.deductions || 0)
                     )}
                   </span>
                 </div>
@@ -1528,9 +1528,9 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
                   <span className="font-medium text-gray-900 dark:text-white">Period:</span>{' '}
                   {selectedPayroll.period
                     ? new Date(selectedPayroll.period).toLocaleDateString('en-US', {
-                      month: 'long',
-                      year: 'numeric',
-                    })
+                        month: 'long',
+                        year: 'numeric',
+                      })
                     : 'Current Month'}
                 </div>
               </div>

@@ -322,12 +322,12 @@ export default function TipsManagementPage() {
       prev.map((t) =>
         t.id === targetTipId
           ? {
-            ...t,
-            status: TipStatus.PAID,
-            paidAt: new Date().toISOString(),
-            paidById: user?.id || 'mgr-1',
-            notes: noteText,
-          }
+              ...t,
+              status: TipStatus.PAID,
+              paidAt: new Date().toISOString(),
+              paidById: user?.id || 'mgr-1',
+              notes: noteText,
+            }
           : t
       )
     );
@@ -376,12 +376,12 @@ export default function TipsManagementPage() {
         prev.map((t) =>
           t.waiter?.id === waiterId && t.status === 'PENDING'
             ? {
-              ...t,
-              status: TipStatus.PAID,
-              paidAt: new Date().toISOString(),
-              paidById: user?.id || 'mgr-1',
-              notes: 'Bulk shift payout',
-            }
+                ...t,
+                status: TipStatus.PAID,
+                paidAt: new Date().toISOString(),
+                paidById: user?.id || 'mgr-1',
+                notes: 'Bulk shift payout',
+              }
             : t
         )
       );
@@ -462,10 +462,11 @@ export default function TipsManagementPage() {
         {/* Total Tips Collected */}
         <div
           onClick={() => setSelectedStatus('ALL')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${selectedStatus === 'ALL'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            selectedStatus === 'ALL'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate block">Tips Collected</span>
@@ -482,10 +483,11 @@ export default function TipsManagementPage() {
         {/* Pending Waiter Payouts */}
         <div
           onClick={() => setSelectedStatus('PENDING')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${selectedStatus === 'PENDING'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            selectedStatus === 'PENDING'
               ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 ring-2 ring-amber-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-amber-300/80 hover:bg-amber-50/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-xs font-semibold text-amber-800 dark:text-amber-400 truncate block">Pending Payout</span>
@@ -502,10 +504,11 @@ export default function TipsManagementPage() {
         {/* Total Disbursed */}
         <div
           onClick={() => setSelectedStatus('PAID')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${selectedStatus === 'PAID'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            selectedStatus === 'PAID'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-[10px] sm:text-xs font-semibold text-emerald-800 dark:text-[#00e676] truncate block">Disbursed</span>
@@ -808,30 +811,33 @@ export default function TipsManagementPage() {
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CASH_TILL')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CASH_TILL'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
+                      payoutDisbursementMethod === 'CASH_TILL'
                         ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] border-emerald-600 dark:border-[#00e676] shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                      }`}
+                    }`}
                   >
                     Cash from Till
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('TELEBIRR_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
+                      payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                      }`}
+                    }`}
                   >
                     Telebirr
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CBE_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CBE_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
+                      payoutDisbursementMethod === 'CBE_TRANSFER'
                         ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                      }`}
+                    }`}
                   >
                     CBE Birr
                   </button>

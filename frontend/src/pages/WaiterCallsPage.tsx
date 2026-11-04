@@ -119,36 +119,36 @@ export default function WaiterCallsPage() {
     const rawItems: any[] = Array.isArray(call.selectedItems)
       ? call.selectedItems
       : (call.selectedItems as any)?.items && Array.isArray((call.selectedItems as any).items)
-        ? (call.selectedItems as any).items
-        : getCustomerCart(call.sessionId)?.items || [];
+      ? (call.selectedItems as any).items
+      : getCustomerCart(call.sessionId)?.items || [];
 
     // 2. Meal items to load into POS cart (with realistic fallback if call had no pre-selected items)
     const itemsToLoad =
       rawItems.length > 0
         ? rawItems
         : [
-          {
-            menuItemId: 'demo-tibs-1',
-            name: 'Special Beef Tibs',
-            price: 280,
-            quantity: 2,
-            subtotal: 560,
-          },
-          {
-            menuItemId: 'demo-injera-1',
-            name: 'Injera Plate',
-            price: 25,
-            quantity: 4,
-            subtotal: 100,
-          },
-          {
-            menuItemId: 'demo-beer-1',
-            name: 'St. George Beer',
-            price: 60,
-            quantity: 2,
-            subtotal: 120,
-          },
-        ];
+            {
+              menuItemId: 'demo-tibs-1',
+              name: 'Special Beef Tibs',
+              price: 280,
+              quantity: 2,
+              subtotal: 560,
+            },
+            {
+              menuItemId: 'demo-injera-1',
+              name: 'Injera Plate',
+              price: 25,
+              quantity: 4,
+              subtotal: 100,
+            },
+            {
+              menuItemId: 'demo-beer-1',
+              name: 'St. George Beer',
+              price: 60,
+              quantity: 2,
+              subtotal: 120,
+            },
+          ];
 
     const customerCart = {
       sessionId: call.sessionId,
@@ -330,10 +330,11 @@ export default function WaiterCallsPage() {
         {/* Card 1: Pending */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'PENDING' ? 'all' : 'PENDING')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${filterStatus === 'PENDING'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            filterStatus === 'PENDING'
               ? 'bg-rose-50/80 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-300/80 hover:bg-rose-50/20 dark:hover:bg-rose-950/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
@@ -353,10 +354,11 @@ export default function WaiterCallsPage() {
         {/* Card 2: In Progress */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'ACKNOWLEDGED' ? 'all' : 'ACKNOWLEDGED')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${filterStatus === 'ACKNOWLEDGED'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            filterStatus === 'ACKNOWLEDGED'
               ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-300/80 hover:bg-blue-50/20 dark:hover:bg-blue-950/20'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
@@ -376,10 +378,11 @@ export default function WaiterCallsPage() {
         {/* Card 3: Total Active */}
         <div
           onClick={() => setFilterStatus('all')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${filterStatus === 'all'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            filterStatus === 'all'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20 dark:hover:bg-[#0c2219]'
-            }`}
+          }`}
         >
           <div className="flex items-center justify-between">
             <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
@@ -449,20 +452,22 @@ export default function WaiterCallsPage() {
             <button
               type="button"
               onClick={() => setFilterStatus('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${filterStatus === 'all'
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                filterStatus === 'all'
                   ? 'bg-gray-900 text-white dark:bg-[#00e676] dark:text-[#032314] shadow-xs'
                   : 'bg-gray-100/90 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
-                }`}
+              }`}
             >
               All ({calls.length})
             </button>
             <button
               type="button"
               onClick={() => setFilterStatus('PENDING')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${filterStatus === 'PENDING'
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                filterStatus === 'PENDING'
                   ? 'bg-rose-600 text-white shadow-xs'
                   : 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30'
-                }`}
+              }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
               Pending ({pendingCalls.length})
@@ -470,10 +475,11 @@ export default function WaiterCallsPage() {
             <button
               type="button"
               onClick={() => setFilterStatus('ACKNOWLEDGED')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${filterStatus === 'ACKNOWLEDGED'
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                filterStatus === 'ACKNOWLEDGED'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30'
-                }`}
+              }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
               In Progress ({acknowledgedCalls.length})
@@ -716,16 +722,16 @@ export default function WaiterCallsPage() {
               {selectedCall.status === 'ACKNOWLEDGED' &&
                 selectedCall.requestType !== 'BILL_REQUEST' &&
                 selectedCall.requestType !== 'ORDER_READY' && (
-                  <Button
-                    size="sm"
-                    onClick={() => handleComplete(selectedCall)}
-                    className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold text-xs gap-1.5 cursor-pointer"
-                    disabled={isActionLoading}
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    Mark Complete
-                  </Button>
-                )}
+                <Button
+                  size="sm"
+                  onClick={() => handleComplete(selectedCall)}
+                  className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold text-xs gap-1.5 cursor-pointer"
+                  disabled={isActionLoading}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Mark Complete
+                </Button>
+              )}
 
               <Button
                 size="sm"
@@ -820,10 +826,11 @@ function CallCard({
 
   return (
     <Card
-      className={`border transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer rounded-2xl overflow-hidden ${isPending
+      className={`border transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer rounded-2xl overflow-hidden ${
+        isPending
           ? 'border-rose-200/90 dark:border-rose-900/60 bg-gradient-to-b from-rose-50/20 to-white dark:from-rose-950/20 dark:to-[#091a13]'
           : 'border-blue-200/80 dark:border-[#143225] bg-gradient-to-b from-blue-50/15 to-white dark:from-[#0c2219]/30 dark:to-[#091a13]'
-        }`}
+      }`}
       onClick={() => onViewDetails(call)}
     >
       <div className="p-4 space-y-3.5">
@@ -831,10 +838,11 @@ function CallCard({
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-3">
             <div
-              className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-bold shrink-0 shadow-2xs ${isPending
+              className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-bold shrink-0 shadow-2xs ${
+                isPending
                   ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-900'
                   : 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900'
-                }`}
+              }`}
             >
               <span className="text-[9px] uppercase tracking-wider font-semibold opacity-75 leading-none">
                 Table
@@ -858,8 +866,9 @@ function CallCard({
           <span className="font-medium text-gray-700 dark:text-gray-200">{timeStr}</span>
           <span className="text-gray-300 dark:text-gray-600">•</span>
           <span
-            className={`font-semibold ${isUrgent ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-gray-500 dark:text-gray-400'
-              }`}
+            className={`font-semibold ${
+              isUrgent ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-gray-500 dark:text-gray-400'
+            }`}
           >
             {waitStr}
           </span>
@@ -870,8 +879,8 @@ function CallCard({
           const rawPreviewItems: any[] = Array.isArray(call.selectedItems)
             ? call.selectedItems
             : (call.selectedItems as any)?.items && Array.isArray((call.selectedItems as any).items)
-              ? (call.selectedItems as any).items
-              : cart?.items || [];
+            ? (call.selectedItems as any).items
+            : cart?.items || [];
 
           if (rawPreviewItems.length === 0) return null;
           const cartTotal = rawPreviewItems.reduce(

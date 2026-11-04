@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Plus,
-  Search,
-  Upload,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Copy,
-  Eye,
+import { 
+  Plus, 
+  Search, 
+  Upload, 
+  MoreVertical, 
+  Edit, 
+  Trash2, 
+  Copy, 
+  Eye, 
   EyeOff,
   X,
   ChevronUp,
@@ -16,11 +16,11 @@ import {
   Utensils
 } from 'lucide-react';
 import { menuApi } from '../api/menu';
-import type {
-  MenuCategory,
-  MenuItem,
-  CreateMenuItemInput,
-  UpdateMenuItemInput
+import type { 
+  MenuCategory, 
+  MenuItem, 
+  CreateMenuItemInput, 
+  UpdateMenuItemInput 
 } from '../api/menu';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
@@ -164,7 +164,7 @@ export default function MenuManagementPage() {
     if (!file) return;
 
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
+    
     if (fileExtension !== 'csv' && fileExtension !== 'json') {
       toast.error('Please upload a CSV or JSON file');
       return;
@@ -186,7 +186,7 @@ export default function MenuManagementPage() {
           // Parse CSV
           const lines = content.split('\n').filter(line => line.trim());
           const headers = lines[0].split(',').map(h => h.trim());
-
+          
           items = lines.slice(1).map(line => {
             const values = line.split(',').map(v => v.trim());
             const item: any = {};
@@ -206,7 +206,7 @@ export default function MenuManagementPage() {
             // Find category by name if categoryId not provided
             let categoryId = item.categoryId;
             if (!categoryId && item.category) {
-              const category = categories.find(c =>
+              const category = categories.find(c => 
                 c.name.toLowerCase() === item.category.toLowerCase()
               );
               categoryId = category?.id;
@@ -237,7 +237,7 @@ export default function MenuManagementPage() {
         }
 
         queryClient.invalidateQueries({ queryKey: ['menuItems'] });
-
+        
         if (successCount > 0) {
           toast.success(`Successfully imported ${successCount} items${errorCount > 0 ? `, ${errorCount} failed` : ''}`);
         } else {
@@ -262,10 +262,10 @@ export default function MenuManagementPage() {
   };
 
   const filteredItems = items.filter((item) => {
-    const matchesSearch = searchQuery === '' ||
+    const matchesSearch = searchQuery === '' || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-
+    
     return matchesSearch;
   });
 
@@ -310,17 +310,17 @@ export default function MenuManagementPage() {
     if (!window.confirm(`Delete ${selectedItems.size} selected items?`)) {
       return;
     }
-
+    
     try {
       const results = await Promise.allSettled(
         Array.from(selectedItems).map(id => deleteMutation.mutateAsync(id))
       );
-
+      
       const successful = results.filter(r => r.status === 'fulfilled').length;
       const failed = results.filter(r => r.status === 'rejected').length;
-
+      
       queryClient.invalidateQueries({ queryKey: ['menuItems'] });
-
+      
       if (successful > 0 && failed === 0) {
         toast.success(`${successful} items deleted`);
       } else if (successful > 0 && failed > 0) {
@@ -328,7 +328,7 @@ export default function MenuManagementPage() {
       } else {
         toast.error('Failed to delete items. Items with order history cannot be deleted - mark as unavailable instead.');
       }
-
+      
       setSelectedItems(new Set());
       setIsBulkMode(false);
     } catch (error) {
@@ -342,10 +342,10 @@ export default function MenuManagementPage() {
       toast.error('No items selected');
       return;
     }
-
+    
     try {
       await Promise.all(
-        Array.from(selectedItems).map(id =>
+        Array.from(selectedItems).map(id => 
           toggleAvailabilityMutation.mutateAsync({ id, isAvailable })
         )
       );
@@ -364,10 +364,10 @@ export default function MenuManagementPage() {
       toast.error('No items selected');
       return;
     }
-
+    
     try {
       await Promise.all(
-        Array.from(selectedItems).map(id =>
+        Array.from(selectedItems).map(id => 
           updateMutation.mutateAsync({ id, data: { categoryId } })
         )
       );
@@ -383,18 +383,18 @@ export default function MenuManagementPage() {
 
   const handleMoveItem = async (index: number, direction: 'up' | 'down') => {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
-
+    
     if (targetIndex < 0 || targetIndex >= filteredItems.length) return;
-
+    
     const currentItem = filteredItems[index];
     const targetItem = filteredItems[targetIndex];
-
+    
     // Check if items have duplicate or missing displayOrder
     const hasDuplicates = filteredItems.some((item, idx) => {
       const otherItems = filteredItems.slice(0, idx);
       return otherItems.some(other => other.displayOrder === item.displayOrder);
     });
-
+    
     if (hasDuplicates || !currentItem.displayOrder || !targetItem.displayOrder) {
       console.log('Fixing displayOrder for all items (sequentially)...');
       try {
@@ -411,26 +411,26 @@ export default function MenuManagementPage() {
         return;
       }
     }
-
+    
     // Now swap - use actual displayOrder values
     const currentOrder = currentItem.displayOrder;
     const targetOrder = targetItem.displayOrder;
-
+    
     console.log('Swapping:', {
       current: { id: currentItem.id, name: currentItem.name, oldOrder: currentOrder, newOrder: targetOrder },
       target: { id: targetItem.id, name: targetItem.name, oldOrder: targetOrder, newOrder: currentOrder }
     });
-
+    
     try {
       // Swap the display orders
       await Promise.all([
         menuApi.updateMenuItem(currentItem.id, { displayOrder: targetOrder }),
         menuApi.updateMenuItem(targetItem.id, { displayOrder: currentOrder }),
       ]);
-
+      
       // Force refetch to see changes
       await queryClient.refetchQueries({ queryKey: ['menuItems', user?.restaurant.id, selectedCategory] });
-
+      
       toast.success('Position swapped');
     } catch (error) {
       console.error('Failed to reorder:', error);
@@ -564,7 +564,7 @@ export default function MenuManagementPage() {
                 {selectedItems.size} selected
               </span>
             </div>
-
+            
             {selectedItems.size > 0 && (
               <>
                 <div className="h-6 w-px bg-gray-300" />
@@ -580,7 +580,7 @@ export default function MenuManagementPage() {
                 >
                   Mark Unavailable
                 </button>
-
+                
                 <select
                   onChange={(e) => {
                     if (e.target.value) {
@@ -597,7 +597,7 @@ export default function MenuManagementPage() {
                     </option>
                   ))}
                 </select>
-
+                
                 <button
                   onClick={handleBulkDelete}
                   className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
@@ -717,8 +717,9 @@ function MenuItemCard({
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className={`bg-white dark:bg-[#091a13] rounded-lg overflow-hidden border-2 hover:shadow-lg transition-all group ${isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 dark:border-[#143225]'
-      }`}>
+    <div className={`bg-white dark:bg-[#091a13] rounded-lg overflow-hidden border-2 hover:shadow-lg transition-all group ${
+      isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 dark:border-[#143225]'
+    }`}>
       {/* Image */}
       <div className="relative aspect-[4/3] bg-gradient-to-br from-orange-100 to-orange-50 dark:from-black/40 dark:to-black/80 overflow-hidden">
         {item.image ? (
@@ -733,14 +734,14 @@ function MenuItemCard({
             }}
           />
         ) : null}
-
+        
         {/* Fallback icon if no image or image fails */}
         {!item.image && (
           <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600">
             <Utensils className="w-12 h-12" />
           </div>
         )}
-
+        
         {/* Selection Checkbox (Bulk Mode) */}
         {isBulkMode && (
           <div className="absolute top-2 left-2">
@@ -753,7 +754,7 @@ function MenuItemCard({
             />
           </div>
         )}
-
+        
         {/* Menu Button */}
         {!isBulkMode && (
           <>
@@ -784,78 +785,78 @@ function MenuItemCard({
                 </button>
               )}
             </div>
-
+            
             <div className="absolute top-2 right-2">
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="p-2 bg-white dark:bg-[#0c2219] rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-[#12281d] cursor-pointer"
-              >
-                <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-              </button>
-
-              {/* Dropdown Menu */}
-              {showMenu && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowMenu(false)}
-                  />
-                  <div className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-[#0c2219] rounded-lg shadow-xl border border-gray-200 dark:border-[#143225] py-1 z-20">
-                    <button
-                      onClick={() => {
-                        onEdit();
-                        setShowMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
-                    >
-                      <Edit className="w-4 h-4" />
-                      Edit dish
-                    </button>
-                    <button
-                      onClick={() => {
-                        onToggleAvailability();
-                        setShowMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
-                    >
-                      {item.isAvailable ? (
-                        <>
-                          <EyeOff className="w-4 h-4" />
-                          Mark unavailable
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="w-4 h-4" />
-                          Mark available
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => {
-                        onDuplicate();
-                        setShowMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
-                    >
-                      <Copy className="w-4 h-4" />
-                      Duplicate
-                    </button>
-                    <hr className="my-1 border-gray-100 dark:border-[#143225]" />
-                    <button
-                      onClick={() => {
-                        onDelete();
-                        setShowMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Delete
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </>
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-2 bg-white dark:bg-[#0c2219] rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-[#12281d] cursor-pointer"
+            >
+              <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </button>
+            
+            {/* Dropdown Menu */}
+            {showMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-10" 
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-[#0c2219] rounded-lg shadow-xl border border-gray-200 dark:border-[#143225] py-1 z-20">
+                  <button
+                    onClick={() => {
+                      onEdit();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit dish
+                  </button>
+                  <button
+                    onClick={() => {
+                      onToggleAvailability();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
+                  >
+                    {item.isAvailable ? (
+                      <>
+                        <EyeOff className="w-4 h-4" />
+                        Mark unavailable
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4" />
+                        Mark available
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDuplicate();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Duplicate
+                  </button>
+                  <hr className="my-1 border-gray-100 dark:border-[#143225]" />
+                  <button
+                    onClick={() => {
+                      onDelete();
+                      setShowMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </>
         )}
 
         {/* Availability Badge */}
@@ -1017,7 +1018,7 @@ function MenuItemModal({
     }
 
     setImageFile(file);
-
+    
     // Show preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -1041,7 +1042,7 @@ function MenuItemModal({
       });
 
       const result = await response.json();
-
+      
       if (result.success) {
         setFormData(prev => ({ ...prev, image: result.data.url }));
         toast.success('Image uploaded successfully!');
@@ -1105,7 +1106,7 @@ function MenuItemModal({
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Category *
               </label>
-
+              
               {/* Custom Dropdown with Delete Icons and Add Button */}
               <div className="flex gap-2">
                 <div className="flex-1 relative">
@@ -1128,8 +1129,8 @@ function MenuItemModal({
                   {/* Dropdown Menu */}
                   {showCategoryDropdown && (
                     <>
-                      <div
-                        className="fixed inset-0 z-10"
+                      <div 
+                        className="fixed inset-0 z-10" 
                         onClick={() => setShowCategoryDropdown(false)}
                       />
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#091a13] border border-gray-300 dark:border-[#143225] rounded-lg shadow-xl z-20 max-h-64 overflow-y-auto">
@@ -1144,13 +1145,14 @@ function MenuItemModal({
                         >
                           Select category
                         </button>
-
+                        
                         {/* Category options with delete icons */}
                         {categories.map((cat) => (
                           <div
                             key={cat.id}
-                            className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-[#123627] border-b border-gray-100 dark:border-[#143225] last:border-b-0 group bg-white dark:bg-[#091a13] ${formData.categoryId === cat.id ? 'bg-green-50 dark:bg-[#123627]' : ''
-                              }`}
+                            className={`flex items-center justify-between px-3 py-2 hover:bg-gray-50 dark:hover:bg-[#123627] border-b border-gray-100 dark:border-[#143225] last:border-b-0 group bg-white dark:bg-[#091a13] ${
+                              formData.categoryId === cat.id ? 'bg-green-50 dark:bg-[#123627]' : ''
+                            }`}
                           >
                             <button
                               type="button"
@@ -1184,7 +1186,7 @@ function MenuItemModal({
                     </>
                   )}
                 </div>
-
+                
                 <button
                   type="button"
                   onClick={() => setShowCategoryForm(true)}
@@ -1253,26 +1255,28 @@ function MenuItemModal({
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Dish Image
             </label>
-
+            
             {/* Upload Method Toggle */}
             <div className="flex gap-2 mb-3">
               <button
                 type="button"
                 onClick={() => setUploadMethod('url')}
-                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${uploadMethod === 'url'
+                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                  uploadMethod === 'url'
                     ? 'bg-green-50 dark:bg-[#123627] border-green-500 dark:border-[#00e676] text-green-700 dark:text-[#00e676]'
                     : 'bg-gray-50 dark:bg-[#071a12] border-gray-300 dark:border-[#143225] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#0c2219]'
-                  }`}
+                }`}
               >
                 URL
               </button>
               <button
                 type="button"
                 onClick={() => setUploadMethod('file')}
-                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${uploadMethod === 'file'
+                className={`flex-1 px-3 py-2 text-sm rounded-lg border transition-colors cursor-pointer ${
+                  uploadMethod === 'file'
                     ? 'bg-green-50 dark:bg-[#123627] border-green-500 dark:border-[#00e676] text-green-700 dark:text-[#00e676]'
                     : 'bg-gray-50 dark:bg-[#071a12] border-gray-300 dark:border-[#143225] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#0c2219]'
-                  }`}
+                }`}
               >
                 Upload File
               </button>
@@ -1457,7 +1461,7 @@ function MenuItemModal({
                   <X className="w-5 h-5" />
                 </button>
               </div>
-
+              
               <div className="space-y-4">
                 <div>
                   <input

@@ -72,7 +72,7 @@ export default function WhyChooseUsSection() {
             >
               {/* Gradient Background on Hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`} />
-
+              
               {/* Icon */}
               <div className="relative mb-4">
                 <div className={`inline-flex p-4 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10 text-gray-200 group-hover:scale-110 transition-all duration-300`}>

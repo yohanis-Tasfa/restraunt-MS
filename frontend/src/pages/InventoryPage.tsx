@@ -10,7 +10,7 @@ import { getStoredInventoryItems, saveStoredInventoryItems } from '../utils/mock
 export default function InventoryPage() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
@@ -278,29 +278,32 @@ export default function InventoryPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setView('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${view === 'all'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+                view === 'all'
                   ? 'bg-green-500 text-white font-bold'
                   : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
-                }`}
+              }`}
             >
               All Items
             </button>
             <button
               onClick={() => setView('low-stock')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${view === 'low-stock'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+                view === 'low-stock'
                   ? 'bg-green-500 text-white font-bold'
                   : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
-                }`}
+              }`}
             >
               Low Stock
             </button>
 
             <button
               onClick={() => setView('expiring')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${view === 'expiring'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+                view === 'expiring'
                   ? 'bg-green-500 text-white font-bold'
                   : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
-                }`}
+              }`}
             >
               Expiring
             </button>
@@ -390,7 +393,7 @@ export default function InventoryPage() {
                 {items.map((item) => {
                   const status = getStockStatus(item);
                   const StatusIcon = status.icon;
-
+                  
                   return (
                     <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -409,8 +412,9 @@ export default function InventoryPage() {
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-2xl font-bold ${item.quantity <= item.minQuantity ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
-                          }`}>
+                        <span className={`text-2xl font-bold ${
+                          item.quantity <= item.minQuantity ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
+                        }`}>
                           {item.quantity}
                         </span>
                       </td>
@@ -534,14 +538,14 @@ function ItemModal({ isOpen, onClose, item, onSubmit, categories }: ItemModalPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     const submitData = {
       ...formData,
       maxQuantity: formData.maxQuantity || undefined,
       expiryDate: formData.expiryDate || undefined,
       batchNumber: formData.batchNumber || undefined,
     };
-
+    
     onSubmit(submitData);
   };
 
@@ -732,11 +736,11 @@ interface MovementModalProps {
   isOpen: boolean;
   onClose: () => void;
   item: InventoryItem;
-  onSubmit: (data: {
-    inventoryId: string;
-    type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'WASTE' | 'TRANSFER';
-    quantity: number;
-    reference?: string;
+  onSubmit: (data: { 
+    inventoryId: string; 
+    type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'WASTE' | 'TRANSFER'; 
+    quantity: number; 
+    reference?: string; 
     notes?: string;
     costPerUnit?: number;
     totalCost?: number;
@@ -840,7 +844,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
             <>
               <div className="border-t border-gray-200 dark:border-[#143225] pt-4 mt-2">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Payment Details</h3>
-
+                
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -946,8 +950,8 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
                 {formData.type === 'IN'
                   ? item.quantity + formData.quantity
                   : formData.type === 'OUT' || formData.type === 'WASTE'
-                    ? item.quantity - formData.quantity
-                    : 'Adjusted'}{' '}
+                  ? item.quantity - formData.quantity
+                  : 'Adjusted'}{' '}
                 {item.unit}
               </span>
             </p>

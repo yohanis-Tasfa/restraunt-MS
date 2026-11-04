@@ -44,8 +44,8 @@ export default function FloatingCallPanel() {
     const rawItems: any[] = Array.isArray(call.selectedItems)
       ? call.selectedItems
       : Array.isArray(call.selectedItems?.items)
-        ? call.selectedItems.items
-        : [];
+      ? call.selectedItems.items
+      : [];
 
     if (rawItems.length > 0) {
       const customerCart = {

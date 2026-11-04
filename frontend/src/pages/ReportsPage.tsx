@@ -135,8 +135,8 @@ export default function ReportsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
                 className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm transition border-b-2 cursor-pointer whitespace-nowrap ${activeTab === tab.id
-                  ? 'border-emerald-600 dark:border-[#00e676] text-emerald-600 dark:text-[#00e676]'
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'border-emerald-600 dark:border-[#00e676] text-emerald-600 dark:text-[#00e676]'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
               >
                 <Icon className="w-4 h-4" />
@@ -159,8 +159,8 @@ export default function ReportsPage() {
               key={range.id}
               onClick={() => setDateRange(range.id as DateRangeType)}
               className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer whitespace-nowrap ${dateRange === range.id
-                ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold shadow-2xs'
-                : 'bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
+                  ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold shadow-2xs'
+                  : 'bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
                 }`}
             >
               {range.label}
