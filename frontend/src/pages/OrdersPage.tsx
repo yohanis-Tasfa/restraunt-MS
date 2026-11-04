@@ -19,9 +19,14 @@ import {
   DialogFooter,
 } from '../components/ui/dialog';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import {
   Search,
-  Eye,
-  MoreVertical,
   X,
   Clock,
   ShoppingBag,
@@ -33,6 +38,7 @@ import {
   Printer,
   Receipt,
   Calendar,
+  Filter,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -53,6 +59,26 @@ export default function OrdersPage() {
   const [orderToPrint, setOrderToPrint] = useState<{ order: Order; type: 'BILL' | 'RECEIPT' } | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [paymentFilter, setPaymentFilter] = useState<string>('all');
+
+  // Combined filter value for mobile dropdown selector
+  const combinedFilter = useMemo(() => {
+    if (paymentFilter === 'unpaid') return 'unpaid';
+    if (paymentFilter === 'paid') return 'paid';
+    return statusFilter;
+  }, [statusFilter, paymentFilter]);
+
+  const handleCombinedFilterChange = (val: string) => {
+    if (val === 'unpaid') {
+      setStatusFilter('all');
+      setPaymentFilter('unpaid');
+    } else if (val === 'paid') {
+      setStatusFilter('all');
+      setPaymentFilter('paid');
+    } else {
+      setStatusFilter(val);
+      setPaymentFilter('all');
+    }
+  };
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -422,7 +448,9 @@ export default function OrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Orders</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and track all orders</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Manage and track all orders • Tap any row to view details
+          </p>
         </div>
 
         {/* Date Filters & Date Picker (Top Right above KPI cards) */}
@@ -568,8 +596,51 @@ export default function OrdersPage() {
         </Card>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="mb-4">
+      {/* Mobile Filter Dropdown (< 640px) */}
+      <div className="sm:hidden mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 shrink-0 flex items-center gap-1">
+            <Filter className="w-3.5 h-3.5" />
+            Filter:
+          </span>
+          <div className="flex-1">
+            <Select value={combinedFilter} onValueChange={handleCombinedFilterChange}>
+              <SelectTrigger className="w-full h-10 text-xs font-semibold bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] text-gray-900 dark:text-gray-100 shadow-xs">
+                <SelectValue placeholder="Filter orders..." />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
+                <SelectItem value="all" className="text-xs font-medium">
+                  All Orders ({stats.total})
+                </SelectItem>
+                <SelectItem value="unpaid" className="text-xs font-medium text-red-600 dark:text-red-400">
+                  💳 Unpaid Orders ({stats.unpaid})
+                </SelectItem>
+                <SelectItem value="paid" className="text-xs font-medium text-emerald-600 dark:text-[#00e676]">
+                  ✓ Paid Orders ({stats.paid})
+                </SelectItem>
+                {isCashier && (
+                  <SelectItem value="bill_requested" className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                    📄 Bill Requested ({billRequests.filter((b: any) => b.status === 'PENDING').length})
+                  </SelectItem>
+                )}
+                {!isCashier && (
+                  <>
+                    <SelectItem value="pending" className="text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                      ⏳ Pending ({stats.pending})
+                    </SelectItem>
+                    <SelectItem value="ready" className="text-xs font-medium text-orange-600 dark:text-orange-400">
+                      🍽️ Ready ({stats.ready})
+                    </SelectItem>
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop / Tablet Filter Tabs (>= 640px) */}
+      <div className="hidden sm:block mb-4">
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <Button
             variant={statusFilter === 'all' && paymentFilter === 'all' ? 'default' : 'outline'}
@@ -578,11 +649,11 @@ export default function OrdersPage() {
               setStatusFilter('all');
               setPaymentFilter('all');
             }}
-            className={
+            className={`shrink-0 whitespace-nowrap ${
               statusFilter === 'all' && paymentFilter === 'all'
                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
                 : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
-            }
+            }`}
           >
             All Orders ({stats.total})
           </Button>
@@ -595,11 +666,11 @@ export default function OrdersPage() {
                 setStatusFilter('bill_requested');
                 setPaymentFilter('all');
               }}
-              className={
+              className={`shrink-0 whitespace-nowrap ${
                 statusFilter === 'bill_requested'
                   ? 'bg-blue-600 hover:bg-blue-700 text-white font-semibold'
                   : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
-              }
+              }`}
             >
               <FileText className="w-4 h-4 mr-1.5" />
               Bill Requested ({billRequests.filter((b: any) => b.status === 'PENDING').length})
@@ -615,11 +686,11 @@ export default function OrdersPage() {
                   setStatusFilter('pending');
                   setPaymentFilter('all');
                 }}
-                className={
+                className={`shrink-0 whitespace-nowrap ${
                   statusFilter === 'pending'
                     ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
                     : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
-                }
+                }`}
               >
                 Pending ({stats.pending})
               </Button>
@@ -630,11 +701,11 @@ export default function OrdersPage() {
                   setStatusFilter('ready');
                   setPaymentFilter('all');
                 }}
-                className={
+                className={`shrink-0 whitespace-nowrap ${
                   statusFilter === 'ready'
                     ? 'bg-orange-600 hover:bg-orange-700 text-white'
                     : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
-                }
+                }`}
               >
                 🍽️ Ready ({stats.ready})
               </Button>
@@ -648,11 +719,11 @@ export default function OrdersPage() {
               setStatusFilter('all');
               setPaymentFilter('unpaid');
             }}
-            className={
+            className={`shrink-0 whitespace-nowrap ${
               paymentFilter === 'unpaid'
                 ? 'bg-red-600 hover:bg-red-700 text-white font-semibold'
                 : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
-            }
+            }`}
           >
             <CreditCard className="w-4 h-4 mr-1.5" />
             Unpaid Orders ({stats.unpaid})
@@ -664,11 +735,11 @@ export default function OrdersPage() {
               setStatusFilter('all');
               setPaymentFilter('paid');
             }}
-            className={
+            className={`shrink-0 whitespace-nowrap ${
               paymentFilter === 'paid'
                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
                 : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
-            }
+            }`}
           >
             <CheckCircle className="w-4 h-4 mr-1.5 text-emerald-400" />
             Paid Orders ({stats.paid})
@@ -690,221 +761,185 @@ export default function OrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white dark:bg-[#091a13] rounded-lg border border-gray-200 dark:border-[#143225] overflow-hidden">
-        {/* Table Header */}
-        <div className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-3 bg-gray-50 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225] text-sm font-medium text-gray-600 dark:text-gray-400">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] overflow-hidden shadow-xs w-full">
+        {/* Table Header: 4 columns only - Action, Order, Table, Total */}
+        <div className="grid grid-cols-[135px_50px_65px_1fr] sm:grid-cols-[170px_70px_90px_1fr] gap-2 sm:gap-4 px-3 sm:px-4 py-3 bg-gray-50/90 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225] text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider items-center">
+          <div>Action</div>
           <div>Order</div>
           <div>Table</div>
-          <div>Waiter</div>
-          <div>Items</div>
-          <div>Total</div>
-          <div>Status</div>
-          <div>Payment</div>
-          <div>Placed</div>
-          <div></div>
+          <div className="text-right">Total</div>
         </div>
 
         {/* Table Body */}
         <div className="divide-y divide-gray-200 dark:divide-[#143225]">
-          {sortedOrders.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 dark:text-gray-500 mb-2">No orders found</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {searchTerm
-                  ? 'Try adjusting your search'
-                  : 'Orders will appear here once created'}
-              </p>
-            </div>
-          ) : (
-            sortedOrders.map((order: Order, index: number) => (
-              <div
-                key={order.id}
-                className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors items-center text-sm"
-              >
-                {/* Sequential Order Number */}
-                <div className="font-medium text-gray-900 dark:text-white">
-                  {(page - 1) * limit + index + 1}
+              {sortedOrders.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 dark:text-gray-500 mb-2">No orders found</div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {searchTerm
+                      ? 'Try adjusting your search'
+                      : 'Orders will appear here once created'}
+                  </p>
                 </div>
+              ) : (
+                sortedOrders.map((order: Order, index: number) => (
+                  <div
+                    key={order.id}
+                    onClick={() => handleViewDetails(order)}
+                    className="grid grid-cols-[135px_50px_65px_1fr] sm:grid-cols-[170px_70px_90px_1fr] gap-2 sm:gap-4 px-3 sm:px-4 py-3 hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors items-center text-sm cursor-pointer"
+                    title="Tap to view full order details"
+                  >
+                    {/* 1. Actions (Far Left) */}
+                    <div className="flex items-center gap-1 flex-wrap" onClick={(e) => e.stopPropagation()}>
+                      {(() => {
+                        const billRequest = getBillRequestForOrder(order.id);
+                        const isUnpaid = order.paymentStatus === 'UNPAID';
+                        const isReady = order.status === OrderStatus.READY;
 
-                {/* Table */}
-                <div className="text-gray-700 dark:text-gray-300">
-                  {order.table ? `T-${order.table.number}` : '-'}
-                </div>
+                        // Cashier Role Actions
+                        if (isCashier) {
+                          return (
+                            <div className="flex items-center gap-1">
+                              {isUnpaid ? (
+                                <Button
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenPrintSlip(order, 'BILL');
+                                  }}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-7 px-2.5 gap-1 font-semibold shadow-xs"
+                                >
+                                  <Printer className="w-3.5 h-3.5" />
+                                  Print Bill
+                                </Button>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenPrintSlip(order, 'RECEIPT');
+                                  }}
+                                  className="border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] text-xs h-7 px-2.5 gap-1 font-semibold"
+                                >
+                                  <Receipt className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
+                                  Receipt
+                                </Button>
+                              )}
+                            </div>
+                          );
+                        }
 
-                {/* Waiter */}
-                <div className="text-gray-700 dark:text-gray-300">
-                  {order.createdBy ? order.createdBy.firstName : '-'}
-                </div>
+                        // Waiter & Manager Role Actions
+                        const canRequestBill =
+                          (isWaiter || isManagerOrOwner) &&
+                          ['SERVED', 'COMPLETED'].includes(order.status) &&
+                          isUnpaid &&
+                          !billRequest;
 
-                {/* Items - Show food names with quantity */}
-                <div className="text-gray-700 dark:text-gray-300">
-                  {order.items && order.items.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {order.items.map((item: any, idx: number) => (
-                        <span key={idx} className="text-sm">
-                          {item.menuItem?.name || 'Unknown'} {item.quantity}
-                          {idx < order.items.length - 1 && ','}
-                        </span>
-                      ))}
+                        const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
+                        const billInProgress = billRequest && billRequest.status !== 'COMPLETED';
+
+                        return (
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {/* Mark as Served button - only for Waiter or Manager */}
+                            {isReady && (isWaiter || isManagerOrOwner) && (
+                              <Button
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsServedMutation.mutate(order.id);
+                                }}
+                                disabled={markAsServedMutation.isPending}
+                                className="bg-green-600 hover:bg-green-700 text-white text-xs h-7 px-2 font-medium"
+                              >
+                                <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                                Served
+                              </Button>
+                            )}
+
+                            {/* Show bill status badge */}
+                            {billInProgress && (
+                              <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-300 dark:border-blue-800 font-normal text-xs py-0.5 px-2">
+                                {billRequest.status === 'PENDING' && '📄 Bill Req.'}
+                                {billRequest.status === 'PROCESSING' && '⏳ In Progress'}
+                              </Badge>
+                            )}
+
+                            {/* Request Bill button - ONLY for Waiters/Managers */}
+                            {canRequestBill && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRequestBill(order);
+                                }}
+                                className="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/40 text-xs h-7 px-2 font-medium"
+                              >
+                                <FileText className="w-3.5 h-3.5 mr-1" />
+                                Request Bill
+                              </Button>
+                            )}
+
+                            {/* Collect Payment button for Waiter/Manager */}
+                            {(billReady || (isUnpaid && !billRequest && !canRequestBill)) && (
+                              <Button
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleProcessPayment(order);
+                                }}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-7 px-2 font-medium shadow-xs"
+                              >
+                                <CreditCard className="w-3.5 h-3.5 mr-1" />
+                                Collect
+                              </Button>
+                            )}
+
+                            {/* Paid Badge if already paid */}
+                            {order.paymentStatus === 'PAID' && (
+                              <span className="text-xs font-medium text-emerald-600 dark:text-[#00e676] flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/40">
+                                ✓ Paid
+                              </span>
+                            )}
+
+                            {/* Cancel / Void button - only when not completed/paid/cancelled */}
+                            {order.status !== OrderStatus.CANCELLED &&
+                              order.status !== OrderStatus.COMPLETED &&
+                              order.paymentStatus !== 'PAID' &&
+                              (isWaiter || isManagerOrOwner) && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleCancelOrder(order.id);
+                                  }}
+                                  className="p-1 hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors cursor-pointer"
+                                  title="Cancel / Void Order"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                          </div>
+                        );
+                      })()}
                     </div>
-                  ) : order._count?.items ? (
-                    <span className="text-gray-500 dark:text-gray-400 text-sm">
-                      {order._count.items} {order._count.items === 1 ? 'item' : 'items'}
-                    </span>
-                  ) : (
-                    <span className="text-gray-500 dark:text-gray-400">-</span>
-                  )}
-                </div>
 
-                {/* Total */}
-                <div className="font-semibold text-gray-900 dark:text-[#00e676]">
-                  Br {order.total.toFixed(2)}
-                </div>
+                    {/* 2. Sequential Order Number */}
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      #{(page - 1) * limit + index + 1}
+                    </div>
 
-                {/* Status */}
-                <div>
-                  <Badge className={`${getStatusColor(order.status)} font-normal text-xs`}>
-                    ● {order.status.charAt(0) + order.status.slice(1).toLowerCase()}
-                  </Badge>
-                </div>
+                    {/* 3. Table */}
+                    <div className="text-gray-800 dark:text-gray-200 font-medium">
+                      {order.table ? `T-${order.table.number}` : '-'}
+                    </div>
 
-                {/* Payment Status */}
-                <div>
-                  <Badge className={`${getPaymentStatusColor(order.paymentStatus)} font-normal text-xs`}>
-                    {order.paymentStatus}
-                  </Badge>
-                </div>
-
-                {/* Time Ago */}
-                <div className="text-gray-500 dark:text-gray-400 text-xs">{getTimeAgo(order.createdAt)}</div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-2 items-center">
-                  {(() => {
-                    const billRequest = getBillRequestForOrder(order.id);
-                    const isUnpaid = order.paymentStatus === 'UNPAID';
-                    const isReady = order.status === OrderStatus.READY;
-
-                    // Cashier Role Actions:
-                    // Cashiers audit, print customer bills, and print settled payment receipts.
-                    // Cashiers do NOT collect payment at table-side (Waiters do).
-                    if (isCashier) {
-                      return (
-                        <>
-                          {isUnpaid ? (
-                            <Button
-                              size="sm"
-                              onClick={() => handleOpenPrintSlip(order, 'BILL')}
-                              className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-2.5 gap-1 font-semibold shadow-xs"
-                            >
-                              <Printer className="w-3.5 h-3.5" />
-                              Print Bill
-                            </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleOpenPrintSlip(order, 'RECEIPT')}
-                              className="border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] text-xs h-8 px-2.5 gap-1 font-semibold"
-                            >
-                              <Receipt className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
-                              Receipt
-                            </Button>
-                          )}
-
-                          <button
-                            onClick={() => handleViewDetails(order)}
-                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        </>
-                      );
-                    }
-
-                    // Waiter & Manager Role Actions
-                    const canRequestBill =
-                      (isWaiter || isManagerOrOwner) &&
-                      ['SERVED', 'COMPLETED'].includes(order.status) &&
-                      isUnpaid &&
-                      !billRequest;
-
-                    const billReady = billRequest?.status === 'COMPLETED' && isUnpaid;
-                    const billInProgress = billRequest && billRequest.status !== 'COMPLETED';
-
-                    return (
-                      <>
-                        {/* Mark as Served button - only for Waiter or Manager */}
-                        {isReady && (isWaiter || isManagerOrOwner) && (
-                          <Button
-                            size="sm"
-                            onClick={() => markAsServedMutation.mutate(order.id)}
-                            disabled={markAsServedMutation.isPending}
-                            className="bg-green-600 hover:bg-green-700 text-white text-xs h-8"
-                          >
-                            <CheckCircle className="w-3.5 h-3.5 mr-1" />
-                            Mark as Served
-                          </Button>
-                        )}
-
-                        {/* Show bill status badge */}
-                        {billInProgress && (
-                          <Badge className="bg-blue-100 text-blue-700 border-blue-300 font-normal text-xs">
-                            {billRequest.status === 'PENDING' && '📄 Bill Requested'}
-                            {billRequest.status === 'PROCESSING' && '⏳ Bill Processing'}
-                          </Badge>
-                        )}
-
-                        {/* Request Bill button - ONLY for Waiters/Managers */}
-                        {canRequestBill && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRequestBill(order)}
-                            className="border-blue-300 text-blue-700 hover:bg-blue-50 text-xs h-8"
-                          >
-                            <FileText className="w-3.5 h-3.5 mr-1" />
-                            Request Bill
-                          </Button>
-                        )}
-
-                        {/* Collect Payment button for Waiter/Manager */}
-                        {(billReady || (isUnpaid && !billRequest && !canRequestBill)) && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleProcessPayment(order)}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8"
-                          >
-                            <CreditCard className="w-3.5 h-3.5 mr-1" />
-                            Collect Payment
-                          </Button>
-                        )}
-
-                        <button
-                          onClick={() => handleViewDetails(order)}
-                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                          title="View Details"
-                        >
-                          <MoreVertical className="w-4 h-4 text-gray-400 dark:text-gray-400" />
-                        </button>
-
-                        {order.status !== OrderStatus.CANCELLED &&
-                          order.status !== OrderStatus.COMPLETED &&
-                          (isWaiter || isManagerOrOwner) && (
-                            <button
-                              onClick={() => handleCancelOrder(order.id)}
-                              className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors cursor-pointer"
-                              title="Cancel / Void Order"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          )}
-                      </>
-                    );
-                  })()}
-                </div>
-              </div>
+                    {/* 4. Total */}
+                    <div className="text-right font-bold text-gray-900 dark:text-[#00e676]">
+                      Br {order.total.toFixed(2)}
+                    </div>
+                  </div>
             ))
           )}
         </div>
@@ -939,7 +974,7 @@ export default function OrdersPage() {
 
       {/* Order Details Modal */}
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] text-gray-900 dark:text-gray-100 p-4 sm:p-6 rounded-2xl shadow-2xl">
           <DialogHeader>
             <DialogTitle>Order Details</DialogTitle>
             <DialogDescription>
@@ -1065,7 +1100,7 @@ export default function OrdersPage() {
               )}
 
               {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t flex-wrap">
+              <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-[#143225] flex-wrap">
                 {(() => {
                   const billRequest = getBillRequestForOrder(selectedOrder.id);
                   const isUnpaid = selectedOrder.paymentStatus === 'UNPAID';
@@ -1186,7 +1221,8 @@ export default function OrdersPage() {
 
                 {!isCashier &&
                   selectedOrder.status !== OrderStatus.CANCELLED &&
-                  selectedOrder.status !== OrderStatus.COMPLETED && (
+                  selectedOrder.status !== OrderStatus.COMPLETED &&
+                  selectedOrder.paymentStatus !== 'PAID' && (
                     <>
                       {selectedOrder.status === OrderStatus.PENDING && (
                         <Button

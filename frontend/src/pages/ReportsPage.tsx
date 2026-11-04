@@ -126,18 +126,18 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-[#143225]">
+        {/* Tabs - Scrollable on mobile without scrollbars */}
+        <div className="flex items-center gap-1.5 sm:gap-2 border-b border-gray-200 dark:border-[#143225] overflow-x-auto no-scrollbar">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition border-b-2 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm transition border-b-2 cursor-pointer whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'border-green-600 dark:border-[#00e676] text-green-600 dark:text-[#00e676]'
-                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'border-emerald-600 dark:border-[#00e676] text-emerald-600 dark:text-[#00e676]'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -148,20 +148,21 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Date Range Selector */}
-      <div className="mb-6 bg-white dark:bg-[#091a13] rounded-xl shadow border border-gray-100 dark:border-[#143225] p-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Range:</span>
+      {/* Date Range Selector - Clean without redundant "Date Range:" text */}
+      <div className="mb-4 sm:mb-6 bg-white dark:bg-[#091a13] rounded-2xl border border-gray-200/80 dark:border-[#143225] p-2.5 sm:p-4 shadow-xs">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
+          <div className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-[#071a12] flex items-center justify-center text-gray-500 dark:text-gray-400 shrink-0">
+            <Calendar className="w-4 h-4" />
+          </div>
           
           {dateRanges.map((range) => (
             <button
               key={range.id}
               onClick={() => setDateRange(range.id as DateRangeType)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer whitespace-nowrap ${
                 dateRange === range.id
-                  ? 'bg-green-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold'
-                  : 'bg-gray-100 dark:bg-[#071a12] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
+                  ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold shadow-2xs'
+                  : 'bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
               }`}
             >
               {range.label}
@@ -169,19 +170,19 @@ export default function ReportsPage() {
           ))}
 
           {dateRange === 'custom' && (
-            <div className="flex items-center gap-2 ml-4">
+            <div className="flex items-center gap-1.5 ml-2">
               <input
                 type="date"
                 value={customStartDate}
                 onChange={(e) => setCustomStartDate(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg text-sm"
+                className="px-2 py-1 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg text-xs"
               />
-              <span className="text-gray-500 dark:text-gray-400">to</span>
+              <span className="text-gray-400 text-xs">to</span>
               <input
                 type="date"
                 value={customEndDate}
                 onChange={(e) => setCustomEndDate(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg text-sm"
+                className="px-2 py-1 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg text-xs"
               />
             </div>
           )}
@@ -329,22 +330,22 @@ function MetricCard({
   subtitle?: string;
 }) {
   const colorClasses = {
-    green: 'bg-green-50 text-green-600',
-    red: 'bg-red-50 text-red-600',
-    blue: 'bg-blue-50 text-blue-600',
-    purple: 'bg-purple-50 text-purple-600',
+    green: 'bg-emerald-50 text-emerald-600 dark:bg-[#0c2219] dark:text-[#00e676]',
+    red: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400',
+    blue: 'bg-emerald-50 text-emerald-600 dark:bg-[#0c2219] dark:text-[#00e676]',
+    purple: 'bg-purple-50 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400',
   };
 
   return (
-    <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-xl shadow-xs p-3.5 sm:p-5">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{title}</p>
-        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${colorClasses[color]}`}>
-          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+    <div className="bg-white dark:bg-[#091a13] border border-gray-200/80 dark:border-[#143225] rounded-xl sm:rounded-2xl shadow-xs p-2.5 sm:p-4">
+      <div className="flex items-center justify-between mb-1 sm:mb-2">
+        <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">{title}</p>
+        <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 ${colorClasses[color]}`}>
+          <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </div>
       </div>
-      <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{value}</p>
-      {subtitle && <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{subtitle}</p>}
+      <p className="text-sm sm:text-2xl font-black text-gray-900 dark:text-white truncate">{value}</p>
+      {subtitle && <p className="text-[9px] sm:text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">{subtitle}</p>}
     </div>
   );
 }

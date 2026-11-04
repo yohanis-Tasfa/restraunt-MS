@@ -17,7 +17,6 @@ import {
   AlertTriangle,
   Filter,
   Search,
-  RefreshCw,
   X,
   Wifi,
 } from 'lucide-react';
@@ -289,48 +288,39 @@ export default function WaiterCallsPage() {
       {/* ========================================================================= */}
       {/* PAGE HEADER                                                               */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-[#091a13] p-4 sm:p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 dark:from-emerald-600 dark:to-teal-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
-            <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0">
+            <Bell className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">
                 Waiter Calls
               </h1>
               {isConnected ? (
-                <Badge className="bg-emerald-50 dark:bg-[#071a12] text-emerald-700 dark:text-[#00e676] border-emerald-200/80 dark:border-[#143225] text-[11px] font-semibold gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <Badge className="bg-emerald-50 dark:bg-[#071a12] text-emerald-700 dark:text-[#00e676] border-emerald-200/80 dark:border-[#143225] text-[10px] sm:text-[11px] font-semibold gap-1.5 py-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Live Connected
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-[11px] text-gray-500 dark:text-gray-400 dark:border-[#143225] gap-1">
+                <Badge variant="outline" className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 dark:border-[#143225] gap-1 py-0.5">
                   <Wifi className="w-3 h-3" />
                   Connecting...
                 </Badge>
               )}
             </div>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5">
               Live customer service alerts, assistance requests, and QR order alerts
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-2.5 self-start sm:self-auto">
-          <Button
-            onClick={() => refetch()}
-            variant="outline"
-            size="sm"
-            className="text-xs font-semibold h-8 sm:h-9 gap-1.5 border-gray-300 dark:border-[#143225] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
-          >
-            <RefreshCw className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
-            Refresh
-          </Button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             size="sm"
             onClick={() => navigate('/admin/pos')}
-            className="text-xs font-semibold h-8 sm:h-9 gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold shadow-xs cursor-pointer"
+            className="text-xs font-semibold h-8 sm:h-9 gap-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] shadow-xs cursor-pointer"
           >
             <ShoppingCart className="w-3.5 h-3.5" />
             POS Terminal
@@ -339,106 +329,147 @@ export default function WaiterCallsPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* INTERACTIVE KPI SUMMARY CARDS (2x2 / 3-grid on Mobile)                    */}
+      {/* BALANCED 3-COLUMN KPI METRIC CARDS (Side-by-side on Mobile & Desktop)     */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3.5">
         {/* Card 1: Pending */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'PENDING' ? 'all' : 'PENDING')}
-          className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs ${
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
             filterStatus === 'PENDING'
-              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
-              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-200 dark:hover:border-rose-900/50 hover:bg-rose-50/30 dark:hover:bg-rose-950/20'
+              ? 'bg-rose-50/80 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-300/80 hover:bg-rose-50/20 dark:hover:bg-rose-950/20'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-bold text-rose-800 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
-              <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400 shrink-0" />
-              Pending Calls
-            </span>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-rose-100 dark:bg-rose-900/40 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
+              <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </div>
+            {filterStatus === 'PENDING' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            )}
           </div>
-          <div className="text-xl sm:text-3xl font-extrabold text-rose-700 dark:text-rose-400 mt-1 sm:mt-2">
-            {pendingCalls.length}
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+              Pending Calls
+            </p>
+            <p className="text-lg sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-0.5">
+              {pendingCalls.length}
+            </p>
           </div>
         </div>
 
         {/* Card 2: In Progress */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'ACKNOWLEDGED' ? 'all' : 'ACKNOWLEDGED')}
-          className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs ${
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
             filterStatus === 'ACKNOWLEDGED'
-              ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
-              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-200 dark:hover:border-blue-900/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+              ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-300/80 hover:bg-blue-50/20 dark:hover:bg-blue-950/20'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400 shrink-0" />
-              In Progress
-            </span>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </div>
+            {filterStatus === 'ACKNOWLEDGED' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            )}
           </div>
-          <div className="text-xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 mt-1 sm:mt-2">
-            {acknowledgedCalls.length}
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+              In Progress
+            </p>
+            <p className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mt-0.5">
+              {acknowledgedCalls.length}
+            </p>
           </div>
         </div>
 
         {/* Card 3: Total Active */}
         <div
           onClick={() => setFilterStatus('all')}
-          className={`col-span-2 sm:col-span-1 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs ${
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
             filterStatus === 'all'
-              ? 'bg-emerald-50 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-600 ring-2 ring-emerald-500/30'
-              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50/30 dark:hover:bg-[#0c2219]'
+              ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20 dark:hover:bg-[#0c2219]'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-bold text-emerald-800 dark:text-[#00e676] uppercase tracking-wider flex items-center gap-1.5 truncate">
-              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-[#00e676] shrink-0" />
-              Total Active
-            </span>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-600 dark:text-[#00e676] shrink-0">
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </div>
+            {filterStatus === 'all' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            )}
           </div>
-          <div className="text-xl sm:text-3xl font-extrabold text-emerald-700 dark:text-[#00e676] mt-1 sm:mt-2">
-            {calls.length}
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+              Total Active
+            </p>
+            <p className="text-lg sm:text-2xl font-bold text-emerald-700 dark:text-[#00e676] mt-0.5">
+              {calls.length}
+            </p>
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* COMPACT & BALANCED FILTER TOOLBAR (Fixes oversized search bar)             */}
+      {/* RESTRUCTURED SEARCH & FILTER TOOLBAR                                      */}
       {/* ========================================================================= */}
-      <div className="bg-white dark:bg-[#091a13] p-3 sm:p-4 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        {/* Left: Compact, bounded Search Input with proper padding */}
-        <div className="relative w-full sm:w-72 lg:w-80 shrink-0">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          <Input
-            placeholder="Search table number (e.g. 10)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-8 h-9.5 text-xs bg-gray-50/70 dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#071a12] transition-colors"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#0c2219] transition-colors cursor-pointer"
-              title="Clear search"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
+      <div className="bg-white dark:bg-[#091a13] p-3 sm:p-4 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs space-y-3">
+        {/* Row 1: Search Input (flex-1) + Request Type Dropdown side-by-side */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Search Table */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Input
+              placeholder="Search table # (e.g. 4, T-10)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-8 h-10 text-xs sm:text-sm bg-gray-50/80 dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#071a12] transition-colors"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-[#143225] transition-colors cursor-pointer"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Request Type Select */}
+          <div className="w-36 sm:w-48 shrink-0">
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-full h-10 text-xs font-semibold rounded-xl bg-gray-50/80 dark:bg-[#071a12] border-gray-200 dark:border-[#143225] text-gray-800 dark:text-gray-200 shadow-2xs">
+                <div className="flex items-center gap-1.5 truncate">
+                  <Filter className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 shrink-0" />
+                  <SelectValue placeholder="All Types" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] text-gray-900 dark:text-gray-100">
+                <SelectItem value="all" className="text-xs font-medium">All Types</SelectItem>
+                <SelectItem value="ORDER_READY" className="text-xs font-medium">🍽️ Ready to Order</SelectItem>
+                <SelectItem value="ASSISTANCE" className="text-xs font-medium">🔔 Assistance</SelectItem>
+                <SelectItem value="BILL_REQUEST" className="text-xs font-medium">💳 Bill Request</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Right: Status Filter Segmented Controls + Request Type Dropdown */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Status Tabs */}
-          <div className="inline-flex rounded-xl bg-gray-100/90 dark:bg-[#071a12] p-1 border border-gray-200/50 dark:border-[#143225]">
+        {/* Row 2: Status Pills (All, Pending, In Progress) */}
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-[#143225]/60 flex-wrap">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
             <button
               type="button"
               onClick={() => setFilterStatus('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 filterStatus === 'all'
-                  ? 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-white shadow-2xs'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-gray-900 text-white dark:bg-[#00e676] dark:text-[#032314] shadow-xs'
+                  : 'bg-gray-100/90 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
               }`}
             >
               All ({calls.length})
@@ -446,56 +477,28 @@ export default function WaiterCallsPage() {
             <button
               type="button"
               onClick={() => setFilterStatus('PENDING')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 filterStatus === 'PENDING'
-                  ? 'bg-rose-600 text-white shadow-2xs'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-rose-700 dark:hover:text-rose-400'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30'
               }`}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
               Pending ({pendingCalls.length})
             </button>
             <button
               type="button"
               onClick={() => setFilterStatus('ACKNOWLEDGED')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 filterStatus === 'ACKNOWLEDGED'
-                  ? 'bg-blue-600 text-white shadow-2xs'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-blue-700 dark:hover:text-blue-400'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30'
               }`}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
               In Progress ({acknowledgedCalls.length})
             </button>
           </div>
-
-          {/* Type Dropdown */}
-          <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[155px] h-9.5 text-xs rounded-xl bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white">
-              <Filter className="w-3.5 h-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-              <SelectValue placeholder="Request Type" />
-            </SelectTrigger>
-            <SelectContent className="dark:bg-[#091a13] dark:border-[#143225] dark:text-white">
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="ORDER_READY">Ready to Order</SelectItem>
-              <SelectItem value="ASSISTANCE">Assistance</SelectItem>
-              <SelectItem value="BILL_REQUEST">Bill Request</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Reset Filters */}
-          {(filterStatus !== 'all' || filterType !== 'all' || searchQuery) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setFilterStatus('all');
-                setFilterType('all');
-                setSearchQuery('');
-              }}
-              className="text-xs h-9.5 px-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
-            >
-              Reset
-            </Button>
-          )}
         </div>
       </div>
 

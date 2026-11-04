@@ -118,164 +118,188 @@ export default function WaiterTipsPage() {
   return (
     <div className="p-3 sm:p-5 md:p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 text-green-600 dark:text-[#00e676]" />
-          My Tips
-        </h1>
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Track your transfer tips pending payout from manager
-        </p>
+      <div className="flex items-center gap-3 bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs mb-4 sm:mb-6">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0">
+          <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+        <div>
+          <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">
+            My Tips
+          </h1>
+          <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            Track your transfer tips pending payout from manager
+          </p>
+        </div>
       </div>
 
-      {/* Summary Cards - 2x2/3-grid on Mobile */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4 mb-6">
-        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+      {/* Summary Cards - Balanced 3-column row on Mobile & Desktop */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3.5 mb-4 sm:mb-6">
+        {/* Card 1: Total Tips */}
+        <div
+          onClick={() => setStatusFilter('all')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'all'
+              ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20 dark:hover:bg-[#0c2219]'
+          }`}
+        >
           <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Total Tips</p>
-              <p className="text-lg sm:text-2xl font-extrabold text-green-600 dark:text-[#00e676] mt-1 truncate">
-                {summary?.total.amount.toFixed(2) || '0.00'} ETB
-              </p>
-              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{summary?.total.count || 0} tips</p>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-600 dark:text-[#00e676] shrink-0">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
-              <TrendingUp className="w-4 h-4 sm:w-6 sm:h-6 text-green-600 dark:text-[#00e676]" />
-            </div>
+            {statusFilter === 'all' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            )}
           </div>
-        </Card>
-
-        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Pending Payout</p>
-              <p className="text-lg sm:text-2xl font-extrabold text-yellow-600 dark:text-yellow-400 mt-1 truncate">
-                {summary?.pending.amount.toFixed(2) || '0.00'} ETB
-              </p>
-              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Awaiting payout</p>
-            </div>
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center shrink-0">
-              <Clock className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+              Total Tips
+            </p>
+            <p className="text-sm sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-0.5 truncate">
+              {summary?.total.amount.toFixed(2) || '0.00'}{' '}
+              <span className="text-[10px] sm:text-xs font-normal">ETB</span>
+            </p>
+            <p className="text-[9px] sm:text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+              {summary?.total.count || 0} tips
+            </p>
           </div>
-        </Card>
-
-        <Card className="col-span-2 md:col-span-1 p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Paid Out</p>
-              <p className="text-lg sm:text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1 truncate">
-                {summary?.paid.amount.toFixed(2) || '0.00'} ETB
-              </p>
-              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{summary?.paid.count || 0} tips</p>
-            </div>
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center shrink-0">
-              <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Filters: Status on Left, Period on Right */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-        {/* Status Filter (Left) */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant={statusFilter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setStatusFilter('all')}
-            className={
-              statusFilter === 'all'
-                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            All Tips
-          </Button>
-          <Button
-            variant={statusFilter === 'PENDING' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setStatusFilter('PENDING')}
-            className={
-              statusFilter === 'PENDING'
-                ? 'bg-yellow-600 hover:bg-yellow-700 text-white font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            <Clock className="w-4 h-4 mr-1.5" />
-            Pending
-          </Button>
-          <Button
-            variant={statusFilter === 'PAID' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setStatusFilter('PAID')}
-            className={
-              statusFilter === 'PAID'
-                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            <CheckCircle className="w-4 h-4 mr-1.5" />
-            Paid
-          </Button>
         </div>
 
-        {/* Date Range Filter (Right) */}
-        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-          <Button
-            variant={dateRange === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setDateRange('all')}
-            className={
-              dateRange === 'all'
-                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            <Calendar className="w-4 h-4 mr-1.5" />
-            All Time
-          </Button>
-          <Button
-            variant={dateRange === 'today' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setDateRange('today')}
-            className={
-              dateRange === 'today'
-                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            Today
-          </Button>
-          <Button
-            variant={dateRange === 'week' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setDateRange('week')}
-            className={
-              dateRange === 'week'
-                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            This Week
-          </Button>
-          <Button
-            variant={dateRange === 'month' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setDateRange('month')}
-            className={
-              dateRange === 'month'
-                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            This Month
-          </Button>
+        {/* Card 2: Pending Payout */}
+        <div
+          onClick={() => setStatusFilter('PENDING')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'PENDING'
+              ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 ring-2 ring-amber-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-amber-300/80 hover:bg-amber-50/20 dark:hover:bg-amber-950/20'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </div>
+            {statusFilter === 'PENDING' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            )}
+          </div>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-400 truncate">
+              Pending Payout
+            </p>
+            <p className="text-sm sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5 truncate">
+              {summary?.pending.amount.toFixed(2) || '0.00'}{' '}
+              <span className="text-[10px] sm:text-xs font-normal">ETB</span>
+            </p>
+            <p className="text-[9px] sm:text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+              Awaiting payout
+            </p>
+          </div>
+        </div>
+
+        {/* Card 3: Paid Out */}
+        <div
+          onClick={() => setStatusFilter('PAID')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'PAID'
+              ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-300/80 hover:bg-blue-50/20 dark:hover:bg-blue-950/20'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </div>
+            {statusFilter === 'PAID' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            )}
+          </div>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-blue-700 dark:text-blue-400 truncate">
+              Paid Out
+            </p>
+            <p className="text-sm sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mt-0.5 truncate">
+              {summary?.paid.amount.toFixed(2) || '0.00'}{' '}
+              <span className="text-[10px] sm:text-xs font-normal">ETB</span>
+            </p>
+            <p className="text-[9px] sm:text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+              {summary?.paid.count || 0} tips
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Restructured Filters: Status Pills + Date Period Tabs */}
+      <div className="bg-white dark:bg-[#091a13] p-3 sm:p-4 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs space-y-2.5 mb-4 sm:mb-6">
+        {/* Tier 1: Status Filter Segmented Controls */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('all')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                statusFilter === 'all'
+                  ? 'bg-gray-900 text-white dark:bg-[#00e676] dark:text-[#032314] shadow-xs'
+                  : 'bg-gray-100/90 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
+              }`}
+            >
+              All Tips ({summary?.total.count || 0})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('PENDING')}
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                statusFilter === 'PENDING'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Pending ({summary?.pending.count || 0})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('PAID')}
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                statusFilter === 'PAID'
+                  ? 'bg-emerald-600 text-white dark:bg-[#00e676] dark:text-[#032314] shadow-xs'
+                  : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-[#00e676] hover:bg-emerald-100 dark:hover:bg-[#0c2219]'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Paid ({summary?.paid.count || 0})
+            </button>
+          </div>
+        </div>
+
+        {/* Tier 2: Date Period Quick Buttons */}
+        <div className="flex items-center gap-1.5 pt-2 border-t border-gray-100 dark:border-[#143225]/60 overflow-x-auto no-scrollbar">
+          {(['all', 'today', 'week', 'month'] as const).map((period) => (
+            <button
+              key={period}
+              type="button"
+              onClick={() => setDateRange(period)}
+              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                dateRange === period
+                  ? 'bg-emerald-600 text-white dark:bg-[#00e676] dark:text-[#032314] font-bold shadow-2xs'
+                  : 'bg-gray-100/80 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
+              }`}
+            >
+              {period === 'all' && (
+                <>
+                  <Calendar className="w-3 h-3" />
+                  <span>All Time</span>
+                </>
+              )}
+              {period === 'today' && 'Today'}
+              {period === 'week' && 'This Week'}
+              {period === 'month' && 'This Month'}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Tips Table */}
-      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] overflow-hidden shadow-xs">
+      <div className="bg-white dark:bg-[#091a13] rounded-2xl border border-gray-200/80 dark:border-[#143225] overflow-hidden shadow-xs w-full">
         {tips.length === 0 ? (
           <div className="text-center py-12">
             <DollarSign className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
@@ -285,100 +309,82 @@ export default function WaiterTipsPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-[#143225] text-left">
-              <thead className="bg-gray-50 dark:bg-[#0c2219] border-b border-gray-200 dark:border-[#143225]">
-                <tr>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Table
-                  </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Order Total
-                  </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Payment Method
-                  </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Date &amp; Time
-                  </th>
-                  <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Tip Amount
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-[#143225] bg-white dark:bg-[#091a13]">
-                {tips.map((tip: Tip) => (
-                  <tr key={tip.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
-                    {/* Table */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-gray-100 dark:bg-[#071a12] text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
-                        {tip.order?.table?.number
-                          ? (tip.order.table.number.toLowerCase().startsWith('t')
-                              ? tip.order.table.number
-                              : `Table ${tip.order.table.number}`)
-                          : 'Takeout'}
-                      </span>
-                    </td>
+          <div className="w-full">
+            {/* Table Header: Tip on far left so it is NEVER cut off */}
+            <div className="grid grid-cols-[115px_50px_85px_1fr] md:grid-cols-[140px_75px_120px_130px_120px_1fr] gap-2 md:gap-4 px-3 sm:px-5 py-3 bg-gray-50/90 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225] text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider items-center">
+              <div>Tip Amount</div>
+              <div>Table</div>
+              <div>Status</div>
+              <div className="text-right md:text-left">Method</div>
+              <div className="hidden md:block">Order Total</div>
+              <div className="hidden md:block text-right">Date &amp; Time</div>
+            </div>
 
-                    {/* Order Total */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {(tip.order?.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ETB
-                      </span>
-                    </td>
+            {/* Table Body */}
+            <div className="divide-y divide-gray-200 dark:divide-[#143225]">
+              {tips.map((tip: Tip) => (
+                <div
+                  key={tip.id}
+                  className="grid grid-cols-[115px_50px_85px_1fr] md:grid-cols-[140px_75px_120px_130px_120px_1fr] gap-2 md:gap-4 px-3 sm:px-5 py-3.5 hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors items-center text-sm"
+                >
+                  {/* 1. Tip Amount (Far Left!) */}
+                  <div>
+                    <div className="font-extrabold text-emerald-600 dark:text-[#00e676] text-sm sm:text-base">
+                      +{tip.amount.toFixed(2)} ETB
+                    </div>
+                    <div className="text-[10px] text-gray-400 dark:text-gray-500 md:hidden mt-0.5">
+                      {format(new Date(tip.createdAt), 'MMM d, HH:mm')}
+                    </div>
+                  </div>
 
-                    {/* Payment Method */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${getMethodColor(tip.method)}`}>
-                        {getMethodIcon(tip.method)}
-                        {tip.method}
-                      </span>
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-col items-start gap-0.5">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getStatusColor(tip.status)}`}>
-                          {tip.status}
-                        </span>
-                        {tip.status === TipStatus.PENDING && (
-                          <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
-                            ⏳ Waiting for payout
-                          </span>
-                        )}
-                        {tip.status === TipStatus.PAID && tip.paidAt && (
-                          <span className="text-[11px] text-gray-500 dark:text-gray-400">
-                            Paid {format(new Date(tip.paidAt), 'MMM dd, yyyy')}
-                            {tip.paidBy ? ` by ${tip.paidBy.firstName}` : ''}
-                          </span>
-                        )}
+                  {/* 2. Table */}
+                  <div>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-gray-100 dark:bg-[#071a12] text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-[#143225]">
+                      {tip.order?.table?.number
+                        ? (tip.order.table.number.toLowerCase().startsWith('t')
+                            ? tip.order.table.number
+                            : `T${tip.order.table.number}`)
+                        : 'Takeout'}
+                    </span>
+                    {tip.order?.total && (
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 md:hidden mt-0.5">
+                        {tip.order.total.toFixed(0)} ETB
                       </div>
-                    </td>
+                    )}
+                  </div>
 
-                    {/* Date & Time */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                      <div className="font-medium text-gray-900 dark:text-white">
-                        {format(new Date(tip.createdAt), 'MMM dd, yyyy')}
-                      </div>
-                      <div className="text-xs text-gray-400 dark:text-gray-500">
-                        {format(new Date(tip.createdAt), 'HH:mm')}
-                      </div>
-                    </td>
+                  {/* 3. Status */}
+                  <div>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold border ${getStatusColor(tip.status)}`}>
+                      {tip.status === TipStatus.PENDING && '⏳ '}
+                      {tip.status === TipStatus.PAID && '✓ '}
+                      {tip.status}
+                    </span>
+                  </div>
 
-                    {/* Tip Amount */}
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-xl font-extrabold text-green-600 dark:text-[#00e676]">
-                        +{tip.amount.toFixed(2)} ETB
-                      </div>
-                      <div className="text-xs text-gray-400 dark:text-gray-500 font-medium">Tip received</div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  {/* 4. Payment Method */}
+                  <div className="text-right md:text-left">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-medium border ${getMethodColor(tip.method)}`}>
+                      {getMethodIcon(tip.method)}
+                      <span className="truncate">{tip.method}</span>
+                    </span>
+                  </div>
+
+                  {/* 5. Order Total (Desktop only) */}
+                  <div className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {(tip.order?.total ?? 0).toFixed(2)} ETB
+                  </div>
+
+                  {/* 6. Date & Time (Desktop only) */}
+                  <div className="hidden md:block text-right text-xs text-gray-500 dark:text-gray-400">
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      {format(new Date(tip.createdAt), 'MMM dd, yyyy')}
+                    </div>
+                    <div>{format(new Date(tip.createdAt), 'HH:mm')}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

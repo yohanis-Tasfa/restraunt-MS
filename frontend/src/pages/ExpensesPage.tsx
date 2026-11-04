@@ -340,23 +340,13 @@ export default function ExpensesPage() {
           <Button
             variant="outline"
             className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
-            onClick={() => {
-              queryClient.invalidateQueries({ queryKey: ['expenses'] });
-              queryClient.invalidateQueries({ queryKey: ['expense-stats'] });
-            }}
-          >
-            Refresh
-          </Button>
-          <Button
-            variant="outline"
-            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
           >
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline">Export</span>
           </Button>
           <Button
             onClick={() => setShowCreateModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer shadow-sm text-xs sm:text-sm h-8 sm:h-9"
+            className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold gap-2 cursor-pointer shadow-xs text-xs sm:text-sm h-8 sm:h-9"
           >
             <Plus className="w-4 h-4" />
             Record expense
@@ -480,12 +470,12 @@ export default function ExpensesPage() {
                   </button>
                 </div>
               </div>
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
                 <button
                   onClick={() => setCategoryFilter('All')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer transition-colors ${
                     categoryFilter === 'All'
-                      ? 'bg-blue-600 text-white font-bold'
+                      ? 'bg-emerald-600 text-white dark:bg-[#00e676] dark:text-[#032314] font-bold shadow-2xs'
                       : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
                   }`}
                 >
@@ -495,9 +485,9 @@ export default function ExpensesPage() {
                   <button
                     key={category}
                     onClick={() => setCategoryFilter(category)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer transition-colors ${
                       categoryFilter === category
-                        ? 'bg-blue-600 text-white font-bold'
+                        ? 'bg-emerald-600 text-white dark:bg-[#00e676] dark:text-[#032314] font-bold shadow-2xs'
                         : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
                     }`}
                   >
@@ -508,29 +498,34 @@ export default function ExpensesPage() {
             </div>
           </div>
 
-          {/* Expenses Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          {/* Expenses Table - Amount on Far Left */}
+          <div className="w-full">
+            <table className="w-full text-left">
               <thead className="bg-gray-50 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Expense
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Method
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  {/* Column 1: Amount (FAR LEFT for mobile view) */}
+                  <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider w-[110px] sm:w-[140px]">
                     Amount
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  {/* Column 2: Expense Description & Reference */}
+                  <th className="px-2 sm:px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                    Expense
+                  </th>
+                  {/* Column 3: Category */}
+                  <th className="px-2 sm:px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                    Category
+                  </th>
+                  {/* Column 4: Status */}
+                  <th className="px-2 sm:px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Status
+                  </th>
+                  {/* Desktop Col: Method */}
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
+                    Method
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-[#091a13] divide-y divide-gray-200 dark:divide-[#143225]">
+              <tbody className="bg-white dark:bg-[#091a13] divide-y divide-gray-200 dark:divide-[#143225] text-xs sm:text-sm">
                 {isLoading && expenses.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
@@ -546,43 +541,55 @@ export default function ExpensesPage() {
                 ) : (
                   filteredExpenses.map((expense: Expense) => (
                     <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors">
-                      <td className="px-4 py-4">
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {expense.description || 'No description'}
-                            </p>
+                      {/* 1. Amount (FAR LEFT) */}
+                      <td className="px-3 sm:px-4 py-3.5 whitespace-nowrap">
+                        <div className="font-extrabold text-gray-900 dark:text-[#00e676] text-xs sm:text-sm">
+                          {formatCurrency(expense.amount)}
+                        </div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
+                          {formatDate(expense.date)}
+                        </div>
+                      </td>
+
+                      {/* 2. Expense Description & Reference */}
+                      <td className="px-2 sm:px-4 py-3.5">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate max-w-[130px] sm:max-w-xs">
+                            {expense.description || 'No description'}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-1 mt-0.5">
                             {expense.reference?.startsWith('PO') && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-[#00e676] border border-emerald-200 dark:border-emerald-800/40">
-                                PO Procurement
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-[#00e676] border border-emerald-200 dark:border-emerald-800/40">
+                                PO
                               </span>
                             )}
                             {expense.reference?.startsWith('PAY') && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800/40">
-                                Staff Payroll
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800/40">
+                                Payroll
                               </span>
                             )}
+                            <span className="text-[10px] text-gray-400 dark:text-gray-500 truncate max-w-[90px]">
+                              {expense.reference || ''}
+                            </span>
                           </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                            {expense.reference || 'No reference'} · {formatDate(expense.date)}
-                          </p>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category}</span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          {expense.reference?.includes('Bank') ? 'Bank transfer' : 'Cash'}
+
+                      {/* 3. Category */}
+                      <td className="px-2 sm:px-4 py-3.5 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-gray-100 dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
+                          {expense.category}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-right">
-                        <span className="text-sm font-extrabold text-gray-900 dark:text-[#00e676]">
-                          {formatCurrency(expense.amount)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-center">
+
+                      {/* 4. Status */}
+                      <td className="px-2 sm:px-4 py-3.5 text-center whitespace-nowrap">
                         {getStatusBadge(expense.status)}
+                      </td>
+
+                      {/* 5. Desktop: Method */}
+                      <td className="px-4 py-3.5 whitespace-nowrap hidden md:table-cell text-xs text-gray-700 dark:text-gray-300">
+                        {expense.reference?.includes('Bank') ? 'Bank transfer' : 'Cash'}
                       </td>
                     </tr>
                   ))

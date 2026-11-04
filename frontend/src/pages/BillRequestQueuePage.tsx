@@ -8,6 +8,13 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Card } from '../components/ui/card';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -237,99 +244,109 @@ export default function BillRequestQueuePage() {
         </p>
       </div>
 
-      {/* Statistics Cards - 2x2 Grid on Mobile */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
-        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+      {/* Statistics Cards - Balanced 4-Grid with interactive filtering */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3.5 mb-4 sm:mb-6">
+        <div
+          onClick={() => setStatusFilter(statusFilter === 'pending' ? 'all' : 'pending')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'pending'
+              ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 ring-2 ring-amber-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-amber-300/80 hover:bg-amber-50/20'
+          }`}
+        >
           <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Pending</p>
-              <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-0.5 sm:mt-1">{stats.pending}</p>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center shrink-0">
-              <Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
+            {statusFilter === 'pending' && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
           </div>
-        </Card>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Pending</p>
+            <p className="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5">{stats.pending}</p>
+          </div>
+        </div>
 
-        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <div
+          onClick={() => setStatusFilter(statusFilter === 'processing' ? 'all' : 'processing')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'processing'
+              ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-300/80 hover:bg-blue-50/20'
+          }`}
+        >
           <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Processing</p>
-              <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mt-0.5 sm:mt-1">{stats.processing}</p>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+              <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center shrink-0">
-              <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
-            </div>
+            {statusFilter === 'processing' && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
           </div>
-        </Card>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Processing</p>
+            <p className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mt-0.5">{stats.processing}</p>
+          </div>
+        </div>
 
-        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <div
+          onClick={() => setStatusFilter(statusFilter === 'completed' ? 'all' : 'completed')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'completed'
+              ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20'
+          }`}
+        >
           <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Completed</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-0.5 sm:mt-1">{stats.completed}</p>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-600 dark:text-[#00e676] shrink-0">
+              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
-              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-600 dark:text-[#00e676]" />
-            </div>
+            {statusFilter === 'completed' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
           </div>
-        </Card>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Completed</p>
+            <p className="text-lg sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-0.5">{stats.completed}</p>
+          </div>
+        </div>
 
-        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <div
+          onClick={() => setStatusFilter(statusFilter === 'cancelled' ? 'all' : 'cancelled')}
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
+            statusFilter === 'cancelled'
+              ? 'bg-rose-50/80 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-300/80 hover:bg-rose-50/20'
+          }`}
+        >
           <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Cancelled</p>
-              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-0.5 sm:mt-1">{stats.cancelled}</p>
+            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-rose-100 dark:bg-rose-950/50 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
+              <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center shrink-0">
-              <XCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-red-600 dark:text-red-400" />
-            </div>
+            {statusFilter === 'cancelled' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
           </div>
-        </Card>
+          <div className="mt-2 sm:mt-2.5">
+            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Cancelled</p>
+            <p className="text-lg sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-0.5">{stats.cancelled}</p>
+          </div>
+        </div>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Filter Toolbar: Mobile Dropdown / Desktop Segmented Buttons */}
       <div className="mb-4">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
-          <Button
-            variant={statusFilter === 'pending' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setStatusFilter('pending')}
-            className={
-              statusFilter === 'pending'
-                ? 'bg-yellow-600 hover:bg-yellow-700 text-white font-semibold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            <Clock className="w-4 h-4 mr-2" />
-            Pending ({stats.pending})
-          </Button>
-          <Button
-            variant={statusFilter === 'processing' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setStatusFilter('processing')}
-            className={
-              statusFilter === 'processing'
-                ? 'bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            <Loader2 className="w-4 h-4 mr-2" />
-            Processing ({stats.processing})
-          </Button>
-          <Button
-            variant={statusFilter === 'completed' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setStatusFilter('completed')}
-            className={
-              statusFilter === 'completed'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-semibold cursor-pointer'
-                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
-            }
-          >
-            <CheckCircle className="w-4 h-4 mr-2" />
-            Completed ({stats.completed})
-          </Button>
+        {/* Mobile Dropdown */}
+        <div className="block sm:hidden">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full h-10 text-xs font-semibold rounded-xl bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] shadow-xs">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
+              <SelectItem value="all">All Requests ({billRequests.length})</SelectItem>
+              <SelectItem value="pending">⏳ Pending ({stats.pending})</SelectItem>
+              <SelectItem value="processing">⚙️ Processing ({stats.processing})</SelectItem>
+              <SelectItem value="completed">✓ Completed ({stats.completed})</SelectItem>
+              <SelectItem value="cancelled">✕ Cancelled ({stats.cancelled})</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Desktop Segmented Buttons */}
+        <div className="hidden sm:flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           <Button
             variant={statusFilter === 'all' ? 'default' : 'outline'}
             size="sm"
@@ -342,11 +359,50 @@ export default function BillRequestQueuePage() {
           >
             All Requests
           </Button>
+          <Button
+            variant={statusFilter === 'pending' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('pending')}
+            className={
+              statusFilter === 'pending'
+                ? 'bg-amber-600 hover:bg-amber-700 text-white font-semibold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
+            }
+          >
+            <Clock className="w-4 h-4 mr-1.5" />
+            Pending ({stats.pending})
+          </Button>
+          <Button
+            variant={statusFilter === 'processing' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('processing')}
+            className={
+              statusFilter === 'processing'
+                ? 'bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
+            }
+          >
+            <Loader2 className="w-4 h-4 mr-1.5" />
+            Processing ({stats.processing})
+          </Button>
+          <Button
+            variant={statusFilter === 'completed' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('completed')}
+            className={
+              statusFilter === 'completed'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-semibold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
+            }
+          >
+            <CheckCircle className="w-4 h-4 mr-1.5" />
+            Completed ({stats.completed})
+          </Button>
         </div>
       </div>
 
-      {/* Bill Requests Table */}
-      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-xs overflow-hidden">
+      {/* Bill Requests Table - Restructured with Action on Far Left (100% Mobile Width) */}
+      <div className="bg-white dark:bg-[#091a13] rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs overflow-hidden w-full">
         {billRequests.length === 0 ? (
           <div className="text-center py-16">
             <FileText className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
@@ -356,34 +412,39 @@ export default function BillRequestQueuePage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-[#143225] text-left">
-              <thead className="bg-gray-50 dark:bg-[#0c2219] border-b border-gray-200 dark:border-[#143225]">
+          <div className="w-full">
+            <table className="w-full text-left">
+              <thead className="bg-gray-50/90 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225] text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 <tr>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  {/* Column 1: Action (FAR LEFT for mobile accessibility) */}
+                  <th className="py-3 px-3 sm:px-4 w-[120px] sm:w-[150px]">
+                    Action
+                  </th>
+                  {/* Column 2: Table & Waiter */}
+                  <th className="py-3 px-2 sm:px-4">
                     Table
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Requested By
-                  </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Items Ordered
-                  </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Requested
-                  </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  {/* Column 3: Total */}
+                  <th className="py-3 px-2 sm:px-4">
                     Total
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  {/* Column 4: Status */}
+                  <th className="py-3 px-2 sm:px-4">
                     Status
                   </th>
-                  <th className="px-4 py-3.5 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                    Actions
+                  {/* Desktop Columns */}
+                  <th className="py-3 px-4 hidden md:table-cell">
+                    Requested By
+                  </th>
+                  <th className="py-3 px-4 hidden lg:table-cell">
+                    Items Ordered
+                  </th>
+                  <th className="py-3 px-4 hidden md:table-cell">
+                    Time
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-[#143225] bg-white dark:bg-[#091a13]">
+              <tbody className="divide-y divide-gray-100 dark:divide-[#143225] bg-white dark:bg-[#091a13] text-xs sm:text-sm">
                 {billRequests.map((request: BillRequest) => {
                   const tableNumber = request.table?.number || request.order?.table?.number;
                   const waiterName = request.requestedBy
@@ -394,118 +455,27 @@ export default function BillRequestQueuePage() {
                   const noteText = !isUUID && request.notes ? request.notes.trim() : null;
 
                   return (
-                    <tr key={request.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
-                      {/* Table */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 dark:bg-[#071a12] text-amber-900 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
-                          {tableNumber ? `Table ${tableNumber}` : 'Direct Order'}
-                        </span>
-                      </td>
-
-                      {/* Waiter */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-[#071a12] flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
-                            <User className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold text-gray-900 dark:text-white">{waiterName}</div>
-                            <div className="text-[11px] text-gray-400">Waiter</div>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Items Ordered */}
-                      <td className="px-4 py-3.5">
-                        {items.length > 0 ? (
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1.5 flex-wrap max-w-sm">
-                              {items.slice(0, 3).map((item: any, idx: number) => (
-                                <span
-                                  key={idx}
-                                  className="bg-gray-100 dark:bg-[#071a12] text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs font-medium border border-gray-200/60 dark:border-[#143225] whitespace-nowrap"
-                                >
-                                  <span className="font-bold text-gray-900 dark:text-white mr-1">{item.quantity}x</span>
-                                  {item.menuItem?.name || item.name || 'Item'}
-                                </span>
-                              ))}
-                              {items.length > 3 && (
-                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
-                                  +{items.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                            {noteText && (
-                              <p className="text-[11px] text-amber-700 dark:text-amber-400 italic max-w-sm truncate">
-                                Note: {noteText}
-                              </p>
-                            )}
-                          </div>
-                        ) : (
-                          <div>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              Order #{request.order?.orderNumber ? request.order.orderNumber.slice(-8) : '—'}
-                            </span>
-                            {noteText && (
-                              <p className="text-[11px] text-amber-700 dark:text-amber-400 italic max-w-sm truncate">
-                                Note: {noteText}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </td>
-
-                      {/* Requested Time */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-medium">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{getTimeAgo(request.requestedAt)}</span>
-                        </div>
-                        {request.priority > 0 && (
-                          <div className={`text-[11px] font-semibold mt-0.5 ${getPriorityColor(request.priority)}`}>
-                            <AlertCircle className="w-3 h-3 inline mr-1" />
-                            Priority: {request.priority}
-                          </div>
-                        )}
-                      </td>
-
-                      {/* Total */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="text-sm font-extrabold text-gray-900 dark:text-[#00e676]">
-                          Br {request.order?.total != null ? Number(request.order.total).toFixed(2) : '0.00'}
-                        </div>
-                      </td>
-
-                      {/* Status */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <Badge className={`${getStatusColor(request.status)} font-semibold text-xs border-0`}>
-                          {request.status}
-                        </Badge>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-4 py-3.5 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                    <tr
+                      key={request.id}
+                      onClick={() => handleViewDetails(request)}
+                      className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors cursor-pointer"
+                    >
+                      {/* 1. Action (FAR LEFT) */}
+                      <td
+                        className="py-3 px-3 sm:px-4 whitespace-nowrap"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex items-center gap-1.5">
                           {/* Pending Actions */}
                           {request.status === BillRequestStatus.PENDING && (
-                            <>
-                              <Button
-                                size="sm"
-                                onClick={() => handleProcessAndGenerate(request)}
-                                className="h-8 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white gap-1.5 shadow-2xs cursor-pointer"
-                              >
-                                <Printer className="w-3.5 h-3.5" />
-                                Print Bill
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleProcess(request.id)}
-                                className="h-8 px-2.5 text-xs font-medium border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] cursor-pointer"
-                              >
-                                Process
-                              </Button>
-                            </>
+                            <Button
+                              size="sm"
+                              onClick={() => handleProcessAndGenerate(request)}
+                              className="h-7 sm:h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-1 shadow-2xs cursor-pointer"
+                            >
+                              <Printer className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <span>Print Bill</span>
+                            </Button>
                           )}
 
                           {/* Processing Actions */}
@@ -514,27 +484,18 @@ export default function BillRequestQueuePage() {
                               <Button
                                 size="sm"
                                 onClick={() => handleGenerateBill(request)}
-                                className="h-8 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white gap-1.5 shadow-2xs cursor-pointer"
+                                className="h-7 sm:h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-1 shadow-2xs cursor-pointer"
                               >
-                                <Printer className="w-3.5 h-3.5" />
-                                Print Bill
+                                <Printer className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                <span>Print</span>
                               </Button>
                               <Button
                                 size="sm"
                                 onClick={() => handleComplete(request.id)}
-                                className="h-8 px-2.5 text-xs font-medium bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold gap-1 cursor-pointer"
+                                className="h-7 sm:h-8 px-2 text-[11px] sm:text-xs font-bold bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] cursor-pointer"
+                                title="Complete"
                               >
                                 <CheckCircle className="w-3.5 h-3.5" />
-                                Done
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleCancel(request.id)}
-                                className="h-8 px-2 text-xs bg-red-600 hover:bg-red-700 text-white cursor-pointer"
-                                title="Cancel Request"
-                              >
-                                <XCircle className="w-3.5 h-3.5" />
                               </Button>
                             </>
                           )}
@@ -545,24 +506,114 @@ export default function BillRequestQueuePage() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleGenerateBill(request)}
-                              className="h-8 px-2.5 text-xs font-medium border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1.5 cursor-pointer"
+                              className="h-7 sm:h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-medium border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1 cursor-pointer"
                             >
-                              <Printer className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-                              Re-Print
+                              <Printer className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                              <span>Re-Print</span>
                             </Button>
                           )}
 
-                          {/* View Details Button */}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleViewDetails(request)}
-                            className="h-8 w-8 p-0 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219] cursor-pointer"
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
+                          {/* Cancelled State */}
+                          {request.status === BillRequestStatus.CANCELLED && (
+                            <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium italic">
+                              Cancelled
+                            </span>
+                          )}
                         </div>
+                      </td>
+
+                      {/* 2. Table & Waiter */}
+                      <td className="py-3 px-2 sm:px-4">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-bold bg-amber-50 dark:bg-[#071a12] text-amber-900 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 whitespace-nowrap">
+                          {tableNumber ? (tableNumber.toLowerCase().startsWith('t') ? tableNumber : `T-${tableNumber}`) : 'Direct'}
+                        </span>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 md:hidden mt-0.5 truncate max-w-[80px]">
+                          {waiterName}
+                        </div>
+                      </td>
+
+                      {/* 3. Total */}
+                      <td className="py-3 px-2 sm:px-4 whitespace-nowrap">
+                        <div className="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-[#00e676]">
+                          Br {request.order?.total != null ? Number(request.order.total).toFixed(0) : '0'}
+                        </div>
+                        <div className="text-[10px] text-gray-400 md:hidden">
+                          {getTimeAgo(request.requestedAt)}
+                        </div>
+                      </td>
+
+                      {/* 4. Status */}
+                      <td className="py-3 px-2 sm:px-4 whitespace-nowrap">
+                        <Badge className={`${getStatusColor(request.status)} font-semibold text-[10px] sm:text-xs border-0 py-0.5 px-1.5`}>
+                          {request.status}
+                        </Badge>
+                      </td>
+
+                      {/* Desktop Col: Requested By */}
+                      <td className="py-3 px-4 whitespace-nowrap hidden md:table-cell">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-gray-100 dark:bg-[#071a12] flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
+                            <User className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold text-gray-900 dark:text-white">{waiterName}</div>
+                            <div className="text-[10px] text-gray-400">Waiter</div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Desktop Col: Items Ordered */}
+                      <td className="py-3 px-4 hidden lg:table-cell">
+                        {items.length > 0 ? (
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 flex-wrap max-w-sm">
+                              {items.slice(0, 2).map((item: any, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="bg-gray-100 dark:bg-[#071a12] text-gray-700 dark:text-gray-300 px-1.5 py-0.5 rounded text-[11px] font-medium border border-gray-200/60 dark:border-[#143225] whitespace-nowrap"
+                                >
+                                  <span className="font-bold text-gray-900 dark:text-white mr-1">{item.quantity}x</span>
+                                  {item.menuItem?.name || item.name || 'Item'}
+                                </span>
+                              ))}
+                              {items.length > 2 && (
+                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                                  +{items.length - 2} more
+                                </span>
+                              )}
+                            </div>
+                            {noteText && (
+                              <p className="text-[10px] text-amber-700 dark:text-amber-400 italic max-w-sm truncate">
+                                Note: {noteText}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              Order #{request.order?.orderNumber ? request.order.orderNumber.slice(-8) : '—'}
+                            </span>
+                            {noteText && (
+                              <p className="text-[10px] text-amber-700 dark:text-amber-400 italic max-w-sm truncate">
+                                Note: {noteText}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Desktop Col: Requested Time */}
+                      <td className="py-3 px-4 whitespace-nowrap hidden md:table-cell">
+                        <div className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-medium">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{getTimeAgo(request.requestedAt)}</span>
+                        </div>
+                        {request.priority > 0 && (
+                          <div className={`text-[10px] font-semibold mt-0.5 ${getPriorityColor(request.priority)}`}>
+                            <AlertCircle className="w-3 h-3 inline mr-1" />
+                            Priority: {request.priority}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
