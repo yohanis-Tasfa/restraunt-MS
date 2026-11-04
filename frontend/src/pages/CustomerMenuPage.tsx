@@ -390,59 +390,59 @@ export default function CustomerMenuPage() {
     <div className="min-h-screen bg-[#040c08] text-white pb-24 selection:bg-[#00e676] selection:text-black">
       {/* Sticky Table Header */}
       <header className="sticky top-0 z-40 bg-[#042417]/95 backdrop-blur-xl border-b border-[#0e442d] shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link to="/" className="flex flex-col leading-none hover:opacity-85 transition-opacity flex-shrink-0" title="Back to Restaurant Landing Page">
-              <span className="font-serif italic font-black text-lg text-white">Yoni</span>
-              <span className="text-[9px] uppercase font-bold text-[#00e676] tracking-wider">Restaurant</span>
+              <span className="font-serif italic font-black text-base sm:text-lg text-white">Yoni</span>
+              <span className="text-[8px] sm:text-[9px] uppercase font-bold text-[#00e676] tracking-wider">Restaurant</span>
             </Link>
-            <span className="h-6 w-px bg-white/20 flex-shrink-0" />
+            <span className="h-5 sm:h-6 w-px bg-white/20 flex-shrink-0" />
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm sm:text-base font-extrabold text-[#00e676] truncate">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-xs sm:text-base font-extrabold text-[#00e676] truncate">
                   Table {session.table.number}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#083a26] border border-[#145d3e] text-white/80 font-semibold flex-shrink-0">
+                <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full bg-[#083a26] border border-[#145d3e] text-white/80 font-semibold flex-shrink-0">
                   {session.guestCount} {session.guestCount === 1 ? 'Guest' : 'Guests'}
                 </span>
               </div>
               {session.table.assignedWaiter && (
-                <p className="text-[11px] text-white/60 truncate">
+                <p className="text-[10px] sm:text-[11px] text-white/60 truncate">
                   Waiter: <span className="text-white font-medium">{session.table.assignedWaiter.firstName}</span>
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             {/* Direct Button to Restaurant Landing Page */}
             <Link
               to="/"
-              className="px-3 py-2 rounded-xl bg-[#083a26] hover:bg-[#0c4d33] border border-[#145d3e] hover:border-[#00e676]/60 text-white hover:text-[#00e676] text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#083a26] hover:bg-[#0c4d33] border border-[#145d3e] hover:border-[#00e676]/60 text-white hover:text-[#00e676] text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
               title="Visit Restaurant Landing Page, Story & About"
             >
-              <Home className="w-4 h-4 text-[#00e676]" />
+              <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#00e676]" />
               <span className="hidden sm:inline">Restaurant Home</span>
             </Link>
 
             {/* Call Waiter General Button */}
             <button
               onClick={() => setIsCallWaiterOpen(true)}
-              className="p-2.5 rounded-xl bg-[#083a26] border border-[#145d3e] hover:border-[#00e676] text-[#00e676] transition-colors cursor-pointer"
+              className="p-2 sm:p-2.5 rounded-xl bg-[#083a26] border border-[#145d3e] hover:border-[#00e676] text-[#00e676] transition-colors cursor-pointer"
               title="Call Waiter"
             >
-              <Bell className="w-5 h-5" />
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative px-3.5 py-2 rounded-xl bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all cursor-pointer"
+              className="relative px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all cursor-pointer"
             >
-              <ShoppingCart className="w-4 h-4" />
+              <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span>{cartTotal > 0 ? `${cartTotal.toFixed(0)} ETB` : 'Cart'}</span>
               {cartItemCount > 0 && (
-                <span className="bg-[#032314] text-[#00e676] text-[10px] font-extrabold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="bg-[#032314] text-[#00e676] text-[10px] font-extrabold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
               )}
@@ -451,24 +451,24 @@ export default function CustomerMenuPage() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="max-w-6xl mx-auto px-4 pb-3">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 pb-2.5 sm:pb-3">
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search dishes, ingredients..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#083a26] border border-[#145d3e] focus:border-[#00e676] text-white text-xs sm:text-sm rounded-xl focus:outline-none focus:ring-1 focus:ring-[#00e676]"
+              className="w-full pl-9 sm:pl-10 pr-3.5 py-1.5 sm:py-2 bg-[#083a26] border border-[#145d3e] focus:border-[#00e676] text-white text-xs sm:text-sm rounded-xl focus:outline-none focus:ring-1 focus:ring-[#00e676]"
             />
           </div>
         </div>
 
         {/* Category Filter Pills */}
-        <div className="max-w-6xl mx-auto px-4 pb-3 overflow-x-auto no-scrollbar flex items-center gap-2">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 pb-2.5 sm:pb-3 overflow-x-auto no-scrollbar flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               selectedCategory === 'all'
                 ? 'bg-[#00e676] text-[#032314] shadow-[0_0_12px_rgba(0,230,118,0.4)]'
                 : 'bg-[#083a26] text-white/80 border border-[#145d3e] hover:border-white/30'
@@ -480,7 +480,7 @@ export default function CustomerMenuPage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat.id
                   ? 'bg-[#00e676] text-[#032314] shadow-[0_0_12px_rgba(0,230,118,0.4)]'
                   : 'bg-[#083a26] text-white/80 border border-[#145d3e] hover:border-white/30'
@@ -493,7 +493,7 @@ export default function CustomerMenuPage() {
       </header>
 
       {/* Main Dishes Grid */}
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {isLoadingMenu ? (
           <div className="text-center py-16 text-white/60 space-y-3">
             <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#00e676]" />
@@ -506,14 +506,14 @@ export default function CustomerMenuPage() {
             <p className="text-xs text-white/60">Try searching for another dish or choose a different category.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4 md:gap-5">
             {filteredItems.map((item: MenuItem) => (
               <div
                 key={item.id}
                 onClick={() => handleOpenItemModal(item)}
-                className="group bg-[#042417] border border-[#145d3e] hover:border-[#00e676]/70 rounded-2xl overflow-hidden shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer flex flex-col"
+                className="group bg-[#042417] border border-[#145d3e] hover:border-[#00e676]/70 rounded-xl sm:rounded-2xl overflow-hidden shadow-md sm:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer flex flex-col active:scale-[0.98]"
               >
-                <div className="relative h-40 overflow-hidden bg-black/40">
+                <div className="relative aspect-[4/3] sm:h-36 md:h-40 overflow-hidden bg-black/40">
                   {item.image ? (
                     <img
                       src={item.image}
@@ -521,31 +521,31 @@ export default function CustomerMenuPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl">
+                    <div className="w-full h-full flex items-center justify-center text-3xl sm:text-4xl">
                       🍽️
                     </div>
                   )}
                   {item.category && (
-                    <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/75 backdrop-blur-md text-white border border-white/20">
+                    <span className="absolute top-2 left-2 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-black/75 backdrop-blur-md text-white border border-white/20">
                       {item.category.name}
                     </span>
                   )}
                 </div>
 
-                <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
+                <div className="p-2.5 sm:p-3 md:p-3.5 flex-1 flex flex-col justify-between space-y-1.5 sm:space-y-2.5">
                   <div>
-                    <h3 className="font-bold text-sm sm:text-base text-white group-hover:text-[#00e676] transition-colors line-clamp-1">
+                    <h3 className="font-bold text-xs sm:text-sm md:text-base text-white group-hover:text-[#00e676] transition-colors line-clamp-1" title={item.name}>
                       {item.name}
                     </h3>
                     {item.description && (
-                      <p className="text-xs text-white/60 line-clamp-1 mt-0.5">
+                      <p className="text-[11px] sm:text-xs text-white/60 line-clamp-1 mt-0.5 hidden xs:block">
                         {item.description}
                       </p>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-base font-extrabold text-[#00e676]">
+                  <div className="flex items-center justify-between pt-1 gap-1">
+                    <span className="text-xs sm:text-sm md:text-base font-extrabold text-[#00e676] truncate">
                       {item.price.toFixed(2)} ETB
                     </span>
                     <button
@@ -554,15 +554,37 @@ export default function CustomerMenuPage() {
                         e.stopPropagation();
                         handleOpenItemModal(item);
                       }}
-                      className="px-3 py-1.5 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
+                      className="px-2 xs:px-3 py-1 sm:py-1.5 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs rounded-lg sm:rounded-xl transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer active:scale-95 flex-shrink-0"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Add</span>
+                      <span className="hidden xs:inline">Add</span>
                     </button>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Mobile Sticky Floating View Order Bar */}
+        {cart.length > 0 && (
+          <div className="fixed bottom-3 inset-x-3 z-40 sm:hidden animate-in fade-in slide-in-from-bottom duration-200">
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
+              className="w-full bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-black py-3 px-4 rounded-xl shadow-[0_8px_25px_rgba(0,230,118,0.45)] flex items-center justify-between transition-transform active:scale-98 cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-[#032314] text-[#00e676] flex items-center justify-center text-xs font-black">
+                  {cartItemCount}
+                </span>
+                <span className="text-xs font-extrabold uppercase tracking-wide">View Order</span>
+              </div>
+              <div className="flex items-center gap-1.5 font-black text-sm">
+                <span>{cartTotal.toFixed(2)} ETB</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </button>
           </div>
         )}
 

@@ -495,79 +495,79 @@ export default function PurchaseOrdersPage() {
   };
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 text-gray-900 dark:text-gray-100">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             Purchase Orders & Procurement
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
             Order raw ingredients from suppliers, approve orders, receive stock, and track expenses.
           </p>
         </div>
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>New Purchase Order</span>
         </button>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total Procured</span>
-            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400">
-              <DollarSign className="w-5 h-5" />
+      {/* KPI Cards - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 truncate">Total Procured</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-[#00e676] tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-[#00e676] tracking-tight truncate">
             Br {totalProcuredAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">{activeOrders.length} total purchase orders</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium truncate">{activeOrders.length} total orders</p>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Pending Approval</span>
-            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400">
-              <Clock className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400 truncate">Pending</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-amber-900 dark:text-amber-400 tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-amber-900 dark:text-amber-400 tracking-tight truncate">
             Br {pendingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 font-medium">{pendingOrders.length} orders awaiting manager approval</p>
+          <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-300 mt-1 font-medium truncate">{pendingOrders.length} orders awaiting</p>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-blue-200 dark:border-blue-900/40 bg-blue-50/20 dark:bg-blue-950/10 shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-400">Approved (In Transit)</span>
-            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400">
-              <Truck className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-blue-200 dark:border-blue-900/40 bg-blue-50/20 dark:bg-blue-950/10 shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-400 truncate">In Transit</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
+              <Truck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-blue-900 dark:text-blue-400 tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-blue-900 dark:text-blue-400 tracking-tight truncate">
             Br {approvedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1 font-medium">{approvedOrders.length} orders ready to receive</p>
+          <p className="text-[10px] sm:text-xs text-blue-700 dark:text-blue-300 mt-1 font-medium truncate">{approvedOrders.length} ready to receive</p>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-[#00e676]">Received & Expensed</span>
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-700 dark:text-[#00e676]">
-              <PackageCheck className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-[#00e676] truncate">Received</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-700 dark:text-[#00e676] shrink-0">
+              <PackageCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight truncate">
             Br {receivedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 font-medium">{receivedOrders.length} received into inventory & P&L</p>
+          <p className="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-300 mt-1 font-medium truncate">{receivedOrders.length} received to stock</p>
         </div>
       </div>
 

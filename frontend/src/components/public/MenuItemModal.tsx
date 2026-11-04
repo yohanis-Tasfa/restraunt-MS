@@ -82,61 +82,61 @@ export default function MenuItemModal({ item, isOpen, onClose, onAddToCart }: Me
   const formatPrice = (price: number) => `${price.toFixed(2)} ETB`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-2xl shadow-2xl border border-gray-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm">
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-gray-900 rounded-2xl shadow-2xl border border-gray-700">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-colors"
+          className="absolute top-3 right-3 z-10 p-2 bg-black/60 hover:bg-black/80 rounded-full transition-colors cursor-pointer"
         >
-          <X className="w-6 h-6 text-white" />
+          <X className="w-5 h-5 text-white" />
         </button>
 
         {/* Image */}
-        <div className="relative h-64 overflow-hidden rounded-t-2xl">
+        <div className="relative h-44 sm:h-56 md:h-64 overflow-hidden rounded-t-2xl">
           {item.image ? (
             <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-green-600/20 to-yellow-600/20 flex items-center justify-center">
-              <span className="text-8xl">🍽️</span>
+              <span className="text-6xl sm:text-8xl">🍽️</span>
             </div>
           )}
           {item.category && (
-            <div className="absolute top-4 left-4 px-3 py-1 bg-black/70 backdrop-blur-sm rounded-full border border-white/20">
-              <span className="text-sm font-semibold text-white">{item.category.name}</span>
+            <div className="absolute top-3 left-3 px-2.5 py-1 bg-black/70 backdrop-blur-sm rounded-full border border-white/20">
+              <span className="text-xs font-semibold text-white">{item.category.name}</span>
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6 space-y-4">
           {/* Title and Price */}
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold text-white mb-2">{item.name}</h2>
-            <p className="text-gray-400 text-sm mb-3">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1.5">{item.name}</h2>
+            <p className="text-gray-400 text-xs sm:text-sm mb-2 leading-relaxed">
               {item.description || 'Delicious Ethiopian dish prepared with authentic spices and fresh ingredients.'}
             </p>
-            <p className="text-2xl font-bold text-green-400">{formatPrice(item.price)}</p>
+            <p className="text-xl sm:text-2xl font-bold text-green-400">{formatPrice(item.price)}</p>
           </div>
 
           {/* Variants */}
           {item.variants && item.variants.length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-white mb-2">Size Options</h3>
+            <div>
+              <h3 className="text-sm sm:text-base font-semibold text-white mb-2">Size Options</h3>
               <div className="grid grid-cols-2 gap-2">
                 {item.variants.map((variant) => (
                   <button
                     key={variant.id}
                     onClick={() => setSelectedVariant(variant)}
                     disabled={!variant.isAvailable}
-                    className={`p-3 rounded-lg border-2 transition-all ${
+                    className={`p-2.5 sm:p-3 rounded-lg border-2 transition-all cursor-pointer ${
                       selectedVariant?.id === variant.id
                         ? 'bg-green-600 border-green-500 text-white'
                         : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-green-500'
                     } ${!variant.isAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    <div className="font-semibold">{variant.name}</div>
-                    <div className="text-sm">{formatPrice(variant.price)}</div>
+                    <div className="font-semibold text-xs sm:text-sm">{variant.name}</div>
+                    <div className="text-xs text-green-300 sm:text-sm">{formatPrice(variant.price)}</div>
                   </button>
                 ))}
               </div>
@@ -145,31 +145,31 @@ export default function MenuItemModal({ item, isOpen, onClose, onAddToCart }: Me
 
           {/* Add-ons */}
           {item.addons && item.addons.length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-white mb-2">Add-ons</h3>
-              <div className="space-y-2">
+            <div>
+              <h3 className="text-sm sm:text-base font-semibold text-white mb-2">Add-ons</h3>
+              <div className="space-y-1.5 sm:space-y-2">
                 {item.addons.map((addon) => (
                   <button
                     key={addon.id}
                     onClick={() => toggleAddon(addon)}
                     disabled={!addon.isAvailable}
-                    className={`w-full p-3 rounded-lg border-2 transition-all flex items-center justify-between ${
+                    className={`w-full p-2.5 sm:p-3 rounded-lg border-2 transition-all flex items-center justify-between cursor-pointer ${
                       selectedAddons.find((a) => a.id === addon.id)
                         ? 'bg-green-600/20 border-green-500 text-white'
                         : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-green-500'
                     } ${!addon.isAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div className="flex items-center gap-2">
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                      <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded border-2 flex items-center justify-center ${
                         selectedAddons.find((a) => a.id === addon.id) ? 'bg-green-600 border-green-500' : 'border-gray-600'
                       }`}>
                         {selectedAddons.find((a) => a.id === addon.id) && (
                           <span className="text-white text-xs">✓</span>
                         )}
                       </div>
-                      <span className="font-medium">{addon.name}</span>
+                      <span className="font-medium text-xs sm:text-sm">{addon.name}</span>
                     </div>
-                    <span className="text-green-400">+{formatPrice(addon.price)}</span>
+                    <span className="text-green-400 text-xs sm:text-sm font-semibold">+{formatPrice(addon.price)}</span>
                   </button>
                 ))}
               </div>
@@ -177,42 +177,42 @@ export default function MenuItemModal({ item, isOpen, onClose, onAddToCart }: Me
           )}
 
           {/* Special Notes */}
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-white mb-2">Special Instructions</h3>
+          <div>
+            <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5">Special Instructions</h3>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Any special requests? (e.g., no onions, extra spicy)"
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 resize-none"
-              rows={3}
+              className="w-full px-3.5 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs sm:text-sm placeholder-gray-500 focus:outline-none focus:border-green-500 resize-none"
+              rows={2}
             />
           </div>
 
           {/* Quantity and Add to Cart */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 pt-1">
             {/* Quantity Selector */}
-            <div className="flex items-center gap-2 bg-gray-800 rounded-lg border border-gray-700 p-1">
+            <div className="flex items-center justify-between sm:justify-center gap-2 bg-gray-800 rounded-xl border border-gray-700 p-1 sm:p-1.5">
               <button
                 onClick={decrementQuantity}
-                className="p-2 hover:bg-gray-700 rounded transition-colors"
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
               >
-                <Minus className="w-5 h-5 text-white" />
+                <Minus className="w-4 h-4 text-white" />
               </button>
-              <span className="px-4 text-lg font-semibold text-white">{quantity}</span>
+              <span className="px-4 text-base sm:text-lg font-bold text-white">{quantity}</span>
               <button
                 onClick={incrementQuantity}
-                className="p-2 hover:bg-gray-700 rounded transition-colors"
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
               >
-                <Plus className="w-5 h-5 text-white" />
+                <Plus className="w-4 h-4 text-white" />
               </button>
             </div>
 
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
-              className="flex-1 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold rounded-lg hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300 flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-bold text-sm sm:text-base rounded-xl hover:shadow-xl hover:shadow-green-600/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Add to Cart · {formatPrice(calculateTotal())}</span>
             </button>
           </div>

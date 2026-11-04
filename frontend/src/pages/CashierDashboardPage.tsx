@@ -389,26 +389,26 @@ export default function CashierDashboardPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. Top 4 Live Financial & Operational Metric Cards */}
+      {/* 2. Top 4 Live Financial & Operational Metric Cards (2x2 on mobile)       */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Card 1: Today's Revenue */}
-        <Card className="border-gray-200 shadow-xs">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-emerald-600" />
+        <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/60 flex items-center justify-center shrink-0">
+                <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-[#00e676]" />
               </div>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-700">
-                <TrendingUp className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-[#00e676]">
+                <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 +{paymentBreakdown.salesChange}%
               </span>
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <p className="text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
                 Today's Revenue
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
+              <h3 className="text-base sm:text-2xl font-extrabold text-gray-900 dark:text-white truncate">
                 Br {paymentBreakdown.totalSales.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -417,20 +417,20 @@ export default function CashierDashboardPage() {
 
         {/* Card 2: Cash Collected */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-950/60 border border-green-200/60 dark:border-green-800/60 flex items-center justify-center">
-                <Coins className="w-5 h-5 text-green-700 dark:text-[#00e676]" />
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-green-50 dark:bg-green-950/60 border border-green-200/60 dark:border-green-800/60 flex items-center justify-center shrink-0">
+                <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-green-700 dark:text-[#00e676]" />
               </div>
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-green-100 dark:bg-green-950/70 text-green-800 dark:text-[#00e676]">
-                Physical Cash
+              <span className="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-green-100 dark:bg-green-950/70 text-green-800 dark:text-[#00e676]">
+                Cash
               </span>
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <p className="text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
                 Cash Collected
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
+              <h3 className="text-base sm:text-2xl font-extrabold text-gray-900 dark:text-white truncate">
                 Br {drawerStats.expectedInTill.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -439,20 +439,20 @@ export default function CashierDashboardPage() {
 
         {/* Card 3: Digital Non-Cash Transfers */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center">
-                <Smartphone className="w-5 h-5 text-[#00A3E0]" />
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center shrink-0">
+                <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-[#00A3E0]" />
               </div>
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900">
-                67.5% Digital
+              <span className="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900 truncate">
+                Digital
               </span>
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Digital Bank Transfers
+              <p className="text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                Digital Transfers
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
+              <h3 className="text-base sm:text-2xl font-extrabold text-gray-900 dark:text-white truncate">
                 Br {paymentBreakdown.totalDigital.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -461,17 +461,17 @@ export default function CashierDashboardPage() {
 
         {/* Card 4: Action Queue (Pending Bills) */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center shrink-0">
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 dark:text-amber-400" />
               </div>
               {pendingBillsCount > 0 ? (
-                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 dark:bg-red-950/70 text-red-700 dark:text-red-300 animate-pulse">
+                <span className="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-red-100 dark:bg-red-950/70 text-red-700 dark:text-red-300 animate-pulse">
                   Print Needed
                 </span>
               ) : (
-                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 dark:bg-[#12281d] text-gray-600 dark:text-gray-300">
+                <span className="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-gray-100 dark:bg-[#12281d] text-gray-600 dark:text-gray-300">
                   All Clear
                 </span>
               )}

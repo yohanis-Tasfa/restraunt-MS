@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import recipesApi, { type MenuItemWithRecipe, type RecipeItem, type MenuItemRecipe } from '../api/recipes';
 import inventoryApi from '../api/inventory';
-import { Plus, Search, Trash2, Edit2, ChefHat, Package, DollarSign, TrendingUp, PackagePlus } from 'lucide-react';
+import { Plus, Search, Trash2, Edit2, ChefHat, Package, DollarSign, TrendingUp, PackagePlus, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import toast from 'react-hot-toast';
 
@@ -12,6 +12,24 @@ export default function RecipesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMenuItem, setSelectedMenuItem] = useState<string | null>(null);
   const [showAddIngredientModal, setShowAddIngredientModal] = useState(false);
+  const detailsRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to recipe details when a menu item is chosen
+  const handleSelectMenuItem = (id: string) => {
+    setSelectedMenuItem(id);
+    setTimeout(() => {
+      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  };
+
+  useEffect(() => {
+    if (selectedMenuItem && detailsRef.current) {
+      const timer = setTimeout(() => {
+        detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedMenuItem]);
 
   // Fetch all menu items with recipe info
   const { data: menuItemsData, isLoading: isLoadingItems, error: menuItemsError } = useQuery({
@@ -87,7 +105,7 @@ export default function RecipesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Menu Items List */}
-        <div className="lg:col-span-1 bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225]">
+        <div id="menu-items-list-container" className="lg:col-span-1 bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225] scroll-mt-6">
           {/* Search */}
           <div className="p-4 border-b border-gray-200 dark:border-[#143225]">
             <div className="relative">
@@ -140,7 +158,7 @@ export default function RecipesPage() {
                     {itemsWithRecipe.map((item: MenuItemWithRecipe) => (
                       <button
                         key={item.id}
-                        onClick={() => setSelectedMenuItem(item.id)}
+                        onClick={() => handleSelectMenuItem(item.id)}
                         className={`w-full text-left px-4 py-3 border-b border-gray-100 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition cursor-pointer ${
                           selectedMenuItem === item.id ? 'bg-green-50 dark:bg-[#072417] border-l-4 border-l-green-600 dark:border-l-[#00e676]' : ''
                         }`}
@@ -186,7 +204,7 @@ export default function RecipesPage() {
                     {itemsWithoutRecipe.map((item: MenuItemWithRecipe) => (
                       <button
                         key={item.id}
-                        onClick={() => setSelectedMenuItem(item.id)}
+                        onClick={() => handleSelectMenuItem(item.id)}
                         className={`w-full text-left px-4 py-3 border-b border-gray-100 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition cursor-pointer ${
                           selectedMenuItem === item.id ? 'bg-green-50 dark:bg-[#072417] border-l-4 border-l-green-600 dark:border-l-[#00e676]' : ''
                         }`}
@@ -223,7 +241,7 @@ export default function RecipesPage() {
         </div>
 
         {/* Right Column - Recipe Details */}
-        <div className="lg:col-span-2">
+        <div ref={detailsRef} className="lg:col-span-2 scroll-mt-6">
           {!selectedMenuItem ? (
             <div className="bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225] p-12 text-center">
               <ChefHat className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
@@ -239,6 +257,15 @@ export default function RecipesPage() {
               recipe={recipe}
               inventoryItems={inventoryItems}
               onAddIngredient={() => setShowAddIngredientModal(true)}
+              onBackToList={() => {
+                const listEl = document.getElementById('menu-items-list-container');
+                if (listEl) {
+                  listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
             />
           ) : null}
         </div>
@@ -268,10 +295,12 @@ function RecipeDetails({
   recipe,
   inventoryItems,
   onAddIngredient,
+  onBackToList,
 }: {
   recipe: MenuItemRecipe;
   inventoryItems: any[];
   onAddIngredient: () => void;
+  onBackToList?: () => void;
 }) {
   const queryClient = useQueryClient();
   const [editingItem, setEditingItem] = useState<RecipeItem | null>(null);
@@ -298,6 +327,20 @@ function RecipeDetails({
 
   return (
     <div className="space-y-6">
+      {/* Mobile Back / Quick Jump Button */}
+      {onBackToList && (
+        <div className="lg:hidden flex items-center justify-between pb-1">
+          <button
+            type="button"
+            onClick={onBackToList}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-[#00e676] bg-emerald-50 dark:bg-[#0c2219] px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-[#143225] hover:bg-emerald-100 dark:hover:bg-[#123627] transition-all cursor-pointer shadow-2xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Menu List</span>
+          </button>
+          <span className="text-xs text-gray-400 dark:text-gray-500">Tap to select another item</span>
+        </div>
+      )}
       {/* Menu Item Info Card */}
       <div className="bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225] p-6">
         <div className="flex items-center justify-between mb-4">
@@ -308,7 +351,7 @@ function RecipeDetails({
         </div>
 
         {/* Cost Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <div className="bg-blue-50 dark:bg-[#092233] border border-blue-100 dark:border-blue-900/40 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
               <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -341,7 +384,7 @@ function RecipeDetails({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Ingredients</h3>
           <Button
             onClick={onAddIngredient}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer"
+            className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold gap-2 cursor-pointer shadow-xs"
             size="sm"
           >
             <Plus className="w-4 h-4" />
@@ -355,7 +398,7 @@ function RecipeDetails({
             <p className="text-gray-500 dark:text-gray-400 mb-4">No ingredients added yet</p>
             <Button
               onClick={onAddIngredient}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer"
+              className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold gap-2 cursor-pointer shadow-xs"
             >
               <Plus className="w-4 h-4" />
               Add First Ingredient

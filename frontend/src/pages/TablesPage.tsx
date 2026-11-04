@@ -492,7 +492,7 @@ export default function TablesPage() {
             <Button
               size="sm"
               onClick={() => navigate('/admin/pos')}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 cursor-pointer"
+              className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-medium text-xs gap-1.5 cursor-pointer shadow-xs transition-all active:scale-[0.98]"
             >
               <ShoppingCart className="w-4 h-4" />
               Open POS
@@ -516,64 +516,64 @@ export default function TablesPage() {
       {/* ========================================================================= */}
       {/* STATISTICS CARDS                                                          */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Tables</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-0.5 sm:mt-1">{stats.total}</p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center">
-              <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Available</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.available}</p>
+              <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-0.5 sm:mt-1">{stats.available}</p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-green-100/70 dark:bg-[#0c2219] flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-green-600 dark:text-[#00e676]" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-100/70 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Occupied</p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.occupied}</p>
+              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-0.5 sm:mt-1">{stats.occupied}</p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-red-100/70 dark:bg-red-950/40 flex items-center justify-center">
-              <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-red-100/70 dark:bg-red-950/40 flex items-center justify-center shrink-0">
+              <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </Card>
 
         {isWaiter ? (
-          <Card className="p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/40 shadow-xs">
+          <Card className="p-3 sm:p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/40 shadow-xs">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">My Assigned Tables</p>
-                <p className="text-2xl font-bold text-blue-800 dark:text-blue-200 mt-1">{stats.myTables}</p>
+                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">My Assigned</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-200 mt-0.5 sm:mt-1">{stats.myTables}</p>
               </div>
-              <div className="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
-                <UserCheck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
+                <UserCheck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </Card>
         ) : (
-          <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
+          <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Unassigned</p>
-                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">{stats.unassigned}</p>
+                <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">{stats.unassigned}</p>
               </div>
-              <div className="w-11 h-11 rounded-xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center shrink-0">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
           </Card>
@@ -676,7 +676,7 @@ export default function TablesPage() {
           )}
         </Card>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4">
           {filteredTables.map((table: Table) => {
             const isAssignedToMe = isWaiter && table.assignedWaiterId === user?.id;
             const hasActiveSession = Boolean(table.customerSessions && table.customerSessions.length > 0);
@@ -684,9 +684,9 @@ export default function TablesPage() {
             return (
               <Card
                 key={table.id}
-                className={`p-4 border-2 transition-all hover:shadow-md flex flex-col justify-between ${getStatusColor(
+                className={`p-3 sm:p-4 border-2 transition-all hover:shadow-md flex flex-col justify-between ${getStatusColor(
                   table.status
-                )} ${isAssignedToMe ? 'ring-2 ring-blue-500/50 shadow-sm' : ''}`}
+                )} ${isAssignedToMe ? 'ring-2 ring-emerald-500/50 shadow-sm' : ''}`}
               >
                 <div>
                   {/* Table Card Header */}
@@ -782,7 +782,7 @@ export default function TablesPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-6 px-1.5 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 cursor-pointer"
+                          className="h-6 px-1.5 text-[11px] font-semibold text-emerald-600 dark:text-[#00e676] hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 cursor-pointer"
                           onClick={() => openWaiterModal(table)}
                         >
                           Change
@@ -855,11 +855,23 @@ export default function TablesPage() {
                 <div className="space-y-1.5 pt-2 border-t border-gray-200/50 dark:border-[#143225]">
                   {/* Table AVAILABLE Actions */}
                   {table.status === TableStatus.AVAILABLE && (
-                    <div className="grid grid-cols-2 gap-1.5">
+                    <div className="flex flex-col gap-1.5 w-full">
+                      <Button
+                        size="sm"
+                        className="w-full h-8 px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] gap-1.5 cursor-pointer shadow-xs transition-all active:scale-[0.98]"
+                        onClick={() =>
+                          navigate('/admin/pos', {
+                            state: { tableNumber: table.number },
+                          })
+                        }
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Take Order</span>
+                      </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs font-medium hover:bg-gray-100 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
+                        className="w-full h-8 px-2 text-xs font-medium border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1.5 cursor-pointer transition-all active:scale-[0.98]"
                         onClick={() =>
                           updateStatusMutation.mutate({
                             id: table.id,
@@ -867,50 +879,41 @@ export default function TablesPage() {
                           })
                         }
                       >
-                        Seat Guests
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white gap-1 cursor-pointer"
-                        onClick={() =>
-                          navigate('/admin/pos', {
-                            state: { tableNumber: table.number },
-                          })
-                        }
-                      >
-                        <ShoppingCart className="w-3 h-3" />
-                        Take Order
+                        <Users className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 shrink-0" />
+                        <span className="truncate">Seat Guests</span>
                       </Button>
                     </div>
                   )}
 
                   {/* Table OCCUPIED Actions */}
                   {table.status === TableStatus.OCCUPIED && (
-                    <div className="space-y-1.5">
+                    <div className="flex flex-col gap-1.5 w-full">
                       <Button
                         size="sm"
-                        className="w-full text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white gap-1 cursor-pointer"
+                        className="w-full h-8 px-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] gap-1.5 cursor-pointer shadow-xs transition-all active:scale-[0.98]"
                         onClick={() =>
                           navigate('/admin/pos', {
                             state: { tableNumber: table.number },
                           })
                         }
                       >
-                        <ShoppingCart className="w-3.5 h-3.5" />
-                        Take Order (POS)
+                        <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Take Order (POS)</span>
                       </Button>
                       <Button
                         size="sm"
-                        className="w-full text-xs font-medium bg-orange-600 hover:bg-orange-700 text-white gap-1 cursor-pointer"
+                        className="w-full h-8 px-2 text-xs font-medium bg-orange-600 hover:bg-orange-700 text-white gap-1.5 cursor-pointer shadow-xs transition-all active:scale-[0.98]"
                         onClick={() => clearTableMutation.mutate(table)}
                         disabled={clearTableMutation.isPending}
                       >
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        {clearTableMutation.isPending
-                          ? 'Clearing Table...'
-                          : hasActiveSession
-                          ? 'End Session & Clear Table'
-                          : 'Clear Table (Set Available)'}
+                        <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">
+                          {clearTableMutation.isPending
+                            ? 'Clearing Table...'
+                            : hasActiveSession
+                            ? 'End Session & Clear Table'
+                            : 'Clear Table (Set Available)'}
+                        </span>
                       </Button>
                     </div>
                   )}
@@ -920,7 +923,7 @@ export default function TablesPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full text-xs font-medium dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
+                      className="w-full h-8 px-2 text-xs font-medium border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 dark:border-emerald-800/40 cursor-pointer gap-1.5 transition-all active:scale-[0.98]"
                       onClick={() =>
                         updateStatusMutation.mutate({
                           id: table.id,
@@ -928,7 +931,8 @@ export default function TablesPage() {
                         })
                       }
                     >
-                      Mark as Available
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span className="truncate">Mark as Available</span>
                     </Button>
                   )}
                 </div>

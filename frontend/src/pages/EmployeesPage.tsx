@@ -646,62 +646,62 @@ export default function EmployeesPage({ defaultTab }: EmployeesPageProps) {
         </div>
       </div>
 
-      {/* Payroll KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-[#091a13] p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
+      {/* Payroll KPI Cards - 2x2 Grid on Mobile */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Total Monthly Payroll
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                  Monthly Payroll
                 </span>
-                <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-[#00e676] mt-2">{formatCurrency(totalPayrollAmount)}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{payrolls.length} payslips recorded</p>
+              <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-[#00e676] mt-1 sm:mt-2 truncate">{formatCurrency(totalPayrollAmount)}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{payrolls.length} payslips recorded</p>
             </div>
 
-            <div className="bg-white dark:bg-[#091a13] p-5 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-sm">
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+                <span className="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider truncate">
                   Pending Disbursal
                 </span>
-                <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                  <Clock className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">
+              <p className="text-base sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1 sm:mt-2 truncate">
                 {formatCurrency(pendingDisbursalAmount)}
               </p>
-              <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                {pendingPayrolls.length} slip{pendingPayrolls.length === 1 ? '' : 's'} waiting for payout
+              <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-300 mt-1 truncate">
+                {pendingPayrolls.length} slip{pendingPayrolls.length === 1 ? '' : 's'} waiting
               </p>
             </div>
 
-            <div className="bg-white dark:bg-[#091a13] p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-sm">
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider">
-                  Paid Out (Recorded)
+                <span className="text-[10px] sm:text-xs font-semibold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider truncate">
+                  Paid Out
                 </span>
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-[#00e676] flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-[#00e676] flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-2">{formatCurrency(paidOutAmount)}</p>
-              <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1">Logged with transfer screenshots</p>
+              <p className="text-base sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-1 sm:mt-2 truncate">{formatCurrency(paidOutAmount)}</p>
+              <p className="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-300 mt-1 truncate">Recorded transfers</p>
             </div>
 
-            <div className="bg-white dark:bg-[#091a13] p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
+            <div className="bg-white dark:bg-[#091a13] p-3.5 sm:p-5 rounded-xl border border-gray-200 dark:border-[#143225] shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
                   Staff Enrolled
                 </span>
-                <div className="w-9 h-9 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                  <Users className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{employees.length || 4}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Active full-time &amp; contracted staff</p>
+              <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-white mt-1 sm:mt-2">{employees.length || 4}</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">Active staff</p>
             </div>
           </div>
 

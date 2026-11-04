@@ -417,7 +417,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="p-6 text-gray-900 dark:text-gray-100">
+    <div className="p-3 sm:p-5 md:p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
@@ -504,65 +504,65 @@ export default function OrdersPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 mb-6">
+        <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <ShoppingBag className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
+        <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Pending</p>
+              <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
+        <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Unpaid</p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.unpaid}</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Unpaid</p>
+              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.unpaid}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <CreditCard className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
+        <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Completed</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
+              <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
+        <Card className="col-span-2 sm:col-span-1 p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Revenue</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Revenue</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">
                 Br {stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>

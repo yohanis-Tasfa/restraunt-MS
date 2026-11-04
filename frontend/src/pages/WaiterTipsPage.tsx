@@ -116,61 +116,61 @@ export default function WaiterTipsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-5 md:p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <DollarSign className="w-7 h-7 text-green-600 dark:text-[#00e676]" />
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 text-green-600 dark:text-[#00e676]" />
           My Tips
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
           Track your transfer tips pending payout from manager
         </p>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+      {/* Summary Cards - 2x2/3-grid on Mobile */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4 mb-6">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Tips</p>
-              <p className="text-2xl font-extrabold text-green-600 dark:text-[#00e676] mt-1">
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Total Tips</p>
+              <p className="text-lg sm:text-2xl font-extrabold text-green-600 dark:text-[#00e676] mt-1 truncate">
                 {summary?.total.amount.toFixed(2) || '0.00'} ETB
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{summary?.total.count || 0} tips</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{summary?.total.count || 0} tips</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
+            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
+              <TrendingUp className="w-4 h-4 sm:w-6 sm:h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Pending Payout</p>
-              <p className="text-2xl font-extrabold text-yellow-600 dark:text-yellow-400 mt-1">
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Pending Payout</p>
+              <p className="text-lg sm:text-2xl font-extrabold text-yellow-600 dark:text-yellow-400 mt-1 truncate">
                 {summary?.pending.amount.toFixed(2) || '0.00'} ETB
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Awaiting manager payout</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Awaiting payout</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <Card className="col-span-2 md:col-span-1 p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Paid Out</p>
-              <p className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Paid Out</p>
+              <p className="text-lg sm:text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1 truncate">
                 {summary?.paid.amount.toFixed(2) || '0.00'} ETB
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{summary?.paid.count || 0} tips</p>
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{summary?.paid.count || 0} tips</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center shrink-0">
+              <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>

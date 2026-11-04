@@ -448,75 +448,75 @@ export default function TipsManagementPage() {
   };
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="w-full p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 text-gray-900 dark:text-gray-100">
       {/* Top Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Tips Management</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <h1 className="text-xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Tips Management</h1>
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
           Track customer tips, reconcile collected funds, and disburse payouts to waitstaff.
         </p>
       </div>
 
-      {/* KPI Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* KPI Stats Cards - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
         {/* Total Tips Collected */}
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total Tips Collected</span>
-            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-400">
-              <DollarSign className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 truncate">Tips Collected</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight truncate">
             Br {(summary.total.amount || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">{summary.total.count || 0} total transactions</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium truncate">{summary.total.count || 0} total transactions</p>
         </div>
 
         {/* Pending Waiter Payouts */}
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/30 dark:bg-amber-950/20 shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Pending Waiter Payout</span>
-            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-700 dark:text-amber-400">
-              <Clock className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/30 dark:bg-amber-950/20 shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400 truncate">Pending Payout</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-amber-900 dark:text-amber-400 tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-amber-900 dark:text-amber-400 tracking-tight truncate">
             Br {(summary.pending.amount || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-amber-700 dark:text-amber-400 mt-1 font-medium">
-            {summary.pending.count || 0} waiting to be paid by Manager/Cashier
+          <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-400 mt-1 font-medium truncate">
+            {summary.pending.count || 0} waiting
           </p>
         </div>
 
         {/* Total Disbursed */}
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-emerald-200 dark:border-[#143225] bg-emerald-50/30 dark:bg-[#0c2219]/40 shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-[#00e676]">Disbursed to Waiters</span>
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-700 dark:text-[#00e676]">
-              <CheckCircle className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-emerald-200 dark:border-[#143225] bg-emerald-50/30 dark:bg-[#0c2219]/40 shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-[#00e676] truncate">Disbursed</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-700 dark:text-[#00e676] shrink-0">
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight truncate">
             Br {(summary.paid.amount || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-1 font-medium">
-            {summary.paid.count || 0} successfully settled
+          <p className="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400 mt-1 font-medium truncate">
+            {summary.paid.count || 0} settled
           </p>
         </div>
 
         {/* Waitstaff Pool */}
-        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Active Waiters</span>
-            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/40 flex items-center justify-center text-purple-700 dark:text-purple-400">
-              <User className="w-5 h-5" />
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-3.5 sm:p-5">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 truncate">Active Waiters</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-purple-100 dark:bg-purple-950/40 flex items-center justify-center text-purple-700 dark:text-purple-400 shrink-0">
+              <User className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+          <div className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight truncate">
             {uniqueWaiters.length} Waiters
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Across all dining shifts</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium truncate">All dining shifts</p>
         </div>
       </div>
 

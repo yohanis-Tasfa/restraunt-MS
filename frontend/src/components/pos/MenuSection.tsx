@@ -60,14 +60,14 @@ export default function MenuSection({ items, isLoading }: MenuSectionProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-4">
       {items.map((item) => (
         <Card
           key={item.id}
-          className="group hover:shadow-lg dark:hover:shadow-[0_8px_20px_rgba(0,230,118,0.15)] border-gray-200 dark:border-[#143225] dark:bg-[#091a13] transition-all overflow-hidden flex flex-col"
+          className="group hover:shadow-lg dark:hover:shadow-[0_8px_20px_rgba(0,230,118,0.15)] border-gray-200 dark:border-[#143225] dark:bg-[#091a13] transition-all overflow-hidden flex flex-col rounded-xl sm:rounded-2xl"
         >
           {/* Item Image */}
-          <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-black/40 dark:to-black/80 relative overflow-hidden">
+          <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-black/40 dark:to-black/80 relative overflow-hidden">
             {item.image ? (
               <img
                 src={item.image}
@@ -76,37 +76,37 @@ export default function MenuSection({ items, isLoading }: MenuSectionProps) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
-                <Plus className="w-12 h-12" />
+                <Plus className="w-8 h-8 sm:w-12 sm:h-12" />
               </div>
             )}
 
             {!item.isAvailable && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <Badge variant="destructive">Unavailable</Badge>
+                <Badge variant="destructive" className="text-xs">Unavailable</Badge>
               </div>
             )}
           </div>
 
           {/* Item Details */}
-          <div className="p-3.5 flex flex-col flex-1 bg-white dark:bg-[#091a13]">
-            <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white mb-1 line-clamp-1" title={item.name}>
+          <div className="p-2.5 sm:p-3.5 flex flex-col flex-1 bg-white dark:bg-[#091a13]">
+            <h3 className="font-bold text-xs sm:text-sm md:text-base text-gray-900 dark:text-white mb-1 line-clamp-1" title={item.name}>
               {item.name}
             </h3>
             
             {item.description && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2 leading-relaxed">
+              <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-1 sm:line-clamp-2 leading-relaxed">
                 {item.description}
               </p>
             )}
 
-            <div className="flex items-center justify-between mb-3 mt-auto pt-1">
-              <span className="text-base sm:text-lg font-extrabold text-green-600 dark:text-[#00e676]">
+            <div className="flex items-center justify-between mb-2 sm:mb-3 mt-auto pt-1">
+              <span className="text-xs sm:text-base font-extrabold text-green-600 dark:text-[#00e676]">
                 {item.price.toFixed(2)} ብር
               </span>
               
               {item.preparationTime && (
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                  <Clock className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                <div className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                  <Clock className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                   <span>{item.preparationTime}m</span>
                 </div>
               )}
@@ -114,12 +114,13 @@ export default function MenuSection({ items, isLoading }: MenuSectionProps) {
 
             <Button
               size="sm"
-              className="w-full bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold shadow-sm cursor-pointer"
+              className="w-full h-7 sm:h-8 text-xs bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold shadow-xs cursor-pointer active:scale-95"
               onClick={() => handleAddToCart(item)}
               disabled={!item.isAvailable}
             >
-              <Plus className="w-4 h-4 mr-1" />
-              Add to Cart
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              <span className="hidden xs:inline">Add to Cart</span>
+              <span className="xs:hidden">Add</span>
             </Button>
           </div>
         </Card>

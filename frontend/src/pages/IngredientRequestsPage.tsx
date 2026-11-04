@@ -198,52 +198,52 @@ export default function IngredientRequestsPage() {
         </Button>
       </div>
 
-      {/* KPI Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/20">
+      {/* KPI Summary Cards - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <Card className="p-3 sm:p-4 border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/20">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Awaiting Store Approval</p>
-              <p className="text-2xl font-black text-amber-900 dark:text-amber-300 mt-1">{pendingCount}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-[10px] sm:text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider truncate">Store Approval</p>
+              <p className="text-lg sm:text-2xl font-black text-amber-900 dark:text-amber-300 mt-1 truncate">{pendingCount}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400">
-              <Clock className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/50 dark:bg-emerald-950/20">
+        <Card className="p-3 sm:p-4 border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/50 dark:bg-emerald-950/20">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider">Approved & Issued</p>
-              <p className="text-2xl font-black text-emerald-900 dark:text-[#00e676] mt-1">{approvedCount}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-[10px] sm:text-xs font-bold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider truncate">Approved & Issued</p>
+              <p className="text-lg sm:text-2xl font-black text-emerald-900 dark:text-[#00e676] mt-1 truncate">{approvedCount}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-700 dark:text-[#00e676]">
-              <PackageCheck className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-700 dark:text-[#00e676] shrink-0">
+              <PackageCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20">
+        <Card className="p-3 sm:p-4 border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">Rejected / Cancelled</p>
-              <p className="text-2xl font-black text-rose-900 dark:text-rose-300 mt-1">{rejectedCount}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-[10px] sm:text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider truncate">Rejected</p>
+              <p className="text-lg sm:text-2xl font-black text-rose-900 dark:text-rose-300 mt-1 truncate">{rejectedCount}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/50 flex items-center justify-center text-rose-700 dark:text-rose-400">
-              <XCircle className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-rose-100 dark:bg-rose-950/50 flex items-center justify-center text-rose-700 dark:text-rose-400 shrink-0">
+              <XCircle className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20">
+        <Card className="p-3 sm:p-4 border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Requisitions</p>
-              <p className="text-2xl font-black text-blue-900 dark:text-blue-300 mt-1">{requests.length}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-[10px] sm:text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider truncate">Total Requisitions</p>
+              <p className="text-lg sm:text-2xl font-black text-blue-900 dark:text-blue-300 mt-1 truncate">{requests.length}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400">
-              <Boxes className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
+              <Boxes className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
         </Card>

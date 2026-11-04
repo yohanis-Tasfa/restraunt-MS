@@ -285,18 +285,18 @@ export default function WaiterCallsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 max-w-[1500px] mx-auto space-y-6">
+    <div className="p-3 sm:p-5 md:p-6 max-w-[1500px] mx-auto space-y-4 sm:space-y-6 text-gray-900 dark:text-gray-100">
       {/* ========================================================================= */}
       {/* PAGE HEADER                                                               */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-[#091a13] p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-[#091a13] p-4 sm:p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 dark:from-emerald-600 dark:to-teal-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
-            <Bell className="w-6 h-6" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 dark:from-emerald-600 dark:to-teal-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+            <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
                 Waiter Calls
               </h1>
               {isConnected ? (
@@ -317,12 +317,12 @@ export default function WaiterCallsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+        <div className="flex items-center gap-2 sm:gap-2.5 self-start sm:self-auto">
           <Button
             onClick={() => refetch()}
             variant="outline"
             size="sm"
-            className="text-xs font-semibold h-9 gap-1.5 border-gray-300 dark:border-[#143225] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
+            className="text-xs font-semibold h-8 sm:h-9 gap-1.5 border-gray-300 dark:border-[#143225] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
             Refresh
@@ -330,7 +330,7 @@ export default function WaiterCallsPage() {
           <Button
             size="sm"
             onClick={() => navigate('/admin/pos')}
-            className="text-xs font-semibold h-9 gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold shadow-xs cursor-pointer"
+            className="text-xs font-semibold h-8 sm:h-9 gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold shadow-xs cursor-pointer"
           >
             <ShoppingCart className="w-3.5 h-3.5" />
             POS Terminal
@@ -339,25 +339,25 @@ export default function WaiterCallsPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* INTERACTIVE KPI SUMMARY CARDS (Click card to filter status)               */}
+      {/* INTERACTIVE KPI SUMMARY CARDS (2x2 / 3-grid on Mobile)                    */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4">
         {/* Card 1: Pending */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'PENDING' ? 'all' : 'PENDING')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${
+          className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs ${
             filterStatus === 'PENDING'
               ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-200 dark:hover:border-rose-900/50 hover:bg-rose-50/30 dark:hover:bg-rose-950/20'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rose-800 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+            <span className="text-[10px] sm:text-xs font-bold text-rose-800 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
+              <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               Pending Calls
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-rose-700 dark:text-rose-400 mt-2">
+          <div className="text-xl sm:text-3xl font-extrabold text-rose-700 dark:text-rose-400 mt-1 sm:mt-2">
             {pendingCalls.length}
           </div>
         </div>
@@ -365,19 +365,19 @@ export default function WaiterCallsPage() {
         {/* Card 2: In Progress */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'ACKNOWLEDGED' ? 'all' : 'ACKNOWLEDGED')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${
+          className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs ${
             filterStatus === 'ACKNOWLEDGED'
               ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-200 dark:hover:border-blue-900/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-[10px] sm:text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400 shrink-0" />
               In Progress
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-blue-700 dark:text-blue-400 mt-2">
+          <div className="text-xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 mt-1 sm:mt-2">
             {acknowledgedCalls.length}
           </div>
         </div>
@@ -385,19 +385,19 @@ export default function WaiterCallsPage() {
         {/* Card 3: Total Active */}
         <div
           onClick={() => setFilterStatus('all')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${
+          className={`col-span-2 sm:col-span-1 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs ${
             filterStatus === 'all'
               ? 'bg-emerald-50 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-600 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50/30 dark:hover:bg-[#0c2219]'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-800 dark:text-[#00e676] uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-800 dark:text-[#00e676] uppercase tracking-wider flex items-center gap-1.5 truncate">
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-[#00e676] shrink-0" />
               Total Active
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-emerald-700 dark:text-[#00e676] mt-2">
+          <div className="text-xl sm:text-3xl font-extrabold text-emerald-700 dark:text-[#00e676] mt-1 sm:mt-2">
             {calls.length}
           </div>
         </div>

@@ -328,18 +328,18 @@ export default function ExpensesPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 text-gray-900 dark:text-gray-100">
+    <div className="p-3 sm:p-6 lg:p-8 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Expenses</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Every Birr out — categorised, approved and reconciled.</p>
-          {error && <p className="text-sm text-red-600 mt-1">Error loading expenses: {error.message}</p>}
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Expenses</h1>
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">Every Birr out — categorised, approved and reconciled.</p>
+          {error && <p className="text-xs sm:text-sm text-red-600 mt-1">Error loading expenses: {error.message}</p>}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <Button
             variant="outline"
-            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
+            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
             onClick={() => {
               queryClient.invalidateQueries({ queryKey: ['expenses'] });
               queryClient.invalidateQueries({ queryKey: ['expense-stats'] });
@@ -349,14 +349,14 @@ export default function ExpensesPage() {
           </Button>
           <Button
             variant="outline"
-            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
+            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
           >
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline">Export</span>
           </Button>
           <Button
             onClick={() => setShowCreateModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer shadow-sm"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer shadow-sm text-xs sm:text-sm h-8 sm:h-9"
           >
             <Plus className="w-4 h-4" />
             Record expense
@@ -364,30 +364,30 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+      {/* Stats Cards - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3.5 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
             {dateFilter === 'month' ? 'Total this month' : 'Total all time'}
           </p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-[#00e676]">{formatCurrency(stats.totalAmount)}</p>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-[#00e676] truncate">{formatCurrency(stats.totalAmount)}</p>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unpaid</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-red-400">{formatCurrency(stats.unpaidAmount)}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stats.unpaidCount} entries</p>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3.5 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">Unpaid</p>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-red-400 truncate">{formatCurrency(stats.unpaidAmount)}</p>
+          <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{stats.unpaidCount} entries</p>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Largest category</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.largestCategory || '-'}</p>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3.5 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">Largest category</p>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{stats.largestCategory || '-'}</p>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Expense ratio</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">38%</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">of revenue</p>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3.5 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">Expense ratio</p>
+          <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">38%</p>
+          <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">of revenue</p>
         </div>
       </div>
 

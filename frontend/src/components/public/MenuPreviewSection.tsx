@@ -607,15 +607,15 @@ export default function MenuPreviewSection() {
               {slides.map((slideItems, slideIdx) => (
                 <div
                   key={slideIdx}
-                  className="w-full flex-shrink-0 snap-start grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-max content-start items-start gap-4 sm:gap-5"
+                  className="w-full flex-shrink-0 snap-start grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-max content-start items-start gap-2.5 sm:gap-4 md:gap-5"
                 >
                   {slideItems.map((item) => (
                     <div
                       key={item.id}
-                      className="group relative rounded-2xl overflow-hidden bg-base-100 border border-base-300 dark:border-[#1b3d2e] hover:border-[#00e676]/70 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg dark:shadow-none hover:dark:shadow-[0_12px_24px_-4px_rgba(0,230,118,0.25)] flex flex-col h-auto"
+                      className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-base-100 border border-base-300 dark:border-[#1b3d2e] hover:border-[#00e676]/70 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg dark:shadow-none hover:dark:shadow-[0_12px_24px_-4px_rgba(0,230,118,0.25)] flex flex-col h-auto"
                     >
                       {/* Image */}
-                      <div className="relative h-36 sm:h-40 md:h-44 overflow-hidden">
+                      <div className="relative h-28 xs:h-32 sm:h-40 md:h-44 overflow-hidden">
                         {item.image ? (
                           <img
                             src={item.image}
@@ -625,31 +625,31 @@ export default function MenuPreviewSection() {
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-gray-200 dark:to-black/60 flex items-center justify-center">
-                            <span className="text-4xl">🍽️</span>
+                            <span className="text-3xl sm:text-4xl">🍽️</span>
                           </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#091712] via-transparent to-transparent opacity-60 pointer-events-none" />
 
                         {/* Category Badge */}
                         {item.category && (
-                          <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 bg-black/75 backdrop-blur-md rounded-full border border-white/20">
-                            <span className="text-[11px] font-semibold text-white">
+                          <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 px-2 py-0.5 bg-black/75 backdrop-blur-md rounded-full border border-white/20">
+                            <span className="text-[9px] sm:text-[11px] font-semibold text-white">
                               {item.category.name}
                             </span>
                           </div>
                         )}
                         {/* Popular Badge */}
-                        <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 bg-[#00e676] text-[#032314] rounded-full font-bold text-[11px] flex items-center gap-1 shadow-md">
-                          <TrendingUp className="w-3 h-3" />
-                          <span>Popular</span>
+                        <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 px-1.5 sm:px-2.5 py-0.5 bg-[#00e676] text-[#032314] rounded-full font-bold text-[9px] sm:text-[11px] flex items-center gap-1 shadow-md">
+                          <TrendingUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          <span className="hidden xs:inline">Popular</span>
                         </div>
                       </div>
 
                       {/* Content: Title, Amount & Add to Order tightly grouped as one compact box */}
-                      <div className="p-3 sm:p-3.5 space-y-2">
+                      <div className="p-2 sm:p-3 sm:p-3.5 space-y-1.5 sm:space-y-2">
                         {/* Title */}
                         <h3
-                          className="text-base sm:text-lg font-bold text-base-content group-hover:text-[#00c853] dark:group-hover:text-[#00e676] transition-colors duration-200 line-clamp-1"
+                          className="text-xs sm:text-base md:text-lg font-bold text-base-content group-hover:text-[#00c853] dark:group-hover:text-[#00e676] transition-colors duration-200 line-clamp-1"
                           title={item.name}
                         >
                           {item.name}
@@ -657,22 +657,23 @@ export default function MenuPreviewSection() {
 
                         {/* Price & Rating */}
                         <div className="flex items-center justify-between">
-                          <span className="text-base sm:text-lg font-extrabold text-[#00a844] dark:text-[#00e676] leading-none">
+                          <span className="text-xs sm:text-base md:text-lg font-extrabold text-[#00a844] dark:text-[#00e676] leading-none">
                             {formatPrice(item.price)}
                           </span>
-                          <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 rounded-full border border-yellow-500/30">
-                            <Star className="w-3 h-3 text-yellow-500 fill-yellow-400" />
-                            <span className="text-[11px] font-bold text-yellow-600 dark:text-yellow-400">4.8</span>
+                          <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 bg-yellow-500/10 rounded-full border border-yellow-500/30">
+                            <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-500 fill-yellow-400" />
+                            <span className="text-[10px] sm:text-[11px] font-bold text-yellow-600 dark:text-yellow-400">4.8</span>
                           </div>
                         </div>
 
                         {/* Order Button */}
                         <button
                           onClick={() => handleAddToOrder(item)}
-                          className="w-full py-2.5 px-3 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs sm:text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:shadow-[0_0_16px_rgba(0,230,118,0.4)] active:scale-[0.98]"
+                          className="w-full py-1.5 sm:py-2.5 px-2 sm:px-3 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold text-xs sm:text-sm rounded-lg sm:rounded-xl transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-sm hover:shadow-[0_0_16px_rgba(0,230,118,0.4)] active:scale-[0.98]"
                         >
-                          <span>Add to Order</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <span className="hidden xs:inline">Add to Order</span>
+                          <span className="xs:hidden">Add</span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         </button>
                       </div>
                     </div>

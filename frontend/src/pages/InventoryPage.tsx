@@ -215,60 +215,60 @@ export default function InventoryPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 text-gray-900 dark:text-gray-100">
+    <div className="p-3 sm:p-5 md:p-6 space-y-4 sm:space-y-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Inventory Management</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Track and manage your stock levels</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Inventory Management</h1>
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Track and manage your stock levels</p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg cursor-pointer shadow-sm"
+          className="flex items-center justify-center gap-2 px-3.5 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg cursor-pointer shadow-sm text-xs sm:text-sm self-start sm:self-auto"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           Add Item
         </button>
       </div>
 
-      {/* Alert Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-4">
+      {/* Alert Cards - 2x2/3-grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4">
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3 sm:p-4">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Items</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{baseItems.length}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Total Items</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{baseItems.length}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-              <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-4">
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3 sm:p-4">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Low Stock</p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Low Stock</p>
+              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-1 truncate">
                 {lowStockCount}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/40 flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-50 dark:bg-red-950/40 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-4">
+        <div className="col-span-2 md:col-span-1 bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3 sm:p-4">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Expiring Soon</p>
-              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Expiring Soon</p>
+              <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1 truncate">
                 {expiringCount}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/30 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/30 flex items-center justify-center shrink-0">
+              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </div>

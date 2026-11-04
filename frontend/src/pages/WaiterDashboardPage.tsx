@@ -586,33 +586,33 @@ export default function WaiterDashboardPage() {
   const periodLabel = selectedPeriod === 'today' ? 'Today' : selectedPeriod === 'week' ? 'This Week' : 'This Month';
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
+    <div className="p-3 sm:p-5 md:p-6 space-y-4 sm:space-y-6 max-w-[1600px] mx-auto text-gray-900 dark:text-gray-100">
       {/* ========================================================================= */}
       {/* HEADER SECTION WITH DEMO/LIVE TOGGLE & QUICK ACTIONS                      */}
       {/* ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#091a13] p-4 sm:p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-            <Utensils className="w-6 h-6" />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+            <Utensils className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
               Welcome back, {user?.firstName || 'Waiter'}!
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               {user?.branch?.name ? `${user.branch.name} • ` : 'Bole Main • '}
               Waiter Sales Performance & Service Dashboard
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
           {/* Mode Switcher Button */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowcaseMode(!showcaseMode)}
-            className="text-xs font-medium border-gray-300 hover:bg-gray-50 gap-1.5"
+            className="text-xs font-medium border-gray-300 dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] gap-1.5"
           >
             <Sparkles className={`w-3.5 h-3.5 ${showcaseMode ? 'text-amber-500' : 'text-gray-400'}`} />
             {showcaseMode ? 'Switch to Live Data' : 'Switch to Showcase Data'}
@@ -626,7 +626,7 @@ export default function WaiterDashboardPage() {
               refetchPaidOrders();
             }}
             disabled={isStatsFetching}
-            className="text-xs font-medium text-gray-600 hover:text-gray-900 border-gray-300"
+            className="text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border-gray-300 dark:border-[#143225] dark:hover:bg-[#12281d]"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isStatsFetching ? 'animate-spin' : ''}`} />
             Refresh
@@ -646,15 +646,15 @@ export default function WaiterDashboardPage() {
       {/* ========================================================================= */}
       {/* TIME PERIOD SELECTOR (RIGHT-ALIGNED)                                      */}
       {/* ========================================================================= */}
-      <div className="flex justify-end">
-        <div className="inline-flex rounded-lg bg-gray-100/90 p-1 border border-gray-200 shadow-xs">
+      <div className="flex justify-start sm:justify-end overflow-x-auto pb-1">
+        <div className="inline-flex rounded-lg bg-gray-100/90 dark:bg-[#071a12] p-1 border border-gray-200 dark:border-[#143225] shadow-xs">
           <button
             type="button"
             onClick={() => setSelectedPeriod('today')}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            className={`px-3 sm:px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
               selectedPeriod === 'today'
-                ? 'bg-white text-blue-700 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-[#123627] text-blue-700 dark:text-[#00e676] shadow-xs'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
             Today
@@ -662,10 +662,10 @@ export default function WaiterDashboardPage() {
           <button
             type="button"
             onClick={() => setSelectedPeriod('week')}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            className={`px-3 sm:px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
               selectedPeriod === 'week'
-                ? 'bg-white text-blue-700 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-[#123627] text-blue-700 dark:text-[#00e676] shadow-xs'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
             This Week
@@ -673,10 +673,10 @@ export default function WaiterDashboardPage() {
           <button
             type="button"
             onClick={() => setSelectedPeriod('month')}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            className={`px-3 sm:px-3.5 py-1.5 text-xs font-semibold rounded-md transition-all ${
               selectedPeriod === 'month'
-                ? 'bg-white text-blue-700 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-[#123627] text-blue-700 dark:text-[#00e676] shadow-xs'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
             This Month
@@ -685,83 +685,82 @@ export default function WaiterDashboardPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 4 PROMINENT METRIC CARDS WITH VIBRANT VISUALS                             */}
+      {/* 4 PROMINENT METRIC CARDS WITH VIBRANT VISUALS (2x2 on Mobile)             */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* 1. Total Sales Made */}
-        <Card className="border-emerald-100 bg-gradient-to-br from-white via-white to-emerald-50/40 shadow-xs hover:shadow-sm transition-shadow">
-          <CardContent className="p-5">
+        <Card className="border-emerald-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-emerald-50/40 dark:to-emerald-950/20 shadow-xs hover:shadow-sm transition-shadow">
+          <CardContent className="p-3 sm:p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                My Total Sales ({periodLabel})
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                Sales ({periodLabel})
               </span>
-              <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-[#00e676]">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-[#00e676] shrink-0">
                 <TrendingUp className="w-4 h-4" />
               </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+            <div className="flex items-baseline gap-2 mt-1 sm:mt-2">
+              <h2 className="text-base sm:text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white truncate">
                 Br {effectiveStats.totalSales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
             </div>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-600 dark:text-[#00e676] font-semibold">
-              <span className="bg-emerald-100/80 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded text-[11px]">
+            <div className="flex items-center gap-1.5 mt-2 text-[11px] text-emerald-600 dark:text-[#00e676] font-semibold">
+              <span className="bg-emerald-100/80 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px]">
                 {effectiveStats.salesChange}
               </span>
-              <span className="text-gray-500 dark:text-gray-400 font-normal">vs previous {selectedPeriod}</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal hidden sm:inline">vs previous {selectedPeriod}</span>
             </div>
           </CardContent>
         </Card>
 
         {/* 2. Paid Orders Finalized */}
         <Card className="border-blue-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-blue-50/40 dark:to-blue-950/20 shadow-xs hover:shadow-sm transition-shadow">
-          <CardContent className="p-5">
+          <CardContent className="p-3 sm:p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Paid Orders Count
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                Paid Orders
               </span>
-              <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
                 <CheckCircle className="w-4 h-4" />
               </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+            <div className="flex items-baseline gap-1.5 mt-1 sm:mt-2">
+              <h2 className="text-base sm:text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">
                 {effectiveStats.paidOrdersCount}
               </h2>
-              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">orders settled</span>
+              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium truncate">orders</span>
             </div>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-blue-700 dark:text-blue-400 font-medium">
-              <span className="bg-blue-100/80 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px] font-semibold">
+            <div className="flex items-center gap-1.5 mt-2 text-[11px] text-blue-700 dark:text-blue-400 font-medium">
+              <span className="bg-blue-100/80 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold">
                 Avg: Br {effectiveStats.avgTicket.toFixed(0)}
               </span>
-              <span className="text-gray-500 dark:text-gray-400">per table ticket</span>
             </div>
           </CardContent>
         </Card>
 
         {/* 3. Tips Earned */}
         <Card className="border-amber-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-amber-50/40 dark:to-amber-950/20 shadow-xs hover:shadow-sm transition-shadow">
-          <CardContent className="p-5">
+          <CardContent className="p-3 sm:p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Tips Earned ({periodLabel})
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                Tips ({periodLabel})
               </span>
-              <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
                 <DollarSign className="w-4 h-4" />
               </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+            <div className="flex items-baseline gap-2 mt-1 sm:mt-2">
+              <h2 className="text-base sm:text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white truncate">
                 Br {effectiveStats.totalTips.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
             </div>
-            <div className="flex items-center justify-between mt-2.5 text-xs">
-              <span className="text-gray-500 dark:text-gray-400">
-                {effectiveStats.tipsCount} tips • Paid: <b className="text-gray-800 dark:text-gray-200">Br {effectiveStats.paidTips.toFixed(0)}</b>
+            <div className="flex items-center justify-between mt-2 text-[10px] sm:text-xs">
+              <span className="text-gray-500 dark:text-gray-400 truncate">
+                {effectiveStats.tipsCount} tips
               </span>
               <button
                 onClick={() => navigate('/admin/my-tips')}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 font-semibold flex items-center gap-0.5 cursor-pointer"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 font-semibold flex items-center gap-0.5 cursor-pointer shrink-0"
               >
                 Tips &rarr;
               </button>
@@ -771,24 +770,25 @@ export default function WaiterDashboardPage() {
 
         {/* 4. Service Efficiency & Satisfaction */}
         <Card className="border-purple-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-purple-50/40 dark:to-purple-950/20 shadow-xs hover:shadow-sm transition-shadow">
-          <CardContent className="p-5">
+          <CardContent className="p-3 sm:p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Service Performance
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider truncate">
+                Performance
               </span>
-              <div className="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
                 <Award className="w-4 h-4" />
               </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+            <div className="flex items-baseline gap-2 mt-1 sm:mt-2">
+              <h2 className="text-base sm:text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white truncate">
                 {effectiveStats.satisfactionRate}
               </h2>
-              <span className="text-xs text-purple-700 dark:text-purple-400 font-semibold">Positive Rating</span>
             </div>
-            <div className="flex items-center gap-2 mt-2.5 text-xs text-gray-500 dark:text-gray-400">
-              <Clock className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-              <span>Avg turnaround: <b className="text-gray-800 dark:text-gray-200">{effectiveStats.avgServiceTime}</b></span>
+            <div className="flex items-center gap-1.5 mt-2 text-[10px] sm:text-xs text-purple-700 dark:text-purple-400 font-medium">
+              <span className="bg-purple-100/80 dark:bg-purple-950/60 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold">
+                {effectiveStats.avgServiceTime}
+              </span>
+              <span className="text-gray-500 dark:text-gray-400 hidden sm:inline">avg ticket speed</span>
             </div>
           </CardContent>
         </Card>
@@ -797,26 +797,26 @@ export default function WaiterDashboardPage() {
       {/* ========================================================================= */}
       {/* CHARTS ROW 1: SALES & TIPS TREND (LINE/AREA) + PAYMENT BREAKDOWN (PIE)    */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Sales & Tips Performance Trend (Area Chart) - 2 Columns */}
-        <Card className="lg:col-span-2 border-gray-200/80 shadow-xs">
+        <Card className="lg:col-span-2 border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs">
           <CardHeader className="pb-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <CardTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-blue-600" />
+                <CardTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Sales & Tips Performance Trend ({periodLabel})
                 </CardTitle>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                   Revenue and tip accumulation curve across {periodLabel.toLowerCase()}
                 </p>
               </div>
               <div className="flex items-center gap-3 text-xs">
-                <span className="flex items-center gap-1.5 font-medium text-gray-700">
+                <span className="flex items-center gap-1.5 font-medium text-gray-700 dark:text-gray-300">
                   <span className="w-3 h-3 rounded-sm bg-blue-600" />
                   Sales (ETB)
                 </span>
-                <span className="flex items-center gap-1.5 font-medium text-gray-700">
+                <span className="flex items-center gap-1.5 font-medium text-gray-700 dark:text-gray-300">
                   <span className="w-3 h-3 rounded-sm bg-emerald-500" />
                   Tips (ETB)
                 </span>
@@ -837,10 +837,10 @@ export default function WaiterDashboardPage() {
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2a3f35" opacity={0.3} />
+                  <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#8899a6' }} axisLine={false} tickLine={false} />
                   <YAxis
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
+                    tick={{ fontSize: 11, fill: '#8899a6' }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => `Br ${v}`}
@@ -848,10 +848,11 @@ export default function WaiterDashboardPage() {
                   <Tooltip
                     formatter={(value: any, name: any) => [`Br ${Number(value).toLocaleString()}`, name]}
                     contentStyle={{
-                      backgroundColor: '#ffffff',
+                      backgroundColor: '#091a13',
                       borderRadius: '10px',
-                      border: '1px solid #e5e7eb',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid #143225',
+                      color: '#ffffff',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.4)',
                       fontSize: '12px',
                     }}
                   />
@@ -880,13 +881,13 @@ export default function WaiterDashboardPage() {
         </Card>
 
         {/* Payment Methods Breakdown (Pie / Donut Chart) - 1 Column */}
-        <Card className="border-gray-200/80 shadow-xs flex flex-col justify-between">
+        <Card className="border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs flex flex-col justify-between">
           <CardHeader className="pb-1">
-            <CardTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
-              <PieIcon className="w-4 h-4 text-purple-600" />
+            <CardTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <PieIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               Payment Methods Breakdown
             </CardTitle>
-            <p className="text-xs text-gray-500">Distribution across Telebirr, CBE Birr & Cash</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Distribution across Telebirr, CBE Birr & Cash</p>
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-[180px] w-full relative">
@@ -909,9 +910,10 @@ export default function WaiterDashboardPage() {
                   <Tooltip
                     formatter={(value: any) => [`Br ${Number(value).toLocaleString()}`, 'Total Paid']}
                     contentStyle={{
-                      backgroundColor: '#ffffff',
+                      backgroundColor: '#091a13',
                       borderRadius: '8px',
-                      border: '1px solid #e5e7eb',
+                      border: '1px solid #143225',
+                      color: '#ffffff',
                       fontSize: '12px',
                     }}
                   />
@@ -920,21 +922,21 @@ export default function WaiterDashboardPage() {
               {/* Center Donut Label */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-[10px] text-gray-400 font-medium">TOTAL PAID</span>
-                <span className="text-sm font-bold text-gray-800">
+                <span className="text-sm font-bold text-gray-800 dark:text-white">
                   Br {(effectiveStats.totalSales / 1000).toFixed(1)}k
                 </span>
               </div>
             </div>
 
             {/* Custom Payment Legend with Badges */}
-            <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-gray-100">
+            <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-[#143225]">
               {effectiveStats.payments.map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-1.5 rounded-lg bg-gray-50/80 text-xs">
+                <div key={i} className="flex items-center justify-between p-1.5 rounded-lg bg-gray-50/80 dark:bg-[#071a12] text-xs border border-transparent dark:border-[#143225]">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                    <span className="font-medium text-gray-700 truncate text-[11px]">{item.name}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 truncate text-[11px]">{item.name}</span>
                   </div>
-                  <span className="font-bold text-gray-900 text-[11px]">{item.percentage}%</span>
+                  <span className="font-bold text-gray-900 dark:text-white text-[11px]">{item.percentage}%</span>
                 </div>
               ))}
             </div>
@@ -945,21 +947,21 @@ export default function WaiterDashboardPage() {
       {/* ========================================================================= */}
       {/* CHARTS ROW 2: TOP DISHES BAR GRAPH + MY ASSIGNED STATIONS                */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Top Selling Dishes Served (Horizontal Bar Chart) - 2 Columns */}
-        <Card className="lg:col-span-2 border-gray-200/80 shadow-xs">
+        <Card className="lg:col-span-2 border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-indigo-600" />
+                <CardTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   Top Selling Dishes You Served ({periodLabel})
                 </CardTitle>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                   Best performing Ethiopian menu items on your station tickets
                 </p>
               </div>
-              <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">
+              <Badge variant="outline" className="text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/50">
                 Top 5 Dishes
               </Badge>
             </div>
@@ -972,10 +974,10 @@ export default function WaiterDashboardPage() {
                   layout="vertical"
                   margin={{ top: 5, right: 30, left: 15, bottom: 5 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#2a3f35" opacity={0.3} />
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 11, fill: '#6b7280' }}
+                    tick={{ fontSize: 11, fill: '#8899a6' }}
                     tickFormatter={(v) => `Br ${v}`}
                     axisLine={false}
                     tickLine={false}
@@ -984,7 +986,7 @@ export default function WaiterDashboardPage() {
                     type="category"
                     dataKey="name"
                     width={130}
-                    tick={{ fontSize: 11, fill: '#374151', fontWeight: 500 }}
+                    tick={{ fontSize: 11, fill: '#8899a6', fontWeight: 500 }}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -994,9 +996,10 @@ export default function WaiterDashboardPage() {
                       'Revenue',
                     ]}
                     contentStyle={{
-                      backgroundColor: '#ffffff',
+                      backgroundColor: '#091a13',
                       borderRadius: '8px',
-                      border: '1px solid #e5e7eb',
+                      border: '1px solid #143225',
+                      color: '#ffffff',
                       fontSize: '12px',
                     }}
                   />
@@ -1015,21 +1018,21 @@ export default function WaiterDashboardPage() {
         </Card>
 
         {/* My Station Tables - 1 Column */}
-        <Card className="border-gray-200/80 shadow-xs flex flex-col justify-between">
+        <Card className="border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs flex flex-col justify-between">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-600" />
+                <CardTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   My Station Tables
                 </CardTitle>
-                <p className="text-xs text-gray-500">Currently assigned tables</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Currently assigned tables</p>
               </div>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => navigate('/admin/tables')}
-                className="text-xs h-7 px-2"
+                className="text-xs h-7 px-2 dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d]"
               >
                 View Map
               </Button>
@@ -1041,15 +1044,15 @@ export default function WaiterDashboardPage() {
                 <div
                   key={table.id}
                   onClick={() => navigate('/admin/tables')}
-                  className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-100"
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50 dark:bg-[#071a12] hover:bg-gray-100 dark:hover:bg-[#0d2e20] transition-colors cursor-pointer border border-gray-100 dark:border-[#143225]"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-800 text-xs">
+                    <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center font-bold text-blue-800 dark:text-blue-300 text-xs">
                       T{table.number}
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-gray-900">Table {table.number}</span>
-                      <p className="text-[11px] text-gray-500">
+                      <span className="text-xs font-semibold text-gray-900 dark:text-white">Table {table.number}</span>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400">
                         {table.guests > 0 ? `${table.guests} guests • ${table.timeElapsed}` : `Capacity: ${table.capacity}`}
                       </p>
                     </div>
@@ -1058,10 +1061,10 @@ export default function WaiterDashboardPage() {
                     <Badge
                       className={`text-[11px] font-normal ${
                         table.status === TableStatus.OCCUPIED
-                          ? 'bg-amber-100 text-amber-800'
+                          ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-900/50'
                           : table.status === TableStatus.RESERVED
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-green-100 text-green-800'
+                          ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-900/50'
+                          : 'bg-green-100 dark:bg-emerald-950/60 text-green-800 dark:text-emerald-300 border-green-300 dark:border-emerald-900/50'
                       }`}
                     >
                       {table.status}
@@ -1078,20 +1081,20 @@ export default function WaiterDashboardPage() {
       {/* CASHIER RECONCILIATION & HANDOVER SUMMARY BANNER                          */}
       {/* Used by Waiter & Cashier at end of shift/day to settle Cash vs Transfers  */}
       {/* ========================================================================= */}
-      <div className="bg-gradient-to-r from-emerald-50 via-teal-50/50 to-blue-50 border border-emerald-200/90 rounded-2xl p-5 shadow-xs">
+      <div className="bg-gradient-to-r from-emerald-50 dark:from-[#042417] via-teal-50/50 dark:via-[#072c1c] to-blue-50 dark:to-[#042417] border border-emerald-200/90 dark:border-[#145d3e] rounded-2xl p-4 sm:p-5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
               <Banknote className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 Cashier Handover & Reconciliation ({periodLabel})
-                <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px] font-semibold">
+                <Badge className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-[#00e676] border-emerald-300 dark:border-emerald-800 text-[10px] font-semibold">
                   Shift Settle
                 </Badge>
               </h3>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Track physical cash collected to surrender to cashier vs. direct digital customer transfers
               </p>
             </div>
@@ -1100,48 +1103,48 @@ export default function WaiterDashboardPage() {
           <Button
             size="sm"
             onClick={() => setIsHandoverModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8 gap-1.5 shadow-xs self-start sm:self-auto"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-8 gap-1.5 shadow-xs self-start sm:self-auto cursor-pointer"
           >
             <FileCheck className="w-3.5 h-3.5" />
             Cashier Handover Slip
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
           {/* Card 1: Physical Cash to Hand Over */}
-          <div className="bg-white/95 backdrop-blur-xs p-4 rounded-xl border border-emerald-200 shadow-2xs">
+          <div className="bg-white/95 dark:bg-[#091a13] backdrop-blur-xs p-3.5 sm:p-4 rounded-xl border border-emerald-200 dark:border-[#143225] shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
-                <Banknote className="w-4 h-4 text-emerald-600" />
-                Physical Cash in Hand
+              <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
+                <Banknote className="w-4 h-4 text-emerald-600 dark:text-[#00e676] shrink-0" />
+                Cash in Hand
               </span>
-              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px] font-bold">
-                {cashOrders.length} cash orders
+              <Badge className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 text-[10px] font-bold">
+                {cashOrders.length}
               </Badge>
             </div>
-            <div className="text-2xl font-extrabold text-emerald-700 mt-2">
+            <div className="text-base sm:text-2xl font-extrabold text-emerald-700 dark:text-[#00e676] mt-2 truncate">
               Br {totalCashAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <p className="text-[11px] text-gray-500 mt-1">
-              Exact paper cash to give to cashier at shift end
+            <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 mt-1 truncate">
+              Physical cash to handover
             </p>
           </div>
 
           {/* Card 2: Digital Transfers Verified */}
-          <div className="bg-white/95 backdrop-blur-xs p-4 rounded-xl border border-blue-200 shadow-2xs">
+          <div className="bg-white/95 dark:bg-[#091a13] backdrop-blur-xs p-3.5 sm:p-4 rounded-xl border border-blue-200 dark:border-[#143225] shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
-                <Smartphone className="w-4 h-4 text-blue-600" />
-                Digital Transfers
+              <span className="text-[11px] font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
+                <Smartphone className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                Transfers
               </span>
-              <Badge className="bg-blue-100 text-blue-800 border-blue-300 text-[10px] font-bold">
-                {transferOrders.length} transfers
+              <Badge className="bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800 text-[10px] font-bold">
+                {transferOrders.length}
               </Badge>
             </div>
-            <div className="text-2xl font-extrabold text-blue-700 mt-2">
+            <div className="text-base sm:text-2xl font-extrabold text-blue-700 dark:text-blue-400 mt-2 truncate">
               Br {totalTransferAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div className="text-[11px] text-gray-500 mt-1 flex items-center gap-2">
+            <div className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1 sm:gap-2 truncate">
               <span>Telebirr: <b>Br {totalTelebirrAmount.toFixed(0)}</b></span>
               <span>•</span>
               <span>CBE: <b>Br {totalCbeAmount.toFixed(0)}</b></span>
@@ -1149,20 +1152,20 @@ export default function WaiterDashboardPage() {
           </div>
 
           {/* Card 3: Total Shift Sales */}
-          <div className="bg-white/95 backdrop-blur-xs p-4 rounded-xl border border-gray-200 shadow-2xs">
+          <div className="col-span-2 sm:col-span-1 bg-white/95 dark:bg-[#091a13] backdrop-blur-xs p-3.5 sm:p-4 rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Receipt className="w-4 h-4 text-gray-600" />
+              <span className="text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider flex items-center gap-1.5 truncate">
+                <Receipt className="w-4 h-4 text-gray-600 dark:text-gray-400 shrink-0" />
                 Total Shift Sales
               </span>
-              <Badge variant="outline" className="text-[10px] font-semibold">
+              <Badge variant="outline" className="text-[10px] font-semibold dark:border-[#143225] dark:text-gray-300">
                 {effectivePaidOrders.length} orders
               </Badge>
             </div>
-            <div className="text-2xl font-extrabold text-gray-900 mt-2">
+            <div className="text-base sm:text-2xl font-extrabold text-gray-900 dark:text-white mt-2 truncate">
               Br {(totalCashAmount + totalTransferAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <p className="text-[11px] text-gray-500 mt-1">
+            <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 mt-1 truncate">
               Combined Cash + Digital payment receipts
             </p>
           </div>
@@ -1172,15 +1175,15 @@ export default function WaiterDashboardPage() {
       {/* ========================================================================= */}
       {/* MY PAID ORDERS FOR THIS PERIOD (WITH CASH & TRANSFER FILTERS)             */}
       {/* ========================================================================= */}
-      <Card className="border-gray-200/80 shadow-xs overflow-hidden">
-        <CardHeader className="bg-gray-50/60 border-b border-gray-100 py-4">
+      <Card className="border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs overflow-hidden">
+        <CardHeader className="bg-gray-50/60 dark:bg-[#071a12] border-b border-gray-100 dark:border-[#143225] py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <CardTitle className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <Receipt className="w-4.5 h-4.5 text-emerald-600" />
+              <CardTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Receipt className="w-4.5 h-4.5 text-emerald-600 dark:text-[#00e676]" />
                 My Paid Orders ({periodLabel})
               </CardTitle>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 Completed & paid tickets attributed to your service station
               </p>
             </div>
@@ -1188,25 +1191,25 @@ export default function WaiterDashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => navigate('/admin/orders')}
-              className="text-xs text-blue-600 hover:text-blue-700 h-8 self-start sm:self-auto"
+              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 dark:border-[#143225] h-8 self-start sm:self-auto cursor-pointer"
             >
               All Orders Page &rarr;
             </Button>
           </div>
 
           {/* Filter Pills: All | Cash Only | Transfers | Telebirr | CBE Birr */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 mt-3.5 pt-3 border-t border-gray-100">
-            <span className="text-xs font-semibold text-gray-500 flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 mt-3.5 pt-3 border-t border-gray-100 dark:border-[#143225]">
+            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 flex items-center gap-1 shrink-0">
               <Filter className="w-3.5 h-3.5" />
               Filter by:
             </span>
             <button
               type="button"
               onClick={() => setPaymentTypeFilter('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
                 paymentTypeFilter === 'all'
-                  ? 'bg-gray-900 text-white shadow-xs'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-gray-900 dark:bg-[#00e676] text-white dark:text-[#032314] shadow-xs font-bold'
+                  : 'bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
               }`}
             >
               All Paid ({effectivePaidOrders.length})
@@ -1214,10 +1217,10 @@ export default function WaiterDashboardPage() {
             <button
               type="button"
               onClick={() => setPaymentTypeFilter('cash')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
                 paymentTypeFilter === 'cash'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200/70'
+                  ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200/70 dark:border-emerald-800/60'
               }`}
             >
               <Banknote className="w-3.5 h-3.5" />
@@ -1226,10 +1229,10 @@ export default function WaiterDashboardPage() {
             <button
               type="button"
               onClick={() => setPaymentTypeFilter('transfer')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
                 paymentTypeFilter === 'transfer'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200/70'
+                  ? 'bg-blue-600 text-white shadow-xs font-bold'
+                  : 'bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200/70 dark:border-blue-800/60'
               }`}
             >
               <Smartphone className="w-3.5 h-3.5" />
@@ -1238,10 +1241,10 @@ export default function WaiterDashboardPage() {
             <button
               type="button"
               onClick={() => setPaymentTypeFilter('telebirr')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1 cursor-pointer ${
                 paymentTypeFilter === 'telebirr'
-                  ? 'bg-[#00A3E0] text-white shadow-xs'
-                  : 'bg-cyan-50 text-cyan-800 hover:bg-cyan-100 border border-cyan-200/70'
+                  ? 'bg-[#00A3E0] text-white shadow-xs font-bold'
+                  : 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-800 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 border border-cyan-200/70 dark:border-cyan-800/60'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-[#00A3E0] inline-block" />
@@ -1250,10 +1253,10 @@ export default function WaiterDashboardPage() {
             <button
               type="button"
               onClick={() => setPaymentTypeFilter('cbe')}
-              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 flex items-center gap-1 cursor-pointer ${
                 paymentTypeFilter === 'cbe'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'bg-purple-50 text-purple-800 hover:bg-purple-100 border border-purple-200/70'
+                  ? 'bg-purple-700 text-white shadow-xs font-bold'
+                  : 'bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-200/70 dark:border-purple-800/60'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-purple-700 inline-block" />
@@ -1264,15 +1267,15 @@ export default function WaiterDashboardPage() {
 
         <CardContent className="p-0">
           {filteredPaidOrders.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 text-xs">
-              <Receipt className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p className="font-semibold text-gray-700 text-sm">
+            <div className="p-8 text-center text-gray-500 dark:text-gray-400 text-xs">
+              <Receipt className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+              <p className="font-semibold text-gray-700 dark:text-gray-300 text-sm">
                 No {paymentTypeFilter === 'cash' ? 'cash' : paymentTypeFilter === 'transfer' ? 'digital transfer' : paymentTypeFilter} orders found for {periodLabel.toLowerCase()}.
               </p>
               <button
                 type="button"
                 onClick={() => setPaymentTypeFilter('all')}
-                className="text-blue-600 text-xs font-medium hover:underline mt-2"
+                className="text-blue-600 dark:text-blue-400 text-xs font-medium hover:underline mt-2 cursor-pointer"
               >
                 Clear filter & show all ({effectivePaidOrders.length}) orders
               </button>
@@ -1280,36 +1283,36 @@ export default function WaiterDashboardPage() {
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 text-left">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-[#143225] text-left">
+                  <thead className="bg-gray-50 dark:bg-[#071a12] border-b border-gray-200 dark:border-[#143225]">
                     <tr>
-                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Table
                       </th>
-                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Order Total
                       </th>
-                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Payment Method
                       </th>
-                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Items Ordered
                       </th>
-                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-5 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Date &amp; Time
                       </th>
-                      <th className="px-5 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-5 py-3.5 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Action
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 bg-white">
+                  <tbody className="divide-y divide-gray-200 dark:divide-[#143225] bg-white dark:bg-[#091a13]">
                     {paginatedPaidOrders.map((order: any) => (
-                      <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                      <tr key={order.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0d2a1d] transition-colors">
                         {/* Table */}
                         <td className="px-5 py-3.5 whitespace-nowrap">
                           <div className="flex flex-col items-start">
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 dark:bg-[#0c2219] text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-[#143225]">
                               {order.table?.number
                                 ? (String(order.table.number).toLowerCase().startsWith('t')
                                     ? order.table.number
@@ -1317,7 +1320,7 @@ export default function WaiterDashboardPage() {
                                 : 'Walk-in'}
                             </span>
                             {order.customer?.firstName && (
-                              <span className="text-[11px] text-gray-500 font-medium mt-1 truncate max-w-[120px]">
+                              <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-1 truncate max-w-[120px]">
                                 {order.customer.firstName} {order.customer.lastName || ''}
                               </span>
                             )}
@@ -1326,7 +1329,7 @@ export default function WaiterDashboardPage() {
 
                         {/* Order Total */}
                         <td className="px-5 py-3.5 whitespace-nowrap">
-                          <span className="text-sm font-bold text-gray-900">
+                          <span className="text-sm font-bold text-gray-900 dark:text-white">
                             Br {Number(order.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         </td>
@@ -1342,9 +1345,9 @@ export default function WaiterDashboardPage() {
                             {(order.items || []).map((item: any, idx: number) => (
                               <span
                                 key={idx}
-                                className="bg-gray-100/90 text-gray-700 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60 whitespace-nowrap"
+                                className="bg-gray-100/90 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-md text-xs font-medium border border-gray-200/60 dark:border-[#143225] whitespace-nowrap"
                               >
-                                <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
+                                <span className="font-bold text-gray-900 dark:text-white mr-1">{item.quantity}x</span>
                                 {item.menuItem?.name || item.name || 'Dish'}
                               </span>
                             ))}
@@ -1355,11 +1358,11 @@ export default function WaiterDashboardPage() {
                         </td>
 
                         {/* Date & Time */}
-                        <td className="px-5 py-3.5 whitespace-nowrap text-sm text-gray-600">
-                          <div className="font-medium text-gray-900">
+                        <td className="px-5 py-3.5 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                          <div className="font-medium text-gray-900 dark:text-white">
                             {order.createdAt ? format(new Date(order.createdAt), 'MMM dd, yyyy') : 'Recent'}
                           </div>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-gray-400 dark:text-gray-500">
                             {order.createdAt ? format(new Date(order.createdAt), 'hh:mm a') : ''}
                           </div>
                         </td>
@@ -1373,7 +1376,7 @@ export default function WaiterDashboardPage() {
                               setSelectedOrderForDetails(order);
                               setIsOrderDetailsOpen(true);
                             }}
-                            className="text-xs font-semibold h-8 px-3 border-gray-300 hover:bg-gray-100 hover:text-gray-900 shadow-2xs"
+                            className="text-xs font-semibold h-8 px-3 border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#12281d] shadow-2xs cursor-pointer"
                           >
                             View
                           </Button>
@@ -1385,11 +1388,11 @@ export default function WaiterDashboardPage() {
               </div>
 
               {/* Pagination Footer */}
-              <div className="px-5 py-3.5 bg-gray-50/70 border-t border-gray-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="text-xs text-gray-600 font-medium">
-                  Showing <span className="font-bold text-gray-900">{totalPaidOrders === 0 ? 0 : startOrderIndex + 1}</span> to{' '}
-                  <span className="font-bold text-gray-900">{endOrderIndex}</span> of{' '}
-                  <span className="font-bold text-gray-900">{totalPaidOrders}</span> orders
+              <div className="px-5 py-3.5 bg-gray-50/70 dark:bg-[#071a12] border-t border-gray-200/80 dark:border-[#143225] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                  Showing <span className="font-bold text-gray-900 dark:text-white">{totalPaidOrders === 0 ? 0 : startOrderIndex + 1}</span> to{' '}
+                  <span className="font-bold text-gray-900 dark:text-white">{endOrderIndex}</span> of{' '}
+                  <span className="font-bold text-gray-900 dark:text-white">{totalPaidOrders}</span> orders
                   {totalPaidPages > 1 && (
                     <span className="ml-1.5 text-gray-400 font-normal">
                       (Page {currentPaidPage} of {totalPaidPages})
@@ -1404,7 +1407,7 @@ export default function WaiterDashboardPage() {
                       size="sm"
                       onClick={() => setPaidOrdersPage((p) => Math.max(1, p - 1))}
                       disabled={currentPaidPage === 1}
-                      className="h-8 px-2.5 text-xs font-semibold gap-1 border-gray-300 disabled:opacity-40"
+                      className="h-8 px-2.5 text-xs font-semibold gap-1 border-gray-300 dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] disabled:opacity-40 cursor-pointer"
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                       <span>Prev</span>
@@ -1433,10 +1436,10 @@ export default function WaiterDashboardPage() {
                             key={pageNum}
                             type="button"
                             onClick={() => setPaidOrdersPage(pageNum)}
-                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
                               isActive
                                 ? 'bg-emerald-600 text-white shadow-xs'
-                                : 'text-gray-700 hover:bg-gray-200/70'
+                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200/70 dark:hover:bg-[#12281d]'
                             }`}
                           >
                             {pageNum}
@@ -1450,7 +1453,7 @@ export default function WaiterDashboardPage() {
                       size="sm"
                       onClick={() => setPaidOrdersPage((p) => Math.min(totalPaidPages, p + 1))}
                       disabled={currentPaidPage === totalPaidPages}
-                      className="h-8 px-2.5 text-xs font-semibold gap-1 border-gray-300 disabled:opacity-40"
+                      className="h-8 px-2.5 text-xs font-semibold gap-1 border-gray-300 dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] disabled:opacity-40 cursor-pointer"
                     >
                       <span>Next</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -1466,42 +1469,42 @@ export default function WaiterDashboardPage() {
       {/* ========================================================================= */}
       {/* QUICK ACTIONS BAR                                                         */}
       {/* ========================================================================= */}
-      <Card className="border-gray-200/80 shadow-xs">
-        <CardHeader className="py-3 px-5 border-b border-gray-100">
-          <CardTitle className="text-sm font-bold text-gray-800">Quick Actions</CardTitle>
+      <Card className="border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs">
+        <CardHeader className="py-3 px-5 border-b border-gray-100 dark:border-[#143225]">
+          <CardTitle className="text-sm font-bold text-gray-800 dark:text-white">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Button
               variant="outline"
-              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-blue-50/80 hover:border-blue-200"
+              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-blue-50/80 dark:hover:bg-[#0d2a45] hover:border-blue-200 dark:border-[#143225] dark:text-gray-200 cursor-pointer"
               onClick={() => navigate('/admin/pos')}
             >
-              <ShoppingBag className="w-5 h-5 text-blue-600" />
+              <ShoppingBag className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <span className="text-xs font-semibold">New POS Order</span>
             </Button>
             <Button
               variant="outline"
-              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-50/80 hover:border-emerald-200"
+              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-50/80 dark:hover:bg-[#0c2219] hover:border-emerald-200 dark:border-[#143225] dark:text-gray-200 cursor-pointer"
               onClick={() => navigate('/admin/tables')}
             >
-              <Users className="w-5 h-5 text-emerald-600" />
+              <Users className="w-5 h-5 text-emerald-600 dark:text-[#00e676]" />
               <span className="text-xs font-semibold">Manage Tables</span>
             </Button>
             <Button
               variant="outline"
-              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-red-50/80 hover:border-red-200"
+              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-red-50/80 dark:hover:bg-[#2b1010] hover:border-red-200 dark:border-[#143225] dark:text-gray-200 cursor-pointer"
               onClick={() => navigate('/admin/waiter-calls')}
             >
-              <Bell className="w-5 h-5 text-red-600" />
+              <Bell className="w-5 h-5 text-red-600 dark:text-red-400" />
               <span className="text-xs font-semibold">Customer Calls ({calls.length})</span>
             </Button>
             <Button
               variant="outline"
-              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-amber-50/80 hover:border-amber-200"
+              className="h-16 flex flex-col items-center justify-center gap-1.5 hover:bg-amber-50/80 dark:hover:bg-[#2b2105] hover:border-amber-200 dark:border-[#143225] dark:text-gray-200 cursor-pointer"
               onClick={() => navigate('/admin/my-tips')}
             >
-              <DollarSign className="w-5 h-5 text-amber-600" />
+              <DollarSign className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               <span className="text-xs font-semibold">Tips Details</span>
             </Button>
           </div>

@@ -209,17 +209,17 @@ export default function BillRequestQueuePage() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
+      <div className="p-3 sm:p-5 md:p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4" />
-          <div className="grid grid-cols-4 gap-4">
+          <div className="h-8 bg-gray-200 dark:bg-[#143225] rounded w-1/4" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded" />
+              <div key={i} className="h-20 sm:h-24 bg-gray-200 dark:bg-[#0c2219] rounded-xl" />
             ))}
           </div>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded" />
+              <div key={i} className="h-16 bg-gray-200 dark:bg-[#0c2219] rounded-xl" />
             ))}
           </div>
         </div>
@@ -228,61 +228,61 @@ export default function BillRequestQueuePage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-5 md:p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Bill Request Queue</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Bill Request Queue</h1>
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
           Process bill requests from waiters and generate bills for customers
         </p>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+      {/* Statistics Cards - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Pending</p>
+              <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-0.5 sm:mt-1">{stats.pending}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Processing</p>
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">{stats.processing}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Processing</p>
+              <p className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mt-0.5 sm:mt-1">{stats.processing}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center">
-              <Loader2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center shrink-0">
+              <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Completed</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-0.5 sm:mt-1">{stats.completed}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
+        <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Cancelled</p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.cancelled}</p>
+            <div className="min-w-0 pr-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Cancelled</p>
+              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-0.5 sm:mt-1">{stats.cancelled}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
-              <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center shrink-0">
+              <XCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </Card>

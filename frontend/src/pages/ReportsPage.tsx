@@ -234,8 +234,8 @@ function OverviewTab({ dateParams }: { dateParams: { startDate: string; endDate:
 
   return (
     <div className="space-y-6">
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Key Metrics - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <MetricCard
           title="Total Revenue"
           value={formatCurrency(revenue)}
@@ -336,15 +336,15 @@ function MetricCard({
   };
 
   return (
-    <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-xl shadow-xs p-3.5 sm:p-5">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClasses[color]}`}>
-          <Icon className="w-5 h-5" />
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{title}</p>
+        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${colorClasses[color]}`}>
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
       </div>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-      {subtitle && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>}
+      <p className="text-base sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{value}</p>
+      {subtitle && <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{subtitle}</p>}
     </div>
   );
 }
