@@ -393,15 +393,15 @@ export default function TablesPage() {
   const getStatusColor = (status: TableStatus) => {
     switch (status) {
       case TableStatus.AVAILABLE:
-        return 'bg-green-50/60 border-green-200 text-green-700';
+        return 'bg-green-50/60 dark:bg-[#091a13] border-green-200 dark:border-[#143225] text-green-700 dark:text-[#00e676]';
       case TableStatus.OCCUPIED:
-        return 'bg-red-50/60 border-red-200 text-red-700';
+        return 'bg-red-50/60 dark:bg-[#091a13] border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400';
       case TableStatus.RESERVED:
-        return 'bg-blue-50/60 border-blue-200 text-blue-700';
+        return 'bg-blue-50/60 dark:bg-[#091a13] border-blue-200 dark:border-blue-900/50 text-blue-700 dark:text-blue-400';
       case TableStatus.CLEANING:
-        return 'bg-amber-50/60 border-amber-200 text-amber-700';
+        return 'bg-amber-50/60 dark:bg-[#091a13] border-amber-200 dark:border-amber-900/50 text-amber-700 dark:text-amber-400';
       default:
-        return 'bg-gray-50 border-gray-200 text-gray-700';
+        return 'bg-gray-50 dark:bg-[#091a13] border-gray-200 dark:border-[#143225] text-gray-700 dark:text-gray-300';
     }
   };
 
@@ -445,30 +445,30 @@ export default function TablesPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
+    <div className="p-6 space-y-6 max-w-[1600px] mx-auto text-gray-900 dark:text-gray-100">
       {/* ========================================================================= */}
       {/* HEADER SECTION WITH ROLE AWARENESS                                       */}
       {/* ========================================================================= */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#091a13] p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
         <div>
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {isWaiter ? 'Table Service & Floor' : 'Table Management'}
             </h1>
             {isManager && (
-              <Badge className="bg-purple-100 text-purple-800 border-purple-200 text-xs font-semibold gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+              <Badge className="bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-800/40 text-xs font-semibold gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
                 Manager Controls
               </Badge>
             )}
             {isWaiter && (
-              <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs font-semibold gap-1">
-                <Utensils className="w-3.5 h-3.5 text-blue-600" />
+              <Badge className="bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800/40 text-xs font-semibold gap-1">
+                <Utensils className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 Waiter Service View
               </Badge>
             )}
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {isWaiter
               ? 'Viewing your assigned tables and open unassigned tables. Other servers\' tables are private.'
               : 'Manage dining room tables, seating capacities, floor layout, and waiter assignments'}
@@ -480,7 +480,7 @@ export default function TablesPage() {
             variant="outline"
             size="sm"
             onClick={() => refetch()}
-            className="text-xs border-gray-300 hover:bg-gray-50 gap-1.5"
+            className="text-xs border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] gap-1.5 cursor-pointer"
             title="Refresh tables"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -492,7 +492,7 @@ export default function TablesPage() {
             <Button
               size="sm"
               onClick={() => navigate('/admin/pos')}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 cursor-pointer"
             >
               <ShoppingCart className="w-4 h-4" />
               Open POS
@@ -504,7 +504,7 @@ export default function TablesPage() {
             <Button
               size="sm"
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add Table
@@ -517,63 +517,63 @@ export default function TablesPage() {
       {/* STATISTICS CARDS                                                          */}
       {/* ========================================================================= */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4 bg-white border border-gray-200 shadow-xs">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Tables</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Tables</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center">
-              <Users className="w-5 h-5 text-gray-600" />
+            <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center">
+              <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white border border-gray-200 shadow-xs">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Available</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{stats.available}</p>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Available</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.available}</p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-green-100/70 flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+            <div className="w-11 h-11 rounded-xl bg-green-100/70 dark:bg-[#0c2219] flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 bg-white border border-gray-200 shadow-xs">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Occupied</p>
-              <p className="text-2xl font-bold text-red-600 mt-1">{stats.occupied}</p>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Occupied</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.occupied}</p>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-red-100/70 flex items-center justify-center">
-              <XCircle className="w-5 h-5 text-red-600" />
+            <div className="w-11 h-11 rounded-xl bg-red-100/70 dark:bg-red-950/40 flex items-center justify-center">
+              <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </Card>
 
         {isWaiter ? (
-          <Card className="p-4 bg-blue-50/50 border border-blue-200/80 shadow-xs">
+          <Card className="p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/40 shadow-xs">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">My Assigned Tables</p>
-                <p className="text-2xl font-bold text-blue-800 mt-1">{stats.myTables}</p>
+                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">My Assigned Tables</p>
+                <p className="text-2xl font-bold text-blue-800 dark:text-blue-200 mt-1">{stats.myTables}</p>
               </div>
-              <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
-                <UserCheck className="w-5 h-5 text-blue-600" />
+              <div className="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                <UserCheck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </Card>
         ) : (
-          <Card className="p-4 bg-white border border-gray-200 shadow-xs">
+          <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Unassigned</p>
-                <p className="text-2xl font-bold text-amber-600 mt-1">{stats.unassigned}</p>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Unassigned</p>
+                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">{stats.unassigned}</p>
               </div>
-              <div className="w-11 h-11 rounded-xl bg-amber-100/70 flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
+              <div className="w-11 h-11 rounded-xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
           </Card>
@@ -583,14 +583,14 @@ export default function TablesPage() {
       {/* ========================================================================= */}
       {/* FILTER TABS                                                               */}
       {/* ========================================================================= */}
-      <div className="flex items-center justify-between flex-wrap gap-3 bg-white px-4 py-3 rounded-xl border border-gray-200/80 shadow-xs">
+      <div className="flex items-center justify-between flex-wrap gap-3 bg-white dark:bg-[#091a13] px-4 py-3 rounded-xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeFilter === 'all'
-                ? 'bg-gray-900 text-white shadow-xs'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? 'bg-gray-900 dark:bg-[#123627] text-white dark:text-[#00e676] shadow-xs'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
             }`}
           >
             All Tables ({stats.total})
@@ -600,10 +600,10 @@ export default function TablesPage() {
           {isWaiter && (
             <button
               onClick={() => setActiveFilter('my')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
                 activeFilter === 'my'
                   ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200'
+                  : 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/40'
               }`}
             >
               <UserCheck className="w-3.5 h-3.5" />
@@ -613,10 +613,10 @@ export default function TablesPage() {
 
           <button
             onClick={() => setActiveFilter('available')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeFilter === 'available'
                 ? 'bg-green-600 text-white shadow-xs'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
             }`}
           >
             Available ({stats.available})
@@ -624,10 +624,10 @@ export default function TablesPage() {
 
           <button
             onClick={() => setActiveFilter('occupied')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeFilter === 'occupied'
                 ? 'bg-red-600 text-white shadow-xs'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
             }`}
           >
             Occupied ({stats.occupied})
@@ -636,10 +636,10 @@ export default function TablesPage() {
           {/* Unassigned / Open Tables filter */}
           <button
             onClick={() => setActiveFilter('unassigned')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
               activeFilter === 'unassigned'
                 ? 'bg-amber-600 text-white shadow-xs'
-                : 'text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200'
+                : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40 border border-amber-200 dark:border-amber-800/40'
             }`}
           >
             <AlertCircle className="w-3.5 h-3.5" />
@@ -647,7 +647,7 @@ export default function TablesPage() {
           </button>
         </div>
 
-        <div className="text-xs text-gray-500 font-medium">
+        <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
           Showing {filteredTables.length} of {accessibleTables.length} tables
         </div>
       </div>
@@ -656,12 +656,12 @@ export default function TablesPage() {
       {/* TABLES GRID                                                               */}
       {/* ========================================================================= */}
       {filteredTables.length === 0 ? (
-        <Card className="p-12 text-center bg-white border border-gray-200 rounded-2xl">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <Users className="w-8 h-8 text-gray-400" />
+        <Card className="p-12 text-center bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] rounded-2xl">
+          <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center mx-auto mb-4">
+            <Users className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">No tables found</h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">No tables found</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             {activeFilter === 'my'
               ? 'You do not have any tables assigned yet. Ask a manager to assign tables to you.'
               : activeFilter === 'unassigned'
@@ -669,7 +669,7 @@ export default function TablesPage() {
               : 'No tables match the current filter.'}
           </p>
           {isManager && tables.length === 0 && (
-            <Button onClick={() => setIsCreateModalOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button onClick={() => setIsCreateModalOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer">
               <Plus className="w-4 h-4 mr-2" />
               Add First Table
             </Button>
@@ -693,7 +693,7 @@ export default function TablesPage() {
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       {getStatusIcon(table.status)}
-                      <span className="font-bold text-base sm:text-lg text-gray-900">
+                      <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-white">
                         Table {table.number}
                       </span>
                     </div>
@@ -705,42 +705,42 @@ export default function TablesPage() {
                         <button
                           onClick={() => openQRModal(table)}
                           title="View QR Code"
-                          className="p-1.5 hover:bg-black/5 rounded-md text-gray-500 hover:text-gray-900 transition-colors"
+                          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/10 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                         >
                           <QrCode className="w-4 h-4" />
                         </button>
                       ) : (
                         /* For Manager: 3-dot management dropdown */
                         <div className="relative group">
-                          <button className="p-1 hover:bg-black/5 rounded-md transition-colors text-gray-600">
+                          <button className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors text-gray-600 dark:text-gray-400 cursor-pointer">
                             <MoreVertical className="w-4 h-4" />
                           </button>
-                          <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-xl shadow-lg py-1 hidden group-hover:block z-20 min-w-[170px]">
+                          <div className="absolute right-0 top-8 bg-white dark:bg-[#0c2219] border border-gray-200 dark:border-[#143225] rounded-xl shadow-lg py-1 hidden group-hover:block z-20 min-w-[170px]">
                             <button
                               onClick={() => openEditModal(table)}
-                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 text-gray-700 dark:text-gray-200 cursor-pointer"
                             >
-                              <Edit className="w-3.5 h-3.5 text-blue-600" />
+                              <Edit className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                               Edit Table
                             </button>
                             <button
                               onClick={() => openQRModal(table)}
-                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 text-gray-700 dark:text-gray-200 cursor-pointer"
                             >
-                              <QrCode className="w-3.5 h-3.5 text-purple-600" />
+                              <QrCode className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
                               QR Code
                             </button>
                             <button
                               onClick={() => openWaiterModal(table)}
-                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 text-gray-700 dark:text-gray-200 cursor-pointer"
                             >
-                              <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                              <UserCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
                               Assign Waiter
                             </button>
-                            <div className="my-1 border-t border-gray-100" />
+                            <div className="my-1 border-t border-gray-100 dark:border-[#143225]" />
                             <button
                               onClick={() => handleDeleteTable(table.id)}
-                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-red-50 flex items-center gap-2 text-red-600"
+                              className="w-full px-4 py-2 text-left text-xs font-medium hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 text-red-600 dark:text-red-400 cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                               Delete Table
@@ -754,15 +754,15 @@ export default function TablesPage() {
                   {/* My Table Highlight Badge */}
                   {isAssignedToMe && (
                     <div className="mb-2.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/40">
                         ★ Assigned to You
                       </span>
                     </div>
                   )}
 
                   {/* Capacity */}
-                  <div className="flex items-center gap-2 mb-3 text-xs text-gray-600">
-                    <Users className="w-3.5 h-3.5 text-gray-500" />
+                  <div className="flex items-center gap-2 mb-3 text-xs text-gray-600 dark:text-gray-400">
+                    <Users className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     <span>Capacity: {table.capacity} seats</span>
                   </div>
 
@@ -772,17 +772,17 @@ export default function TablesPage() {
                   {isManager ? (
                     // MANAGER VIEW: Can see and trigger assignment
                     table.assignedWaiter ? (
-                      <div className="flex items-center justify-between mb-3 bg-white/80 p-2 rounded-lg border border-gray-200 text-xs shadow-2xs">
+                      <div className="flex items-center justify-between mb-3 bg-white/80 dark:bg-[#071a12] p-2 rounded-lg border border-gray-200 dark:border-[#143225] text-xs shadow-2xs">
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          <span className="font-semibold text-gray-800 truncate">
+                          <UserCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676] shrink-0" />
+                          <span className="font-semibold text-gray-800 dark:text-gray-200 truncate">
                             {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}
                           </span>
                         </div>
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-6 px-1.5 text-[11px] font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="h-6 px-1.5 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 cursor-pointer"
                           onClick={() => openWaiterModal(table)}
                         >
                           Change
@@ -793,7 +793,7 @@ export default function TablesPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="w-full text-xs border-dashed border-orange-300 text-orange-700 hover:bg-orange-50 font-medium gap-1"
+                          className="w-full text-xs border-dashed border-orange-300 dark:border-amber-700/50 text-orange-700 dark:text-amber-400 hover:bg-orange-50 dark:hover:bg-amber-950/30 font-medium gap-1 cursor-pointer"
                           onClick={() => openWaiterModal(table)}
                         >
                           <UserCheck className="w-3.5 h-3.5" />
@@ -804,13 +804,13 @@ export default function TablesPage() {
                   ) : (
                     // WAITER VIEW: Shows only their assigned tables and open unassigned tables
                     table.assignedWaiter ? (
-                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100/80 border border-emerald-300 text-emerald-900">
-                        <UserCheck className="w-3.5 h-3.5 text-emerald-700" />
+                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100/80 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/40 text-emerald-900 dark:text-[#00e676]">
+                        <UserCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-[#00e676]" />
                         <span>Assigned to You</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg bg-amber-50/80 border border-dashed border-amber-200 text-xs font-medium text-amber-800">
-                        <Users className="w-3.5 h-3.5 text-amber-600" />
+                      <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1.5 rounded-lg bg-amber-50/80 dark:bg-amber-950/30 border border-dashed border-amber-200 dark:border-amber-800/40 text-xs font-medium text-amber-800 dark:text-amber-300">
+                        <Users className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                         <span>Unassigned • Open Table</span>
                       </div>
                     )
@@ -820,19 +820,19 @@ export default function TablesPage() {
                   {table.qrCodeUrl && (
                     <div
                       onClick={() => openQRModal(table)}
-                      className="flex items-center gap-1.5 mb-3 text-xs text-emerald-700 font-medium cursor-pointer hover:underline"
+                      className="flex items-center gap-1.5 mb-3 text-xs text-emerald-700 dark:text-[#00e676] font-medium cursor-pointer hover:underline"
                     >
-                      <QrCode className="w-3.5 h-3.5 text-emerald-600" />
+                      <QrCode className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
                       <span>QR Active</span>
                     </div>
                   )}
 
                   {/* Active Digital Session Badge if present */}
                   {hasActiveSession && (
-                    <div className="flex items-center gap-1.5 mb-2.5 px-2 py-1 rounded-md bg-blue-50 border border-blue-200 text-[11px] font-semibold text-blue-800">
+                    <div className="flex items-center gap-1.5 mb-2.5 px-2 py-1 rounded-md bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-[11px] font-semibold text-blue-800 dark:text-blue-300">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600 dark:bg-blue-400"></span>
                       </span>
                       <span>Active QR Session</span>
                     </div>
@@ -852,14 +852,14 @@ export default function TablesPage() {
                 {/* ========================================================= */}
                 {/* QUICK ACTION BUTTONS                                      */}
                 {/* ========================================================= */}
-                <div className="space-y-1.5 pt-2 border-t border-gray-200/50">
+                <div className="space-y-1.5 pt-2 border-t border-gray-200/50 dark:border-[#143225]">
                   {/* Table AVAILABLE Actions */}
                   {table.status === TableStatus.AVAILABLE && (
                     <div className="grid grid-cols-2 gap-1.5">
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs font-medium hover:bg-gray-100"
+                        className="text-xs font-medium hover:bg-gray-100 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
                         onClick={() =>
                           updateStatusMutation.mutate({
                             id: table.id,
@@ -871,7 +871,7 @@ export default function TablesPage() {
                       </Button>
                       <Button
                         size="sm"
-                        className="text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white gap-1"
+                        className="text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white gap-1 cursor-pointer"
                         onClick={() =>
                           navigate('/admin/pos', {
                             state: { tableNumber: table.number },
@@ -889,7 +889,7 @@ export default function TablesPage() {
                     <div className="space-y-1.5">
                       <Button
                         size="sm"
-                        className="w-full text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white gap-1"
+                        className="w-full text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white gap-1 cursor-pointer"
                         onClick={() =>
                           navigate('/admin/pos', {
                             state: { tableNumber: table.number },
@@ -901,7 +901,7 @@ export default function TablesPage() {
                       </Button>
                       <Button
                         size="sm"
-                        className="w-full text-xs font-medium bg-orange-600 hover:bg-orange-700 text-white gap-1"
+                        className="w-full text-xs font-medium bg-orange-600 hover:bg-orange-700 text-white gap-1 cursor-pointer"
                         onClick={() => clearTableMutation.mutate(table)}
                         disabled={clearTableMutation.isPending}
                       >
@@ -920,7 +920,7 @@ export default function TablesPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full text-xs font-medium"
+                      className="w-full text-xs font-medium dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
                       onClick={() =>
                         updateStatusMutation.mutate({
                           id: table.id,
@@ -945,23 +945,24 @@ export default function TablesPage() {
       {/* 1. Create Table Modal (Manager Only) */}
       {isManager && (
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-          <DialogContent>
+          <DialogContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
             <DialogHeader>
-              <DialogTitle>Add New Table</DialogTitle>
-              <DialogDescription>Create a new table for your restaurant branch</DialogDescription>
+              <DialogTitle className="text-gray-900 dark:text-white">Add New Table</DialogTitle>
+              <DialogDescription className="text-gray-500 dark:text-gray-400">Create a new table for your restaurant branch</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="number">Table Number *</Label>
+                <Label htmlFor="number" className="text-gray-900 dark:text-gray-200">Table Number *</Label>
                 <Input
                   id="number"
                   placeholder="e.g., 1, A1, T-101"
                   value={formData.number}
                   onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                  className="bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
                 />
               </div>
               <div>
-                <Label htmlFor="capacity">Capacity (Seats) *</Label>
+                <Label htmlFor="capacity" className="text-gray-900 dark:text-gray-200">Capacity (Seats) *</Label>
                 <Input
                   id="capacity"
                   type="number"
@@ -969,14 +970,15 @@ export default function TablesPage() {
                   placeholder="Number of seats"
                   value={formData.capacity}
                   onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                  className="bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+              <Button variant="outline" onClick={() => setIsCreateModalOpen(false)} className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]">
                 Cancel
               </Button>
-              <Button onClick={handleCreateTable} disabled={createTableMutation.isPending}>
+              <Button onClick={handleCreateTable} disabled={createTableMutation.isPending} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
                 {createTableMutation.isPending ? 'Creating...' : 'Create Table'}
               </Button>
             </DialogFooter>
@@ -987,23 +989,24 @@ export default function TablesPage() {
       {/* 2. Edit Table Modal (Manager Only) */}
       {isManager && (
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogContent>
+          <DialogContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
             <DialogHeader>
-              <DialogTitle>Edit Table</DialogTitle>
-              <DialogDescription>Update table number and seating capacity</DialogDescription>
+              <DialogTitle className="text-gray-900 dark:text-white">Edit Table</DialogTitle>
+              <DialogDescription className="text-gray-500 dark:text-gray-400">Update table number and seating capacity</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="edit-number">Table Number *</Label>
+                <Label htmlFor="edit-number" className="text-gray-900 dark:text-gray-200">Table Number *</Label>
                 <Input
                   id="edit-number"
                   placeholder="e.g., 1, A1, T-101"
                   value={formData.number}
                   onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                  className="bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
                 />
               </div>
               <div>
-                <Label htmlFor="edit-capacity">Capacity *</Label>
+                <Label htmlFor="edit-capacity" className="text-gray-900 dark:text-gray-200">Capacity *</Label>
                 <Input
                   id="edit-capacity"
                   type="number"
@@ -1011,14 +1014,15 @@ export default function TablesPage() {
                   placeholder="Number of seats"
                   value={formData.capacity}
                   onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                  className="bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+              <Button variant="outline" onClick={() => setIsEditModalOpen(false)} className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]">
                 Cancel
               </Button>
-              <Button onClick={handleEditTable} disabled={updateTableMutation.isPending}>
+              <Button onClick={handleEditTable} disabled={updateTableMutation.isPending} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
                 {updateTableMutation.isPending ? 'Updating...' : 'Update Table'}
               </Button>
             </DialogFooter>
@@ -1028,10 +1032,10 @@ export default function TablesPage() {
 
       {/* 3. QR Code Modal (View/Download for All, Regenerate for Manager Only) */}
       <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <DialogHeader>
-            <DialogTitle>QR Code - Table {selectedTable?.number}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-white">QR Code - Table {selectedTable?.number}</DialogTitle>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">
               {isManager
                 ? 'Generate, download, or regenerate table digital QR code'
                 : 'Customer ordering QR code for quick scanning and ordering'}
@@ -1040,7 +1044,7 @@ export default function TablesPage() {
           <div className="space-y-4">
             {selectedTable?.qrCodeUrl ? (
               <>
-                <div className="flex justify-center p-6 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex justify-center p-6 bg-gray-50 dark:bg-white rounded-xl border border-gray-200 dark:border-[#143225]">
                   <img
                     src={selectedTable.qrCodeUrl}
                     alt={`QR Code for Table ${selectedTable.number}`}
@@ -1052,7 +1056,7 @@ export default function TablesPage() {
                   {isManager && (
                     <Button
                       variant="outline"
-                      className="flex-1 text-xs"
+                      className="flex-1 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
                       onClick={() => regenerateQRMutation.mutate(selectedTable.id)}
                       disabled={regenerateQRMutation.isPending}
                     >
@@ -1062,7 +1066,7 @@ export default function TablesPage() {
                   )}
                   <Button
                     variant="outline"
-                    className="flex-1 text-xs"
+                    className="flex-1 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
                     onClick={() => handleDownloadQR(selectedTable.id, selectedTable.number)}
                   >
                     <Download className="w-3.5 h-3.5 mr-1.5" />
@@ -1072,15 +1076,15 @@ export default function TablesPage() {
               </>
             ) : (
               <div className="text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                  <QrCode className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center mx-auto mb-4">
+                  <QrCode className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                 </div>
-                <p className="text-gray-600 mb-4 text-sm">No QR code generated yet for this table</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">No QR code generated yet for this table</p>
                 {isManager ? (
                   <Button
                     onClick={() => generateQRMutation.mutate(selectedTable?.id || '')}
                     disabled={generateQRMutation.isPending}
-                    className="bg-purple-600 hover:bg-purple-700 text-white text-xs"
+                    className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold"
                   >
                     <QrCode className="w-4 h-4 mr-2" />
                     {generateQRMutation.isPending ? 'Generating...' : 'Generate QR Code'}
@@ -1092,7 +1096,7 @@ export default function TablesPage() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsQRModalOpen(false)}>
+            <Button variant="outline" onClick={() => setIsQRModalOpen(false)} className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]">
               Close
             </Button>
           </DialogFooter>
@@ -1102,30 +1106,30 @@ export default function TablesPage() {
       {/* 4. Waiter Assignment Modal (Manager Only) */}
       {isManager && (
         <Dialog open={isWaiterModalOpen} onOpenChange={setIsWaiterModalOpen}>
-          <DialogContent>
+          <DialogContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
             <DialogHeader>
-              <DialogTitle>Assign Waiter - Table {selectedTable?.number}</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-gray-900 dark:text-white">Assign Waiter - Table {selectedTable?.number}</DialogTitle>
+              <DialogDescription className="text-gray-500 dark:text-gray-400">
                 Assign or change the primary server assigned to this table
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               {selectedTable?.assignedWaiter && (
-                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <div className="p-4 bg-emerald-50 dark:bg-[#071a12] border border-emerald-200 dark:border-[#143225] rounded-xl">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-emerald-800 font-semibold uppercase tracking-wider">
+                      <p className="text-xs text-emerald-800 dark:text-[#00e676] font-semibold uppercase tracking-wider">
                         Currently Assigned Server
                       </p>
-                      <p className="text-sm font-bold text-emerald-950 mt-0.5">
+                      <p className="text-sm font-bold text-emerald-950 dark:text-white mt-0.5">
                         {selectedTable.assignedWaiter.firstName} {selectedTable.assignedWaiter.lastName}
                       </p>
-                      <p className="text-xs text-emerald-700">{selectedTable.assignedWaiter.email}</p>
+                      <p className="text-xs text-emerald-700 dark:text-emerald-400">{selectedTable.assignedWaiter.email}</p>
                     </div>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-red-200 text-red-600 hover:bg-red-50 text-xs"
+                      className="border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 text-xs"
                       onClick={() => unassignWaiterMutation.mutate(selectedTable.id)}
                       disabled={unassignWaiterMutation.isPending}
                     >
@@ -1135,17 +1139,17 @@ export default function TablesPage() {
                 </div>
               )}
               <div>
-                <Label htmlFor="waiter-select">Select Waiter</Label>
+                <Label htmlFor="waiter-select" className="text-gray-900 dark:text-gray-200">Select Waiter</Label>
                 <Select value={selectedWaiterId} onValueChange={setSelectedWaiterId}>
-                  <SelectTrigger id="waiter-select" className="mt-1">
+                  <SelectTrigger id="waiter-select" className="mt-1 bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white">
                     <SelectValue placeholder="Choose a waiter" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
                     {waiters.length === 0 ? (
-                      <div className="p-2 text-sm text-gray-500">No active waiters found</div>
+                      <div className="p-2 text-sm text-gray-500 dark:text-gray-400">No active waiters found</div>
                     ) : (
                       waiters.map((waiter: Employee) => (
-                        <SelectItem key={waiter.userId} value={waiter.userId}>
+                        <SelectItem key={waiter.userId} value={waiter.userId} className="dark:text-gray-200 dark:focus:bg-[#123627]">
                           {waiter.user.firstName} {waiter.user.lastName} ({waiter.position || 'Waiter'})
                         </SelectItem>
                       ))
@@ -1155,13 +1159,13 @@ export default function TablesPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsWaiterModalOpen(false)}>
+              <Button variant="outline" onClick={() => setIsWaiterModalOpen(false)} className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]">
                 Cancel
               </Button>
               <Button
                 onClick={handleAssignWaiter}
                 disabled={assignWaiterMutation.isPending || !selectedWaiterId}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
               >
                 {assignWaiterMutation.isPending ? 'Assigning...' : 'Assign Waiter'}
               </Button>

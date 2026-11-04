@@ -263,7 +263,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
       {/* Sidebar */}
       <div
         className={cn(
-          'fixed lg:static inset-y-0 left-0 z-50 bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300 ease-in-out',
+          'fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-[#091a13] border-r border-gray-200 dark:border-[#143225] flex flex-col h-screen transition-all duration-300 ease-in-out',
           // Mobile: slide in/out
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           // Desktop/Tablet: collapse to icon-only
@@ -272,7 +272,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
       >
         {/* Logo - Horizontal layout with text on right */}
         <div className={cn(
-          'p-3 border-b border-gray-200 flex items-center',
+          'p-3 border-b border-gray-200 dark:border-[#143225] flex items-center',
           isCollapsed ? 'lg:justify-center' : 'justify-between'
         )}>
           <div className={cn(
@@ -300,7 +300,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
           {!isCollapsed && (
             <button
               onClick={onClose}
-              className="lg:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="lg:hidden p-1 hover:bg-gray-100 dark:hover:bg-[#12281d] rounded-lg transition-colors"
             >
               <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             </button>
@@ -312,8 +312,8 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
           <div className={cn(
             'mx-3 my-2 px-3 py-2 rounded-lg flex items-center gap-2 text-xs',
             isConnected
-              ? 'bg-green-50 text-green-700'
-              : 'bg-red-50 text-red-700'
+              ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 border border-transparent dark:border-green-800/40'
+              : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 border border-transparent dark:border-red-800/40'
           )}>
             {isConnected ? (
               <>
@@ -332,8 +332,8 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
           <div className={cn(
             'mx-2 my-2 p-1.5 rounded-lg flex items-center justify-center',
             isConnected
-              ? 'bg-green-50 text-green-700'
-              : 'bg-red-50 text-red-700'
+              ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400'
+              : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400'
           )}
             title={isConnected ? 'Real-time connected' : 'Disconnected - reconnecting...'}
           >
@@ -350,20 +350,20 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
           <div className="px-2 space-y-1">
             {/* Overview Section */}
             {!isCollapsed && (
-                <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Overview
-                </div>
+              <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Overview
+              </div>
             )}
-                {filteredOverviewItems.map((item) => (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigate(item.path)}
-                    className={cn(
-                      'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
-                      isActive(item.path)
-                    ? 'bg-green-50 text-green-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50',
-                      isCollapsed && 'lg:justify-center lg:px-2'
+            {filteredOverviewItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => handleNavigate(item.path)}
+                className={cn(
+                  'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
+                  isActive(item.path)
+                    ? 'bg-green-50 dark:bg-[#0c2f21] text-green-700 dark:text-[#00e676] font-semibold'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0e271c] hover:text-gray-900 dark:hover:text-white',
+                  isCollapsed && 'lg:justify-center lg:px-2'
                 )}
                 title={isCollapsed ? item.label : undefined}
               >
@@ -386,20 +386,20 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
             {/* Operations Section */}
             {!isCollapsed && (
-                <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">
-                  Operations
-                </div>
+              <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-4">
+                Operations
+              </div>
             )}
-                {filteredOperationsItems.map((item) => (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigate(item.path)}
-                    className={cn(
-                      'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
-                      isActive(item.path)
-                    ? 'bg-green-50 text-green-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50',
-                      isCollapsed && 'lg:justify-center lg:px-2'
+            {filteredOperationsItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => handleNavigate(item.path)}
+                className={cn(
+                  'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
+                  isActive(item.path)
+                    ? 'bg-green-50 dark:bg-[#0c2f21] text-green-700 dark:text-[#00e676] font-semibold'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0e271c] hover:text-gray-900 dark:hover:text-white',
+                  isCollapsed && 'lg:justify-center lg:px-2'
                 )}
                 title={isCollapsed ? item.label : undefined}
               >
@@ -422,20 +422,20 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
 
             {/* Business Section */}
             {filteredBusinessItems.length > 0 && !isCollapsed && (
-                <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">
-                  Business
-                </div>
+              <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-4">
+                Business
+              </div>
             )}
-                {filteredBusinessItems.map((item) => (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigate(item.path)}
-                    className={cn(
-                      'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
-                      isActive(item.path)
-                    ? 'bg-green-50 text-green-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50',
-                      isCollapsed && 'lg:justify-center lg:px-2'
+            {filteredBusinessItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => handleNavigate(item.path)}
+                className={cn(
+                  'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative',
+                  isActive(item.path)
+                    ? 'bg-green-50 dark:bg-[#0c2f21] text-green-700 dark:text-[#00e676] font-semibold'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0e271c] hover:text-gray-900 dark:hover:text-white',
+                  isCollapsed && 'lg:justify-center lg:px-2'
                 )}
                 title={isCollapsed ? item.label : undefined}
               >
@@ -459,49 +459,49 @@ export default function Sidebar({ isOpen, onClose, isCollapsed = false }: Sideba
         </div>
 
         {/* User Section */}
-          <div className="p-4 border-t border-gray-200">
-            <button
-              onClick={() => handleNavigate('/admin/profile')}
-              className={cn(
-                'w-full flex items-center gap-3 mb-3 p-2 rounded-lg hover:bg-gray-50 transition-colors',
-                isActive('/admin/profile') && 'bg-green-50 text-green-700',
-                isCollapsed && 'lg:justify-center lg:gap-0'
-              )}
-              title={isCollapsed ? `${user?.firstName} ${user?.lastName}` : undefined}
-            >
-              {user?.profilePicture ? (
-                <img
-                  src={user.profilePicture}
-                  alt={`${user.firstName} ${user.lastName}`}
-                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                  {user?.firstName?.[0]}{user?.lastName?.[0]}
-                </div>
-              )}
-              {!isCollapsed && (
-                <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
-                      {user?.firstName} {user?.lastName}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">{user?.role?.name}</p>
-                </div>
-              )}
-            </button>
-            <button
-              onClick={logout}
-              className={cn(
-                'w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors',
-                isCollapsed && 'lg:justify-center lg:px-2'
-              )}
-              title={isCollapsed ? "Logout" : undefined}
-            >
-              <LogOut className="w-4 h-4 flex-shrink-0" />
-              {!isCollapsed && 'Logout'}
-            </button>
-          </div>
+        <div className="p-4 border-t border-gray-200 dark:border-[#143225]">
+          <button
+            onClick={() => handleNavigate('/admin/profile')}
+            className={cn(
+              'w-full flex items-center gap-3 mb-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-[#0e271c] transition-colors',
+              isActive('/admin/profile') && 'bg-green-50 dark:bg-[#0c2f21] text-green-700 dark:text-[#00e676]',
+              isCollapsed && 'lg:justify-center lg:gap-0'
+            )}
+            title={isCollapsed ? `${user?.firstName} ${user?.lastName}` : undefined}
+          >
+            {user?.profilePicture ? (
+              <img
+                src={user.profilePicture}
+                alt={`${user.firstName} ${user.lastName}`}
+                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
+              </div>
+            )}
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.role?.name}</p>
+              </div>
+            )}
+          </button>
+          <button
+            onClick={logout}
+            className={cn(
+              'w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors cursor-pointer',
+              isCollapsed && 'lg:justify-center lg:px-2'
+            )}
+            title={isCollapsed ? "Logout" : undefined}
+          >
+            <LogOut className="w-4 h-4 flex-shrink-0" />
+            {!isCollapsed && 'Logout'}
+          </button>
         </div>
+      </div>
       </>
       );
 }

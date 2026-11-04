@@ -405,10 +405,10 @@ export default function CashierDashboardPage() {
               </span>
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Today's Revenue
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900">
+              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
                 Br {paymentBreakdown.totalSales.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -416,21 +416,21 @@ export default function CashierDashboardPage() {
         </Card>
 
         {/* Card 2: Cash Collected */}
-        <Card className="border-gray-200 shadow-xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-200/60 flex items-center justify-center">
-                <Coins className="w-5 h-5 text-green-700" />
+              <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-950/60 border border-green-200/60 dark:border-green-800/60 flex items-center justify-center">
+                <Coins className="w-5 h-5 text-green-700 dark:text-[#00e676]" />
               </div>
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-green-100 text-green-800">
+              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-green-100 dark:bg-green-950/70 text-green-800 dark:text-[#00e676]">
                 Physical Cash
               </span>
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Cash Collected
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900">
+              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
                 Br {drawerStats.expectedInTill.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -438,21 +438,21 @@ export default function CashierDashboardPage() {
         </Card>
 
         {/* Card 3: Digital Non-Cash Transfers */}
-        <Card className="border-gray-200 shadow-xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200/60 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60 flex items-center justify-center">
                 <Smartphone className="w-5 h-5 text-[#00A3E0]" />
               </div>
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900">
                 67.5% Digital
               </span>
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Digital Bank Transfers
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900">
+              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
                 Br {paymentBreakdown.totalDigital.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -460,28 +460,28 @@ export default function CashierDashboardPage() {
         </Card>
 
         {/* Card 4: Action Queue (Pending Bills) */}
-        <Card className="border-gray-200 shadow-xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-xs">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-amber-600" />
+              <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
               {pendingBillsCount > 0 ? (
-                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 text-red-700 animate-pulse">
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 dark:bg-red-950/70 text-red-700 dark:text-red-300 animate-pulse">
                   Print Needed
                 </span>
               ) : (
-                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-600">
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 dark:bg-[#12281d] text-gray-600 dark:text-gray-300">
                   All Clear
                 </span>
               )}
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Pending Bill Requests
               </p>
-              <h3 className="text-2xl font-extrabold text-gray-900">
-                {pendingBillsCount} <span className="text-sm font-semibold text-gray-500">requests</span>
+              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-white">
+                {pendingBillsCount} <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">requests</span>
               </h3>
             </div>
           </CardContent>

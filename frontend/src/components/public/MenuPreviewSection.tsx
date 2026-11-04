@@ -129,7 +129,7 @@ export default function MenuPreviewSection() {
   const fetchCategories = async () => {
     try {
       const cats = await menuApi.getCategories();
-      setCategories(cats);
+      setCategories(Array.isArray(cats) ? cats : []);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
     }
@@ -167,7 +167,7 @@ export default function MenuPreviewSection() {
     try {
       setIsLoading(true);
       const items = await menuApi.getMenuItems({ isAvailable: true });
-      setAllItems(items);
+      setAllItems(Array.isArray(items) ? items : []);
     } catch (error) {
       console.error('Failed to fetch menu items:', error);
       setAllItems([]);
@@ -532,7 +532,7 @@ export default function MenuPreviewSection() {
                 className="w-full appearance-none pl-10 pr-9 py-2.5 bg-base-100 border border-base-300 dark:border-[#1b3d2e] focus:border-[#00e676] text-base-content font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00e676]/25 transition shadow-sm text-sm cursor-pointer"
               >
                 <option value="all">All Categories</option>
-                {categories.map((category) => (
+                {(Array.isArray(categories) ? categories : []).map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>

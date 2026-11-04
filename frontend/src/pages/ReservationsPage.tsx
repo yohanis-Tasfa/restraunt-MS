@@ -385,36 +385,36 @@ export default function ReservationsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">Reservations</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reservations</h1>
             {isManager && (
-              <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100 font-medium">
+              <Badge className="bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/40 font-medium">
                 Manager Control
               </Badge>
             )}
             {isCashier && (
-              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-medium">
+              <Badge className="bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/40 font-medium">
                 Front Desk & Reception
               </Badge>
             )}
             {isWaiter && (
-              <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 font-medium">
+              <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-[#00e676] border-emerald-200 dark:border-emerald-800/40 font-medium">
                 Floor Service & Seating
               </Badge>
             )}
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {isWaiter
               ? 'View expected guest arrivals and seat arriving parties at their reserved tables'
               : 'Manage table bookings, phone reservations, and guest arrivals'}
           </p>
         </div>
         {canCreate && (
-          <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Button onClick={() => setIsCreateModalOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer">
             <Plus className="w-4 h-4 mr-2" />
             New Reservation
           </Button>
@@ -423,50 +423,50 @@ export default function ReservationsPage() {
 
       {/* Statistics Cards - 2x2 grid on mobile, 4 columns on desktop */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Today</p>
-              <p className="text-2xl font-bold text-purple-600 mt-1">{stats.today}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Today</p>
+              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{stats.today}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Upcoming</p>
-              <p className="text-2xl font-bold text-orange-600 mt-1">{stats.upcoming}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Upcoming</p>
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">{stats.upcoming}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
-              <Users className="w-6 h-6 text-orange-600" />
+            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+              <Users className="w-6 h-6 text-orange-600 dark:text-orange-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{stats.completed}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
@@ -480,17 +480,17 @@ export default function ReservationsPage() {
             placeholder="Search by customer name, phone, or table..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-11"
+            className="pl-10 h-11 bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] dark:text-white dark:placeholder-gray-500"
           />
         </div>
       </div>
 
       {/* Reservations Table - Wrapped in horizontal scroll container */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-[#091a13] rounded-lg border border-gray-200 dark:border-[#143225] overflow-hidden">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             {/* Table Header */}
-            <div className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
+            <div className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-3 bg-gray-50 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225] text-sm font-medium text-gray-600 dark:text-gray-400">
               <div>#</div>
               <div>Customer</div>
               <div>Phone</div>
@@ -503,14 +503,14 @@ export default function ReservationsPage() {
             </div>
 
             {/* Table Body */}
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200 dark:divide-[#143225]">
               {filteredReservations.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                    <Calendar className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No reservations found</h3>
-                  <p className="text-gray-500 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No reservations found</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">
                     {searchTerm
                       ? 'Try adjusting your search'
                       : canCreate
@@ -518,7 +518,7 @@ export default function ReservationsPage() {
                       : 'No upcoming reservations scheduled.'}
                   </p>
                   {!searchTerm && canCreate && (
-                    <Button onClick={() => setIsCreateModalOpen(true)}>
+                    <Button onClick={() => setIsCreateModalOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer">
                       <Plus className="w-4 h-4 mr-2" />
                       New Reservation
                     </Button>
@@ -529,32 +529,32 @@ export default function ReservationsPage() {
                   <div
                     key={reservation.id}
                     onClick={() => handleViewDetails(reservation)}
-                    className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm cursor-pointer"
+                    className="grid grid-cols-[60px_150px_120px_150px_100px_120px_140px_120px_50px] gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors items-center text-sm cursor-pointer"
                   >
                     {/* Number */}
-                    <div className="font-medium text-gray-900">{index + 1}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">{index + 1}</div>
 
                     {/* Customer */}
-                    <div className="text-gray-900 font-medium">
+                    <div className="text-gray-900 dark:text-white font-medium">
                       {reservation.customer.firstName} {reservation.customer.lastName}
                     </div>
 
                     {/* Phone */}
-                    <div className="text-gray-700">{reservation.customer.phone || '-'}</div>
+                    <div className="text-gray-700 dark:text-gray-300">{reservation.customer.phone || '-'}</div>
 
                     {/* Date & Time */}
-                    <div className="text-gray-700">
+                    <div className="text-gray-700 dark:text-gray-300">
                       {format(new Date(reservation.reservationDate), 'MMM dd, yyyy HH:mm')}
                     </div>
 
                     {/* Guests */}
-                    <div className="text-gray-700 flex items-center gap-1">
+                    <div className="text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <Users className="w-4 h-4" />
                       {reservation.guests}
                     </div>
 
                     {/* Table */}
-                    <div className="text-gray-700">
+                    <div className="text-gray-700 dark:text-gray-300">
                       {reservation.reservationTables && reservation.reservationTables.length > 0
                         ? reservation.reservationTables
                             .map(rt => `Table ${rt.table.number}`)
@@ -593,10 +593,10 @@ export default function ReservationsPage() {
 
       {/* Create Reservation Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <DialogHeader>
-            <DialogTitle>New Reservation</DialogTitle>
-            <DialogDescription>Create a new table reservation</DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-white">New Reservation</DialogTitle>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">Create a new table reservation</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             {/* Customer Information */}
@@ -843,39 +843,39 @@ export default function ReservationsPage() {
 
       {/* Reservation Details Modal */}
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <DialogHeader>
-            <DialogTitle>Reservation Details</DialogTitle>
+            <DialogTitle className="text-gray-900 dark:text-white">Reservation Details</DialogTitle>
           </DialogHeader>
 
           {selectedReservation && (
-            <div className="space-y-4">
+            <div className="space-y-4 text-gray-900 dark:text-gray-100">
               {/* Customer Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Customer</p>
-                  <p className="font-medium">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Customer</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {selectedReservation.customer.firstName}{' '}
                     {selectedReservation.customer.lastName}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Phone</p>
-                  <p className="font-medium">{selectedReservation.customer.phone || '-'}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Phone</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{selectedReservation.customer.phone || '-'}</p>
                 </div>
               </div>
 
               {/* Reservation Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Date & Time</p>
-                  <p className="font-medium">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Date & Time</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {format(new Date(selectedReservation.reservationDate), 'PPP p')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Guests</p>
-                  <p className="font-medium flex items-center gap-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Guests</p>
+                  <p className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
                     <Users className="w-4 h-4" />
                     {selectedReservation.guests}
                   </p>
@@ -884,8 +884,8 @@ export default function ReservationsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Table</p>
-                  <p className="font-medium">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Table</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {selectedReservation.reservationTables &&
                     selectedReservation.reservationTables.length > 0
                       ? selectedReservation.reservationTables
@@ -897,7 +897,7 @@ export default function ReservationsPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Status</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
                   <Badge className={getStatusColor(selectedReservation.status)}>
                     {selectedReservation.status}
                   </Badge>
@@ -907,13 +907,13 @@ export default function ReservationsPage() {
               {/* Notes */}
               {selectedReservation.notes && (
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Notes</p>
-                  <p className="text-sm bg-gray-50 p-3 rounded">{selectedReservation.notes}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Notes</p>
+                  <p className="text-sm bg-gray-50 dark:bg-[#071a12] border border-gray-100 dark:border-[#143225] p-3 rounded">{selectedReservation.notes}</p>
                 </div>
               )}
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-2 pt-4 border-t">
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-[#143225]">
                 {/* Confirm booking: Manager & Cashier */}
                 {canConfirm && selectedReservation.status === ReservationStatus.PENDING && (
                   <Button

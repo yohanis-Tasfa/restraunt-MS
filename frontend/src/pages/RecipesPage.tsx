@@ -68,36 +68,36 @@ export default function RecipesPage() {
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <ChefHat className="w-8 h-8 text-green-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Recipes</h1>
+            <ChefHat className="w-8 h-8 text-green-600 dark:text-[#00e676]" />
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipes</h1>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Link menu items to inventory ingredients for automatic cost calculation
           </p>
         </div>
 
         <Link
           to="/admin/ingredients"
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 text-xs font-bold transition-all shrink-0 shadow-2xs"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-amber-50 dark:bg-[#0c2219] text-amber-800 dark:text-[#00e676] border border-amber-300 dark:border-[#143225] hover:bg-amber-100 dark:hover:bg-[#123627] text-xs font-bold transition-all shrink-0 shadow-2xs"
         >
-          <PackagePlus className="w-4 h-4 text-amber-600" />
+          <PackagePlus className="w-4 h-4 text-amber-600 dark:text-[#00e676]" />
           <span>Check Live Ingredients & Request Stock</span>
         </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Menu Items List */}
-        <div className="lg:col-span-1 bg-white rounded-lg shadow">
+        <div className="lg:col-span-1 bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225]">
           {/* Search */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 dark:border-[#143225]">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search menu items..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               />
             </div>
           </div>
@@ -105,34 +105,35 @@ export default function RecipesPage() {
           {/* Menu Items List */}
           <div className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
             {isLoadingItems ? (
-              <div className="p-8 text-center text-gray-500">Loading menu items...</div>
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">Loading menu items...</div>
             ) : menuItemsError ? (
               <div className="p-4 text-center">
-                <p className="text-red-600 font-medium mb-2">Error loading menu items</p>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-red-600 dark:text-red-400 font-medium mb-2">Error loading menu items</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                   {(menuItemsError as any)?.response?.data?.message || (menuItemsError as any)?.message || 'Unknown error'}
                 </p>
                 <Button 
                   onClick={() => queryClient.invalidateQueries({ queryKey: ['recipes-menu-items'] })}
                   variant="outline"
                   size="sm"
+                  className="dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#0c2219]"
                 >
                   Retry
                 </Button>
               </div>
             ) : filteredMenuItems.length === 0 && searchTerm === '' ? (
               <div className="p-8 text-center">
-                <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-2">No menu items found</p>
-                <p className="text-sm text-gray-400">Create menu items first in the Menu page</p>
+                <Package className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 mb-2">No menu items found</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">Create menu items first in the Menu page</p>
               </div>
             ) : (
               <>
                 {/* Items with recipe */}
                 {itemsWithRecipe.length > 0 && (
                   <div>
-                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                      <p className="text-xs font-semibold text-gray-500 uppercase">
+                    <div className="px-4 py-2 bg-gray-50 dark:bg-[#071a12] border-b border-gray-200 dark:border-[#143225]">
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                         With Recipe ({itemsWithRecipe.length})
                       </p>
                     </div>
@@ -140,8 +141,8 @@ export default function RecipesPage() {
                       <button
                         key={item.id}
                         onClick={() => setSelectedMenuItem(item.id)}
-                        className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
-                          selectedMenuItem === item.id ? 'bg-green-50 border-l-4 border-l-green-600' : ''
+                        className={`w-full text-left px-4 py-3 border-b border-gray-100 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition cursor-pointer ${
+                          selectedMenuItem === item.id ? 'bg-green-50 dark:bg-[#072417] border-l-4 border-l-green-600 dark:border-l-[#00e676]' : ''
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -152,18 +153,18 @@ export default function RecipesPage() {
                               className="w-12 h-12 rounded-lg object-cover"
                             />
                           ) : (
-                            <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                              <Package className="w-6 h-6 text-gray-400" />
+                            <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center">
+                              <Package className="w-6 h-6 text-gray-400 dark:text-gray-500" />
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{item.name}</p>
-                            <p className="text-xs text-gray-500">{item.category.name}</p>
+                            <p className="font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{item.category.name}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-gray-600">
+                              <span className="text-xs text-gray-600 dark:text-gray-300">
                                 {item.ingredientCount} ingredients
                               </span>
-                              <span className="text-xs font-medium text-green-600">
+                              <span className="text-xs font-bold text-green-600 dark:text-[#00e676]">
                                 {formatPercentage(item.profitPercentage)} profit
                               </span>
                             </div>
@@ -177,8 +178,8 @@ export default function RecipesPage() {
                 {/* Items without recipe */}
                 {itemsWithoutRecipe.length > 0 && (
                   <div>
-                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                      <p className="text-xs font-semibold text-gray-500 uppercase">
+                    <div className="px-4 py-2 bg-gray-50 dark:bg-[#071a12] border-b border-gray-200 dark:border-[#143225]">
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                         No Recipe ({itemsWithoutRecipe.length})
                       </p>
                     </div>
@@ -186,8 +187,8 @@ export default function RecipesPage() {
                       <button
                         key={item.id}
                         onClick={() => setSelectedMenuItem(item.id)}
-                        className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition ${
-                          selectedMenuItem === item.id ? 'bg-green-50 border-l-4 border-l-green-600' : ''
+                        className={`w-full text-left px-4 py-3 border-b border-gray-100 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition cursor-pointer ${
+                          selectedMenuItem === item.id ? 'bg-green-50 dark:bg-[#072417] border-l-4 border-l-green-600 dark:border-l-[#00e676]' : ''
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -198,14 +199,14 @@ export default function RecipesPage() {
                               className="w-12 h-12 rounded-lg object-cover"
                             />
                           ) : (
-                            <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                              <Package className="w-6 h-6 text-gray-400" />
+                            <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center">
+                              <Package className="w-6 h-6 text-gray-400 dark:text-gray-500" />
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{item.name}</p>
-                            <p className="text-xs text-gray-500">{item.category.name}</p>
-                            <p className="text-xs text-orange-600 mt-1">No recipe defined</p>
+                            <p className="font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{item.category.name}</p>
+                            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 font-medium">No recipe defined</p>
                           </div>
                         </div>
                       </button>
@@ -214,7 +215,7 @@ export default function RecipesPage() {
                 )}
 
                 {filteredMenuItems.length === 0 && (
-                  <div className="p-8 text-center text-gray-500">No menu items found</div>
+                  <div className="p-8 text-center text-gray-500 dark:text-gray-400">No menu items found</div>
                 )}
               </>
             )}
@@ -224,13 +225,13 @@ export default function RecipesPage() {
         {/* Right Column - Recipe Details */}
         <div className="lg:col-span-2">
           {!selectedMenuItem ? (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
-              <ChefHat className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Select a menu item</h3>
-              <p className="text-gray-500">Choose a menu item from the list to view or edit its recipe</p>
+            <div className="bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225] p-12 text-center">
+              <ChefHat className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Select a menu item</h3>
+              <p className="text-gray-500 dark:text-gray-400">Choose a menu item from the list to view or edit its recipe</p>
             </div>
           ) : isLoadingRecipe ? (
-            <div className="bg-white rounded-lg shadow p-12 text-center text-gray-500">
+            <div className="bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225] p-12 text-center text-gray-500 dark:text-gray-400">
               Loading recipe...
             </div>
           ) : recipe ? (
@@ -298,49 +299,49 @@ function RecipeDetails({
   return (
     <div className="space-y-6">
       {/* Menu Item Info Card */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225] p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">{recipe.menuItemName}</h2>
-          <span className="text-lg font-semibold text-gray-900">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{recipe.menuItemName}</h2>
+          <span className="text-lg font-extrabold text-gray-900 dark:text-[#00e676]">
             {formatCurrency(recipe.menuItemPrice)}
           </span>
         </div>
 
         {/* Cost Stats */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-blue-50 dark:bg-[#092233] border border-blue-100 dark:border-blue-900/40 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="w-4 h-4 text-blue-600" />
-              <p className="text-xs text-blue-600 font-medium">Total Cost</p>
+              <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total Cost</p>
             </div>
-            <p className="text-lg font-bold text-gray-900">{formatCurrency(recipe.totalCost)}</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-blue-200">{formatCurrency(recipe.totalCost)}</p>
           </div>
 
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-green-50 dark:bg-[#072417] border border-green-100 dark:border-green-900/40 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="w-4 h-4 text-green-600" />
-              <p className="text-xs text-green-600 font-medium">Profit</p>
+              <TrendingUp className="w-4 h-4 text-green-600 dark:text-[#00e676]" />
+              <p className="text-xs text-green-600 dark:text-[#00e676] font-medium">Profit</p>
             </div>
-            <p className="text-lg font-bold text-gray-900">{formatCurrency(recipe.profitMargin)}</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-[#00e676]">{formatCurrency(recipe.profitMargin)}</p>
           </div>
 
-          <div className="bg-purple-50 rounded-lg p-4">
+          <div className="bg-purple-50 dark:bg-[#1a0f2e] border border-purple-100 dark:border-purple-900/40 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="w-4 h-4 text-purple-600" />
-              <p className="text-xs text-purple-600 font-medium">Margin</p>
+              <TrendingUp className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">Margin</p>
             </div>
-            <p className="text-lg font-bold text-gray-900">{formatPercentage(recipe.profitPercentage)}</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-purple-200">{formatPercentage(recipe.profitPercentage)}</p>
           </div>
         </div>
       </div>
 
       {/* Ingredients List */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Ingredients</h3>
+      <div className="bg-white dark:bg-[#091a13] rounded-lg shadow border border-transparent dark:border-[#143225]">
+        <div className="p-4 border-b border-gray-200 dark:border-[#143225] flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Ingredients</h3>
           <Button
             onClick={onAddIngredient}
-            className="bg-green-600 hover:bg-green-700 gap-2"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer"
             size="sm"
           >
             <Plus className="w-4 h-4" />
@@ -350,33 +351,33 @@ function RecipeDetails({
 
         {recipe.recipeItems.length === 0 ? (
           <div className="p-12 text-center">
-            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 mb-4">No ingredients added yet</p>
+            <Package className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-500 dark:text-gray-400 mb-4">No ingredients added yet</p>
             <Button
               onClick={onAddIngredient}
-              className="bg-green-600 hover:bg-green-700 gap-2"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Add First Ingredient
             </Button>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-[#143225]">
             {recipe.recipeItems.map((item: RecipeItem) => {
               const itemCost = (item.inventory.cost || 0) * item.quantity;
               return (
                 <div
                   key={item.id}
-                  className="p-4 hover:bg-gray-50 transition flex items-center justify-between"
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition flex items-center justify-between"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                        <Package className="w-5 h-5 text-gray-400" />
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center">
+                        <Package className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{item.inventory.name}</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="font-medium text-gray-900 dark:text-white">{item.inventory.name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {item.quantity} {item.unit}
                         </p>
                       </div>
@@ -384,15 +385,15 @@ function RecipeDetails({
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">{formatCurrency(itemCost)}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm font-bold text-gray-900 dark:text-[#00e676]">{formatCurrency(itemCost)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         @ {formatCurrency(item.inventory.cost || 0)}/{item.inventory.unit}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setEditingItem(item)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition cursor-pointer"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -402,7 +403,7 @@ function RecipeDetails({
                             deleteMutation.mutate(item.id);
                           }
                         }}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition cursor-pointer"
                         disabled={deleteMutation.isPending}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -482,15 +483,15 @@ function AddIngredientModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900">Add Ingredient</h3>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-xl border border-gray-200 dark:border-[#143225] max-w-md w-full">
+        <div className="p-6 border-b border-gray-200 dark:border-[#143225]">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Add Ingredient</h3>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Inventory Item *
             </label>
             <select
@@ -500,7 +501,7 @@ function AddIngredientModal({
                 const item = inventoryItems.find(i => i.id === e.target.value);
                 if (item) setUnit(item.unit);
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500"
               required
             >
               <option value="">Select ingredient...</option>
@@ -513,7 +514,7 @@ function AddIngredientModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Quantity *
             </label>
             <input
@@ -522,30 +523,32 @@ function AddIngredientModal({
               min="0.01"
               value={quantity}
               onChange={(e) => setQuantity(parseFloat(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Unit *
             </label>
             <input
               type="text"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500"
               placeholder="e.g., kg, g, pieces"
               required
             />
           </div>
 
           {selectedItem && selectedItem.cost && (
-            <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-sm text-blue-900">
-                <span className="font-medium">Estimated cost:</span> Br{' '}
-                {((selectedItem.cost || 0) * quantity).toFixed(2)}
+            <div className="bg-blue-50 dark:bg-[#092233] border border-blue-200 dark:border-blue-900/50 rounded-lg p-3">
+              <p className="text-sm text-blue-900 dark:text-blue-200">
+                <span className="font-medium">Estimated cost:</span>{' '}
+                <span className="font-bold text-blue-950 dark:text-[#00e676]">
+                  Br {((selectedItem.cost || 0) * quantity).toFixed(2)}
+                </span>
               </p>
             </div>
           )}
@@ -555,14 +558,14 @@ function AddIngredientModal({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
               disabled={createMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold"
               disabled={createMutation.isPending}
             >
               {createMutation.isPending ? 'Adding...' : 'Add Ingredient'}
@@ -604,16 +607,16 @@ function EditIngredientModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900">Edit Ingredient</h3>
-          <p className="text-sm text-gray-500 mt-1">{recipeItem.inventory.name}</p>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-xl border border-gray-200 dark:border-[#143225] max-w-md w-full">
+        <div className="p-6 border-b border-gray-200 dark:border-[#143225]">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Edit Ingredient</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{recipeItem.inventory.name}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Quantity *
             </label>
             <input
@@ -622,20 +625,20 @@ function EditIngredientModal({
               min="0.01"
               value={quantity}
               onChange={(e) => setQuantity(parseFloat(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Unit *
             </label>
             <input
               type="text"
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
@@ -645,21 +648,16 @@ function EditIngredientModal({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
               disabled={updateMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold"
               disabled={updateMutation.isPending}
             >
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
             </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
+          </d

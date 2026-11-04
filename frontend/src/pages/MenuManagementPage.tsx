@@ -438,47 +438,47 @@ export default function MenuManagementPage() {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 dark:bg-[#07130e] text-gray-900 dark:text-gray-100 min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Menu</h1>
-        <p className="text-gray-600 mt-1">Manage categories, dishes, pricing and availability.</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Menu</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">Manage categories, dishes, pricing and availability.</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="text-2xl font-bold text-gray-900">{items.length}</div>
-          <div className="text-sm text-gray-600 mt-1">{categories.length} categories</div>
-          <div className="text-xs text-gray-500 mt-1">Total items</div>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg p-4 border border-gray-200 dark:border-[#143225]">
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">{items.length}</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{categories.length} categories</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Total items</div>
         </div>
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="text-2xl font-bold text-green-600">{activeItems}</div>
-          <div className="text-xs text-gray-500 mt-1">Active</div>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg p-4 border border-gray-200 dark:border-[#143225]">
+          <div className="text-2xl font-bold text-green-600 dark:text-[#00e676]">{activeItems}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Active</div>
         </div>
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="text-2xl font-bold text-orange-600">—</div>
-          <div className="text-xs text-gray-500 mt-1">Low stock</div>
-          <div className="text-xs text-gray-400 mt-1">Requires inventory</div>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg p-4 border border-gray-200 dark:border-[#143225]">
+          <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">—</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Low stock</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Requires inventory</div>
         </div>
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <div className="text-2xl font-bold text-red-600">{outOfStockItems}</div>
-          <div className="text-xs text-gray-500 mt-1">Unavailable</div>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg p-4 border border-gray-200 dark:border-[#143225]">
+          <div className="text-2xl font-bold text-red-600 dark:text-red-400">{outOfStockItems}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Unavailable</div>
         </div>
       </div>
 
       {/* Search and Category Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white dark:bg-[#091a13] rounded-lg border border-gray-200 dark:border-[#143225] p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Search dish..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400"
+              className="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
@@ -487,13 +487,13 @@ export default function MenuManagementPage() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white pr-8"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#143225] rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none bg-white dark:bg-[#071a12] pr-8"
             >
-              <option value="all" className="text-gray-900 bg-white">All Categories ({items.length})</option>
+              <option value="all" className="text-gray-900 dark:text-white bg-white dark:bg-[#091a13]">All Categories ({items.length})</option>
               {categories.map((cat) => {
                 const categoryItemCount = items.filter(item => item.categoryId === cat.id).length;
                 return (
-                  <option key={cat.id} value={cat.id} className="text-gray-900 bg-white">
+                  <option key={cat.id} value={cat.id} className="text-gray-900 dark:text-white bg-white dark:bg-[#091a13]">
                     {cat.name} ({categoryItemCount})
                   </option>
                 );
@@ -514,19 +514,19 @@ export default function MenuManagementPage() {
                   setIsBulkMode(false);
                   setSelectedItems(new Set());
                 }}
-                className="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0c2219] border border-gray-300 dark:border-[#143225] rounded-lg hover:bg-gray-50 dark:hover:bg-[#12281d] font-medium cursor-pointer"
               >
                 Cancel
               </button>
             ) : (
               <button
                 onClick={() => setIsBulkMode(true)}
-                className="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0c2219] border border-gray-300 dark:border-[#143225] rounded-lg hover:bg-gray-50 dark:hover:bg-[#12281d] font-medium cursor-pointer"
               >
                 Select
               </button>
             )}
-            <label className={`flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer font-medium ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <label className={`flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0c2219] border border-gray-300 dark:border-[#143225] rounded-lg hover:bg-gray-50 dark:hover:bg-[#12281d] cursor-pointer font-medium ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}>
               <Upload className="w-4 h-4" />
               <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import'}</span>
               <input
@@ -539,7 +539,7 @@ export default function MenuManagementPage() {
             </label>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 whitespace-nowrap"
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg whitespace-nowrap cursor-pointer shadow-sm"
             >
               <Plus className="w-4 h-4" />
               New Item
@@ -716,11 +716,11 @@ function MenuItemCard({
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className={`bg-white rounded-lg overflow-hidden border-2 hover:shadow-lg transition-all group ${
-      isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+    <div className={`bg-white dark:bg-[#091a13] rounded-lg overflow-hidden border-2 hover:shadow-lg transition-all group ${
+      isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 dark:border-[#143225]'
     }`}>
       {/* Image */}
-      <div className="relative aspect-[4/3] bg-gradient-to-br from-orange-100 to-orange-50 overflow-hidden">
+      <div className="relative aspect-[4/3] bg-gradient-to-br from-orange-100 to-orange-50 dark:from-black/40 dark:to-black/80 overflow-hidden">
         {item.image ? (
           <img
             src={item.image}
@@ -765,10 +765,10 @@ function MenuItemCard({
                     e.stopPropagation();
                     onMoveUp?.();
                   }}
-                  className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-gray-50"
+                  className="p-1.5 bg-white dark:bg-[#0c2219] rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-[#12281d] cursor-pointer"
                   title="Move up"
                 >
-                  <ChevronUp className="w-4 h-4 text-gray-600" />
+                  <ChevronUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                 </button>
               )}
               {canMoveDown && (
@@ -777,10 +777,10 @@ function MenuItemCard({
                     e.stopPropagation();
                     onMoveDown?.();
                   }}
-                  className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-gray-50"
+                  className="p-1.5 bg-white dark:bg-[#0c2219] rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-[#12281d] cursor-pointer"
                   title="Move down"
                 >
-                  <ChevronDown className="w-4 h-4 text-gray-600" />
+                  <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                 </button>
               )}
             </div>
@@ -788,9 +788,9 @@ function MenuItemCard({
             <div className="absolute top-2 right-2">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50"
+              className="p-2 bg-white dark:bg-[#0c2219] rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-[#12281d] cursor-pointer"
             >
-              <MoreVertical className="w-4 h-4 text-gray-600" />
+              <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-300" />
             </button>
             
             {/* Dropdown Menu */}
@@ -800,13 +800,13 @@ function MenuItemCard({
                   className="fixed inset-0 z-10" 
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20">
+                <div className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-[#0c2219] rounded-lg shadow-xl border border-gray-200 dark:border-[#143225] py-1 z-20">
                   <button
                     onClick={() => {
                       onEdit();
                       setShowMenu(false);
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
                   >
                     <Edit className="w-4 h-4" />
                     Edit dish
@@ -816,7 +816,7 @@ function MenuItemCard({
                       onToggleAvailability();
                       setShowMenu(false);
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
                   >
                     {item.isAvailable ? (
                       <>
@@ -835,18 +835,18 @@ function MenuItemCard({
                       onDuplicate();
                       setShowMenu(false);
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#123627] flex items-center gap-2 cursor-pointer"
                   >
                     <Copy className="w-4 h-4" />
                     Duplicate
                   </button>
-                  <hr className="my-1" />
+                  <hr className="my-1 border-gray-100 dark:border-[#143225]" />
                   <button
                     onClick={() => {
                       onDelete();
                       setShowMenu(false);
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                     Delete
@@ -869,9 +869,9 @@ function MenuItemCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 bg-white dark:bg-[#091a13]">
         {/* Name with Emoji */}
-        <h3 className="font-semibold text-gray-900 text-base mb-1 flex items-center gap-1">
+        <h3 className="font-semibold text-gray-900 dark:text-white text-base mb-1 flex items-center gap-1">
           {item.name}
           {item.isVegetarian && <span className="text-base">🌱</span>}
           {item.isSpicy && <span className="text-base">🌶️</span>}
@@ -879,7 +879,7 @@ function MenuItemCard({
 
         {/* Description */}
         {item.description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
             {item.description}
           </p>
         )}
@@ -887,14 +887,14 @@ function MenuItemCard({
         {/* Category Tag */}
         <div className="mb-3">
           {item.category && (
-            <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+            <span className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 rounded border border-transparent dark:border-[#143225]">
               {item.category.name}
             </span>
           )}
         </div>
 
         {/* Price */}
-        <div className="text-lg font-bold text-green-600">
+        <div className="text-lg font-extrabold text-green-600 dark:text-[#00e676]">
           Br {item.price.toFixed(2)}
         </div>
       </div>

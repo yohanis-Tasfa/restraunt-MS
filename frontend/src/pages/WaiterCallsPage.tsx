@@ -120,36 +120,36 @@ export default function WaiterCallsPage() {
     const rawItems: any[] = Array.isArray(call.selectedItems)
       ? call.selectedItems
       : (call.selectedItems as any)?.items && Array.isArray((call.selectedItems as any).items)
-      ? (call.selectedItems as any).items
-      : getCustomerCart(call.sessionId)?.items || [];
+        ? (call.selectedItems as any).items
+        : getCustomerCart(call.sessionId)?.items || [];
 
     // 2. Meal items to load into POS cart (with realistic fallback if call had no pre-selected items)
     const itemsToLoad =
       rawItems.length > 0
         ? rawItems
         : [
-            {
-              menuItemId: 'demo-tibs-1',
-              name: 'Special Beef Tibs',
-              price: 280,
-              quantity: 2,
-              subtotal: 560,
-            },
-            {
-              menuItemId: 'demo-injera-1',
-              name: 'Injera Plate',
-              price: 25,
-              quantity: 4,
-              subtotal: 100,
-            },
-            {
-              menuItemId: 'demo-beer-1',
-              name: 'St. George Beer',
-              price: 60,
-              quantity: 2,
-              subtotal: 120,
-            },
-          ];
+          {
+            menuItemId: 'demo-tibs-1',
+            name: 'Special Beef Tibs',
+            price: 280,
+            quantity: 2,
+            subtotal: 560,
+          },
+          {
+            menuItemId: 'demo-injera-1',
+            name: 'Injera Plate',
+            price: 25,
+            quantity: 4,
+            subtotal: 100,
+          },
+          {
+            menuItemId: 'demo-beer-1',
+            name: 'St. George Beer',
+            price: 60,
+            quantity: 2,
+            subtotal: 120,
+          },
+        ];
 
     const customerCart = {
       sessionId: call.sessionId,
@@ -289,29 +289,29 @@ export default function WaiterCallsPage() {
       {/* ========================================================================= */}
       {/* PAGE HEADER                                                               */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-[#091a13] p-5 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 dark:from-emerald-600 dark:to-teal-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
             <Bell className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 Waiter Calls
               </h1>
               {isConnected ? (
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200/80 text-[11px] font-semibold gap-1.5">
+                <Badge className="bg-emerald-50 dark:bg-[#071a12] text-emerald-700 dark:text-[#00e676] border-emerald-200/80 dark:border-[#143225] text-[11px] font-semibold gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   Live Connected
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-[11px] text-gray-500 gap-1">
+                <Badge variant="outline" className="text-[11px] text-gray-500 dark:text-gray-400 dark:border-[#143225] gap-1">
                   <Wifi className="w-3 h-3" />
                   Connecting...
                 </Badge>
               )}
             </div>
-            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               Live customer service alerts, assistance requests, and QR order alerts
             </p>
           </div>
@@ -322,15 +322,15 @@ export default function WaiterCallsPage() {
             onClick={() => refetch()}
             variant="outline"
             size="sm"
-            className="text-xs font-semibold h-9 gap-1.5 border-gray-300 hover:bg-gray-50 shadow-2xs"
+            className="text-xs font-semibold h-9 gap-1.5 border-gray-300 dark:border-[#143225] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-gray-600" />
+            <RefreshCw className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
             Refresh
           </Button>
           <Button
             size="sm"
             onClick={() => navigate('/admin/pos')}
-            className="text-xs font-semibold h-9 gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-xs"
+            className="text-xs font-semibold h-9 gap-1.5 bg-blue-600 hover:bg-blue-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold shadow-xs cursor-pointer"
           >
             <ShoppingCart className="w-3.5 h-3.5" />
             POS Terminal
@@ -345,19 +345,18 @@ export default function WaiterCallsPage() {
         {/* Card 1: Pending */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'PENDING' ? 'all' : 'PENDING')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${
-            filterStatus === 'PENDING'
-              ? 'bg-rose-50 border-rose-300 ring-2 ring-rose-500/30'
-              : 'bg-white border-gray-200/80 hover:border-rose-200 hover:bg-rose-50/30'
-          }`}
+          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${filterStatus === 'PENDING'
+              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-200 dark:hover:border-rose-900/50 hover:bg-rose-50/30 dark:hover:bg-rose-950/20'
+            }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-rose-600" />
+            <span className="text-xs font-bold text-rose-800 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
               Pending Calls
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-rose-700 mt-2">
+          <div className="text-3xl font-extrabold text-rose-700 dark:text-rose-400 mt-2">
             {pendingCalls.length}
           </div>
         </div>
@@ -365,19 +364,18 @@ export default function WaiterCallsPage() {
         {/* Card 2: In Progress */}
         <div
           onClick={() => setFilterStatus(filterStatus === 'ACKNOWLEDGED' ? 'all' : 'ACKNOWLEDGED')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${
-            filterStatus === 'ACKNOWLEDGED'
-              ? 'bg-blue-50 border-blue-300 ring-2 ring-blue-500/30'
-              : 'bg-white border-gray-200/80 hover:border-blue-200 hover:bg-blue-50/30'
-          }`}
+          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${filterStatus === 'ACKNOWLEDGED'
+              ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-200 dark:hover:border-blue-900/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
+            }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-blue-600" />
+            <span className="text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               In Progress
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-blue-700 mt-2">
+          <div className="text-3xl font-extrabold text-blue-700 dark:text-blue-400 mt-2">
             {acknowledgedCalls.length}
           </div>
         </div>
@@ -385,19 +383,18 @@ export default function WaiterCallsPage() {
         {/* Card 3: Total Active */}
         <div
           onClick={() => setFilterStatus('all')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${
-            filterStatus === 'all'
-              ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500/30'
-              : 'bg-white border-gray-200/80 hover:border-emerald-200 hover:bg-emerald-50/30'
-          }`}
+          className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-xs ${filterStatus === 'all'
+              ? 'bg-emerald-50 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-600 ring-2 ring-emerald-500/30'
+              : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50/30 dark:hover:bg-[#0c2219]'
+            }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-bold text-emerald-800 dark:text-[#00e676] uppercase tracking-wider flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
               Total Active
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-emerald-700 mt-2">
+          <div className="text-3xl font-extrabold text-emerald-700 dark:text-[#00e676] mt-2">
             {calls.length}
           </div>
         </div>
@@ -406,7 +403,7 @@ export default function WaiterCallsPage() {
       {/* ========================================================================= */}
       {/* COMPACT & BALANCED FILTER TOOLBAR (Fixes oversized search bar)             */}
       {/* ========================================================================= */}
-      <div className="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="bg-white dark:bg-[#091a13] p-3 sm:p-4 rounded-2xl border border-gray-200/80 dark:border-[#143225] shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         {/* Left: Compact, bounded Search Input with proper padding */}
         <div className="relative w-full sm:w-72 lg:w-80 shrink-0">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -414,13 +411,13 @@ export default function WaiterCallsPage() {
             placeholder="Search table number (e.g. 10)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-8 h-9.5 text-xs bg-gray-50/70 border-gray-200 rounded-xl focus:bg-white transition-colors"
+            className="pl-10 pr-8 h-9.5 text-xs bg-gray-50/70 dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white rounded-xl focus:bg-white dark:focus:bg-[#071a12] transition-colors"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#0c2219] transition-colors cursor-pointer"
               title="Clear search"
             >
               <X className="w-3.5 h-3.5" />
@@ -431,37 +428,34 @@ export default function WaiterCallsPage() {
         {/* Right: Status Filter Segmented Controls + Request Type Dropdown */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Status Tabs */}
-          <div className="inline-flex rounded-xl bg-gray-100/90 p-1 border border-gray-200/50">
+          <div className="inline-flex rounded-xl bg-gray-100/90 dark:bg-[#071a12] p-1 border border-gray-200/50 dark:border-[#143225]">
             <button
               type="button"
               onClick={() => setFilterStatus('all')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                filterStatus === 'all'
-                  ? 'bg-white text-gray-900 shadow-2xs'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${filterStatus === 'all'
+                  ? 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-white shadow-2xs'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
             >
               All ({calls.length})
             </button>
             <button
               type="button"
               onClick={() => setFilterStatus('PENDING')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                filterStatus === 'PENDING'
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${filterStatus === 'PENDING'
                   ? 'bg-rose-600 text-white shadow-2xs'
-                  : 'text-gray-600 hover:text-rose-700'
-              }`}
+                  : 'text-gray-600 dark:text-gray-400 hover:text-rose-700 dark:hover:text-rose-400'
+                }`}
             >
               Pending ({pendingCalls.length})
             </button>
             <button
               type="button"
               onClick={() => setFilterStatus('ACKNOWLEDGED')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                filterStatus === 'ACKNOWLEDGED'
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${filterStatus === 'ACKNOWLEDGED'
                   ? 'bg-blue-600 text-white shadow-2xs'
-                  : 'text-gray-600 hover:text-blue-700'
-              }`}
+                  : 'text-gray-600 dark:text-gray-400 hover:text-blue-700 dark:hover:text-blue-400'
+                }`}
             >
               In Progress ({acknowledgedCalls.length})
             </button>
@@ -469,11 +463,11 @@ export default function WaiterCallsPage() {
 
           {/* Type Dropdown */}
           <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[155px] h-9.5 text-xs rounded-xl bg-white border-gray-200">
-              <Filter className="w-3.5 h-3.5 mr-1.5 text-gray-500" />
+            <SelectTrigger className="w-[155px] h-9.5 text-xs rounded-xl bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] dark:text-white">
+              <Filter className="w-3.5 h-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
               <SelectValue placeholder="Request Type" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-[#091a13] dark:border-[#143225] dark:text-white">
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="ORDER_READY">Ready to Order</SelectItem>
               <SelectItem value="ASSISTANCE">Assistance</SelectItem>
@@ -491,7 +485,7 @@ export default function WaiterCallsPage() {
                 setFilterType('all');
                 setSearchQuery('');
               }}
-              className="text-xs h-9.5 px-2.5 text-gray-500 hover:text-gray-900"
+              className="text-xs h-9.5 px-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
             >
               Reset
             </Button>
@@ -503,15 +497,15 @@ export default function WaiterCallsPage() {
       {/* CALLS GRID LIST                                                           */}
       {/* ========================================================================= */}
       {filteredCalls.length === 0 ? (
-        <Card className="border-gray-200/80 shadow-xs">
+        <Card className="border-gray-200/80 dark:border-[#143225] bg-white dark:bg-[#091a13] shadow-xs">
           <CardContent className="p-12 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200/80 flex items-center justify-center text-blue-600 mx-auto mb-3 shadow-2xs">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-[#0c2219] border border-blue-200/80 dark:border-[#143225] flex items-center justify-center text-blue-600 dark:text-[#00e676] mx-auto mb-3 shadow-2xs">
               <Bell className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-bold text-gray-900 mb-1">
+            <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">
               No Active Calls Matching Filter
             </h3>
-            <p className="text-xs text-gray-500 max-w-sm mx-auto">
+            <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
               {calls.length === 0
                 ? 'All caught up! No customer table requests or assistance calls at the moment.'
                 : 'No calls found matching the current search or status filter.'}
@@ -525,7 +519,7 @@ export default function WaiterCallsPage() {
                   setFilterType('all');
                   setSearchQuery('');
                 }}
-                className="mt-4 text-xs"
+                className="mt-4 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
               >
                 Clear all filters
               </Button>
@@ -539,10 +533,10 @@ export default function WaiterCallsPage() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
-                <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">
                   Pending Attention
                 </h2>
-                <Badge className="bg-rose-100 text-rose-800 border-rose-200 font-bold text-[10px]">
+                <Badge className="bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-900 font-bold text-[10px]">
                   {pendingCalls.filter((c) => filteredCalls.some((fc) => fc.id === c.id)).length} waiting
                 </Badge>
               </div>
@@ -574,10 +568,10 @@ export default function WaiterCallsPage() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-                <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">
                   In Progress / Attending
                 </h2>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 font-bold text-[10px]">
+                <Badge className="bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-900 font-bold text-[10px]">
                   {acknowledgedCalls.filter((c) => filteredCalls.some((fc) => fc.id === c.id)).length} active
                 </Badge>
               </div>
@@ -611,18 +605,18 @@ export default function WaiterCallsPage() {
       {/* ========================================================================= */}
       {selectedCall && (
         <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
-          <DialogContent className="max-w-lg p-6" hideCloseButton>
+          <DialogContent className="max-w-lg p-6 bg-white dark:bg-[#091a13] border dark:border-[#143225]" hideCloseButton>
             <DialogHeader>
-              <DialogTitle className="flex items-center justify-between text-base font-bold text-gray-900">
+              <DialogTitle className="flex items-center justify-between text-base font-bold text-gray-900 dark:text-white">
                 <span className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700">
+                  <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-[#0c2219] flex items-center justify-center text-blue-700 dark:text-[#00e676]">
                     {getRequestTypeIcon(selectedCall.requestType)}
                   </div>
                   Table {selectedCall.table.number.replace(/^T/i, '')} • {getRequestTypeLabel(selectedCall.requestType)}
                 </span>
                 {getStatusBadge(selectedCall.status)}
               </DialogTitle>
-              <DialogDescription className="text-xs text-gray-500 pt-1">
+              <DialogDescription className="text-xs text-gray-500 dark:text-gray-400 pt-1">
                 Requested on {format(new Date(selectedCall.createdAt), 'EEEE, MMM d, yyyy • h:mm:ss a')}
               </DialogDescription>
             </DialogHeader>
@@ -630,10 +624,10 @@ export default function WaiterCallsPage() {
             <div className="space-y-4 py-2">
               {/* Waiter Info */}
               {selectedCall.waiter && (
-                <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs flex items-center justify-between">
-                  <span className="text-gray-500 font-medium">Assigned Server:</span>
-                  <span className="font-bold text-gray-900 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-gray-500" />
+                <div className="bg-gray-50 dark:bg-[#071a12] p-3 rounded-xl border border-gray-200 dark:border-[#143225] text-xs flex items-center justify-between">
+                  <span className="text-gray-500 dark:text-gray-400 font-medium">Assigned Server:</span>
+                  <span className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     {selectedCall.waiter.firstName} {selectedCall.waiter.lastName}
                   </span>
                 </div>
@@ -644,24 +638,24 @@ export default function WaiterCallsPage() {
                 selectedCall.selectedItems &&
                 selectedCall.selectedItems.length > 0 && (
                   <div>
-                    <label className="text-xs font-bold text-gray-700 mb-2 block uppercase tracking-wider">
+                    <label className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 block uppercase tracking-wider">
                       Customer Pre-Selected Items
                     </label>
-                    <div className="border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100 text-xs">
+                    <div className="border border-gray-200 dark:border-[#143225] rounded-xl overflow-hidden divide-y divide-gray-100 dark:divide-[#143225] text-xs">
                       {selectedCall.selectedItems.map((item, idx) => (
-                        <div key={idx} className="p-2.5 flex items-center justify-between bg-white">
+                        <div key={idx} className="p-2.5 flex items-center justify-between bg-white dark:bg-[#071a12]">
                           <div>
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-gray-900 dark:text-white">
                               {item.quantity}x {item.name}
                             </span>
-                            <p className="text-[11px] text-gray-500">Br {item.price.toFixed(2)} each</p>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Br {item.price.toFixed(2)} each</p>
                           </div>
-                          <span className="font-bold text-gray-900">Br {item.subtotal.toFixed(2)}</span>
+                          <span className="font-bold text-gray-900 dark:text-[#00e676]">Br {item.subtotal.toFixed(2)}</span>
                         </div>
                       ))}
-                      <div className="p-3 bg-gray-50 flex items-center justify-between font-bold text-xs text-gray-900">
+                      <div className="p-3 bg-gray-50 dark:bg-[#0c2219] flex items-center justify-between font-bold text-xs text-gray-900 dark:text-white">
                         <span>Cart Total</span>
-                        <span className="text-sm font-extrabold text-emerald-700">
+                        <span className="text-sm font-extrabold text-emerald-700 dark:text-[#00e676]">
                           Br {selectedCall.selectedItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)}
                         </span>
                       </div>
@@ -671,25 +665,25 @@ export default function WaiterCallsPage() {
 
               {/* Notes */}
               <div>
-                <label className="text-xs font-bold text-gray-700 block mb-1.5 uppercase tracking-wider">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300 block mb-1.5 uppercase tracking-wider">
                   Service Notes
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add optional notes about this table request..."
-                  className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50/50"
+                  className="w-full px-3 py-2 text-xs border border-gray-200 dark:border-[#143225] rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50/50 dark:bg-[#071a12] text-gray-900 dark:text-white"
                   rows={2}
                 />
               </div>
             </div>
 
-            <DialogFooter className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-gray-100">
+            <DialogFooter className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-[#143225]">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowDetailsModal(false)}
-                className="text-xs"
+                className="text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
               >
                 Close
               </Button>
@@ -698,7 +692,7 @@ export default function WaiterCallsPage() {
                 <Button
                   size="sm"
                   onClick={() => handleAcknowledge(selectedCall)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 cursor-pointer"
                   disabled={isActionLoading}
                 >
                   <Clock className="w-3.5 h-3.5" />
@@ -710,7 +704,7 @@ export default function WaiterCallsPage() {
                 <Button
                   size="sm"
                   onClick={() => handleCreateOrder(selectedCall)}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5"
+                  className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold text-xs gap-1.5 cursor-pointer"
                   disabled={isActionLoading}
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
@@ -722,7 +716,7 @@ export default function WaiterCallsPage() {
                 <Button
                   size="sm"
                   onClick={() => handleCollectPayment(selectedCall)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white text-xs gap-1.5"
+                  className="bg-purple-600 hover:bg-purple-700 text-white text-xs gap-1.5 cursor-pointer"
                   disabled={isActionLoading}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
@@ -733,22 +727,22 @@ export default function WaiterCallsPage() {
               {selectedCall.status === 'ACKNOWLEDGED' &&
                 selectedCall.requestType !== 'BILL_REQUEST' &&
                 selectedCall.requestType !== 'ORDER_READY' && (
-                <Button
-                  size="sm"
-                  onClick={() => handleComplete(selectedCall)}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5"
-                  disabled={isActionLoading}
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  Mark Complete
-                </Button>
-              )}
+                  <Button
+                    size="sm"
+                    onClick={() => handleComplete(selectedCall)}
+                    className="bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold text-xs gap-1.5 cursor-pointer"
+                    disabled={isActionLoading}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Mark Complete
+                  </Button>
+                )}
 
               <Button
                 size="sm"
                 onClick={() => handleCancel(selectedCall)}
                 variant="ghost"
-                className="text-rose-600 hover:bg-rose-50 text-xs gap-1"
+                className="text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs gap-1 cursor-pointer"
                 disabled={isActionLoading}
               >
                 <XCircle className="w-3.5 h-3.5" />
@@ -837,11 +831,10 @@ function CallCard({
 
   return (
     <Card
-      className={`border transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer rounded-2xl overflow-hidden ${
-        isPending
-          ? 'border-rose-200/90 bg-gradient-to-b from-rose-50/20 to-white'
-          : 'border-blue-200/80 bg-gradient-to-b from-blue-50/15 to-white'
-      }`}
+      className={`border transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer rounded-2xl overflow-hidden ${isPending
+          ? 'border-rose-200/90 dark:border-rose-900/60 bg-gradient-to-b from-rose-50/20 to-white dark:from-rose-950/20 dark:to-[#091a13]'
+          : 'border-blue-200/80 dark:border-[#143225] bg-gradient-to-b from-blue-50/15 to-white dark:from-[#0c2219]/30 dark:to-[#091a13]'
+        }`}
       onClick={() => onViewDetails(call)}
     >
       <div className="p-4 space-y-3.5">
@@ -849,11 +842,10 @@ function CallCard({
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-3">
             <div
-              className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-bold shrink-0 shadow-2xs ${
-                isPending
-                  ? 'bg-rose-100 text-rose-800 border border-rose-200'
-                  : 'bg-blue-100 text-blue-800 border border-blue-200'
-              }`}
+              className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-bold shrink-0 shadow-2xs ${isPending
+                  ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-900'
+                  : 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900'
+                }`}
             >
               <span className="text-[9px] uppercase tracking-wider font-semibold opacity-75 leading-none">
                 Table
@@ -862,7 +854,7 @@ function CallCard({
             </div>
 
             <div>
-              <h3 className="font-bold text-base text-gray-900 leading-snug">
+              <h3 className="font-bold text-base text-gray-900 dark:text-white leading-snug">
                 Table {tableNum}
               </h3>
             </div>
@@ -872,14 +864,13 @@ function CallCard({
         </div>
 
         {/* Wait Time & Timestamp */}
-        <div className="flex items-center gap-2 text-xs bg-gray-50/80 px-2.5 py-1.5 rounded-lg border border-gray-100 text-gray-600">
-          <Clock className={`w-3.5 h-3.5 ${isUrgent ? 'text-rose-500' : 'text-gray-400'}`} />
-          <span className="font-medium text-gray-700">{timeStr}</span>
-          <span className="text-gray-300">•</span>
+        <div className="flex items-center gap-2 text-xs bg-gray-50/80 dark:bg-[#071a12] px-2.5 py-1.5 rounded-lg border border-gray-100 dark:border-[#143225] text-gray-600 dark:text-gray-300">
+          <Clock className={`w-3.5 h-3.5 ${isUrgent ? 'text-rose-500' : 'text-gray-400 dark:text-gray-500'}`} />
+          <span className="font-medium text-gray-700 dark:text-gray-200">{timeStr}</span>
+          <span className="text-gray-300 dark:text-gray-600">•</span>
           <span
-            className={`font-semibold ${
-              isUrgent ? 'text-rose-600 font-bold' : 'text-gray-500'
-            }`}
+            className={`font-semibold ${isUrgent ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-gray-500 dark:text-gray-400'
+              }`}
           >
             {waitStr}
           </span>
@@ -890,8 +881,8 @@ function CallCard({
           const rawPreviewItems: any[] = Array.isArray(call.selectedItems)
             ? call.selectedItems
             : (call.selectedItems as any)?.items && Array.isArray((call.selectedItems as any).items)
-            ? (call.selectedItems as any).items
-            : cart?.items || [];
+              ? (call.selectedItems as any).items
+              : cart?.items || [];
 
           if (rawPreviewItems.length === 0) return null;
           const cartTotal = rawPreviewItems.reduce(
@@ -900,25 +891,25 @@ function CallCard({
           );
 
           return (
-            <div className="bg-emerald-50/90 border border-emerald-200/80 rounded-xl p-2.5 space-y-1.5">
+            <div className="bg-emerald-50/90 dark:bg-[#071a12] border border-emerald-200/80 dark:border-[#143225] rounded-xl p-2.5 space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-emerald-900 flex items-center gap-1.5">
-                  <ShoppingCart className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="font-bold text-emerald-900 dark:text-[#00e676] flex items-center gap-1.5">
+                  <ShoppingCart className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
                   {rawPreviewItems.length} item{rawPreviewItems.length !== 1 ? 's' : ''} in cart
                 </span>
-                <span className="font-extrabold text-emerald-700">Br {cartTotal.toFixed(2)}</span>
+                <span className="font-extrabold text-emerald-700 dark:text-[#00e676]">Br {cartTotal.toFixed(2)}</span>
               </div>
               <div className="flex items-center gap-1 flex-wrap">
                 {rawPreviewItems.slice(0, 2).map((item: any, idx: number) => (
                   <span
                     key={idx}
-                    className="bg-white text-emerald-800 text-[10px] font-medium px-2 py-0.5 rounded border border-emerald-200"
+                    className="bg-white dark:bg-[#091a13] text-emerald-800 dark:text-emerald-300 text-[10px] font-medium px-2 py-0.5 rounded border border-emerald-200 dark:border-[#143225]"
                   >
                     {item.quantity}x {item.menuItem?.name || item.name}
                   </span>
                 ))}
                 {rawPreviewItems.length > 2 && (
-                  <span className="text-[10px] text-emerald-700 font-semibold">
+                  <span className="text-[10px] text-emerald-700 dark:text-[#00e676] font-semibold">
                     +{rawPreviewItems.length - 2} more
                   </span>
                 )}
@@ -928,12 +919,12 @@ function CallCard({
         })()}
 
         {/* Direct Action Buttons */}
-        <div className="flex items-center gap-2 pt-2 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-[#143225]" onClick={(e) => e.stopPropagation()}>
           {isPending && (
             <Button
               size="sm"
               onClick={() => onAcknowledge(call)}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 font-semibold shadow-2xs gap-1"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 font-semibold shadow-2xs gap-1 cursor-pointer"
               disabled={isActionLoading}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -945,7 +936,7 @@ function CallCard({
             <Button
               size="sm"
               onClick={() => onCreateOrder(call)}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 font-semibold shadow-2xs gap-1"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold text-xs h-8 shadow-2xs gap-1 cursor-pointer"
               disabled={isActionLoading}
             >
               <ShoppingCart className="w-3.5 h-3.5" />
@@ -957,7 +948,7 @@ function CallCard({
             <Button
               size="sm"
               onClick={() => onCollectPayment(call)}
-              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs h-8 font-semibold shadow-2xs gap-1"
+              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs h-8 font-semibold shadow-2xs gap-1 cursor-pointer"
               disabled={isActionLoading}
             >
               <CreditCard className="w-3.5 h-3.5" />
@@ -969,7 +960,7 @@ function CallCard({
             <Button
               size="sm"
               onClick={() => onComplete(call)}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 font-semibold shadow-2xs gap-1"
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold text-xs h-8 shadow-2xs gap-1 cursor-pointer"
               disabled={isActionLoading}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -981,7 +972,7 @@ function CallCard({
             size="sm"
             variant="outline"
             onClick={() => onViewDetails(call)}
-            className="px-3 text-xs h-8 text-gray-700 hover:bg-gray-100 font-semibold border-gray-200"
+            className="px-3 text-xs h-8 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] font-semibold border-gray-200 dark:border-[#143225] cursor-pointer"
           >
             Details
           </Button>

@@ -33,6 +33,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,7 +85,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <WebSocketProvider>
           <BrowserRouter>
-            <Routes>
+            <ErrorBoundary>
+              <Routes>
               {/* Public routes - NO authentication required */}
               <Route path="/" element={<PublicLandingPage />} />
               <Route path="/menu/table/:qrCode" element={<CustomerMenuPage />} />
@@ -299,6 +301,7 @@ function App() {
               {/* Catch all - redirect to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            </ErrorBoundary>
           </BrowserRouter>
           <Toaster position="top-right" />
         </WebSocketProvider>

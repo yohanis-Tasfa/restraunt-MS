@@ -209,13 +209,13 @@ export default function ProfilePage() {
     <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">My Profile</h1>
-        <p className="text-gray-600">Manage your account information and settings</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">My Profile</h1>
+        <p className="text-gray-600 dark:text-gray-400">Manage your account information and settings</p>
       </div>
 
       {/* Profile Header Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex items-start gap-6">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl shadow-md border border-gray-100 dark:border-[#143225] p-6 mb-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Profile Picture */}
           <div className="flex flex-col items-center">
             <div className="relative">
@@ -223,16 +223,16 @@ export default function ProfilePage() {
                 <img
                   src={previewUrl}
                   alt="Profile"
-                  className="w-24 h-24 rounded-full object-cover border-4 border-green-100"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-green-100 dark:border-[#143225]"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white text-2xl font-bold border-4 border-green-100">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white text-2xl font-bold border-4 border-green-100 dark:border-[#143225]">
                   {getInitials(profile.firstName, profile.lastName)}
                 </div>
               )}
               <label
                 htmlFor="profile-picture"
-                className="absolute bottom-0 right-0 bg-green-600 text-white p-2 rounded-full cursor-pointer hover:bg-green-700 transition-colors"
+                className="absolute bottom-0 right-0 bg-green-600 dark:bg-[#00e676] text-white dark:text-[#032314] p-2 rounded-full cursor-pointer hover:bg-green-700 dark:hover:bg-[#00c853] transition-colors shadow-md"
               >
                 <Camera className="w-4 h-4" />
                 <input
@@ -248,7 +248,7 @@ export default function ProfilePage() {
               <button
                 onClick={handleUploadProfilePicture}
                 disabled={saving}
-                className="mt-2 px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400"
+                className="mt-2 px-3 py-1 text-xs bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold rounded cursor-pointer disabled:opacity-50"
               >
                 {saving ? 'Uploading...' : 'Upload'}
               </button>
@@ -256,30 +256,30 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Info */}
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="flex-1 text-center sm:text-left">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               {profile.firstName} {profile.lastName}
             </h2>
-            <p className="text-green-600 font-medium">{profile.role.name}</p>
+            <p className="text-green-600 dark:text-[#00e676] font-semibold">{profile.role.name}</p>
             {profile.employee && (
-              <p className="text-sm text-gray-600 mt-1">
-                {profile.employee.position} • {profile.employee.department}
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                {profile.employee.position} &bull; {profile.employee.department}
               </p>
             )}
-            <div className="flex flex-wrap gap-4 mt-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Mail className="w-4 h-4" />
+            <div className="flex flex-wrap justify-center sm:justify-start gap-4 mt-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <Mail className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
                 {profile.email}
               </div>
               {profile.phone && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Phone className="w-4 h-4" />
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  <Phone className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
                   {profile.phone}
                 </div>
               )}
               {profile.branch && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Building2 className="w-4 h-4" />
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  <Building2 className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
                   {profile.branch.name}
                 </div>
               )}
@@ -287,31 +287,31 @@ export default function ProfilePage() {
           </div>
 
           {/* Statistics */}
-          <div className="flex gap-6">
+          <div className="flex gap-6 border-t sm:border-t-0 sm:border-l border-gray-200 dark:border-[#143225] pt-4 sm:pt-0 sm:pl-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{profile.statistics.totalOrders}</div>
-              <div className="text-xs text-gray-600">Orders</div>
+              <div className="text-2xl font-extrabold text-green-600 dark:text-[#00e676]">{profile.statistics.totalOrders}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">Orders</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-extrabold text-green-600 dark:text-[#00e676]">
                 {profile.statistics.totalExpenses}
               </div>
-              <div className="text-xs text-gray-600">Expenses</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">Expenses</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg shadow-md">
-        <div className="border-b border-gray-200">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl shadow-md border border-gray-100 dark:border-[#143225] overflow-hidden">
+        <div className="border-b border-gray-200 dark:border-[#143225] bg-gray-50/50 dark:bg-[#0c2219]">
           <div className="flex">
             <button
               onClick={() => setActiveTab('personal')}
-              className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+              className={`px-6 py-3.5 font-medium text-sm border-b-2 transition-colors cursor-pointer ${
                 activeTab === 'personal'
-                  ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+                  ? 'border-green-600 dark:border-[#00e676] text-green-600 dark:text-[#00e676] bg-white dark:bg-[#091a13]'
+                  : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -321,10 +321,10 @@ export default function ProfilePage() {
             </button>
             <button
               onClick={() => setActiveTab('security')}
-              className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+              className={`px-6 py-3.5 font-medium text-sm border-b-2 transition-colors cursor-pointer ${
                 activeTab === 'security'
-                  ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+                  ? 'border-green-600 dark:border-[#00e676] text-green-600 dark:text-[#00e676] bg-white dark:bg-[#091a13]'
+                  : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -334,10 +334,10 @@ export default function ProfilePage() {
             </button>
             <button
               onClick={() => setActiveTab('activity')}
-              className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+              className={`px-6 py-3.5 font-medium text-sm border-b-2 transition-colors cursor-pointer ${
                 activeTab === 'activity'
-                  ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+                  ? 'border-green-600 dark:border-[#00e676] text-green-600 dark:text-[#00e676] bg-white dark:bg-[#091a13]'
+                  : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -355,7 +355,7 @@ export default function ProfilePage() {
               <form onSubmit={handleUpdatePersonalInfo}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       First Name *
                     </label>
                     <input
@@ -365,11 +365,11 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, firstName: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Last Name *
                     </label>
                     <input
@@ -379,11 +379,11 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, lastName: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email *
                     </label>
                     <input
@@ -393,18 +393,18 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, email: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone</label>
                     <input
                       type="tel"
                       value={personalInfo.phone}
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, phone: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -412,41 +412,41 @@ export default function ProfilePage() {
                 {/* Employee Information (Read-only) */}
                 {profile.employee && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                       Employment Information
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 dark:bg-[#071a12] border dark:border-[#143225] p-4 rounded-xl">
                       <div>
-                        <label className="text-xs text-gray-500">Employee Code</label>
-                        <p className="font-medium">{profile.employee.employeeCode}</p>
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Employee Code</label>
+                        <p className="font-semibold text-gray-900 dark:text-white">{profile.employee.employeeCode}</p>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500">Department</label>
-                        <p className="font-medium">{profile.employee.department}</p>
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Department</label>
+                        <p className="font-semibold text-gray-900 dark:text-white">{profile.employee.department}</p>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500">Position</label>
-                        <p className="font-medium">{profile.employee.position}</p>
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Position</label>
+                        <p className="font-semibold text-gray-900 dark:text-white">{profile.employee.position}</p>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500">Employment Type</label>
-                        <p className="font-medium">
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Employment Type</label>
+                        <p className="font-semibold text-gray-900 dark:text-white">
                           {profile.employee.employmentType.replace('_', ' ')}
                         </p>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500">Hire Date</label>
-                        <p className="font-medium">
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Hire Date</label>
+                        <p className="font-semibold text-gray-900 dark:text-white">
                           {new Date(profile.employee.hireDate).toLocaleDateString()}
                         </p>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500">Status</label>
+                        <label className="text-xs text-gray-500 dark:text-gray-400">Status</label>
                         <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                             profile.employee.status === 'ACTIVE'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
+                              ? 'bg-green-100 text-green-800 dark:bg-[#0c2219] dark:text-[#00e676] dark:border dark:border-[#143225]'
+                              : 'bg-gray-100 text-gray-800 dark:bg-[#0c2219] dark:text-gray-400'
                           }`}
                         >
                           {profile.employee.status}
@@ -456,11 +456,11 @@ export default function ProfilePage() {
                   </div>
                 )}
 
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-[#143225]">
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 flex items-center gap-2"
+                    className="px-6 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold rounded-lg disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm transition-colors"
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'Saving...' : 'Save Changes'}
@@ -474,10 +474,10 @@ export default function ProfilePage() {
           {activeTab === 'security' && (
             <div>
               <form onSubmit={handleChangePassword} className="max-w-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Change Password</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Current Password *
                     </label>
                     <input
@@ -487,11 +487,11 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, currentPassword: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       New Password *
                     </label>
                     <input
@@ -501,14 +501,14 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Must be at least 6 characters long
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Confirm New Password *
                     </label>
                     <input
@@ -518,7 +518,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -527,7 +527,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 flex items-center gap-2"
+                    className="px-6 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold rounded-lg disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-sm transition-colors"
                   >
                     <Lock className="w-4 h-4" />
                     {saving ? 'Changing...' : 'Change Password'}
@@ -536,30 +536,30 @@ export default function ProfilePage() {
               </form>
 
               {/* Account Info */}
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-[#143225]">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Account Information</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Username:</span>
-                    <span className="font-medium">{profile.username}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Username:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{profile.username}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Account Created:</span>
-                    <span className="font-medium">{formatDate(profile.createdAt)}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Account Created:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{formatDate(profile.createdAt)}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Last Login:</span>
-                    <span className="font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Last Login:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {profile.lastLogin ? formatDate(profile.lastLogin) : 'Never'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Account Status:</span>
+                    <span className="text-gray-600 dark:text-gray-400">Account Status:</span>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                         profile.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                          ? 'bg-green-100 text-green-800 dark:bg-[#0c2219] dark:text-[#00e676] dark:border dark:border-[#143225]'
+                          : 'bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-400'
                       }`}
                     >
                       {profile.isActive ? 'Active' : 'Inactive'}
@@ -573,10 +573,10 @@ export default function ProfilePage() {
           {/* Activity Log Tab */}
           {activeTab === 'activity' && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
               {activities.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <FileText className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                  <FileText className="w-12 h-12 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
                   <p>No recent activity</p>
                 </div>
               ) : (
@@ -584,27 +584,27 @@ export default function ProfilePage() {
                   {activities.map((activity) => (
                     <div
                       key={activity.id}
-                      className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
+                      className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-[#071a12] border border-gray-100 dark:border-[#143225] rounded-xl"
                     >
-                      <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <Activity className="w-5 h-5 text-green-600" />
+                      <div className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-[#0c2219] rounded-full flex items-center justify-center">
+                        <Activity className="w-5 h-5 text-green-600 dark:text-[#00e676]" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">
+                            <p className="font-medium text-gray-900 dark:text-white">
                               {activity.action} {activity.entity}
                             </p>
                             {activity.entityId && (
-                              <p className="text-sm text-gray-600">ID: {activity.entityId}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">ID: {activity.entityId}</p>
                             )}
                           </div>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
                             {formatDate(activity.createdAt)}
                           </span>
                         </div>
                         {activity.ipAddress && (
-                          <p className="text-xs text-gray-500 mt-1">IP: {activity.ipAddress}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">IP: {activity.ipAddress}</p>
                         )}
                       </div>
                     </div>

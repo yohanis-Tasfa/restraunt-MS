@@ -117,39 +117,39 @@ export default function PurchaseOrdersPage() {
     suppliersData && suppliersData.length > 0
       ? suppliersData
       : [
-          {
-            id: 'sup-1',
-            name: 'Addis Agri-Wholesale & Grain Trading',
-            phone: '+251 911 234 567',
-            contactPerson: 'Mulugeta Tadesse',
-            isActive: true,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 'sup-2',
-            name: 'Abyssinia Premium Butchery Co.',
-            phone: '+251 922 456 789',
-            contactPerson: 'Dawit Bekele',
-            isActive: true,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 'sup-3',
-            name: 'Rift Valley Fresh Dairy & Butter',
-            phone: '+251 933 789 012',
-            contactPerson: 'Genet Alemu',
-            isActive: true,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 'sup-4',
-            name: 'Ambo Beverage Distributors',
-            phone: '+251 944 321 654',
-            contactPerson: 'Kassahun Worku',
-            isActive: true,
-            createdAt: new Date().toISOString(),
-          },
-        ];
+        {
+          id: 'sup-1',
+          name: 'Addis Agri-Wholesale & Grain Trading',
+          phone: '+251 911 234 567',
+          contactPerson: 'Mulugeta Tadesse',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: 'sup-2',
+          name: 'Abyssinia Premium Butchery Co.',
+          phone: '+251 922 456 789',
+          contactPerson: 'Dawit Bekele',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: 'sup-3',
+          name: 'Rift Valley Fresh Dairy & Butter',
+          phone: '+251 933 789 012',
+          contactPerson: 'Genet Alemu',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: 'sup-4',
+          name: 'Ambo Beverage Distributors',
+          phone: '+251 944 321 654',
+          contactPerson: 'Kassahun Worku',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        },
+      ];
 
   // Fetch inventory items for ingredient options
   const { data: inventoryData } = useQuery({
@@ -160,12 +160,12 @@ export default function PurchaseOrdersPage() {
   const availableIngredients: PredefinedIngredient[] =
     inventoryData?.items && inventoryData.items.length > 0
       ? inventoryData.items.map((inv: any) => ({
-          id: inv.id,
-          name: inv.name,
-          unit: inv.unit || 'unit',
-          defaultPrice: inv.costPrice || 100,
-          category: inv.category || 'General',
-        }))
+        id: inv.id,
+        name: inv.name,
+        unit: inv.unit || 'unit',
+        defaultPrice: inv.costPrice || 100,
+        category: inv.category || 'General',
+      }))
       : PREDEFINED_INGREDIENTS;
 
   // Effective orders list
@@ -227,13 +227,13 @@ export default function PurchaseOrdersPage() {
         prev.map((row) =>
           row.id === rowId
             ? {
-                ...row,
-                inventoryId: '__custom__',
-                name: '',
-                unit: 'kg',
-                price: 100,
-                isCustom: true,
-              }
+              ...row,
+              inventoryId: '__custom__',
+              name: '',
+              unit: 'kg',
+              price: 100,
+              isCustom: true,
+            }
             : row
         )
       );
@@ -247,13 +247,13 @@ export default function PurchaseOrdersPage() {
       prev.map((row) =>
         row.id === rowId
           ? {
-              ...row,
-              inventoryId: matched.id,
-              name: matched.name,
-              unit: matched.unit,
-              price: matched.defaultPrice,
-              isCustom: false,
-            }
+            ...row,
+            inventoryId: matched.id,
+            name: matched.name,
+            unit: matched.unit,
+            price: matched.defaultPrice,
+            isCustom: false,
+          }
           : row
       )
     );
@@ -414,12 +414,12 @@ export default function PurchaseOrdersPage() {
     const updated = ordersList.map((po) =>
       po.id === targetId
         ? {
-            ...po,
-            status: 'RECEIVED' as POStatus,
-            receivedDate: nowIso,
-            updatedAt: nowIso,
-            items: po.items?.map((it) => ({ ...it, receivedQty: it.quantity })),
-          }
+          ...po,
+          status: 'RECEIVED' as POStatus,
+          receivedDate: nowIso,
+          updatedAt: nowIso,
+          items: po.items?.map((it) => ({ ...it, receivedQty: it.quantity })),
+        }
         : po
     );
     setOrdersList(updated);
@@ -458,34 +458,34 @@ export default function PurchaseOrdersPage() {
     switch (status) {
       case 'RECEIVED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/50">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             Received
           </span>
         );
       case 'APPROVED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300">
-            <Truck className="w-3.5 h-3.5 text-blue-600" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700/50">
+            <Truck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             Approved
           </span>
         );
       case 'SUBMITTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-            <Clock className="w-3.5 h-3.5 text-amber-600" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50">
+            <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             Submitted
           </span>
         );
       case 'DRAFT':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-300">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-[#143225]">
             Draft
           </span>
         );
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700/50">
             Cancelled
           </span>
         );
@@ -499,10 +499,10 @@ export default function PurchaseOrdersPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             Purchase Orders & Procurement
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Order raw ingredients from suppliers, approve orders, receive stock, and track expenses.
           </p>
         </div>
@@ -518,63 +518,63 @@ export default function PurchaseOrdersPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Total Procured</span>
-            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total Procured</span>
+            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400">
               <DollarSign className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-[#00e676] tracking-tight">
             Br {totalProcuredAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-gray-500 mt-1 font-medium">{activeOrders.length} total purchase orders</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">{activeOrders.length} total purchase orders</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-amber-200 bg-amber-50/20 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/20 dark:bg-amber-950/10 shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-800">Pending Approval</span>
-            <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Pending Approval</span>
+            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400">
               <Clock className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-amber-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-amber-900 dark:text-amber-400 tracking-tight">
             Br {pendingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-amber-700 mt-1 font-medium">{pendingOrders.length} orders awaiting manager approval</p>
+          <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 font-medium">{pendingOrders.length} orders awaiting manager approval</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-blue-200 bg-blue-50/20 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-blue-200 dark:border-blue-900/40 bg-blue-50/20 dark:bg-blue-950/10 shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-800">Approved (In Transit)</span>
-            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-400">Approved (In Transit)</span>
+            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400">
               <Truck className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-blue-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-blue-900 dark:text-blue-400 tracking-tight">
             Br {approvedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-blue-700 mt-1 font-medium">{approvedOrders.length} orders ready to receive</p>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1 font-medium">{approvedOrders.length} orders ready to receive</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-emerald-200 bg-emerald-50/20 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Received & Expensed</span>
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-[#00e676]">Received & Expensed</span>
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-700 dark:text-[#00e676]">
               <PackageCheck className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight">
             Br {receivedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <p className="text-xs text-emerald-700 mt-1 font-medium">{receivedOrders.length} received into inventory & P&L</p>
+          <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 font-medium">{receivedOrders.length} received into inventory & P&L</p>
         </div>
       </div>
 
       {/* Main Table Card */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-2xs overflow-hidden">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs overflow-hidden">
         {/* Compact In-Table Toolbar */}
-        <div className="p-3 sm:p-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 bg-white">
+        <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-[#143225] flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#091a13]">
           <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
             {/* Search Input */}
             <div className="relative w-48 sm:w-64">
@@ -584,7 +584,7 @@ export default function PurchaseOrdersPage() {
                 placeholder="Search PO #, supplier, items..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50 hover:bg-white transition-colors"
+                className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50 dark:bg-[#071a12] text-gray-900 dark:text-white hover:bg-white dark:hover:bg-[#0a2016] transition-colors"
               />
             </div>
 
@@ -592,7 +592,7 @@ export default function PurchaseOrdersPage() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white font-medium text-gray-700"
+              className="px-2.5 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-[#071a12] font-medium text-gray-700 dark:text-gray-200"
             >
               <option value="ALL">All Statuses</option>
               <option value="SUBMITTED">Submitted (Pending Approval)</option>
@@ -607,14 +607,14 @@ export default function PurchaseOrdersPage() {
                   setSelectedStatus('ALL');
                   setSearchTerm('');
                 }}
-                className="text-xs font-semibold text-gray-500 hover:text-gray-900 px-2 py-1 hover:bg-gray-100 rounded-md transition-colors cursor-pointer"
+                className="text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-md transition-colors cursor-pointer"
               >
                 Clear
               </button>
             )}
           </div>
 
-          <div className="text-xs font-semibold text-gray-500">
+          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
             {filteredOrders.length} orders
           </div>
         </div>
@@ -622,7 +622,7 @@ export default function PurchaseOrdersPage() {
         {/* Orders Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50/80 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+            <thead className="bg-gray-50/80 dark:bg-[#071a12] border-b border-gray-200 dark:border-[#143225] text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">PO Number & Date</th>
                 <th className="py-3 px-4">Supplier</th>
@@ -632,26 +632,26 @@ export default function PurchaseOrdersPage() {
                 <th className="py-3 px-4">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-xs sm:text-sm">
+            <tbody className="divide-y divide-gray-100 dark:divide-[#143225] text-xs sm:text-sm">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     Loading purchase orders...
                   </td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     No purchase orders match your filter criteria
                   </td>
                 </tr>
               ) : (
                 filteredOrders.map((po) => (
-                  <tr key={po.id} className="hover:bg-gray-50/80 transition-colors">
+                  <tr key={po.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
                     {/* PO Number & Date */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <div className="font-mono font-bold text-gray-900 text-xs sm:text-sm">{po.orderNumber}</div>
-                      <div className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+                      <div className="font-mono font-bold text-gray-900 dark:text-white text-xs sm:text-sm">{po.orderNumber}</div>
+                      <div className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-0.5">
                         <Calendar className="w-3 h-3" />
                         {format(new Date(po.createdAt), 'MMM dd, yyyy')}
                       </div>
@@ -659,8 +659,8 @@ export default function PurchaseOrdersPage() {
 
                     {/* Supplier */}
                     <td className="py-3.5 px-4">
-                      <div className="font-semibold text-gray-900 text-xs sm:text-sm">{po.supplier?.name}</div>
-                      <div className="text-[11px] text-gray-500 font-medium">
+                      <div className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">{po.supplier?.name}</div>
+                      <div className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
                         {po.supplier?.phone || po.supplier?.contactPerson || 'Verified Supplier'}
                       </div>
                     </td>
@@ -669,10 +669,10 @@ export default function PurchaseOrdersPage() {
                     <td className="py-3.5 px-4">
                       <div className="space-y-0.5">
                         {po.items?.map((item) => (
-                          <div key={item.id} className="text-xs text-gray-700 flex items-center gap-1.5">
+                          <div key={item.id} className="text-xs text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            <span className="font-medium">{item.inventory?.name || 'Item'}</span>
-                            <span className="text-gray-400 font-mono text-[11px]">
+                            <span className="font-medium text-gray-900 dark:text-gray-200">{item.inventory?.name || 'Item'}</span>
+                            <span className="text-gray-400 dark:text-gray-500 font-mono text-[11px]">
                               ({item.quantity} {item.inventory?.unit || 'unit'} @ Br {item.price})
                             </span>
                           </div>
@@ -681,7 +681,7 @@ export default function PurchaseOrdersPage() {
                     </td>
 
                     {/* Total Amount */}
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap font-mono font-black text-gray-900 text-sm sm:text-base">
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap font-mono font-black text-gray-900 dark:text-[#00e676] text-sm sm:text-base">
                       Br {po.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
 
@@ -708,16 +708,16 @@ export default function PurchaseOrdersPage() {
                         </button>
                       ) : po.status === 'RECEIVED' ? (
                         <div className="flex flex-col items-start gap-0.5">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/50">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                             <span>Received</span>
                           </span>
-                          <span className="text-[10px] text-gray-400 font-medium">
+                          <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
                             {po.receivedDate ? format(new Date(po.receivedDate), 'MMM dd, HH:mm') : 'Logged in Expenses'}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-gray-400 text-xs italic">-</span>
+                        <span className="text-gray-400 dark:text-gray-500 text-xs italic">-</span>
                       )}
                     </td>
                   </tr>
@@ -728,61 +728,61 @@ export default function PurchaseOrdersPage() {
         </div>
       </div>
 
-      {/* 1. Approve PO Modal (Clean, No Explanation Text) */}
+      {/* 1. Approve PO Modal */}
       {approvingOrder && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-4 bg-blue-700 text-white flex items-center justify-between">
+          <div className="bg-white dark:bg-[#091a13] rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-[#143225] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-4 bg-blue-700 dark:bg-blue-800 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-blue-200" />
                 <h3 className="font-bold text-sm">Approve Purchase Order</h3>
               </div>
               <button
                 onClick={() => setApprovingOrder(null)}
-                className="p-1 rounded-lg text-blue-200 hover:text-white hover:bg-blue-800"
+                className="p-1 rounded-lg text-blue-200 hover:text-white hover:bg-blue-800 dark:hover:bg-blue-900"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-5 space-y-4 text-xs">
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+              <div className="bg-blue-50 dark:bg-[#092233] border border-blue-200 dark:border-blue-900/50 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-blue-950 text-sm">PO #{approvingOrder.orderNumber}</span>
-                  <span className="font-mono font-black text-blue-900 text-base">
+                  <span className="font-bold text-blue-950 dark:text-blue-200 text-sm">PO #{approvingOrder.orderNumber}</span>
+                  <span className="font-mono font-black text-blue-900 dark:text-[#00e676] text-base">
                     Br {approvingOrder.total.toLocaleString()}
                   </span>
                 </div>
-                <p className="text-blue-800">
-                  Supplier: <strong>{approvingOrder.supplier?.name}</strong>
+                <p className="text-blue-800 dark:text-blue-300">
+                  Supplier: <strong className="text-blue-950 dark:text-white">{approvingOrder.supplier?.name}</strong>
                 </p>
                 {approvingOrder.notes && (
-                  <p className="text-gray-500 text-[11px] italic">Note: {approvingOrder.notes}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-[11px] italic">Note: {approvingOrder.notes}</p>
                 )}
               </div>
 
               <div>
-                <span className="font-bold uppercase tracking-wider text-gray-500 text-[10px]">
+                <span className="font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-[10px]">
                   Items to be Approved:
                 </span>
-                <div className="mt-1 bg-gray-50 rounded-lg p-2.5 border border-gray-200 space-y-1.5 max-h-40 overflow-y-auto">
+                <div className="mt-1 bg-gray-50 dark:bg-[#071a12] rounded-lg p-2.5 border border-gray-200 dark:border-[#143225] space-y-1.5 max-h-40 overflow-y-auto">
                   {approvingOrder.items?.map((item) => (
                     <div key={item.id} className="flex justify-between items-center">
-                      <span className="font-medium text-gray-800">
+                      <span className="font-medium text-gray-800 dark:text-gray-200">
                         {item.inventory?.name} ({item.quantity} {item.inventory?.unit})
                       </span>
-                      <span className="font-mono font-bold text-gray-900">Br {item.subtotal.toLocaleString()}</span>
+                      <span className="font-mono font-bold text-gray-900 dark:text-[#00e676]">Br {item.subtotal.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+            <div className="p-4 bg-gray-50 dark:bg-[#091a13] border-t border-gray-200 dark:border-[#143225] flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setApprovingOrder(null)}
-                className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                className="px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -800,62 +800,62 @@ export default function PurchaseOrdersPage() {
         </div>
       )}
 
-      {/* 2. Receive Shipment Modal (NO explanation box, clean order confirmation) */}
+      {/* 2. Receive Shipment Modal */}
       {receivingOrder && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-4 bg-emerald-700 text-white flex items-center justify-between">
+          <div className="bg-white dark:bg-[#091a13] rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 dark:border-[#143225] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-4 bg-emerald-700 dark:bg-emerald-800 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <PackageCheck className="w-5 h-5 text-emerald-200" />
                 <h3 className="font-bold text-sm">Receive Shipment - PO #{receivingOrder.orderNumber}</h3>
               </div>
               <button
                 onClick={() => setReceivingOrder(null)}
-                className="p-1 rounded-lg text-emerald-200 hover:text-white hover:bg-emerald-800 transition-colors"
+                className="p-1 rounded-lg text-emerald-200 hover:text-white hover:bg-emerald-800 dark:hover:bg-emerald-900 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-5 space-y-4 text-xs">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-1.5">
+              <div className="bg-emerald-50 dark:bg-[#072417] border border-emerald-200 dark:border-emerald-900/50 rounded-xl p-4 space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-emerald-950 text-sm">PO #{receivingOrder.orderNumber}</span>
-                  <span className="font-mono font-black text-emerald-900 text-base">
+                  <span className="font-bold text-emerald-950 dark:text-emerald-200 text-sm">PO #{receivingOrder.orderNumber}</span>
+                  <span className="font-mono font-black text-emerald-900 dark:text-[#00e676] text-base">
                     Br {receivingOrder.total.toLocaleString()}
                   </span>
                 </div>
-                <p className="text-emerald-800">
-                  Supplier: <strong>{receivingOrder.supplier?.name}</strong>
+                <p className="text-emerald-800 dark:text-emerald-300">
+                  Supplier: <strong className="text-emerald-950 dark:text-white">{receivingOrder.supplier?.name}</strong>
                 </p>
               </div>
 
               {/* Items Arriving */}
               <div className="space-y-1.5">
-                <span className="font-bold uppercase tracking-wider text-gray-500 text-[10px]">
+                <span className="font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-[10px]">
                   Delivered Items to Stock:
                 </span>
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-2 max-h-52 overflow-y-auto">
+                <div className="bg-gray-50 dark:bg-[#071a12] rounded-lg p-3 border border-gray-200 dark:border-[#143225] space-y-2 max-h-52 overflow-y-auto">
                   {receivingOrder.items?.map((item) => (
                     <div key={item.id} className="flex justify-between items-center text-xs">
                       <div>
-                        <span className="font-semibold text-gray-800">{item.inventory?.name}</span>
-                        <div className="text-[11px] text-gray-400">
+                        <span className="font-semibold text-gray-800 dark:text-gray-200">{item.inventory?.name}</span>
+                        <div className="text-[11px] text-gray-400 dark:text-gray-500">
                           {item.quantity} {item.inventory?.unit} @ Br {item.price}
                         </div>
                       </div>
-                      <span className="font-mono font-bold text-gray-900">Br {item.subtotal.toLocaleString()}</span>
+                      <span className="font-mono font-bold text-gray-900 dark:text-[#00e676]">Br {item.subtotal.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+            <div className="p-4 bg-gray-50 dark:bg-[#091a13] border-t border-gray-200 dark:border-[#143225] flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setReceivingOrder(null)}
-                className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                className="px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -873,19 +873,19 @@ export default function PurchaseOrdersPage() {
         </div>
       )}
 
-      {/* 3. Create New Purchase Order Modal (Fully Dynamic Items & Lifecycle Buttons) */}
+      {/* 3. Create New Purchase Order Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
+          <div className="bg-white dark:bg-[#091a13] rounded-2xl max-w-2xl w-full shadow-2xl border border-gray-200 dark:border-[#143225] overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="p-4 bg-gray-900 text-white flex items-center justify-between shrink-0">
+            <div className="p-4 bg-gray-900 dark:bg-black/80 text-white flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5 text-emerald-400" />
                 <h3 className="font-bold text-sm">Create New Purchase Order</h3>
               </div>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 cursor-pointer"
+                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 dark:hover:bg-gray-700 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -896,12 +896,12 @@ export default function PurchaseOrdersPage() {
               {/* Supplier & Expected Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Select Supplier *</label>
+                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Select Supplier *</label>
                   <select
                     value={newPoSupplierId}
                     onChange={(e) => setNewPoSupplierId(e.target.value)}
                     required
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white font-medium"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white font-medium"
                   >
                     <option value="">-- Choose Supplier --</option>
                     {suppliers.map((s) => (
@@ -913,12 +913,12 @@ export default function PurchaseOrdersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Expected Delivery Date</label>
+                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Expected Delivery Date</label>
                   <input
                     type="date"
                     value={newPoExpectedDate}
                     onChange={(e) => setNewPoExpectedDate(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -926,11 +926,11 @@ export default function PurchaseOrdersPage() {
               {/* Order Items Header & Add Button */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-gray-800">Order Items & Quantities *</label>
+                  <label className="text-xs font-bold text-gray-800 dark:text-gray-200">Order Items & Quantities *</label>
                   <button
                     type="button"
                     onClick={handleAddItemRow}
-                    className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                    className="px-2.5 py-1 bg-emerald-50 dark:bg-[#0c2219] hover:bg-emerald-100 dark:hover:bg-[#123627] text-emerald-700 dark:text-[#00e676] border border-emerald-300 dark:border-[#143225] rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add Item</span>
@@ -942,10 +942,10 @@ export default function PurchaseOrdersPage() {
                   {formItems.map((item, idx) => (
                     <div
                       key={item.id}
-                      className="p-3 rounded-xl border border-gray-200 bg-gray-50/70 space-y-2 hover:border-gray-300 transition-colors"
+                      className="p-3 rounded-xl border border-gray-200 dark:border-[#143225] bg-gray-50/70 dark:bg-[#071a12] space-y-2 hover:border-gray-300 dark:hover:border-[#1a4a35] transition-colors"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-gray-400 w-5">#{idx + 1}</span>
+                        <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500 w-5">#{idx + 1}</span>
 
                         {/* Ingredient Selector */}
                         <div className="flex-1">
@@ -953,7 +953,7 @@ export default function PurchaseOrdersPage() {
                             <select
                               value={item.inventoryId}
                               onChange={(e) => handleIngredientChange(item.id, e.target.value)}
-                              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg bg-white font-medium focus:ring-2 focus:ring-emerald-500"
+                              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg bg-white dark:bg-[#091a13] text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500"
                             >
                               <optgroup label="Standard Ingredients">
                                 {availableIngredients.map((ing) => (
@@ -971,13 +971,13 @@ export default function PurchaseOrdersPage() {
                                 placeholder="Enter ingredient name..."
                                 value={item.name}
                                 onChange={(e) => handleFieldChange(item.id, 'name', e.target.value)}
-                                className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg bg-white font-medium focus:ring-2 focus:ring-emerald-500"
+                                className="w-full px-2.5 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg bg-white dark:bg-[#091a13] text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500"
                                 autoFocus
                               />
                               <button
                                 type="button"
                                 onClick={() => handleIngredientChange(item.id, availableIngredients[0]?.id || 'ing-1')}
-                                className="text-[11px] text-gray-500 hover:text-gray-900 underline whitespace-nowrap"
+                                className="text-[11px] text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white underline whitespace-nowrap cursor-pointer"
                               >
                                 Select list
                               </button>
@@ -990,7 +990,7 @@ export default function PurchaseOrdersPage() {
                           <button
                             type="button"
                             onClick={() => handleRemoveItemRow(item.id)}
-                            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
                             title="Remove item"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1001,7 +1001,7 @@ export default function PurchaseOrdersPage() {
                       {/* Quantity, Unit, Price, and Subtotal */}
                       <div className="grid grid-cols-4 gap-2 pt-1">
                         <div>
-                          <label className="block text-[10px] font-bold text-gray-500 mb-0.5">Quantity</label>
+                          <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-0.5">Quantity</label>
                           <input
                             type="number"
                             min="0.1"
@@ -1010,16 +1010,16 @@ export default function PurchaseOrdersPage() {
                             onChange={(e) =>
                               handleFieldChange(item.id, 'quantity', Math.max(0, parseFloat(e.target.value) || 0))
                             }
-                            className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded-lg bg-white font-mono font-bold text-right"
+                            className="w-full px-2 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg bg-white dark:bg-[#091a13] text-gray-900 dark:text-white font-mono font-bold text-right"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold text-gray-500 mb-0.5">Unit</label>
+                          <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-0.5">Unit</label>
                           <select
                             value={item.unit}
                             onChange={(e) => handleFieldChange(item.id, 'unit', e.target.value)}
-                            className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded-lg bg-white font-medium"
+                            className="w-full px-2 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg bg-white dark:bg-[#091a13] text-gray-900 dark:text-white font-medium"
                           >
                             <option value="kg">kg</option>
                             <option value="L">L</option>
@@ -1031,7 +1031,7 @@ export default function PurchaseOrdersPage() {
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold text-gray-500 mb-0.5">Unit Price (Br)</label>
+                          <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-0.5">Unit Price (Br)</label>
                           <input
                             type="number"
                             min="0"
@@ -1040,13 +1040,13 @@ export default function PurchaseOrdersPage() {
                             onChange={(e) =>
                               handleFieldChange(item.id, 'price', Math.max(0, parseFloat(e.target.value) || 0))
                             }
-                            className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded-lg bg-white font-mono font-bold text-right"
+                            className="w-full px-2 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg bg-white dark:bg-[#091a13] text-gray-900 dark:text-[#00e676] font-mono font-bold text-right"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold text-gray-500 mb-0.5">Subtotal</label>
-                          <div className="px-2 py-1.5 bg-gray-100 rounded-lg text-xs font-mono font-black text-gray-900 text-right truncate">
+                          <label className="block text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-0.5">Subtotal</label>
+                          <div className="px-2 py-1.5 bg-gray-100 dark:bg-[#0c2219] rounded-lg text-xs font-mono font-black text-gray-900 dark:text-[#00e676] text-right truncate">
                             Br {((item.quantity || 0) * (item.price || 0)).toLocaleString()}
                           </div>
                         </div>
@@ -1058,31 +1058,31 @@ export default function PurchaseOrdersPage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Procurement Notes</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Procurement Notes</label>
                 <input
                   type="text"
                   placeholder="e.g. Urgent restocking for holiday weekend"
                   value={newPoNotes}
                   onChange={(e) => setNewPoNotes(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-[#071a12] text-gray-900 dark:text-white"
                 />
               </div>
 
               {/* Live Total */}
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex justify-between items-center">
-                <span className="font-bold text-emerald-950">Estimated Order Total:</span>
-                <span className="text-base font-black text-emerald-950 font-mono">
+              <div className="p-3 bg-emerald-50 dark:bg-[#072417] rounded-xl border border-emerald-200 dark:border-emerald-900/50 flex justify-between items-center">
+                <span className="font-bold text-emerald-950 dark:text-emerald-200">Estimated Order Total:</span>
+                <span className="text-base font-black text-emerald-950 dark:text-[#00e676] font-mono">
                   Br {estimatedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>
 
-            {/* Modal Footer with Two Clear Lifecycle Options */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap items-center justify-end gap-2 shrink-0">
+            {/* Modal Footer */}
+            <div className="p-4 bg-gray-50 dark:bg-[#091a13] border-t border-gray-200 dark:border-[#143225] flex flex-wrap items-center justify-end gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsCreateModalOpen(false)}
-                className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer"
+                className="px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg cursor-pointer"
               >
                 Cancel
               </button>

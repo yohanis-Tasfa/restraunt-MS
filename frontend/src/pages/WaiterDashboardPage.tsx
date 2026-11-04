@@ -692,76 +692,76 @@ export default function WaiterDashboardPage() {
         <Card className="border-emerald-100 bg-gradient-to-br from-white via-white to-emerald-50/40 shadow-xs hover:shadow-sm transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 My Total Sales ({periodLabel})
               </span>
-              <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+              <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-[#00e676]">
                 <TrendingUp className="w-4 h-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
                 Br {effectiveStats.totalSales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
             </div>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-600 font-semibold">
-              <span className="bg-emerald-100/80 px-1.5 py-0.5 rounded text-[11px]">
+            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-600 dark:text-[#00e676] font-semibold">
+              <span className="bg-emerald-100/80 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded text-[11px]">
                 {effectiveStats.salesChange}
               </span>
-              <span className="text-gray-500 font-normal">vs previous {selectedPeriod}</span>
+              <span className="text-gray-500 dark:text-gray-400 font-normal">vs previous {selectedPeriod}</span>
             </div>
           </CardContent>
         </Card>
 
         {/* 2. Paid Orders Finalized */}
-        <Card className="border-blue-100 bg-gradient-to-br from-white via-white to-blue-50/40 shadow-xs hover:shadow-sm transition-shadow">
+        <Card className="border-blue-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-blue-50/40 dark:to-blue-950/20 shadow-xs hover:shadow-sm transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Paid Orders Count
               </span>
-              <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+              <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
                 <CheckCircle className="w-4 h-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
                 {effectiveStats.paidOrdersCount}
               </h2>
-              <span className="text-xs text-gray-500 font-medium">orders settled</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">orders settled</span>
             </div>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-blue-700 font-medium">
-              <span className="bg-blue-100/80 px-1.5 py-0.5 rounded text-[11px] font-semibold">
+            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-blue-700 dark:text-blue-400 font-medium">
+              <span className="bg-blue-100/80 dark:bg-blue-950/60 px-1.5 py-0.5 rounded text-[11px] font-semibold">
                 Avg: Br {effectiveStats.avgTicket.toFixed(0)}
               </span>
-              <span className="text-gray-500">per table ticket</span>
+              <span className="text-gray-500 dark:text-gray-400">per table ticket</span>
             </div>
           </CardContent>
         </Card>
 
         {/* 3. Tips Earned */}
-        <Card className="border-amber-100 bg-gradient-to-br from-white via-white to-amber-50/40 shadow-xs hover:shadow-sm transition-shadow">
+        <Card className="border-amber-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-amber-50/40 dark:to-amber-950/20 shadow-xs hover:shadow-sm transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Tips Earned ({periodLabel})
               </span>
-              <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
+              <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <DollarSign className="w-4 h-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
                 Br {effectiveStats.totalTips.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
             </div>
             <div className="flex items-center justify-between mt-2.5 text-xs">
-              <span className="text-gray-500">
-                {effectiveStats.tipsCount} tips • Paid: <b className="text-gray-800">Br {effectiveStats.paidTips.toFixed(0)}</b>
+              <span className="text-gray-500 dark:text-gray-400">
+                {effectiveStats.tipsCount} tips • Paid: <b className="text-gray-800 dark:text-gray-200">Br {effectiveStats.paidTips.toFixed(0)}</b>
               </span>
               <button
                 onClick={() => navigate('/admin/my-tips')}
-                className="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-0.5"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 font-semibold flex items-center gap-0.5 cursor-pointer"
               >
                 Tips &rarr;
               </button>
@@ -770,25 +770,25 @@ export default function WaiterDashboardPage() {
         </Card>
 
         {/* 4. Service Efficiency & Satisfaction */}
-        <Card className="border-purple-100 bg-gradient-to-br from-white via-white to-purple-50/40 shadow-xs hover:shadow-sm transition-shadow">
+        <Card className="border-purple-100 dark:border-[#143225] bg-gradient-to-br from-white dark:from-[#091a13] via-white dark:via-[#091a13] to-purple-50/40 dark:to-purple-950/20 shadow-xs hover:shadow-sm transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Service Performance
               </span>
-              <div className="w-9 h-9 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
+              <div className="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400">
                 <Award className="w-4 h-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2 mt-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
                 {effectiveStats.satisfactionRate}
               </h2>
-              <span className="text-xs text-purple-700 font-semibold">Positive Rating</span>
+              <span className="text-xs text-purple-700 dark:text-purple-400 font-semibold">Positive Rating</span>
             </div>
-            <div className="flex items-center gap-2 mt-2.5 text-xs text-gray-500">
-              <Clock className="w-3.5 h-3.5 text-purple-600" />
-              <span>Avg turnaround: <b>{effectiveStats.avgServiceTime}</b></span>
+            <div className="flex items-center gap-2 mt-2.5 text-xs text-gray-500 dark:text-gray-400">
+              <Clock className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+              <span>Avg turnaround: <b className="text-gray-800 dark:text-gray-200">{effectiveStats.avgServiceTime}</b></span>
             </div>
           </CardContent>
         </Card>

@@ -321,73 +321,73 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage and track all orders</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Orders</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and track all orders</p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <Card className="p-4">
+        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Orders</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <ShoppingBag className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <ShoppingBag className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.pending}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
+              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600" />
+            <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Unpaid</p>
-              <p className="text-2xl font-bold text-red-600 mt-1">{stats.unpaid}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Unpaid</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.unpaid}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-              <CreditCard className="w-6 h-6 text-red-600" />
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+              <CreditCard className="w-6 h-6 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{stats.completed}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Revenue</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400">Revenue</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">
                 Br {stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
+              <DollarSign className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
@@ -406,7 +406,7 @@ export default function OrdersPage() {
             className={
               statusFilter === 'all' && paymentFilter === 'all'
                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
             }
           >
             All Orders ({stats.total})
@@ -423,7 +423,7 @@ export default function OrdersPage() {
               className={
                 statusFilter === 'bill_requested'
                   ? 'bg-blue-600 hover:bg-blue-700 text-white font-semibold'
-                  : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                  : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
               }
             >
               <FileText className="w-4 h-4 mr-1.5" />
@@ -443,7 +443,7 @@ export default function OrdersPage() {
                 className={
                   statusFilter === 'pending'
                     ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                    : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
                 }
               >
                 Pending ({stats.pending})
@@ -458,7 +458,7 @@ export default function OrdersPage() {
                 className={
                   statusFilter === 'ready'
                     ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                    : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
                 }
               >
                 🍽️ Ready ({stats.ready})
@@ -476,7 +476,7 @@ export default function OrdersPage() {
             className={
               paymentFilter === 'unpaid'
                 ? 'bg-red-600 hover:bg-red-700 text-white font-semibold'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
             }
           >
             <CreditCard className="w-4 h-4 mr-1.5" />
@@ -492,7 +492,7 @@ export default function OrdersPage() {
             className={
               paymentFilter === 'paid'
                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
             }
           >
             <CheckCircle className="w-4 h-4 mr-1.5 text-emerald-400" />
@@ -509,15 +509,15 @@ export default function OrdersPage() {
             placeholder="Search order id, customer, table..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-11"
+            className="pl-10 h-11 bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] dark:text-white dark:placeholder-gray-500"
           />
         </div>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-[#091a13] rounded-lg border border-gray-200 dark:border-[#143225] overflow-hidden">
         {/* Table Header */}
-        <div className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-600">
+        <div className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-3 bg-gray-50 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225] text-sm font-medium text-gray-600 dark:text-gray-400">
           <div>Order</div>
           <div>Table</div>
           <div>Waiter</div>
@@ -530,11 +530,11 @@ export default function OrdersPage() {
         </div>
 
         {/* Table Body */}
-        <div className="divide-y divide-gray-200">
+        <div className="divide-y divide-gray-200 dark:divide-[#143225]">
           {sortedOrders.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-gray-400 mb-2">No orders found</div>
-              <p className="text-sm text-gray-500">
+              <div className="text-gray-400 dark:text-gray-500 mb-2">No orders found</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {searchTerm
                   ? 'Try adjusting your search'
                   : 'Orders will appear here once created'}
@@ -544,25 +544,25 @@ export default function OrdersPage() {
             sortedOrders.map((order: Order, index: number) => (
               <div
                 key={order.id}
-                className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center text-sm"
+                className="grid grid-cols-[60px_100px_150px_1fr_120px_140px_140px_120px_100px] gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors items-center text-sm"
               >
                 {/* Sequential Order Number */}
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-gray-900 dark:text-white">
                   {(page - 1) * limit + index + 1}
                 </div>
 
                 {/* Table */}
-                <div className="text-gray-700">
+                <div className="text-gray-700 dark:text-gray-300">
                   {order.table ? `T-${order.table.number}` : '-'}
                 </div>
 
                 {/* Waiter */}
-                <div className="text-gray-700">
+                <div className="text-gray-700 dark:text-gray-300">
                   {order.createdBy ? order.createdBy.firstName : '-'}
                 </div>
 
                 {/* Items - Show food names with quantity */}
-                <div className="text-gray-700">
+                <div className="text-gray-700 dark:text-gray-300">
                   {order.items && order.items.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {order.items.map((item: any, idx: number) => (
@@ -573,16 +573,16 @@ export default function OrdersPage() {
                       ))}
                     </div>
                   ) : order._count?.items ? (
-                    <span className="text-gray-500 text-sm">
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">
                       {order._count.items} {order._count.items === 1 ? 'item' : 'items'}
                     </span>
                   ) : (
-                    <span className="text-gray-500">-</span>
+                    <span className="text-gray-500 dark:text-gray-400">-</span>
                   )}
                 </div>
 
                 {/* Total */}
-                <div className="font-medium text-gray-900">
+                <div className="font-semibold text-gray-900 dark:text-[#00e676]">
                   Br {order.total.toFixed(2)}
                 </div>
 
@@ -601,7 +601,7 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Time Ago */}
-                <div className="text-gray-500 text-xs">{getTimeAgo(order.createdAt)}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs">{getTimeAgo(order.createdAt)}</div>
 
                 {/* Actions */}
                 <div className="flex justify-end gap-2 items-center">
@@ -630,16 +630,16 @@ export default function OrdersPage() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleOpenPrintSlip(order, 'RECEIPT')}
-                              className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs h-8 px-2.5 gap-1 font-semibold"
+                              className="border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219] text-xs h-8 px-2.5 gap-1 font-semibold"
                             >
-                              <Receipt className="w-3.5 h-3.5 text-emerald-600" />
+                              <Receipt className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
                               Receipt
                             </Button>
                           )}
 
                           <button
                             onClick={() => handleViewDetails(order)}
-                            className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors"
+                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -708,10 +708,10 @@ export default function OrdersPage() {
 
                         <button
                           onClick={() => handleViewDetails(order)}
-                          className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors"
+                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                           title="View Details"
                         >
-                          <MoreVertical className="w-4 h-4 text-gray-400" />
+                          <MoreVertical className="w-4 h-4 text-gray-400 dark:text-gray-400" />
                         </button>
 
                         {order.status !== OrderStatus.CANCELLED &&
@@ -719,7 +719,7 @@ export default function OrdersPage() {
                           (isWaiter || isManagerOrOwner) && (
                             <button
                               onClick={() => handleCancelOrder(order.id)}
-                              className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg transition-colors"
+                              className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors cursor-pointer"
                               title="Cancel / Void Order"
                             >
                               <X className="w-4 h-4" />
@@ -743,10 +743,11 @@ export default function OrdersPage() {
             size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
+            className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
           >
             Previous
           </Button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             Page {page} of {pagination.totalPages}
           </span>
           <Button
@@ -754,6 +755,7 @@ export default function OrdersPage() {
             size="sm"
             onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
             disabled={page === pagination.totalPages}
+            className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
           >
             Next
           </Button>
@@ -776,39 +778,39 @@ export default function OrdersPage() {
               {/* Order Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Order Type</p>
-                  <p className="font-medium text-gray-900">{selectedOrder.type.replace('_', ' ')}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Order Type</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{selectedOrder.type.replace('_', ' ')}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Status</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
                   <Badge className={getStatusColor(selectedOrder.status)}>
                     {selectedOrder.status}
                   </Badge>
                 </div>
                 {selectedOrder.table && (
                   <div>
-                    <p className="text-sm text-gray-600">Table</p>
-                    <p className="font-medium text-gray-900">Table {selectedOrder.table.number}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Table</p>
+                    <p className="font-medium text-gray-900 dark:text-white">Table {selectedOrder.table.number}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm text-gray-600">Payment Status</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Payment Status</p>
                   <Badge className={getPaymentStatusColor(selectedOrder.paymentStatus)}>
                     {selectedOrder.paymentStatus}
                   </Badge>
                 </div>
                 {selectedOrder.createdBy && (
                   <div>
-                    <p className="text-sm text-gray-600">Waiter</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Waiter</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {selectedOrder.createdBy.firstName} {selectedOrder.createdBy.lastName}
                     </p>
                   </div>
                 )}
                 {selectedOrder.customer && (
                   <div>
-                    <p className="text-sm text-gray-600">Customer</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Customer</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {selectedOrder.customer.firstName} {selectedOrder.customer.lastName}
                     </p>
                   </div>
@@ -817,23 +819,23 @@ export default function OrdersPage() {
 
               {/* Items */}
               <div>
-                <h3 className="font-semibold mb-3 text-gray-900">Order Items</h3>
+                <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Order Items</h3>
                 <div className="space-y-2">
                   {(selectedOrder.items || []).map((item: any) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#071a12] border border-gray-100 dark:border-[#143225] rounded-lg"
                     >
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{item.menuItem?.name || 'Unknown Item'}</p>
-                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">{item.menuItem?.name || 'Unknown Item'}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Qty: {item.quantity}</p>
                         {item.notes && (
-                          <p className="text-sm text-gray-500 italic">Note: {item.notes}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 italic">Note: {item.notes}</p>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">Br {(item.subtotal || 0).toFixed(2)}</p>
-                        <p className="text-sm text-gray-600">@ Br {(item.price || 0).toFixed(2)}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">Br {(item.subtotal || 0).toFixed(2)}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">@ Br {(item.price || 0).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
@@ -841,32 +843,32 @@ export default function OrdersPage() {
               </div>
 
               {/* Totals */}
-              <div className="border-t pt-4 space-y-2">
+              <div className="border-t border-gray-200 dark:border-[#143225] pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium text-gray-900">Br {selectedOrder.subtotal.toFixed(2)}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
+                  <span className="font-medium text-gray-900 dark:text-white">Br {selectedOrder.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-gray-600 dark:text-gray-400">
                     Tax ({selectedOrder.tax > 0 ? '15%' : '0%'})
                   </span>
-                  <span className="font-medium text-gray-900">Br {selectedOrder.tax.toFixed(2)}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">Br {selectedOrder.tax.toFixed(2)}</span>
                 </div>
                 {selectedOrder.serviceCharge > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Service Charge</span>
-                    <span className="font-medium text-gray-900">Br {selectedOrder.serviceCharge.toFixed(2)}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Service Charge</span>
+                    <span className="font-medium text-gray-900 dark:text-white">Br {selectedOrder.serviceCharge.toFixed(2)}</span>
                   </div>
                 )}
                 {selectedOrder.discount > 0 && (
-                  <div className="flex justify-between text-sm text-red-600">
+                  <div className="flex justify-between text-sm text-red-600 dark:text-red-400">
                     <span>Discount</span>
                     <span className="font-medium">-Br {selectedOrder.discount.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                  <span className="text-gray-900">Total</span>
-                  <span className="text-gray-900 font-extrabold text-emerald-800">
+                <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 dark:border-[#143225]">
+                  <span className="text-gray-900 dark:text-white">Total</span>
+                  <span className="font-extrabold text-emerald-800 dark:text-[#00e676]">
                     Br {selectedOrder.total.toFixed(2)}
                   </span>
                 </div>
@@ -875,12 +877,12 @@ export default function OrdersPage() {
               {/* Notes */}
               {(selectedOrder.notes || selectedOrder.specialInstructions) && (
                 <div>
-                  <h3 className="font-semibold mb-2 text-gray-900">Notes</h3>
+                  <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Notes</h3>
                   {selectedOrder.notes && (
-                    <p className="text-sm text-gray-600">{selectedOrder.notes}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{selectedOrder.notes}</p>
                   )}
                   {selectedOrder.specialInstructions && (
-                    <p className="text-sm text-gray-600 italic">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">
                       Special: {selectedOrder.specialInstructions}
                     </p>
                   )}
@@ -1075,33 +1077,33 @@ export default function OrdersPage() {
 
       {/* Printable Bill / Receipt Slip Modal */}
       <Dialog open={!!orderToPrint} onOpenChange={(open) => !open && setOrderToPrint(null)}>
-        <DialogContent className="max-w-md p-6 bg-white rounded-2xl shadow-2xl">
+        <DialogContent className="max-w-md p-6 bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] rounded-2xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base font-bold text-gray-900">
-              <Printer className="w-5 h-5 text-blue-600" />
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white">
+              <Printer className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               {orderToPrint?.type === 'BILL' ? 'Print Official Customer Bill' : 'Print Settled Payment Receipt'}
             </DialogTitle>
-            <DialogDescription className="text-xs text-gray-500">
+            <DialogDescription className="text-xs text-gray-500 dark:text-gray-400">
               Thermal receipt slip preview for Table {orderToPrint?.order.table?.number || 'Takeaway'}
             </DialogDescription>
           </DialogHeader>
 
           {orderToPrint && (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 font-mono text-xs space-y-2.5">
-              <div className="text-center pb-2 border-b border-gray-300">
-                <h4 className="font-extrabold text-sm uppercase text-gray-900">
+            <div className="bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-xl p-4 font-mono text-xs space-y-2.5">
+              <div className="text-center pb-2 border-b border-gray-300 dark:border-[#143225]">
+                <h4 className="font-extrabold text-sm uppercase text-gray-900 dark:text-white">
                   {user?.branch?.name || 'Habesha Restaurant'}
                 </h4>
-                <p className="text-[11px] text-gray-500">Bole, Addis Ababa, Ethiopia</p>
-                <p className="text-[11px] font-bold text-gray-800 mt-1">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Bole, Addis Ababa, Ethiopia</p>
+                <p className="text-[11px] font-bold text-gray-800 dark:text-gray-200 mt-1">
                   {orderToPrint.type === 'BILL' ? '*** CUSTOMER BILL ***' : '*** OFFICIAL PAYMENT RECEIPT ***'}
                 </p>
               </div>
 
-              <div className="text-[11px] space-y-0.5 text-gray-600">
+              <div className="text-[11px] space-y-0.5 text-gray-600 dark:text-gray-400">
                 <div className="flex justify-between">
                   <span>Order: #{orderToPrint.order.orderNumber}</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-gray-900 dark:text-white">
                     {orderToPrint.order.table ? `Table ${orderToPrint.order.table.number}` : 'Takeaway'}
                   </span>
                 </div>
@@ -1110,16 +1112,16 @@ export default function OrdersPage() {
                   <span>{format(new Date(orderToPrint.order.createdAt), 'MMM dd, HH:mm')}</span>
                 </div>
                 {orderToPrint.type === 'RECEIPT' && (
-                  <div className="flex justify-between text-emerald-700 font-semibold">
+                  <div className="flex justify-between text-emerald-700 dark:text-[#00e676] font-semibold">
                     <span>Payment: {orderToPrint.order.paymentMethod || 'SETTLED'}</span>
                     <span>Status: PAID</span>
                   </div>
                 )}
               </div>
 
-              <div className="border-t border-b border-dashed border-gray-300 py-2 space-y-1.5">
+              <div className="border-t border-b border-dashed border-gray-300 dark:border-[#143225] py-2 space-y-1.5">
                 {(orderToPrint.order.items || []).map((item: any, idx: number) => (
-                  <div key={idx} className="flex justify-between text-gray-900">
+                  <div key={idx} className="flex justify-between text-gray-900 dark:text-gray-200">
                     <span className="truncate pr-2">
                       {item.quantity}x {item.menuItem?.name || 'Item'}
                     </span>
@@ -1130,7 +1132,7 @@ export default function OrdersPage() {
                 ))}
               </div>
 
-              <div className="space-y-1 text-[11px] text-gray-600">
+              <div className="space-y-1 text-[11px] text-gray-600 dark:text-gray-400">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
                   <span>Br {orderToPrint.order.subtotal?.toFixed(2) || orderToPrint.order.total.toFixed(2)}</span>
@@ -1148,14 +1150,14 @@ export default function OrdersPage() {
                   </div>
                 )}
                 {orderToPrint.order.discount > 0 && (
-                  <div className="flex justify-between text-rose-600">
+                  <div className="flex justify-between text-rose-600 dark:text-rose-400">
                     <span>Discount:</span>
                     <span>-Br {orderToPrint.order.discount.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-sm font-extrabold text-gray-900 pt-1 border-t border-gray-300">
+                <div className="flex justify-between text-sm font-extrabold text-gray-900 dark:text-white pt-1 border-t border-gray-300 dark:border-[#143225]">
                   <span>TOTAL DUE:</span>
-                  <span className="text-emerald-700">Br {orderToPrint.order.total.toFixed(2)}</span>
+                  <span className="text-emerald-700 dark:text-[#00e676]">Br {orderToPrint.order.total.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -1171,7 +1173,7 @@ export default function OrdersPage() {
               variant="outline"
               size="sm"
               onClick={() => setOrderToPrint(null)}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219]"
             >
               Close
             </Button>

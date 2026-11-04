@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import reportsApi from '../api/reports';
-import { 
-  TrendingUp, 
-  DollarSign, 
-  ShoppingCart, 
+import {
+  TrendingUp,
+  DollarSign,
+  ShoppingCart,
   Package,
   Calendar,
   Download,
@@ -113,13 +113,13 @@ export default function ReportsPage() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reports & Analytics</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Track your business performance and make data-driven decisions
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer">
               <Download className="w-4 h-4" />
               Export
             </Button>
@@ -127,18 +127,17 @@ export default function ReportsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 border-b border-gray-200">
+        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-[#143225]">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition border-b-2 ${
-                  activeTab === tab.id
-                    ? 'border-green-600 text-green-600'
-                    : 'border-transparent text-gray-600 hover:text-gray-900'
-                }`}
+                className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition border-b-2 cursor-pointer ${activeTab === tab.id
+                    ? 'border-green-600 dark:border-[#00e676] text-green-600 dark:text-[#00e676]'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
@@ -149,20 +148,19 @@ export default function ReportsPage() {
       </div>
 
       {/* Date Range Selector */}
-      <div className="mb-6 bg-white rounded-lg shadow p-4">
+      <div className="mb-6 bg-white dark:bg-[#091a13] rounded-xl shadow border border-gray-100 dark:border-[#143225] p-4">
         <div className="flex items-center gap-3 flex-wrap">
-          <Calendar className="w-5 h-5 text-gray-400" />
-          <span className="text-sm font-medium text-gray-700">Date Range:</span>
-          
+          <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Range:</span>
+
           {dateRanges.map((range) => (
             <button
               key={range.id}
               onClick={() => setDateRange(range.id as DateRangeType)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                dateRange === range.id
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer ${dateRange === range.id
+                  ? 'bg-green-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold'
+                  : 'bg-gray-100 dark:bg-[#071a12] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
+                }`}
             >
               {range.label}
             </button>
@@ -174,14 +172,14 @@ export default function ReportsPage() {
                 type="date"
                 value={customStartDate}
                 onChange={(e) => setCustomStartDate(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-1.5 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg text-sm"
               />
-              <span className="text-gray-500">to</span>
+              <span className="text-gray-500 dark:text-gray-400">to</span>
               <input
                 type="date"
                 value={customEndDate}
                 onChange={(e) => setCustomEndDate(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-1.5 border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg text-sm"
               />
             </div>
           )}
@@ -267,8 +265,8 @@ function OverviewTab({ dateParams }: { dateParams: { startDate: string; endDate:
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Summary</h3>
+        <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Summary</h3>
           <div className="space-y-3">
             <StatRow label="Orders Completed" value={sales?.summary?.totalOrders || 0} />
             <StatRow label="Tax Collected" value={formatCurrency(sales?.summary?.totalTax || 0)} />
@@ -277,34 +275,34 @@ function OverviewTab({ dateParams }: { dateParams: { startDate: string; endDate:
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Indicators</h3>
+        <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Performance Indicators</h3>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Revenue Target</span>
-                <span className="font-medium">75%</span>
+                <span className="text-gray-600 dark:text-gray-400">Revenue Target</span>
+                <span className="font-semibold text-gray-900 dark:text-white">75%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+              <div className="w-full bg-gray-200 dark:bg-[#0c2219] rounded-full h-2">
+                <div className="bg-green-600 dark:bg-[#00e676] h-2 rounded-full" style={{ width: '75%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Expense Control</span>
-                <span className="font-medium">82%</span>
+                <span className="text-gray-600 dark:text-gray-400">Expense Control</span>
+                <span className="font-semibold text-gray-900 dark:text-white">82%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-[#0c2219] rounded-full h-2">
                 <div className="bg-blue-600 h-2 rounded-full" style={{ width: '82%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Profit Margin</span>
-                <span className="font-medium">{profitMargin}%</span>
+                <span className="text-gray-600 dark:text-gray-400">Profit Margin</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{profitMargin}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className={`h-2 rounded-full ${parseFloat(profitMargin) >= 20 ? 'bg-green-600' : 'bg-orange-500'}`} style={{ width: `${profitMargin}%` }}></div>
+              <div className="w-full bg-gray-200 dark:bg-[#0c2219] rounded-full h-2">
+                <div className={`h-2 rounded-full ${parseFloat(profitMargin) >= 20 ? 'bg-green-600 dark:bg-[#00e676]' : 'bg-orange-500'}`} style={{ width: `${profitMargin}%` }}></div>
               </div>
             </div>
           </div>
@@ -336,24 +334,24 @@ function MetricCard({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm text-gray-600">{title}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClasses[color]}`}>
           <Icon className="w-5 h-5" />
         </div>
       </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-      {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+      <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+      {subtitle && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>}
     </div>
   );
 }
 
 function StatRow({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-      <span className="text-sm text-gray-600">{label}</span>
-      <span className="text-sm font-semibold text-gray-900">{value}</span>
+    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-[#143225] last:border-0">
+      <span className="text-sm text-gray-600 dark:text-gray-400">{label}</span>
+      <span className="text-sm font-semibold text-gray-900 dark:text-white">{value}</span>
     </div>
   );
 }
@@ -407,19 +405,19 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
   return (
     <div className="space-y-6">
       {/* Revenue Trend Chart */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+      <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue Trend</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={revenueChartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2a4536" />
+            <XAxis dataKey="date" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
             <Tooltip formatter={(value: number) => formatCurrency(value)} />
             <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke={COLORS.primary} 
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke={COLORS.primary}
               strokeWidth={2}
               name="Revenue"
             />
@@ -429,23 +427,23 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Selling Items */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Selling Items</h3>
+        <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Selling Items</h3>
           <div className="space-y-3">
             {topItemsData?.items?.slice(0, 10).map((item: any, index: number) => (
-              <div key={item.menuItem.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+              <div key={item.menuItem.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-[#143225] last:border-0">
                 <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-semibold">
+                  <span className="w-6 h-6 rounded-full bg-green-100 dark:bg-[#0c2219] text-green-600 dark:text-[#00e676] flex items-center justify-center text-xs font-semibold">
                     {index + 1}
                   </span>
                   <div>
-                    <p className="font-medium text-gray-900">{item.menuItem.name}</p>
-                    <p className="text-xs text-gray-500">{item.menuItem.category.name}</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{item.menuItem.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{item.menuItem.category.name}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-gray-900">{item.quantitySold} sold</p>
-                  <p className="text-xs text-gray-500">{formatCurrency(item.revenue)}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{item.quantitySold} sold</p>
+                  <p className="text-xs text-gray-500 dark:text-[#00e676] font-medium">{formatCurrency(item.revenue)}</p>
                 </div>
               </div>
             ))}
@@ -453,8 +451,8 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
         </div>
 
         {/* Revenue by Category */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Category</h3>
+        <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue by Category</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -478,13 +476,13 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
             {categoryData?.categories?.slice(0, 6).map((item: any, index: number) => (
               <div key={item.category} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                  <div
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                   />
-                  <span className="text-gray-700">{item.category}</span>
+                  <span className="text-gray-700 dark:text-gray-300">{item.category}</span>
                 </div>
-                <span className="font-medium text-gray-900">{formatCurrency(item.revenue)}</span>
+                <span className="font-medium text-gray-900 dark:text-[#00e676]">{formatCurrency(item.revenue)}</span>
               </div>
             ))}
           </div>
@@ -528,27 +526,27 @@ function ExpensesTab({ dateParams }: { dateParams: { startDate: string; endDate:
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Total Expenses</p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalExpenses)}</p>
-          <p className="text-xs text-gray-500 mt-1">{expenses?.summary?.expenseCount || 0} transactions</p>
+        <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Expenses</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalExpenses)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{expenses?.summary?.expenseCount || 0} transactions</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Paid</p>
-          <p className="text-2xl font-bold text-green-600">{formatCurrency(expenses?.summary?.totalPaid || 0)}</p>
-          <p className="text-xs text-gray-500 mt-1">Completed payments</p>
+        <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Paid</p>
+          <p className="text-2xl font-bold text-green-600 dark:text-[#00e676]">{formatCurrency(expenses?.summary?.totalPaid || 0)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Completed payments</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Pending</p>
-          <p className="text-2xl font-bold text-orange-600">{formatCurrency(expenses?.summary?.totalPending || 0)}</p>
-          <p className="text-xs text-gray-500 mt-1">Awaiting payment</p>
+        <div className="bg-white dark:bg-[#091a13] border border-transparent dark:border-[#143225] rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pending</p>
+          <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{formatCurrency(expenses?.summary?.totalPending || 0)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Awaiting payment</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Expense Breakdown Pie Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Expense Breakdown</h3>
+        <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Expense Breakdown</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -571,8 +569,8 @@ function ExpensesTab({ dateParams }: { dateParams: { startDate: string; endDate:
         </div>
 
         {/* Expense by Category Table */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">By Category</h3>
+        <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">By Category</h3>
           <div className="space-y-3">
             {expenses?.byCategory?.map((item: any, index: number) => {
               const percentage = totalExpenses > 0 ? ((item.amount / totalExpenses) * 100).toFixed(1) : '0';
@@ -580,21 +578,21 @@ function ExpensesTab({ dateParams }: { dateParams: { startDate: string; endDate:
                 <div key={item.category} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                       />
-                      <span className="text-sm font-medium text-gray-900">{item.category}</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-200">{item.category}</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">{formatCurrency(item.amount)}</p>
-                      <p className="text-xs text-gray-500">{item.count} items</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(item.amount)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{item.count} items</p>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="h-2 rounded-full" 
-                      style={{ 
+                  <div className="w-full bg-gray-200 dark:bg-[#0c2219] rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full"
+                      style={{
                         width: `${percentage}%`,
                         backgroundColor: CHART_COLORS[index % CHART_COLORS.length]
                       }}
@@ -626,15 +624,15 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading profit & loss statement...</div>
+        <div className="text-gray-500 dark:text-gray-400">Loading profit & loss statement...</div>
       </div>
     );
   }
 
   const revenue = pl?.revenue || { sales: 0, tax: 0, serviceCharge: 0, totalRevenue: 0 };
-  const expenses = pl?.expenses || { 
-    ingredients: 0, utilities: 0, payroll: 0, rent: 0, 
-    marketing: 0, maintenance: 0, other: 0, totalExpenses: 0 
+  const expenses = pl?.expenses || {
+    ingredients: 0, utilities: 0, payroll: 0, rent: 0,
+    marketing: 0, maintenance: 0, other: 0, totalExpenses: 0
   };
   const profit = pl?.profit || { gross: 0, net: 0, margin: 0 };
 
@@ -642,36 +640,36 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow p-6 border border-green-200">
-          <p className="text-sm text-green-700 mb-1 font-medium">Gross Profit</p>
-          <p className="text-3xl font-bold text-green-900">{formatCurrency(profit.gross)}</p>
-          <p className="text-xs text-green-600 mt-2">Revenue - Direct Costs</p>
+        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-emerald-950/60 dark:to-emerald-900/40 rounded-xl shadow p-6 border border-green-200 dark:border-emerald-800/60">
+          <p className="text-sm text-green-700 dark:text-emerald-300 mb-1 font-medium">Gross Profit</p>
+          <p className="text-3xl font-bold text-green-900 dark:text-[#00e676]">{formatCurrency(profit.gross)}</p>
+          <p className="text-xs text-green-600 dark:text-emerald-400 mt-2">Revenue - Direct Costs</p>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow p-6 border border-blue-200">
-          <p className="text-sm text-blue-700 mb-1 font-medium">Net Profit</p>
-          <p className="text-3xl font-bold text-blue-900">{formatCurrency(profit.net)}</p>
-          <p className="text-xs text-blue-600 mt-2">After all expenses</p>
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/60 dark:to-blue-900/40 rounded-xl shadow p-6 border border-blue-200 dark:border-blue-800/60">
+          <p className="text-sm text-blue-700 dark:text-blue-300 mb-1 font-medium">Net Profit</p>
+          <p className="text-3xl font-bold text-blue-900 dark:text-blue-200">{formatCurrency(profit.net)}</p>
+          <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">After all expenses</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow p-6 border border-purple-200">
-          <p className="text-sm text-purple-700 mb-1 font-medium">Profit Margin</p>
-          <p className="text-3xl font-bold text-purple-900">{profit.margin.toFixed(1)}%</p>
-          <p className="text-xs text-purple-600 mt-2">Net / Revenue</p>
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/60 dark:to-purple-900/40 rounded-xl shadow p-6 border border-purple-200 dark:border-purple-800/60">
+          <p className="text-sm text-purple-700 dark:text-purple-300 mb-1 font-medium">Profit Margin</p>
+          <p className="text-3xl font-bold text-purple-900 dark:text-purple-200">{profit.margin.toFixed(1)}%</p>
+          <p className="text-xs text-purple-600 dark:text-purple-400 mt-2">Net / Revenue</p>
         </div>
       </div>
 
       {/* P&L Statement */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Profit & Loss Statement</h3>
-          <p className="text-sm text-gray-500 mt-1">
+      <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow">
+        <div className="p-6 border-b border-gray-200 dark:border-[#143225]">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profit & Loss Statement</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {new Date(dateParams.startDate).toLocaleDateString()} - {new Date(dateParams.endDate).toLocaleDateString()}
           </p>
         </div>
-        
+
         <div className="p-6 space-y-6">
           {/* Revenue Section */}
           <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">Revenue</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">Revenue</h4>
             <div className="space-y-2 ml-4">
               <PLRow label="Sales" amount={revenue.sales} />
               <PLRow label="Tax Collected" amount={revenue.tax} indent />
@@ -682,7 +680,7 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
 
           {/* Expenses Section */}
           <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">Expenses</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">Expenses</h4>
             <div className="space-y-2 ml-4">
               <PLRow label="Ingredients & Supplies" amount={expenses.ingredients} />
               <PLRow label="Utilities" amount={expenses.utilities} />
@@ -696,7 +694,7 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
           </div>
 
           {/* Profit Section */}
-          <div className="border-t-2 border-gray-300 pt-4">
+          <div className="border-t-2 border-gray-300 dark:border-[#143225] pt-4">
             <PLRow label="Gross Profit" amount={profit.gross} bold large success />
             <PLRow label="Net Profit" amount={profit.net} bold large success />
           </div>
@@ -704,8 +702,8 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
       </div>
 
       {/* Visual Comparison */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Financial Overview</h3>
+      <div className="bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225] rounded-xl shadow p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Financial Overview</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={[
@@ -714,10 +712,10 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
               { name: 'Profit', amount: profit.net, fill: profit.net >= 0 ? COLORS.primary : COLORS.danger },
             ]}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip 
+            <CartesianGrid strokeDasharray="3 3" stroke="#2a4536" />
+            <XAxis dataKey="name" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
+            <Tooltip
               formatter={(value: number) => formatCurrency(value)}
               cursor={false}
             />
@@ -729,18 +727,18 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
   );
 }
 
-function PLRow({ 
-  label, 
-  amount, 
-  bold, 
-  indent, 
-  large, 
-  success, 
-  danger 
-}: { 
-  label: string; 
-  amount: number; 
-  bold?: boolean; 
+function PLRow({
+  label,
+  amount,
+  bold,
+  indent,
+  large,
+  success,
+  danger
+}: {
+  label: string;
+  amount: number;
+  bold?: boolean;
   indent?: boolean;
   large?: boolean;
   success?: boolean;
@@ -751,11 +749,11 @@ function PLRow({
   };
 
   return (
-    <div className={`flex items-center justify-between py-2 ${bold ? 'border-t border-gray-200' : ''}`}>
-      <span className={`${indent ? 'ml-4 text-sm' : ''} ${bold ? 'font-bold' : ''} ${large ? 'text-lg' : 'text-sm'} ${success ? 'text-green-900' : danger ? 'text-red-900' : 'text-gray-700'}`}>
+    <div className={`flex items-center justify-between py-2 ${bold ? 'border-t border-gray-200 dark:border-[#143225]' : ''}`}>
+      <span className={`${indent ? 'ml-4 text-sm' : ''} ${bold ? 'font-bold' : ''} ${large ? 'text-lg' : 'text-sm'} ${success ? 'text-green-900 dark:text-[#00e676]' : danger ? 'text-red-900 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
         {label}
       </span>
-      <span className={`${bold ? 'font-bold' : ''} ${large ? 'text-lg' : 'text-sm'} ${success ? 'text-green-900' : danger ? 'text-red-900' : 'text-gray-900'}`}>
+      <span className={`${bold ? 'font-bold' : ''} ${large ? 'text-lg' : 'text-sm'} ${success ? 'text-green-900 dark:text-[#00e676]' : danger ? 'text-red-900 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}>
         {formatCurrency(amount)}
       </span>
     </div>

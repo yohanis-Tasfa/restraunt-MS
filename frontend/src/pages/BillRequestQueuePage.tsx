@@ -231,58 +231,58 @@ export default function BillRequestQueuePage() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Bill Request Queue</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Bill Request Queue</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Process bill requests from waiters and generate bills for customers
         </p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.pending}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Pending</p>
+              <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600" />
+            <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Processing</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">{stats.processing}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Processing</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">{stats.processing}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <Loader2 className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center">
+              <Loader2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{stats.completed}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Cancelled</p>
-              <p className="text-2xl font-bold text-red-600 mt-1">{stats.cancelled}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Cancelled</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.cancelled}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-              <XCircle className="w-6 h-6 text-red-600" />
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
+              <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
             </div>
           </div>
         </Card>
@@ -297,8 +297,8 @@ export default function BillRequestQueuePage() {
             onClick={() => setStatusFilter('pending')}
             className={
               statusFilter === 'pending'
-                ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-yellow-600 hover:bg-yellow-700 text-white font-semibold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             <Clock className="w-4 h-4 mr-2" />
@@ -310,8 +310,8 @@ export default function BillRequestQueuePage() {
             onClick={() => setStatusFilter('processing')}
             className={
               statusFilter === 'processing'
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             <Loader2 className="w-4 h-4 mr-2" />
@@ -323,8 +323,8 @@ export default function BillRequestQueuePage() {
             onClick={() => setStatusFilter('completed')}
             className={
               statusFilter === 'completed'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-green-600 hover:bg-green-700 text-white font-semibold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             <CheckCircle className="w-4 h-4 mr-2" />
@@ -336,8 +336,8 @@ export default function BillRequestQueuePage() {
             onClick={() => setStatusFilter('all')}
             className={
               statusFilter === 'all'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-900 dark:text-white border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             All Requests
@@ -346,44 +346,44 @@ export default function BillRequestQueuePage() {
       </div>
 
       {/* Bill Requests Table */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-xs overflow-hidden">
         {billRequests.length === 0 ? (
           <div className="text-center py-16">
-            <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <div className="text-gray-700 font-semibold mb-1">No bill requests</div>
-            <p className="text-sm text-gray-400">
+            <FileText className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+            <div className="text-gray-700 dark:text-gray-300 font-semibold mb-1">No bill requests</div>
+            <p className="text-sm text-gray-400 dark:text-gray-500">
               Bill requests from waiters will appear here automatically
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-left">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-[#143225] text-left">
+              <thead className="bg-gray-50 dark:bg-[#0c2219] border-b border-gray-200 dark:border-[#143225]">
                 <tr>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Table
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Requested By
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Items Ordered
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Requested
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Total
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-gray-100 dark:divide-[#143225] bg-white dark:bg-[#091a13]">
                 {billRequests.map((request: BillRequest) => {
                   const tableNumber = request.table?.number || request.order?.table?.number;
                   const waiterName = request.requestedBy
@@ -394,10 +394,10 @@ export default function BillRequestQueuePage() {
                   const noteText = !isUUID && request.notes ? request.notes.trim() : null;
 
                   return (
-                    <tr key={request.id} className="hover:bg-gray-50/80 transition-colors">
+                    <tr key={request.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
                       {/* Table */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 dark:bg-[#071a12] text-amber-900 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
                           {tableNumber ? `Table ${tableNumber}` : 'Direct Order'}
                         </span>
                       </td>
@@ -405,11 +405,11 @@ export default function BillRequestQueuePage() {
                       {/* Waiter */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-700 border border-gray-200">
-                            <User className="w-3.5 h-3.5 text-gray-500" />
+                          <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-[#071a12] flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
+                            <User className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                           </div>
                           <div>
-                            <div className="text-xs font-semibold text-gray-900">{waiterName}</div>
+                            <div className="text-xs font-semibold text-gray-900 dark:text-white">{waiterName}</div>
                             <div className="text-[11px] text-gray-400">Waiter</div>
                           </div>
                         </div>
@@ -423,31 +423,31 @@ export default function BillRequestQueuePage() {
                               {items.slice(0, 3).map((item: any, idx: number) => (
                                 <span
                                   key={idx}
-                                  className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs font-medium border border-gray-200/60 whitespace-nowrap"
+                                  className="bg-gray-100 dark:bg-[#071a12] text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs font-medium border border-gray-200/60 dark:border-[#143225] whitespace-nowrap"
                                 >
-                                  <span className="font-bold text-gray-900 mr-1">{item.quantity}x</span>
+                                  <span className="font-bold text-gray-900 dark:text-white mr-1">{item.quantity}x</span>
                                   {item.menuItem?.name || item.name || 'Item'}
                                 </span>
                               ))}
                               {items.length > 3 && (
-                                <span className="text-[11px] text-gray-500 font-medium">
+                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
                                   +{items.length - 3} more
                                 </span>
                               )}
                             </div>
                             {noteText && (
-                              <p className="text-[11px] text-amber-700 italic max-w-sm truncate">
+                              <p className="text-[11px] text-amber-700 dark:text-amber-400 italic max-w-sm truncate">
                                 Note: {noteText}
                               </p>
                             )}
                           </div>
                         ) : (
                           <div>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
                               Order #{request.order?.orderNumber ? request.order.orderNumber.slice(-8) : '—'}
                             </span>
                             {noteText && (
-                              <p className="text-[11px] text-amber-700 italic max-w-sm truncate">
+                              <p className="text-[11px] text-amber-700 dark:text-amber-400 italic max-w-sm truncate">
                                 Note: {noteText}
                               </p>
                             )}
@@ -457,7 +457,7 @@ export default function BillRequestQueuePage() {
 
                       {/* Requested Time */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                        <div className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-medium">
                           <Clock className="w-3.5 h-3.5" />
                           <span>{getTimeAgo(request.requestedAt)}</span>
                         </div>
@@ -471,7 +471,7 @@ export default function BillRequestQueuePage() {
 
                       {/* Total */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="text-sm font-extrabold text-gray-900">
+                        <div className="text-sm font-extrabold text-gray-900 dark:text-[#00e676]">
                           Br {request.order?.total != null ? Number(request.order.total).toFixed(2) : '0.00'}
                         </div>
                       </td>
@@ -492,7 +492,7 @@ export default function BillRequestQueuePage() {
                               <Button
                                 size="sm"
                                 onClick={() => handleProcessAndGenerate(request)}
-                                className="h-8 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white gap-1.5 shadow-2xs"
+                                className="h-8 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white gap-1.5 shadow-2xs cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5" />
                                 Print Bill
@@ -501,7 +501,7 @@ export default function BillRequestQueuePage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleProcess(request.id)}
-                                className="h-8 px-2.5 text-xs font-medium border-gray-300 text-gray-700 hover:bg-gray-100"
+                                className="h-8 px-2.5 text-xs font-medium border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] cursor-pointer"
                               >
                                 Process
                               </Button>
@@ -514,7 +514,7 @@ export default function BillRequestQueuePage() {
                               <Button
                                 size="sm"
                                 onClick={() => handleGenerateBill(request)}
-                                className="h-8 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white gap-1.5 shadow-2xs"
+                                className="h-8 px-3 text-xs font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white gap-1.5 shadow-2xs cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5" />
                                 Print Bill
@@ -522,7 +522,7 @@ export default function BillRequestQueuePage() {
                               <Button
                                 size="sm"
                                 onClick={() => handleComplete(request.id)}
-                                className="h-8 px-2.5 text-xs font-medium bg-green-600 hover:bg-green-700 text-white gap-1"
+                                className="h-8 px-2.5 text-xs font-medium bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold gap-1 cursor-pointer"
                               >
                                 <CheckCircle className="w-3.5 h-3.5" />
                                 Done
@@ -531,7 +531,7 @@ export default function BillRequestQueuePage() {
                                 size="sm"
                                 variant="destructive"
                                 onClick={() => handleCancel(request.id)}
-                                className="h-8 px-2 text-xs bg-red-600 hover:bg-red-700 text-white"
+                                className="h-8 px-2 text-xs bg-red-600 hover:bg-red-700 text-white cursor-pointer"
                                 title="Cancel Request"
                               >
                                 <XCircle className="w-3.5 h-3.5" />
@@ -545,9 +545,9 @@ export default function BillRequestQueuePage() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleGenerateBill(request)}
-                              className="h-8 px-2.5 text-xs font-medium border-gray-300 text-gray-700 hover:bg-gray-100 gap-1.5"
+                              className="h-8 px-2.5 text-xs font-medium border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1.5 cursor-pointer"
                             >
-                              <Printer className="w-3.5 h-3.5 text-gray-500" />
+                              <Printer className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                               Re-Print
                             </Button>
                           )}
@@ -557,7 +557,7 @@ export default function BillRequestQueuePage() {
                             size="sm"
                             variant="ghost"
                             onClick={() => handleViewDetails(request)}
-                            className="h-8 w-8 p-0 text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                            className="h-8 w-8 p-0 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219] cursor-pointer"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4" />
@@ -575,10 +575,10 @@ export default function BillRequestQueuePage() {
 
       {/* Bill Request Details Modal */}
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#091a13] border dark:border-[#143225]">
           <DialogHeader>
-            <DialogTitle>Bill Request Details</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-white">Bill Request Details</DialogTitle>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">
               {selectedRequest && format(new Date(selectedRequest.requestedAt), 'MMM dd, yyyy HH:mm')}
             </DialogDescription>
           </DialogHeader>
@@ -588,40 +588,40 @@ export default function BillRequestQueuePage() {
               {/* Request Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Status</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
                   <Badge className={getStatusColor(selectedRequest.status)}>
                     {selectedRequest.status}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Priority</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Priority</p>
                   <p className={`font-medium ${getPriorityColor(selectedRequest.priority)}`}>
                     {selectedRequest.priority}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Table</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Table</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {selectedRequest.table?.number ? `Table ${selectedRequest.table.number}` : 'N/A'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Requested By</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Requested By</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {selectedRequest.requestedBy?.firstName} {selectedRequest.requestedBy?.lastName}
                   </p>
                 </div>
                 {selectedRequest.processedBy && (
                   <>
                     <div>
-                      <p className="text-sm text-gray-600">Processed By</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Processed By</p>
+                      <p className="font-medium text-gray-900 dark:text-white">
                         {selectedRequest.processedBy.firstName} {selectedRequest.processedBy.lastName}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Processed At</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Processed At</p>
+                      <p className="font-medium text-gray-900 dark:text-white">
                         {selectedRequest.processedAt &&
                           format(new Date(selectedRequest.processedAt), 'MMM dd, yyyy HH:mm')}
                       </p>
@@ -631,34 +631,34 @@ export default function BillRequestQueuePage() {
               </div>
 
               {/* Order Details */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3 text-gray-900">Order Information</h3>
+              <div className="border-t border-gray-200 dark:border-[#143225] pt-4">
+                <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Order Information</h3>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="text-sm text-gray-600">Order Number</p>
-                    <p className="font-medium text-gray-900">{selectedRequest.order.orderNumber}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Order Number</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedRequest.order.orderNumber}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Order Status</p>
-                    <p className="font-medium text-gray-900">{selectedRequest.order.status}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Order Status</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedRequest.order.status}</p>
                   </div>
                 </div>
 
                 {/* Order Items */}
                 <div className="space-y-2 mb-4">
-                  <h4 className="font-medium text-sm text-gray-900">Items</h4>
+                  <h4 className="font-medium text-sm text-gray-900 dark:text-white">Items</h4>
                   {(selectedRequest.order.items || []).map((item: any) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#071a12] border dark:border-[#143225] rounded-lg"
                     >
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{item.menuItem?.name || item.name || 'Unknown Item'}</p>
-                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">{item.menuItem?.name || item.name || 'Unknown Item'}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Qty: {item.quantity}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">Br {(item.subtotal || 0).toFixed(2)}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-bold text-gray-900 dark:text-[#00e676]">Br {(item.subtotal || 0).toFixed(2)}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
                           @ Br {(item.price || 0).toFixed(2)}
                         </p>
                       </div>
@@ -667,33 +667,33 @@ export default function BillRequestQueuePage() {
                 </div>
 
                 {/* Order Totals */}
-                <div className="border-t pt-3 space-y-2">
+                <div className="border-t border-gray-200 dark:border-[#143225] pt-3 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium text-gray-900">Br {selectedRequest.order.subtotal?.toFixed(2)}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
+                    <span className="font-medium text-gray-900 dark:text-white">Br {selectedRequest.order.subtotal?.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax</span>
-                    <span className="font-medium text-gray-900">Br {selectedRequest.order.tax?.toFixed(2)}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Tax</span>
+                    <span className="font-medium text-gray-900 dark:text-white">Br {selectedRequest.order.tax?.toFixed(2)}</span>
                   </div>
                   {selectedRequest.order.serviceCharge > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Service Charge</span>
-                      <span className="font-medium text-gray-900">
+                      <span className="text-gray-600 dark:text-gray-400">Service Charge</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
                         Br {selectedRequest.order.serviceCharge.toFixed(2)}
                       </span>
                     </div>
                   )}
                   {selectedRequest.order.discount > 0 && (
-                    <div className="flex justify-between text-sm text-red-600">
+                    <div className="flex justify-between text-sm text-red-600 dark:text-red-400">
                       <span>Discount</span>
                       <span className="font-medium">
                         -Br {selectedRequest.order.discount.toFixed(2)}
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between text-lg font-bold pt-2 border-t text-gray-900">
-                    <span>Total</span>
+                  <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200 dark:border-[#143225] text-gray-900 dark:text-[#00e676]">
+                    <span className="text-gray-900 dark:text-white">Total</span>
                     <span>Br {selectedRequest.order.total?.toFixed(2)}</span>
                   </div>
                 </div>
@@ -701,14 +701,14 @@ export default function BillRequestQueuePage() {
 
               {/* Notes */}
               {selectedRequest.notes && !/^[0-9a-f-]{36}$/i.test(selectedRequest.notes.trim()) && (
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold mb-2 text-gray-900">Notes</h3>
-                  <p className="text-sm text-gray-600">{selectedRequest.notes}</p>
+                <div className="border-t border-gray-200 dark:border-[#143225] pt-4">
+                  <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Notes</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{selectedRequest.notes}</p>
                 </div>
               )}
 
               {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t">
+              <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-[#143225]">
                 {selectedRequest.status === BillRequestStatus.PENDING && (
                   <>
                     <Button
@@ -716,7 +716,7 @@ export default function BillRequestQueuePage() {
                         handleProcess(selectedRequest.id);
                         setIsDetailsModalOpen(false);
                       }}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700"
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer"
                     >
                       <Loader2 className="w-4 h-4 mr-2" />
                       Start Processing
@@ -726,7 +726,7 @@ export default function BillRequestQueuePage() {
                         setIsDetailsModalOpen(false);
                         handleProcessAndGenerate(selectedRequest);
                       }}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700"
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 cursor-pointer"
                     >
                       <Receipt className="w-4 h-4 mr-2" />
                       Generate Bill
@@ -741,14 +741,14 @@ export default function BillRequestQueuePage() {
                         setIsDetailsModalOpen(false);
                         handleGenerateBill(selectedRequest);
                       }}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700"
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 cursor-pointer"
                     >
                       <Receipt className="w-4 h-4 mr-2" />
                       Generate & Print Bill
                     </Button>
                     <Button
                       onClick={() => handleComplete(selectedRequest.id)}
-                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer"
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Mark as Completed
@@ -756,6 +756,7 @@ export default function BillRequestQueuePage() {
                     <Button
                       variant="destructive"
                       onClick={() => handleCancel(selectedRequest.id)}
+                      className="cursor-pointer"
                     >
                       <XCircle className="w-4 h-4 mr-2" />
                       Cancel

@@ -243,16 +243,16 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
         <div className="space-y-4">
           {/* Order Type */}
           <div>
-            <label className="text-sm font-semibold text-gray-700 mb-2 block">Order Type</label>
+            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Order Type</label>
             <div className="grid grid-cols-3 gap-2">
               {[OrderType.DINE_IN, OrderType.TAKEAWAY, OrderType.DELIVERY].map((type) => (
                 <button
                   key={type}
                   onClick={() => setOrderType(type)}
-                  className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors cursor-pointer ${
                     orderType === type
-                      ? 'border-green-600 bg-green-50 text-green-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                      ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627] text-green-700 dark:text-[#00e676]'
+                      : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-[#1b3d2e]'
                   }`}
                 >
                   {type.replace('_', ' ')}
@@ -264,16 +264,16 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
           {/* Table Selection */}
           {orderType === OrderType.DINE_IN && (
             <div>
-              <label className="text-sm font-semibold text-gray-700 mb-2 block">Table</label>
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Table</label>
               <Select value={selectedTable} onValueChange={setSelectedTable}>
-                <SelectTrigger>
+                <SelectTrigger className="dark:bg-[#071a12] dark:border-[#143225] dark:text-gray-100">
                   <SelectValue placeholder="Select a table" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-[#091a13] dark:border-[#143225]">
                   {visibleTables.map((table: any) => {
                     const isMine = table.assignedWaiterId === user?.id;
                     return (
-                      <SelectItem key={table.id} value={table.id}>
+                      <SelectItem key={table.id} value={table.id} className="dark:text-gray-200 dark:focus:bg-[#123627] dark:focus:text-[#00e676]">
                         Table {table.number} ({table.capacity} seats) {isMine ? '• [My Table]' : '• [Unassigned]'}
                       </SelectItem>
                     );
@@ -286,40 +286,40 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
           {/* Payment Method - Only for TAKEAWAY and DELIVERY */}
           {orderType !== OrderType.DINE_IN && (
             <div>
-              <label className="text-sm font-semibold text-gray-700 mb-2 block">Payment Method</label>
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 block">Payment Method</label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setPaymentMethod('CASH')}
-                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors cursor-pointer ${
                     paymentMethod === 'CASH'
-                      ? 'border-green-600 bg-green-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
+                      : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#0c2219] hover:border-gray-300'
                   }`}
                 >
-                  <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600' : 'text-gray-700'}`} />
-                  <span className={`text-xs font-medium ${paymentMethod === 'CASH' ? 'text-gray-900' : 'text-gray-700'}`}>Cash</span>
+                  <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-400'}`} />
+                  <span className={`text-xs font-medium ${paymentMethod === 'CASH' ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>Cash</span>
                 </button>
                 <button
                   onClick={() => setPaymentMethod('CARD')}
-                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors cursor-pointer ${
                     paymentMethod === 'CARD'
-                      ? 'border-green-600 bg-green-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
+                      : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#0c2219] hover:border-gray-300'
                   }`}
                 >
-                  <CreditCard className={`w-6 h-6 ${paymentMethod === 'CARD' ? 'text-green-600' : 'text-gray-700'}`} />
-                  <span className={`text-xs font-medium ${paymentMethod === 'CARD' ? 'text-gray-900' : 'text-gray-700'}`}>Card</span>
+                  <CreditCard className={`w-6 h-6 ${paymentMethod === 'CARD' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-400'}`} />
+                  <span className={`text-xs font-medium ${paymentMethod === 'CARD' ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>Card</span>
                 </button>
                 <button
                   onClick={() => setPaymentMethod('MOBILE')}
-                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+                  className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors cursor-pointer ${
                     paymentMethod === 'MOBILE'
-                      ? 'border-green-600 bg-green-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
+                      : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#0c2219] hover:border-gray-300'
                   }`}
                 >
-                  <Smartphone className={`w-6 h-6 ${paymentMethod === 'MOBILE' ? 'text-green-600' : 'text-gray-700'}`} />
-                  <span className={`text-xs font-medium ${paymentMethod === 'MOBILE' ? 'text-gray-900' : 'text-gray-700'}`}>Mobile</span>
+                  <Smartphone className={`w-6 h-6 ${paymentMethod === 'MOBILE' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-400'}`} />
+                  <span className={`text-xs font-medium ${paymentMethod === 'MOBILE' ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>Mobile</span>
                 </button>
               </div>
             </div>
@@ -327,48 +327,48 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
 
           {/* Dine-in Notice */}
           {orderType === OrderType.DINE_IN && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded-lg p-3">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
                 <strong>Note:</strong> Order will be sent to kitchen. Payment will be collected after service.
               </p>
             </div>
           )}
 
           {/* Order Summary with Meals List */}
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200/80 space-y-3">
-            <div className="flex items-center justify-between border-b border-gray-200/80 pb-2">
-              <h3 className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
-                <Utensils className="w-4 h-4 text-emerald-600" />
+          <div className="bg-gray-50 dark:bg-[#071a12] rounded-xl p-4 border border-gray-200/80 dark:border-[#143225] space-y-3">
+            <div className="flex items-center justify-between border-b border-gray-200/80 dark:border-[#143225] pb-2">
+              <h3 className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-1.5">
+                <Utensils className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
                 Ordered Meals ({items.reduce((sum, item) => sum + item.quantity, 0)})
               </h3>
-              <span className="text-xs text-gray-500 font-medium">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{items.length} item{items.length !== 1 ? 's' : ''}</span>
             </div>
 
             {/* List of meals being ordered */}
-            <div className="max-h-44 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100">
+            <div className="max-h-44 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100 dark:divide-[#143225]">
               {items.map((item) => (
                 <div key={item.id} className="pt-2 first:pt-0 flex items-start justify-between text-xs">
                   <div className="flex-1 pr-2">
-                    <div className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <span className="w-5 h-5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center justify-center shrink-0">
+                    <div className="font-semibold text-gray-900 dark:text-white flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-[#00e676] text-[11px] font-bold flex items-center justify-center shrink-0">
                         {item.quantity}x
                       </span>
                       <span>{item.menuItem?.name || 'Dish'}</span>
                       {item.variant?.name && (
-                        <span className="text-[10px] text-gray-500 font-normal">({item.variant.name})</span>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-normal">({item.variant.name})</span>
                       )}
                     </div>
                     {item.specialInstructions && (
-                      <p className="text-[11px] text-gray-500 italic pl-6.5 mt-0.5">
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400 italic pl-6.5 mt-0.5">
                         Note: {item.specialInstructions}
                       </p>
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="font-bold text-gray-900">
+                    <span className="font-bold text-gray-900 dark:text-[#00e676]">
                       {(item.unitPrice * item.quantity).toFixed(2)} ብር
                     </span>
-                    <p className="text-[10px] text-gray-400">
+                    <p className="text-[10px] text-gray-400 dark:text-gray-500">
                       {item.unitPrice.toFixed(2)} each
                     </p>
                   </div>
@@ -377,29 +377,29 @@ export default function CheckoutDialog({ open, onOpenChange, prefillData, onSucc
             </div>
 
             {/* Pricing breakdown */}
-            <div className="border-t border-gray-200/80 pt-2.5 space-y-1.5 text-xs">
+            <div className="border-t border-gray-200/80 dark:border-[#143225] pt-2.5 space-y-1.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-gray-500">Subtotal</span>
-                <span className="font-medium text-gray-900">{subtotal.toFixed(2)} ብር</span>
+                <span className="text-gray-500 dark:text-gray-400">Subtotal</span>
+                <span className="font-medium text-gray-900 dark:text-white">{subtotal.toFixed(2)} ብር</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Tax (15%)</span>
-                <span className="font-medium text-gray-900">{tax.toFixed(2)} ብር</span>
+                <span className="text-gray-500 dark:text-gray-400">Tax (15%)</span>
+                <span className="font-medium text-gray-900 dark:text-white">{tax.toFixed(2)} ብር</span>
               </div>
-              <div className="flex justify-between text-base font-extrabold border-t border-gray-200/90 pt-2 text-gray-900">
+              <div className="flex justify-between text-base font-extrabold border-t border-gray-200/90 dark:border-[#143225] pt-2 text-gray-900 dark:text-white">
                 <span>Total Payable</span>
-                <span className="text-emerald-700">{total.toFixed(2)} ብር</span>
+                <span className="text-emerald-700 dark:text-[#00e676]">{total.toFixed(2)} ብር</span>
               </div>
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
-            <Button variant="outline" className="flex-1" onClick={handleClose}>
+            <Button variant="outline" className="flex-1 dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] cursor-pointer" onClick={handleClose}>
               Cancel
             </Button>
             <Button
-              className="flex-1"
+              className="flex-1 bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold shadow-md cursor-pointer"
               onClick={handlePlaceOrder}
               disabled={createOrderMutation.isPending}
             >

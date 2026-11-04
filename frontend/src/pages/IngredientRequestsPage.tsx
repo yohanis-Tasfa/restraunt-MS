@@ -180,8 +180,8 @@ export default function IngredientRequestsPage() {
               <PackagePlus className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-gray-900 tracking-tight">Ingredient Requests</h1>
-              <p className="text-xs text-gray-500 font-medium">
+              <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Ingredient Requests</h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                 Kitchen raw stock requisitions & store fulfillment
               </p>
             </div>
@@ -191,7 +191,7 @@ export default function IngredientRequestsPage() {
         {/* Action Button: "+ Request Ingredients" */}
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-2 shadow-xs"
+          className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-2 shadow-xs cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Request Ingredients</span>
@@ -200,49 +200,49 @@ export default function IngredientRequestsPage() {
 
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 border-amber-200 bg-amber-50/50">
+        <Card className="p-4 border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-amber-700 uppercase tracking-wider">Awaiting Store Approval</p>
-              <p className="text-2xl font-black text-amber-900 mt-1">{pendingCount}</p>
+              <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Awaiting Store Approval</p>
+              <p className="text-2xl font-black text-amber-900 dark:text-amber-300 mt-1">{pendingCount}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400">
               <Clock className="w-5 h-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-emerald-200 bg-emerald-50/50">
+        <Card className="p-4 border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/50 dark:bg-emerald-950/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Approved & Issued</p>
-              <p className="text-2xl font-black text-emerald-900 mt-1">{approvedCount}</p>
+              <p className="text-xs font-bold text-emerald-700 dark:text-[#00e676] uppercase tracking-wider">Approved & Issued</p>
+              <p className="text-2xl font-black text-emerald-900 dark:text-[#00e676] mt-1">{approvedCount}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-700 dark:text-[#00e676]">
               <PackageCheck className="w-5 h-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-rose-200 bg-rose-50/50">
+        <Card className="p-4 border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-rose-700 uppercase tracking-wider">Rejected / Cancelled</p>
-              <p className="text-2xl font-black text-rose-900 mt-1">{rejectedCount}</p>
+              <p className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">Rejected / Cancelled</p>
+              <p className="text-2xl font-black text-rose-900 dark:text-rose-300 mt-1">{rejectedCount}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center text-rose-700">
+            <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/50 flex items-center justify-center text-rose-700 dark:text-rose-400">
               <XCircle className="w-5 h-5" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 border-blue-200 bg-blue-50/50">
+        <Card className="p-4 border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-blue-700 uppercase tracking-wider">Total Requisitions</p>
-              <p className="text-2xl font-black text-blue-900 mt-1">{requests.length}</p>
+              <p className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Total Requisitions</p>
+              <p className="text-2xl font-black text-blue-900 dark:text-blue-300 mt-1">{requests.length}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-700">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-700 dark:text-blue-400">
               <Boxes className="w-5 h-5" />
             </div>
           </div>
@@ -250,19 +250,19 @@ export default function IngredientRequestsPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 pb-2 overflow-x-auto text-xs font-bold">
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-[#143225] pb-2 overflow-x-auto text-xs font-bold">
         <button
           onClick={() => setActiveTab('pending')}
-          className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'pending'
               ? 'bg-amber-600 text-white shadow-2xs'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
           }`}
         >
           <span>Pending Approval</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-              activeTab === 'pending' ? 'bg-white text-amber-700' : 'bg-gray-200 text-gray-700'
+              activeTab === 'pending' ? 'bg-white text-amber-700' : 'bg-gray-200 dark:bg-[#143225] text-gray-700 dark:text-gray-300'
             }`}
           >
             {pendingCount}
@@ -271,16 +271,16 @@ export default function IngredientRequestsPage() {
 
         <button
           onClick={() => setActiveTab('approved')}
-          className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'approved'
               ? 'bg-emerald-600 text-white shadow-2xs'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
           }`}
         >
           <span>Issued / Approved</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-              activeTab === 'approved' ? 'bg-white text-emerald-700' : 'bg-gray-200 text-gray-700'
+              activeTab === 'approved' ? 'bg-white text-emerald-700' : 'bg-gray-200 dark:bg-[#143225] text-gray-700 dark:text-gray-300'
             }`}
           >
             {approvedCount}
@@ -289,16 +289,16 @@ export default function IngredientRequestsPage() {
 
         <button
           onClick={() => setActiveTab('rejected')}
-          className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+          className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'rejected'
               ? 'bg-rose-600 text-white shadow-2xs'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
           }`}
         >
           <span>Rejected / Cancelled</span>
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-              activeTab === 'rejected' ? 'bg-white text-rose-700' : 'bg-gray-200 text-gray-700'
+              activeTab === 'rejected' ? 'bg-white text-rose-700' : 'bg-gray-200 dark:bg-[#143225] text-gray-700 dark:text-gray-300'
             }`}
           >
             {rejectedCount}
@@ -307,10 +307,10 @@ export default function IngredientRequestsPage() {
 
         <button
           onClick={() => setActiveTab('all')}
-          className={`px-3.5 py-1.5 rounded-lg transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
             activeTab === 'all'
-              ? 'bg-gray-900 text-white shadow-2xs'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              ? 'bg-gray-900 dark:bg-[#143225] text-white shadow-2xs'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
           }`}
         >
           All Requests ({requests.length})
@@ -318,57 +318,57 @@ export default function IngredientRequestsPage() {
       </div>
 
       {/* Main Table */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-xs overflow-hidden">
         {isLoading ? (
-          <div className="text-center py-16 text-gray-400 font-medium">Loading requests...</div>
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500 font-medium">Loading requests...</div>
         ) : filteredRequests.length === 0 ? (
           <div className="text-center py-16">
-            <Boxes className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-gray-700">No ingredient requests</h3>
-            <p className="text-xs text-gray-400 mt-1">
+            <Boxes className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-gray-700 dark:text-gray-300">No ingredient requests</h3>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               Click &quot;Request Ingredients&quot; above to request raw ingredients from the store.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-left">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-[#143225] text-left">
+              <thead className="bg-gray-50 dark:bg-[#071a12] border-b border-gray-200 dark:border-[#143225]">
                 <tr>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Request #
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Requested By
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Ingredient & Quantity
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Kitchen Note
                   </th>
-                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-4 py-3.5 text-right text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-gray-100 dark:divide-[#143225] bg-white dark:bg-[#091a13]">
                 {filteredRequests.map((req) => {
                   const itemInStore = inventoryItems.find((i: any) => i.id === req.inventoryId);
                   const availableStock = itemInStore ? itemInStore.quantity : null;
                   const isSufficient = availableStock != null ? availableStock >= req.quantity : true;
 
                   return (
-                    <tr key={req.id} className="hover:bg-gray-50/80 transition-colors">
+                    <tr key={req.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
                       {/* Request # & Date */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="font-mono text-xs font-bold text-gray-900">{req.requestNumber}</div>
-                        <div className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+                        <div className="font-mono text-xs font-bold text-gray-900 dark:text-white">{req.requestNumber}</div>
+                        <div className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" />
                           <span>{format(new Date(req.createdAt), 'MMM dd, HH:mm')}</span>
                         </div>
@@ -377,12 +377,12 @@ export default function IngredientRequestsPage() {
                       {/* Requested By */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-xs font-bold text-amber-800">
+                          <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-xs font-bold text-amber-800 dark:text-amber-400">
                             <User className="w-3.5 h-3.5" />
                           </div>
                           <div>
-                            <div className="text-xs font-bold text-gray-900">{req.requestedByName}</div>
-                            <div className="text-[11px] text-gray-400">Kitchen Staff</div>
+                            <div className="text-xs font-bold text-gray-900 dark:text-white">{req.requestedByName}</div>
+                            <div className="text-[11px] text-gray-400 dark:text-gray-500">Kitchen Staff</div>
                           </div>
                         </div>
                       </td>
@@ -390,17 +390,17 @@ export default function IngredientRequestsPage() {
                       {/* Ingredient & Quantity */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-sm text-gray-900">
+                          <span className="font-extrabold text-sm text-gray-900 dark:text-white">
                             {req.quantity} {req.unit}
                           </span>
-                          <span className="text-xs font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
+                          <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-[#0c2219] px-2 py-0.5 rounded border border-gray-200 dark:border-[#143225]">
                             {req.inventoryName}
                           </span>
                         </div>
                         {availableStock != null && req.status === 'PENDING' && (
                           <div
                             className={`text-[11px] font-medium mt-1 ${
-                              isSufficient ? 'text-emerald-600' : 'text-rose-600 font-bold'
+                              isSufficient ? 'text-emerald-600 dark:text-[#00e676]' : 'text-rose-600 dark:text-rose-400 font-bold'
                             }`}
                           >
                             Store Stock: {availableStock} {req.unit} {isSufficient ? '(Available)' : '(Low Stock!)'}
@@ -411,12 +411,12 @@ export default function IngredientRequestsPage() {
                       {/* Priority */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         {req.priority === 'URGENT' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-black bg-rose-100 text-rose-700 animate-pulse border border-rose-300">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-black bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 animate-pulse border border-rose-300 dark:border-rose-800">
                             <AlertTriangle className="w-3 h-3" />
                             URGENT
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-gray-100 text-gray-600">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-gray-100 dark:bg-[#0c2219] text-gray-600 dark:text-gray-300 border border-transparent dark:border-[#143225]">
                             Normal Prep
                           </span>
                         )}
@@ -425,12 +425,12 @@ export default function IngredientRequestsPage() {
                       {/* Notes / Reason */}
                       <td className="px-4 py-3.5 max-w-xs">
                         {req.notes ? (
-                          <p className="text-xs text-gray-700 italic truncate">{req.notes}</p>
+                          <p className="text-xs text-gray-700 dark:text-gray-300 italic truncate">{req.notes}</p>
                         ) : (
-                          <span className="text-gray-400 text-xs">—</span>
+                          <span className="text-gray-400 dark:text-gray-500 text-xs">—</span>
                         )}
                         {req.rejectionReason && (
-                          <p className="text-[11px] text-rose-600 font-medium mt-0.5">
+                          <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-0.5">
                             Reason: {req.rejectionReason}
                           </p>
                         )}
@@ -439,27 +439,27 @@ export default function IngredientRequestsPage() {
                       {/* Status */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         {req.status === 'PENDING' && (
-                          <Badge className="bg-amber-100 text-amber-800 border-amber-300 font-bold text-xs">
+                          <Badge className="bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800 font-bold text-xs">
                             Pending Store
                           </Badge>
                         )}
                         {req.status === 'APPROVED' && (
                           <div className="space-y-0.5">
-                            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 font-bold text-xs">
+                            <Badge className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 font-bold text-xs">
                               Issued to Kitchen
                             </Badge>
                             {req.processedByName && (
-                              <p className="text-[10px] text-gray-400">By {req.processedByName}</p>
+                              <p className="text-[10px] text-gray-400 dark:text-gray-500">By {req.processedByName}</p>
                             )}
                           </div>
                         )}
                         {req.status === 'REJECTED' && (
-                          <Badge className="bg-rose-100 text-rose-800 border-rose-300 font-bold text-xs">
+                          <Badge className="bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800 font-bold text-xs">
                             Rejected
                           </Badge>
                         )}
                         {req.status === 'CANCELLED' && (
-                          <Badge className="bg-gray-100 text-gray-700 border-gray-300 font-medium text-xs">
+                          <Badge className="bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] font-medium text-xs">
                             Cancelled
                           </Badge>
                         )}
@@ -476,7 +476,7 @@ export default function IngredientRequestsPage() {
                                   size="sm"
                                   onClick={() => approveMutation.mutate(req.id)}
                                   disabled={approveMutation.isPending}
-                                  className="h-8 px-2.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1 shadow-2xs"
+                                  className="h-8 px-2.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1 shadow-2xs cursor-pointer"
                                   title="Approve & automatically deduct from inventory"
                                 >
                                   <Check className="w-3.5 h-3.5" />
@@ -486,7 +486,7 @@ export default function IngredientRequestsPage() {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => setRejectingRequest(req)}
-                                  className="h-8 px-2 text-xs font-semibold text-rose-600 border-rose-300 hover:bg-rose-50"
+                                  className="h-8 px-2 text-xs font-semibold text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
                                   title="Reject request"
                                 >
                                   <X className="w-3.5 h-3.5" />
@@ -501,7 +501,7 @@ export default function IngredientRequestsPage() {
                                 variant="outline"
                                 onClick={() => cancelMutation.mutate(req.id)}
                                 disabled={cancelMutation.isPending}
-                                className="h-8 px-2.5 text-xs text-gray-600 border-gray-300 hover:bg-gray-100"
+                                className="h-8 px-2.5 text-xs text-gray-600 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-100 dark:hover:bg-[#0c2219] cursor-pointer"
                               >
                                 Cancel
                               </Button>
@@ -520,13 +520,13 @@ export default function IngredientRequestsPage() {
 
       {/* "+ Request Ingredients" Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <PackagePlus className="w-5 h-5 text-amber-600" />
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+              <PackagePlus className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               <span>Request Ingredients from Store</span>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">
               Select the raw stock item needed for kitchen preparation. Store managers will be alerted immediately.
             </DialogDescription>
           </DialogHeader>
@@ -534,13 +534,13 @@ export default function IngredientRequestsPage() {
           <div className="space-y-4 mt-3">
             {/* Inventory Item Dropdown */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
                 Select Ingredient <span className="text-rose-500">*</span>
               </label>
               <select
                 value={selectedInventoryId}
                 onChange={(e) => setSelectedInventoryId(e.target.value)}
-                className="w-full h-10 px-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                className="w-full h-10 px-3 bg-white dark:bg-[#071a12] border border-gray-300 dark:border-[#143225] rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500"
               >
                 <option value="">-- Choose an ingredient from store --</option>
                 {inventoryItems.map((item: any) => (
@@ -553,7 +553,7 @@ export default function IngredientRequestsPage() {
 
             {/* Quantity & Unit */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
                 Quantity Needed <span className="text-rose-500">*</span>
               </label>
               <div className="flex items-center gap-2">
@@ -564,52 +564,52 @@ export default function IngredientRequestsPage() {
                   placeholder="e.g. 5"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="flex-1 h-10 px-3 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-amber-500"
+                  className="flex-1 h-10 px-3 bg-white dark:bg-[#071a12] border border-gray-300 dark:border-[#143225] rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500"
                 />
-                <span className="h-10 px-3 bg-gray-100 border border-gray-300 rounded-lg flex items-center justify-center text-xs font-bold text-gray-700 min-w-16">
+                <span className="h-10 px-3 bg-gray-100 dark:bg-[#0c2219] border border-gray-300 dark:border-[#143225] rounded-lg flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-300 min-w-16">
                   {selectedItemObject?.unit || 'Unit'}
                 </span>
               </div>
               {selectedItemObject && (
-                <p className="text-[11px] text-gray-500 mt-1">
-                  Currently available in store: <strong>{selectedItemObject.quantity} {selectedItemObject.unit}</strong>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                  Currently available in store: <strong className="text-gray-800 dark:text-gray-200">{selectedItemObject.quantity} {selectedItemObject.unit}</strong>
                 </p>
               )}
             </div>
 
             {/* Priority Selector */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Priority Level</label>
+              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Priority Level</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setPriority('NORMAL')}
-                  className={`p-2.5 rounded-lg border text-xs font-bold transition-all text-left flex items-center gap-2 ${
+                  className={`p-2.5 rounded-lg border text-xs font-bold transition-all text-left flex items-center gap-2 cursor-pointer ${
                     priority === 'NORMAL'
-                      ? 'bg-amber-50 border-amber-500 text-amber-900 ring-2 ring-amber-400/40'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                      ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-500 text-amber-900 dark:text-amber-200 ring-2 ring-amber-400/40'
+                      : 'bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219]'
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   <div>
                     <div>Normal Prep</div>
-                    <div className="text-[10px] font-normal text-gray-500">For upcoming shift / prep</div>
+                    <div className="text-[10px] font-normal text-gray-500 dark:text-gray-400">For upcoming shift / prep</div>
                   </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPriority('URGENT')}
-                  className={`p-2.5 rounded-lg border text-xs font-bold transition-all text-left flex items-center gap-2 ${
+                  className={`p-2.5 rounded-lg border text-xs font-bold transition-all text-left flex items-center gap-2 cursor-pointer ${
                     priority === 'URGENT'
-                      ? 'bg-rose-50 border-rose-500 text-rose-900 ring-2 ring-rose-400/40'
-                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                      ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-500 text-rose-900 dark:text-rose-200 ring-2 ring-rose-400/40'
+                      : 'bg-white dark:bg-[#071a12] border-gray-200 dark:border-[#143225] text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#0c2219]'
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                   <div>
                     <div>Urgent / Stalled</div>
-                    <div className="text-[10px] font-normal text-rose-500">Active tickets waiting</div>
+                    <div className="text-[10px] font-normal text-rose-500 dark:text-rose-400">Active tickets waiting</div>
                   </div>
                 </button>
               </div>
@@ -617,29 +617,29 @@ export default function IngredientRequestsPage() {
 
             {/* Kitchen Notes */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Notes / Reason (Optional)</label>
+              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Notes / Reason (Optional)</label>
               <textarea
                 rows={2}
                 placeholder="e.g. For dinner rush marination, ran out on the line"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-amber-500"
+                className="w-full p-2.5 bg-white dark:bg-[#071a12] border border-gray-300 dark:border-[#143225] rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500"
               />
             </div>
 
             {/* Submit Button */}
-            <div className="pt-2 border-t flex justify-end gap-2">
+            <div className="pt-2 border-t border-gray-200 dark:border-[#143225] flex justify-end gap-2">
               <Button
                 variant="outline"
                 onClick={() => setIsCreateModalOpen(false)}
-                className="border-gray-300"
+                className="border-gray-300 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 onClick={() => createMutation.mutate()}
                 disabled={!selectedInventoryId || !quantity || createMutation.isPending}
-                className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-1.5"
+                className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-1.5 cursor-pointer"
               >
                 {createMutation.isPending ? (
                   <>
@@ -660,23 +660,23 @@ export default function IngredientRequestsPage() {
 
       {/* Reject Reason Modal */}
       <Dialog open={!!rejectingRequest} onOpenChange={(open) => !open && setRejectingRequest(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225] text-gray-900 dark:text-white">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-gray-900">
+            <DialogTitle className="text-base font-bold text-gray-900 dark:text-white">
               Reject Ingredient Request
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">
               Provide a reason to the kitchen team why this ingredient cannot be issued.
             </DialogDescription>
           </DialogHeader>
 
           {rejectingRequest && (
             <div className="space-y-3 mt-2">
-              <div className="p-2.5 rounded bg-gray-50 border text-xs">
+              <div className="p-2.5 rounded bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] text-xs text-gray-800 dark:text-gray-200">
                 Request: <strong>{rejectingRequest.quantity} {rejectingRequest.unit} of {rejectingRequest.inventoryName}</strong>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
                   Reason for Rejection
                 </label>
                 <textarea
@@ -684,12 +684,12 @@ export default function IngredientRequestsPage() {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="e.g. Out of stock in main store, replacement arriving at 4 PM"
-                  className="w-full p-2 border border-gray-300 rounded-lg text-xs"
+                  className="w-full p-2 bg-white dark:bg-[#071a12] border border-gray-300 dark:border-[#143225] rounded-lg text-xs text-gray-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t">
-                <Button variant="outline" size="sm" onClick={() => setRejectingRequest(null)}>
+              <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-[#143225]">
+                <Button variant="outline" size="sm" onClick={() => setRejectingRequest(null)} className="dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer">
                   Cancel
                 </Button>
                 <Button
@@ -701,7 +701,7 @@ export default function IngredientRequestsPage() {
                     })
                   }
                   disabled={rejectMutation.isPending}
-                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer"
                 >
                   Confirm Reject
                 </Button>

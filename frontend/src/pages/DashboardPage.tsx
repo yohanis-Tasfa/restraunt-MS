@@ -283,79 +283,79 @@ export default function DashboardPage() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full">
       {/* Welcome Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Dashboard</h1>
-        <p className="text-sm sm:text-base text-gray-500 mt-1">
-          {greeting}, {managerName} — here's what's happening at <strong className="text-gray-800 font-semibold">{branchName}</strong> today.
+        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dashboard</h1>
+        <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">
+          {greeting}, {managerName} — here's what's happening at <strong className="text-gray-800 dark:text-gray-200 font-semibold">{branchName}</strong> today.
         </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* Today's Sales */}
-        <Card className="border-gray-200 shadow-2xs hover:shadow-sm transition-shadow">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-700">
+              <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-950/60 flex items-center justify-center text-green-700 dark:text-[#00e676]">
                 <DollarSign className="w-6 h-6" />
               </div>
-              <span className="text-xs sm:text-sm font-bold text-green-700 bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200 flex items-center gap-1">
+              <span className="text-xs sm:text-sm font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
                 +14.2%
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Br 48,250.00</h3>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Today's sales</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Br 48,250.00</h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Today's sales</p>
           </CardContent>
         </Card>
 
         {/* Orders Today */}
-        <Card className="border-gray-200 shadow-2xs hover:shadow-sm transition-shadow">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700">
+              <div className="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-950/60 flex items-center justify-center text-orange-700 dark:text-orange-400">
                 <ShoppingBag className="w-6 h-6" />
               </div>
-              <span className="text-xs sm:text-sm font-bold text-green-700 bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200 flex items-center gap-1">
+              <span className="text-xs sm:text-sm font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
                 +8.5%
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">184</h3>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Orders today</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">184</h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Orders today</p>
           </CardContent>
         </Card>
 
         {/* Profit */}
-        <Card className="border-gray-200 shadow-2xs hover:shadow-sm transition-shadow">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-700">
+              <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-700 dark:text-blue-400">
                 <ChartUp className="w-6 h-6" />
               </div>
-              <span className="text-xs sm:text-sm font-bold text-green-700 bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200 flex items-center gap-1">
+              <span className="text-xs sm:text-sm font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
                 +12.4%
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Br 119,980.00</h3>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Profit [7d]</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Br 119,980.00</h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Profit [7d]</p>
           </CardContent>
         </Card>
 
         {/* Inventory Alerts */}
-        <Card className="border-gray-200 shadow-2xs hover:shadow-sm transition-shadow">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-700">
+              <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-700 dark:text-red-400">
                 <AlertTriangle className="w-6 h-6" />
               </div>
-              <span className="text-xs sm:text-sm font-bold text-red-700 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-200 flex items-center gap-1">
+              <span className="text-xs sm:text-sm font-bold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-2.5 py-0.5 rounded-full border border-red-200 dark:border-red-800/60 flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
                 2 urgent
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">4 items</h3>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-medium">Inventory alerts</p>
+            <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">4 items</h3>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Inventory alerts</p>
           </CardContent>
         </Card>
       </div>
@@ -363,12 +363,12 @@ export default function DashboardPage() {
       {/* Charts Row - Revenue vs Expenses (2/3) + Top Selling Dishes (1/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sales Overview Area Chart */}
-        <Card className="lg:col-span-2 border-gray-200 shadow-2xs">
+        <Card className="lg:col-span-2 border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <CardTitle className="text-lg font-bold text-gray-900">Sales overview</CardTitle>
-                <p className="text-xs text-gray-500">
+                <CardTitle className="text-lg font-bold text-gray-900 dark:text-white">Sales overview</CardTitle>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Revenue vs. expenses - {timeframe === '7d' ? 'last 7 days' : timeframe === '30d' ? 'last 30 days' : 'last 90 days'}
                 </p>
               </div>
@@ -377,23 +377,23 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-3 text-xs font-medium mr-2">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                    <span className="text-gray-600 text-xs font-semibold">Revenue</span>
+                    <span className="text-gray-600 dark:text-gray-300 text-xs font-semibold">Revenue</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                    <span className="text-gray-600 text-xs font-semibold">Expenses</span>
+                    <span className="text-gray-600 dark:text-gray-300 text-xs font-semibold">Expenses</span>
                   </div>
                 </div>
 
-                <div className="flex bg-gray-100 p-0.5 rounded-md border border-gray-200 text-xs font-medium">
+                <div className="flex bg-gray-100 dark:bg-[#071a12] p-0.5 rounded-md border border-gray-200 dark:border-[#143225] text-xs font-medium">
                   {(['7d', '30d', '90d'] as const).map((period) => (
                     <button
                       key={period}
                       onClick={() => setTimeframe(period)}
-                      className={`px-2.5 py-1 rounded transition-all ${
+                      className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
                         timeframe === period
-                          ? 'bg-white text-gray-900 shadow-2xs font-bold'
-                          : 'text-gray-600 hover:text-gray-900'
+                          ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs font-bold'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                       }`}
                     >
                       {period}
@@ -406,7 +406,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="h-72 sm:h-80 relative mt-2">
               {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-[11px] text-gray-400 font-mono pr-2">
+              <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-[11px] text-gray-400 dark:text-gray-500 font-mono pr-2">
                 <span>Br 80k</span>
                 <span>Br 60k</span>
                 <span>Br 40k</span>
@@ -429,11 +429,11 @@ export default function DashboardPage() {
                   </defs>
 
                   {/* Horizontal gridlines */}
-                  <line x1="0" y1="0" x2="600" y2="0" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="50" x2="600" y2="50" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="100" x2="600" y2="100" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="150" x2="600" y2="150" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="200" x2="600" y2="200" stroke="#f3f4f6" strokeWidth="1" />
+                  <line x1="0" y1="0" x2="600" y2="0" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="50" x2="600" y2="50" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="100" x2="600" y2="100" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="150" x2="600" y2="150" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="200" x2="600" y2="200" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
 
                   {/* Gradient fills */}
                   <polygon points={currentStats.revPoly} fill="url(#revenueGrad)" />
@@ -509,10 +509,10 @@ export default function DashboardPage() {
         </Card>
 
         {/* Popular Foods (Top Sellers) */}
-        <Card className="border-gray-200 shadow-2xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-bold text-gray-900">Popular dishes</CardTitle>
-            <p className="text-xs text-gray-500">Top selling menu items by volume & revenue</p>
+            <CardTitle className="text-lg font-bold text-gray-900 dark:text-white">Popular dishes</CardTitle>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Top selling menu items by volume & revenue</p>
           </CardHeader>
           <CardContent>
             {/* Visual Donut Chart */}
@@ -576,8 +576,8 @@ export default function DashboardPage() {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-2xl font-black text-gray-900 tracking-tight">472</span>
-                  <span className="text-[11px] text-gray-500 uppercase font-bold tracking-wider">Dishes</span>
+                  <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">472</span>
+                  <span className="text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Dishes</span>
                 </div>
               </div>
             </div>
@@ -585,14 +585,14 @@ export default function DashboardPage() {
             {/* Dish Rankings List */}
             <div className="space-y-2.5 mt-4">
               {popularFoods.map((food, i) => (
-                <div key={i} className="flex items-center justify-between text-xs sm:text-sm py-1.5 border-b border-gray-100 last:border-0">
+                <div key={i} className="flex items-center justify-between text-xs sm:text-sm py-1.5 border-b border-gray-100 dark:border-[#143225] last:border-0">
                   <div className="flex items-center gap-2.5">
                     <div className={`w-3 h-3 rounded-full ${food.color}`} />
-                    <span className="font-semibold text-gray-800">{food.name}</span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{food.name}</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-gray-900">{food.percentage}%</span>
-                    <span className="text-gray-400 ml-2 font-mono text-xs">(Br {food.revenue.toLocaleString()})</span>
+                    <span className="font-bold text-gray-900 dark:text-white">{food.percentage}%</span>
+                    <span className="text-gray-400 dark:text-gray-400 ml-2 font-mono text-xs">(Br {food.revenue.toLocaleString()})</span>
                   </div>
                 </div>
               ))}
@@ -604,14 +604,14 @@ export default function DashboardPage() {
       {/* Operational Breakdown Row - Sales by Day, Peak Hours, Staffing */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sales This Week */}
-        <Card className="border-gray-200 shadow-2xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-gray-900">Sales this week</CardTitle>
-            <p className="text-xs text-gray-500">Daily totals across current week</p>
+            <CardTitle className="text-base font-bold text-gray-900 dark:text-white">Sales this week</CardTitle>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Daily totals across current week</p>
           </CardHeader>
           <CardContent>
             <div className="h-52 relative">
-              <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[11px] font-mono text-gray-400 pr-1">
+              <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[11px] font-mono text-gray-400 dark:text-gray-500 pr-1">
                 <span>50k</span>
                 <span>35k</span>
                 <span>20k</span>
@@ -619,10 +619,10 @@ export default function DashboardPage() {
               </div>
               <div className="ml-9 h-full relative pb-2">
                 <svg className="w-full h-full" viewBox="0 0 280 140" preserveAspectRatio="none">
-                  <line x1="0" y1="0" x2="280" y2="0" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="46" x2="280" y2="46" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="92" x2="280" y2="92" stroke="#f3f4f6" strokeWidth="1" />
-                  <line x1="0" y1="138" x2="280" y2="138" stroke="#f3f4f6" strokeWidth="1" />
+                  <line x1="0" y1="0" x2="280" y2="0" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="46" x2="280" y2="46" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="92" x2="280" y2="92" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
+                  <line x1="0" y1="138" x2="280" y2="138" stroke="currentColor" className="text-gray-100 dark:text-[#143225]" strokeWidth="1" />
                   <polyline
                     points="0,110 45,95 90,98 135,70 180,30 225,18 270,45"
                     fill="none"
@@ -661,7 +661,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-gray-500 mt-2 ml-9">
+            <div className="flex justify-between text-xs font-semibold text-gray-500 dark:text-gray-400 mt-2 ml-9">
               <span>Mon</span>
               <span>Tue</span>
               <span>Wed</span>
@@ -674,10 +674,10 @@ export default function DashboardPage() {
         </Card>
 
         {/* Peak Ordering Hours */}
-        <Card className="border-gray-200 shadow-2xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-gray-900">Peak hours</CardTitle>
-            <p className="text-xs text-gray-500">Orders by hour - today</p>
+            <CardTitle className="text-base font-bold text-gray-900 dark:text-white">Peak hours</CardTitle>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Orders by hour - today</p>
           </CardHeader>
           <CardContent>
             <div className="h-52 flex items-end justify-between gap-1.5 px-1 pb-2">
@@ -697,7 +697,7 @@ export default function DashboardPage() {
                 <div key={i} className="flex-1 flex flex-col items-center group/bar relative">
                   <div
                     className={`w-full rounded-t transition-all cursor-pointer ${
-                      item.isRush ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-200 hover:bg-gray-300'
+                      item.isRush ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-200 dark:bg-[#143225] hover:bg-gray-300 dark:hover:bg-[#1b3d2e]'
                     }`}
                     style={{ height: `${(item.orders / 82) * 155}px` }}
                   >
@@ -710,55 +710,55 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-            <div className="flex justify-between text-[11px] text-gray-500 font-medium mt-2 px-1">
+            <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-2 px-1">
               <span>11 AM</span>
-              <span className="text-orange-600 font-bold">12 - 2 PM</span>
-              <span className="text-orange-600 font-bold">7 - 9 PM</span>
+              <span className="text-orange-600 dark:text-orange-400 font-bold">12 - 2 PM</span>
+              <span className="text-orange-600 dark:text-orange-400 font-bold">7 - 9 PM</span>
               <span>10 PM</span>
             </div>
           </CardContent>
         </Card>
 
         {/* Staff & Shift Roster */}
-        <Card className="border-gray-200 shadow-2xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-gray-900">Operations</CardTitle>
-            <p className="text-xs text-gray-500">Live branch status</p>
+            <CardTitle className="text-base font-bold text-gray-900 dark:text-white">Operations</CardTitle>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Live branch status</p>
           </CardHeader>
           <CardContent className="space-y-3.5">
             <div>
               <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                <span className="text-gray-700 flex items-center gap-1.5">
-                  <UsersIcon className="w-4 h-4 text-purple-600" />
+                <span className="text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                  <UsersIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   Staff on Duty
                 </span>
-                <span className="text-gray-900 font-bold">11 / 14 Present</span>
+                <span className="text-gray-900 dark:text-white font-bold">11 / 14 Present</span>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-gray-100 dark:bg-[#143225] rounded-full overflow-hidden">
                 <div className="h-full bg-purple-600 rounded-full" style={{ width: '78%' }} />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                <span className="text-gray-700 flex items-center gap-1.5">
-                  <ChefHat className="w-4 h-4 text-amber-600" />
+                <span className="text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                  <ChefHat className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   Kitchen Queue
                 </span>
-                <span className="text-gray-900 font-bold">5 Active Tickets</span>
+                <span className="text-gray-900 dark:text-white font-bold">5 Active Tickets</span>
               </div>
-              <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-gray-100 dark:bg-[#143225] rounded-full overflow-hidden">
                 <div className="h-full bg-amber-500 rounded-full" style={{ width: '60%' }} />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                <span className="text-gray-700 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-blue-600" />
+                <span className="text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Reservations Today
                 </span>
-                <span className="text-blue-700 font-bold">8 Bookings (34 Guests)</span>
+                <span className="text-blue-700 dark:text-blue-400 font-bold">8 Bookings (34 Guests)</span>
               </div>
             </div>
 
@@ -766,9 +766,9 @@ export default function DashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => navigate('/admin/employees')}
-              className="w-full text-xs font-semibold text-gray-700 mt-2 gap-1.5"
+              className="w-full text-xs font-semibold text-gray-700 dark:text-gray-200 dark:border-[#143225] dark:hover:bg-[#12281d] mt-2 gap-1.5 cursor-pointer"
             >
-              <UsersIcon className="w-3.5 h-3.5 text-gray-500" />
+              <UsersIcon className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
               <span>Manage Staff Directory</span>
             </Button>
           </CardContent>
@@ -778,24 +778,24 @@ export default function DashboardPage() {
       {/* Bottom Row - Recent Orders Master Table (2/3) + Low Stock Alert (1/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Orders Master View */}
-        <Card className="lg:col-span-2 border-gray-200 shadow-2xs">
+        <Card className="lg:col-span-2 border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <CardTitle className="text-lg font-bold text-gray-900">Recent orders</CardTitle>
-                <p className="text-xs text-gray-500">Live order stream across Dine-in, Takeaway, and Delivery</p>
+                <CardTitle className="text-lg font-bold text-gray-900 dark:text-white">Recent orders</CardTitle>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Live order stream across Dine-in, Takeaway, and Delivery</p>
               </div>
 
               {/* Channel filter tabs */}
-              <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200 text-xs">
+              <div className="flex items-center bg-gray-100 dark:bg-[#071a12] p-0.5 rounded-lg border border-gray-200 dark:border-[#143225] text-xs">
                 {(['ALL', 'DINE_IN', 'TAKEAWAY', 'DELIVERY'] as const).map((ch) => (
                   <button
                     key={ch}
                     onClick={() => setOrderChannelFilter(ch)}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
+                    className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer ${
                       orderChannelFilter === ch
-                        ? 'bg-white text-gray-900 shadow-2xs'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     {ch === 'ALL' ? 'All' : ch === 'DINE_IN' ? 'Dine-In' : ch === 'TAKEAWAY' ? 'Takeaway' : 'Delivery'}
@@ -808,7 +808,7 @@ export default function DashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  <tr className="border-b border-gray-200 dark:border-[#143225] text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     <th className="py-3 px-3">Order #</th>
                     <th className="py-3 px-3">Customer / Channel</th>
                     <th className="py-3 px-3">Table / Server</th>
@@ -817,29 +817,29 @@ export default function DashboardPage() {
                     <th className="py-3 px-3 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 text-xs sm:text-sm">
+                <tbody className="divide-y divide-gray-100 dark:divide-[#143225] text-xs sm:text-sm">
                   {filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                    <tr key={order.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/40 transition-colors">
                       <td className="py-3.5 px-3">
-                        <span className="font-mono font-bold text-gray-900">{order.orderNumber}</span>
-                        <div className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+                        <span className="font-mono font-bold text-gray-900 dark:text-white">{order.orderNumber}</span>
+                        <div className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" /> {order.time}
                         </div>
                       </td>
 
                       <td className="py-3.5 px-3">
-                        <div className="font-semibold text-gray-800">{order.customer}</div>
-                        <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-600 mt-0.5">
+                        <div className="font-semibold text-gray-800 dark:text-gray-200">{order.customer}</div>
+                        <span className="inline-block text-[10px] font-medium px-2 py-0.5 rounded bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-300 border border-transparent dark:border-[#143225] mt-0.5">
                           {order.type}
                         </span>
                       </td>
 
                       <td className="py-3.5 px-3">
-                        <div className="font-medium text-gray-900">{order.table || 'Counter'}</div>
-                        <div className="text-xs text-gray-400">{order.waiter}</div>
+                        <div className="font-medium text-gray-900 dark:text-gray-200">{order.table || 'Counter'}</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500">{order.waiter}</div>
                       </td>
 
-                      <td className="py-3.5 px-3 text-right font-mono font-bold text-gray-900 text-sm">
+                      <td className="py-3.5 px-3 text-right font-mono font-bold text-gray-900 dark:text-[#00e676] text-sm">
                         Br {order.total.toFixed(2)}
                       </td>
 
@@ -854,7 +854,7 @@ export default function DashboardPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => setSelectedOrder(order)}
-                          className="h-8 text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 px-3"
+                          className="h-8 text-xs font-bold text-emerald-700 dark:text-[#00e676] hover:text-emerald-800 dark:hover:text-[#69f0ae] hover:bg-emerald-50 dark:hover:bg-[#0c2f21] px-3 cursor-pointer"
                         >
                           Invoice
                         </Button>
@@ -865,13 +865,13 @@ export default function DashboardPage() {
               </table>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#143225] flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
               <span>Showing {filteredOrders.length} recent orders</span>
               <Button
                 variant="link"
                 size="sm"
                 onClick={() => navigate('/admin/orders')}
-                className="text-xs text-emerald-700 font-bold p-0 h-auto"
+                className="text-xs text-emerald-700 dark:text-[#00e676] font-bold p-0 h-auto cursor-pointer"
               >
                 View all orders & invoices &rarr;
               </Button>
@@ -880,17 +880,17 @@ export default function DashboardPage() {
         </Card>
 
         {/* Low Stock Alerts & Purchase Order Quick Trigger */}
-        <Card className="border-gray-200 shadow-2xs">
+        <Card className="border-gray-200 dark:border-[#143225] shadow-2xs">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-bold text-gray-900 flex items-center gap-1.5">
+                <CardTitle className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
                   <AlertTriangle className="w-4 h-4 text-rose-500" />
                   Low stock
                 </CardTitle>
-                <p className="text-xs text-gray-500">Below reorder threshold</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Below reorder threshold</p>
               </div>
-              <Badge className="bg-rose-100 text-rose-800 border-rose-300 font-bold text-xs">
+              <Badge className="bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800 font-bold text-xs">
                 {lowStockItems.length} Low
               </Badge>
             </div>
@@ -901,16 +901,16 @@ export default function DashboardPage() {
               const isUrgent = item.urgency === 'URGENT';
 
               return (
-                <div key={i} className="p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
+                <div key={i} className="p-2.5 rounded-lg border border-gray-100 dark:border-[#143225] bg-gray-50/50 dark:bg-[#07150f]">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-bold text-gray-900">{item.name}</span>
+                    <span className="text-xs font-bold text-gray-900 dark:text-white">{item.name}</span>
                     <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
-                      isUrgent ? 'bg-rose-100 text-rose-800 animate-pulse' : 'bg-amber-100 text-amber-800'
+                      isUrgent ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 animate-pulse' : 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300'
                     }`}>
                       {item.current} / {item.threshold} {item.unit}
                     </span>
                   </div>
-                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-gray-200 dark:bg-[#143225] rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${isUrgent ? 'bg-rose-500' : 'bg-amber-500'}`}
                       style={{ width: `${pct}%` }}
@@ -923,7 +923,7 @@ export default function DashboardPage() {
             <div className="pt-2">
               <Button
                 onClick={() => setIsPoModalOpen(true)}
-                className="w-full text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-xs"
+                className="w-full text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-xs cursor-pointer"
               >
                 <Package className="w-4 h-4" />
                 <span>Create Purchase Order</span>
@@ -936,9 +936,9 @@ export default function DashboardPage() {
       {/* Invoice Quick-View Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#091a13] rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-[#143225] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="p-4 bg-gray-900 text-white flex items-center justify-between">
+            <div className="p-4 bg-gray-900 dark:bg-[#04120b] text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-emerald-400" />
                 <div>
@@ -948,7 +948,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 dark:hover:bg-[#12281d] transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -956,18 +956,18 @@ export default function DashboardPage() {
 
             {/* Modal Body */}
             <div className="p-5 space-y-4">
-              <div className="flex justify-between items-center text-xs pb-3 border-b border-gray-100">
+              <div className="flex justify-between items-center text-xs pb-3 border-b border-gray-100 dark:border-[#143225]">
                 <div>
                   <span className="text-gray-400">Channel:</span>{' '}
-                  <strong className="text-gray-800 font-bold">{selectedOrder.type}</strong>
+                  <strong className="text-gray-800 dark:text-gray-200 font-bold">{selectedOrder.type}</strong>
                 </div>
                 <div>
                   <span className="text-gray-400">Server:</span>{' '}
-                  <strong className="text-gray-800 font-bold">{selectedOrder.waiter}</strong>
+                  <strong className="text-gray-800 dark:text-gray-200 font-bold">{selectedOrder.waiter}</strong>
                 </div>
                 <div>
                   <span className="text-gray-400">Table:</span>{' '}
-                  <strong className="text-gray-800 font-bold">{selectedOrder.table || 'Counter'}</strong>
+                  <strong className="text-gray-800 dark:text-gray-200 font-bold">{selectedOrder.table || 'Counter'}</strong>
                 </div>
               </div>
 
@@ -976,10 +976,10 @@ export default function DashboardPage() {
                 <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Items Ordered</p>
                 {selectedOrder.items.map((item, idx) => (
                   <div key={idx} className="flex justify-between text-xs py-1">
-                    <span className="text-gray-800 font-medium">
+                    <span className="text-gray-800 dark:text-gray-200 font-medium">
                       {item.quantity}x {item.name}
                     </span>
-                    <span className="font-mono text-gray-900 font-semibold">
+                    <span className="font-mono text-gray-900 dark:text-white font-semibold">
                       Br {(item.quantity * item.price).toFixed(2)}
                     </span>
                   </div>
@@ -987,26 +987,26 @@ export default function DashboardPage() {
               </div>
 
               {/* Calculations */}
-              <div className="pt-3 border-t border-gray-200 space-y-1.5 text-xs">
-                <div className="flex justify-between text-gray-600">
+              <div className="pt-3 border-t border-gray-200 dark:border-[#143225] space-y-1.5 text-xs">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Subtotal:</span>
-                  <span className="font-mono">Br {selectedOrder.subtotal.toFixed(2)}</span>
+                  <span className="font-mono text-gray-800 dark:text-gray-200 font-medium">Br {selectedOrder.subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>VAT (15%):</span>
-                  <span className="font-mono">Br {selectedOrder.vat.toFixed(2)}</span>
+                  <span className="font-mono text-gray-800 dark:text-gray-200 font-medium">Br {selectedOrder.vat.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Service Charge:</span>
-                  <span className="font-mono">Br {selectedOrder.serviceCharge.toFixed(2)}</span>
+                  <span className="font-mono text-gray-800 dark:text-gray-200 font-medium">Br {selectedOrder.serviceCharge.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm font-black text-gray-900 pt-2 border-t border-gray-100">
+                <div className="flex justify-between text-sm font-black text-gray-900 dark:text-white pt-2 border-t border-gray-100 dark:border-[#143225]">
                   <span>Total Amount:</span>
-                  <span className="font-mono text-emerald-700">Br {selectedOrder.total.toFixed(2)}</span>
+                  <span className="font-mono text-emerald-700 dark:text-[#00e676]">Br {selectedOrder.total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-xs text-gray-500 pt-1">
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 pt-1">
                   <span>Payment Method:</span>
-                  <Badge variant="outline" className="font-bold text-gray-700">
+                  <Badge variant="outline" className="font-bold text-gray-700 dark:text-gray-300 dark:border-[#143225]">
                     {selectedOrder.paymentMethod}
                   </Badge>
                 </div>
@@ -1014,12 +1014,12 @@ export default function DashboardPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+            <div className="p-4 bg-gray-50 dark:bg-[#07150f] border-t border-gray-200 dark:border-[#143225] flex items-center justify-end gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setSelectedOrder(null)}
-                className="text-xs font-semibold"
+                className="text-xs font-semibold dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] cursor-pointer"
               >
                 Close
               </Button>
@@ -1029,7 +1029,7 @@ export default function DashboardPage() {
                   window.print();
                   setSelectedOrder(null);
                 }}
-                className="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+                className="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 cursor-pointer shadow-sm"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Print Receipt</span>
@@ -1042,7 +1042,7 @@ export default function DashboardPage() {
       {/* Quick Purchase Order Trigger Modal */}
       {isPoModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#091a13] rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-[#143225] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <div className="p-4 bg-amber-600 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Package className="w-5 h-5 text-amber-200" />
@@ -1053,7 +1053,7 @@ export default function DashboardPage() {
                   setIsPoModalOpen(false);
                   setPoSubmitted(false);
                 }}
-                className="p-1 rounded-lg text-amber-200 hover:text-white hover:bg-amber-700"
+                className="p-1 rounded-lg text-amber-200 hover:text-white hover:bg-amber-700 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1062,39 +1062,39 @@ export default function DashboardPage() {
             <div className="p-5 space-y-4">
               {poSubmitted ? (
                 <div className="py-6 text-center space-y-2">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-[#00e676] flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
-                  <h4 className="font-bold text-gray-900">Purchase Order Sent!</h4>
-                  <p className="text-xs text-gray-500">
+                  <h4 className="font-bold text-gray-900 dark:text-white">Purchase Order Sent!</h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     A stock requisition for 5 critical items has been dispatched to suppliers.
                   </p>
                 </div>
               ) : (
                 <>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
                     Generate an emergency restocking purchase order for all items currently below threshold:
                   </p>
 
-                  <div className="space-y-1.5 bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs">
+                  <div className="space-y-1.5 bg-gray-50 dark:bg-[#07150f] p-3 rounded-lg border border-gray-200 dark:border-[#143225] text-xs">
                     {lowStockItems.map((item, idx) => (
                       <div key={idx} className="flex justify-between py-0.5">
-                        <span className="font-medium text-gray-800">{item.name}</span>
-                        <span className="font-mono text-gray-600 font-bold">
+                        <span className="font-medium text-gray-800 dark:text-gray-200">{item.name}</span>
+                        <span className="font-mono text-gray-600 dark:text-gray-400 font-bold">
                           +{(item.threshold * 2 - item.current).toFixed(1)} {item.unit}
                         </span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="text-xs text-gray-500">
-                    Target Supplier: <strong className="text-gray-800">Addis Agri-Wholesale Co.</strong>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    Target Supplier: <strong className="text-gray-800 dark:text-gray-200">Addis Agri-Wholesale Co.</strong>
                   </div>
                 </>
               )}
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+            <div className="p-4 bg-gray-50 dark:bg-[#07150f] border-t border-gray-200 dark:border-[#143225] flex items-center justify-end gap-2">
               {poSubmitted ? (
                 <Button
                   size="sm"
@@ -1102,7 +1102,7 @@ export default function DashboardPage() {
                     setIsPoModalOpen(false);
                     setPoSubmitted(false);
                   }}
-                  className="text-xs font-bold bg-gray-900 text-white"
+                  className="text-xs font-bold bg-gray-900 dark:bg-[#123627] text-white dark:text-[#00e676] cursor-pointer"
                 >
                   Done
                 </Button>
@@ -1112,14 +1112,14 @@ export default function DashboardPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => setIsPoModalOpen(false)}
-                    className="text-xs font-semibold"
+                    className="text-xs font-semibold dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] cursor-pointer"
                   >
                     Cancel
                   </Button>
                   <Button
                     size="sm"
                     onClick={() => setPoSubmitted(true)}
-                    className="text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white gap-1"
+                    className="text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white gap-1 cursor-pointer"
                   >
                     Confirm & Send Order
                   </Button>

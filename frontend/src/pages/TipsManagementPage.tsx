@@ -322,12 +322,12 @@ export default function TipsManagementPage() {
       prev.map((t) =>
         t.id === targetTipId
           ? {
-              ...t,
-              status: TipStatus.PAID,
-              paidAt: new Date().toISOString(),
-              paidById: user?.id || 'mgr-1',
-              notes: noteText,
-            }
+            ...t,
+            status: TipStatus.PAID,
+            paidAt: new Date().toISOString(),
+            paidById: user?.id || 'mgr-1',
+            notes: noteText,
+          }
           : t
       )
     );
@@ -376,12 +376,12 @@ export default function TipsManagementPage() {
         prev.map((t) =>
           t.waiter?.id === waiterId && t.status === 'PENDING'
             ? {
-                ...t,
-                status: TipStatus.PAID,
-                paidAt: new Date().toISOString(),
-                paidById: user?.id || 'mgr-1',
-                notes: 'Bulk shift payout',
-              }
+              ...t,
+              status: TipStatus.PAID,
+              paidAt: new Date().toISOString(),
+              paidById: user?.id || 'mgr-1',
+              notes: 'Bulk shift payout',
+            }
             : t
         )
       );
@@ -451,8 +451,8 @@ export default function TipsManagementPage() {
     <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Top Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Tips Management</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">Tips Management</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Track customer tips, reconcile collected funds, and disburse payouts to waitstaff.
         </p>
       </div>
@@ -460,70 +460,70 @@ export default function TipsManagementPage() {
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Tips Collected */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Total Tips Collected</span>
-            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Total Tips Collected</span>
+            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-400">
               <DollarSign className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             Br {(summary.total.amount || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-gray-500 mt-1 font-medium">{summary.total.count || 0} total transactions</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">{summary.total.count || 0} total transactions</p>
         </div>
 
         {/* Pending Waiter Payouts */}
-        <div className="bg-white rounded-xl border border-amber-200 bg-amber-50/30 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/30 dark:bg-amber-950/20 shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-800">Pending Waiter Payout</span>
-            <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Pending Waiter Payout</span>
+            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-700 dark:text-amber-400">
               <Clock className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-amber-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-amber-900 dark:text-amber-400 tracking-tight">
             Br {(summary.pending.amount || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-amber-700 mt-1 font-medium">
+          <p className="text-xs text-amber-700 dark:text-amber-400 mt-1 font-medium">
             {summary.pending.count || 0} waiting to be paid by Manager/Cashier
           </p>
         </div>
 
         {/* Total Disbursed */}
-        <div className="bg-white rounded-xl border border-emerald-200 bg-emerald-50/30 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-emerald-200 dark:border-[#143225] bg-emerald-50/30 dark:bg-[#0c2219]/40 shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Disbursed to Waiters</span>
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-[#00e676]">Disbursed to Waiters</span>
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-700 dark:text-[#00e676]">
               <CheckCircle className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight">
             Br {(summary.paid.amount || 0).toFixed(2)}
           </div>
-          <p className="text-xs text-emerald-700 mt-1 font-medium">
+          <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-1 font-medium">
             {summary.paid.count || 0} successfully settled
           </p>
         </div>
 
         {/* Waitstaff Pool */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-2xs p-5">
+        <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Active Waiters</span>
-            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Active Waiters</span>
+            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-950/40 flex items-center justify-center text-purple-700 dark:text-purple-400">
               <User className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             {uniqueWaiters.length} Waiters
           </div>
-          <p className="text-xs text-gray-500 mt-1 font-medium">Across all dining shifts</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Across all dining shifts</p>
         </div>
       </div>
 
       {/* Tips Master Table */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-2xs overflow-hidden">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] shadow-2xs overflow-hidden">
         {/* Compact Table Header Toolbar with Search & Side-by-Side Filters */}
-        <div className="p-3 sm:p-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3 bg-white">
+        <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-[#143225] flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#091a13]">
           {/* Left: Search input and compact dropdown filters side-by-side */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 flex-1 min-w-[280px]">
             {/* Search Input */}
@@ -534,7 +534,7 @@ export default function TipsManagementPage() {
                 placeholder="Search waiter, order #, table..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50 hover:bg-white transition-colors"
+                className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50/50 hover:bg-white dark:hover:bg-[#071a12] transition-colors"
               />
             </div>
 
@@ -542,7 +542,7 @@ export default function TipsManagementPage() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as TipStatus | 'ALL')}
-              className="px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white font-medium text-gray-700"
+              className="px-2.5 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-[#071a12] font-medium text-gray-700 dark:text-white"
             >
               <option value="ALL">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -553,7 +553,7 @@ export default function TipsManagementPage() {
             <select
               value={selectedMethod}
               onChange={(e) => setSelectedMethod(e.target.value)}
-              className="px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white font-medium text-gray-700"
+              className="px-2.5 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-[#071a12] font-medium text-gray-700 dark:text-white"
             >
               <option value="ALL">All Methods</option>
               <option value="CASH">Cash</option>
@@ -566,7 +566,7 @@ export default function TipsManagementPage() {
             <select
               value={selectedWaiter}
               onChange={(e) => setSelectedWaiter(e.target.value)}
-              className="px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white font-medium text-gray-700 max-w-[150px]"
+              className="px-2.5 py-1.5 text-xs border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white dark:bg-[#071a12] font-medium text-gray-700 dark:text-white max-w-[150px]"
             >
               <option value="ALL">All Waiters</option>
               {uniqueWaiters.map(
@@ -589,7 +589,7 @@ export default function TipsManagementPage() {
                   setSearchQuery('');
                   setDateRange({ from: '', to: '' });
                 }}
-                className="text-xs font-semibold text-gray-500 hover:text-gray-900 px-2 py-1 hover:bg-gray-100 rounded-md transition-colors"
+                className="text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#0c2219] rounded-md transition-colors cursor-pointer"
               >
                 Clear
               </button>
@@ -598,7 +598,7 @@ export default function TipsManagementPage() {
 
           {/* Right: Record Count & Optional Bulk Action */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-gray-500">
+            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
               {tips.length} records
             </span>
 
@@ -610,7 +610,7 @@ export default function TipsManagementPage() {
                     handlePayoutAllForWaiter(waiterObj.id, `${waiterObj.firstName} ${waiterObj.lastName}`);
                   }
                 }}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Banknote className="w-3.5 h-3.5" />
                 <span>Disburse All</span>
@@ -621,7 +621,7 @@ export default function TipsManagementPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50/80 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+            <thead className="bg-gray-50/80 dark:bg-[#0c2219] border-b border-gray-200 dark:border-[#143225] text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">Date & Time</th>
                 <th className="py-3 px-4">Waiter (Recipient)</th>
@@ -632,27 +632,27 @@ export default function TipsManagementPage() {
                 <th className="py-3 px-4">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-xs sm:text-sm">
+            <tbody className="divide-y divide-gray-100 dark:divide-[#143225] text-xs sm:text-sm bg-white dark:bg-[#091a13]">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     Loading tips ledger...
                   </td>
                 </tr>
               ) : tips.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                    <DollarSign className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <DollarSign className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
                     No tips match the current filter selection
                   </td>
                 </tr>
               ) : (
                 tips.map((tip) => (
-                  <tr key={tip.id} className="hover:bg-gray-50/80 transition-colors">
+                  <tr key={tip.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
                     {/* Date */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2 text-xs text-gray-900 font-medium">
-                        <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                      <div className="flex items-center gap-2 text-xs text-gray-900 dark:text-white font-medium">
+                        <Calendar className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                         {format(new Date(tip.createdAt), 'MMM dd, yyyy HH:mm')}
                       </div>
                     </td>
@@ -660,24 +660,24 @@ export default function TipsManagementPage() {
                     {/* Waiter */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                        <div className="w-7 h-7 rounded-full bg-emerald-100 dark:bg-[#0c2219] text-emerald-800 dark:text-[#00e676] flex items-center justify-center font-bold text-xs">
                           {tip.waiter?.firstName ? tip.waiter.firstName.charAt(0) : 'W'}
                         </div>
                         <div>
-                          <span className="font-bold text-gray-900 text-xs sm:text-sm">
+                          <span className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm">
                             {tip.waiter ? `${tip.waiter.firstName} ${tip.waiter.lastName}` : 'Unassigned Waiter'}
                           </span>
-                          <div className="text-[10px] text-gray-400">{tip.waiter?.email || 'Server'}</div>
+                          <div className="text-[10px] text-gray-400 dark:text-gray-500">{tip.waiter?.email || 'Server'}</div>
                         </div>
                       </div>
                     </td>
 
                     {/* Order & Table */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <span className="font-mono font-bold text-gray-900">
+                      <span className="font-mono font-bold text-gray-900 dark:text-white">
                         {tip.order?.orderNumber || `#${tip.orderId.slice(-8)}`}
                       </span>
-                      <div className="text-[11px] text-gray-500 font-medium mt-0.5">
+                      <div className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
                         {tip.order?.table?.number ? `Table ${tip.order.table.number}` : 'Counter / Takeaway'}
                         {tip.order?.total ? ` • Br ${tip.order.total.toFixed(2)}` : ''}
                       </div>
@@ -685,7 +685,7 @@ export default function TipsManagementPage() {
 
                     {/* Tip Amount */}
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <span className="font-mono font-black text-emerald-700 text-sm sm:text-base">
+                      <span className="font-mono font-black text-emerald-700 dark:text-[#00e676] text-sm sm:text-base">
                         Br {tip.amount.toFixed(2)}
                       </span>
                     </td>
@@ -713,14 +713,14 @@ export default function TipsManagementPage() {
                             setPayoutModalTip(tip);
                             setPayoutNotes('');
                           }}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hover:scale-102"
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hover:scale-102"
                         >
                           <Banknote className="w-3.5 h-3.5" />
                           <span>Mark as Paid</span>
                         </button>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-[#0c2219] text-emerald-800 dark:text-[#00e676] border border-emerald-300 dark:border-[#143225]">
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" />
                           <span>Paid</span>
                         </span>
                       )}
@@ -736,16 +736,16 @@ export default function TipsManagementPage() {
       {/* Payout Confirmation Modal */}
       {payoutModalTip && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#091a13] rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-[#143225] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="p-4 bg-emerald-700 text-white flex items-center justify-between">
+            <div className="p-4 bg-emerald-700 dark:bg-[#0c2219] text-white flex items-center justify-between border-b dark:border-[#143225]">
               <div className="flex items-center gap-2">
-                <Banknote className="w-5 h-5 text-emerald-200" />
+                <Banknote className="w-5 h-5 text-emerald-200 dark:text-[#00e676]" />
                 <h3 className="font-bold text-sm">Disburse Waiter Tip Payout</h3>
               </div>
               <button
                 onClick={() => setPayoutModalTip(null)}
-                className="p-1 rounded-lg text-emerald-200 hover:text-white hover:bg-emerald-800 transition-colors"
+                className="p-1 rounded-lg text-emerald-200 hover:text-white hover:bg-emerald-800 dark:hover:bg-[#143225] transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -753,14 +753,14 @@ export default function TipsManagementPage() {
 
             {/* Modal Body */}
             <div className="p-5 space-y-4">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
-                <span className="text-xs uppercase tracking-wider font-bold text-emerald-800">Payout Amount</span>
-                <div className="text-3xl font-black text-emerald-950 font-mono mt-1">
+              <div className="bg-emerald-50 dark:bg-[#071a12] border border-emerald-200 dark:border-[#143225] rounded-xl p-4 text-center">
+                <span className="text-xs uppercase tracking-wider font-bold text-emerald-800 dark:text-[#00e676]">Payout Amount</span>
+                <div className="text-3xl font-black text-emerald-950 dark:text-[#00e676] font-mono mt-1">
                   Br {payoutModalTip.amount.toFixed(2)}
                 </div>
-                <p className="text-xs text-emerald-700 font-medium mt-1">
+                <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium mt-1">
                   For Waiter:{' '}
-                  <strong className="text-emerald-950">
+                  <strong className="text-emerald-950 dark:text-white">
                     {payoutModalTip.waiter
                       ? `${payoutModalTip.waiter.firstName} ${payoutModalTip.waiter.lastName}`
                       : 'Assigned Waiter'}
@@ -769,59 +769,56 @@ export default function TipsManagementPage() {
               </div>
 
               {/* Order Reference Details */}
-              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs space-y-1.5">
+              <div className="bg-gray-50 dark:bg-[#0c2219] p-3 rounded-lg border border-gray-200 dark:border-[#143225] text-xs space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Order Reference:</span>
-                  <span className="font-mono font-bold text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">Order Reference:</span>
+                  <span className="font-mono font-bold text-gray-900 dark:text-white">
                     {payoutModalTip.order?.orderNumber || payoutModalTip.orderId}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Table:</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">Table:</span>
+                  <span className="font-bold text-gray-900 dark:text-white">
                     {payoutModalTip.order?.table?.number ? `Table ${payoutModalTip.order.table.number}` : 'Counter'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Customer Paid Via:</span>
-                  <span className="font-bold text-gray-900">{payoutModalTip.method}</span>
+                  <span className="text-gray-500 dark:text-gray-400">Customer Paid Via:</span>
+                  <span className="font-bold text-gray-900 dark:text-white">{payoutModalTip.method}</span>
                 </div>
               </div>
 
               {/* Payout Disbursement Channel */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">Disbursement Method</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Disbursement Method</label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CASH_TILL')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all ${
-                      payoutDisbursementMethod === 'CASH_TILL'
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CASH_TILL'
+                        ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] border-emerald-600 dark:border-[#00e676] shadow-xs'
+                        : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
+                      }`}
                   >
                     Cash from Till
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('TELEBIRR_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all ${
-                      payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
+                        : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
+                      }`}
                   >
                     Telebirr
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CBE_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all ${
-                      payoutDisbursementMethod === 'CBE_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CBE_TRANSFER'
                         ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
+                        : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
+                      }`}
                   >
                     CBE Birr
                   </button>
@@ -830,25 +827,25 @@ export default function TipsManagementPage() {
 
               {/* Optional Payout Notes */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Reconciliation Notes <span className="text-gray-400 font-normal">(Optional)</span>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  Reconciliation Notes <span className="text-gray-400 dark:text-gray-500 font-normal">(Optional)</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. Shift closing cash envelope #4"
                   value={payoutNotes}
                   onChange={(e) => setPayoutNotes(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-[#143225] dark:bg-[#071a12] dark:text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+            <div className="p-4 bg-gray-50 dark:bg-[#0c2219] border-t border-gray-200 dark:border-[#143225] flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setPayoutModalTip(null)}
-                className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#071a12] rounded-lg transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -856,7 +853,7 @@ export default function TipsManagementPage() {
                 type="button"
                 disabled={isSubmittingPayout}
                 onClick={submitPayout}
-                className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all shadow-xs flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] rounded-lg transition-all shadow-xs flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
               >
                 <CheckCircle className="w-4 h-4" />
                 <span>Confirm & Mark as Paid</span>

@@ -170,9 +170,9 @@ export default function POSPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-[#07130e] text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
+      <header className="bg-white dark:bg-[#091a13] border-b border-gray-200 dark:border-[#143225] px-4 py-3 shadow-sm transition-colors duration-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -180,8 +180,8 @@ export default function POSPage() {
                 <ShoppingCart className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">POS System</h1>
-                <p className="text-xs text-gray-500">
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white">POS System</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {user?.branch?.name || 'Main Branch'}
                 </p>
               </div>
@@ -192,14 +192,14 @@ export default function POSPage() {
             {/* Active Calls Indicator */}
             <ActiveCallsIndicator />
             
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg">
-              <User className="w-4 h-4 text-gray-600" />
-              <span className="text-sm font-medium text-gray-700">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-[#0c2219] border border-transparent dark:border-[#143225] rounded-lg">
+              <User className="w-4 h-4 text-gray-600 dark:text-[#00e676]" />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 {user?.firstName} {user?.lastName}
               </span>
             </div>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="w-4 h-4" />
+            <Button variant="outline" size="sm" onClick={handleLogout} className="dark:border-[#143225] dark:text-gray-200 dark:hover:bg-[#12281d] cursor-pointer">
+              <LogOut className="w-4 h-4 mr-1.5" />
               Logout
             </Button>
           </div>
@@ -209,14 +209,14 @@ export default function POSPage() {
       {/* Main Content - Two Column Layout */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Side - Menu */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden bg-gray-50 dark:bg-[#07130e]">
           {/* Category Tabs */}
-          <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="bg-white dark:bg-[#091a13] border-b border-gray-200 dark:border-[#143225] px-4 py-3">
             <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-              <TabsList className="w-full justify-start overflow-x-auto">
-                <TabsTrigger value="all">All Items</TabsTrigger>
+              <TabsList className="w-full justify-start overflow-x-auto bg-gray-100 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] p-1">
+                <TabsTrigger value="all" className="dark:data-[state=active]:bg-[#123627] dark:data-[state=active]:text-[#00e676] dark:text-gray-300">All Items</TabsTrigger>
                 {categories.map((category: MenuCategory) => (
-                  <TabsTrigger key={category.id} value={category.id}>
+                  <TabsTrigger key={category.id} value={category.id} className="dark:data-[state=active]:bg-[#123627] dark:data-[state=active]:text-[#00e676] dark:text-gray-300">
                     {category.name}
                   </TabsTrigger>
                 ))}
@@ -225,7 +225,7 @@ export default function POSPage() {
           </div>
 
           {/* Menu Items Grid */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-[#07130e]">
             <MenuSection
               items={menuItems}
               isLoading={itemsLoading || categoriesLoading}
@@ -234,7 +234,7 @@ export default function POSPage() {
         </div>
 
         {/* Right Side - Cart */}
-        <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+        <div className="w-96 bg-white dark:bg-[#091a13] border-l border-gray-200 dark:border-[#143225] flex flex-col shadow-lg">
           <CartSection onCheckout={handleCheckout} />
         </div>
       </div>

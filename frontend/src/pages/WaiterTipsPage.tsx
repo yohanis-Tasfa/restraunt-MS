@@ -119,58 +119,58 @@ export default function WaiterTipsPage() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <DollarSign className="w-7 h-7 text-green-600" />
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <DollarSign className="w-7 h-7 text-green-600 dark:text-[#00e676]" />
           My Tips
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Track your transfer tips pending payout from manager
         </p>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Tips</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400">Total Tips</p>
+              <p className="text-2xl font-extrabold text-green-600 dark:text-[#00e676] mt-1">
                 {summary?.total.amount.toFixed(2) || '0.00'} ETB
               </p>
-              <p className="text-xs text-gray-500">{summary?.total.count || 0} tips</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{summary?.total.count || 0} tips</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending Payout</p>
-              <p className="text-2xl font-bold text-yellow-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400">Pending Payout</p>
+              <p className="text-2xl font-extrabold text-yellow-600 dark:text-yellow-400 mt-1">
                 {summary?.pending.amount.toFixed(2) || '0.00'} ETB
               </p>
-              <p className="text-xs text-gray-500">Awaiting manager payout</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Awaiting manager payout</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-yellow-600" />
+            <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/40 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-100 dark:border-[#143225]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Paid Out</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400">Paid Out</p>
+              <p className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">
                 {summary?.paid.amount.toFixed(2) || '0.00'} ETB
               </p>
-              <p className="text-xs text-gray-500">{summary?.paid.count || 0} tips</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{summary?.paid.count || 0} tips</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
         </Card>
@@ -186,8 +186,8 @@ export default function WaiterTipsPage() {
             onClick={() => setStatusFilter('all')}
             className={
               statusFilter === 'all'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             All Tips
@@ -198,8 +198,8 @@ export default function WaiterTipsPage() {
             onClick={() => setStatusFilter('PENDING')}
             className={
               statusFilter === 'PENDING'
-                ? 'bg-yellow-600 hover:bg-yellow-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-yellow-600 hover:bg-yellow-700 text-white font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             <Clock className="w-4 h-4 mr-1.5" />
@@ -211,8 +211,8 @@ export default function WaiterTipsPage() {
             onClick={() => setStatusFilter('PAID')}
             className={
               statusFilter === 'PAID'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             <CheckCircle className="w-4 h-4 mr-1.5" />
@@ -228,8 +228,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('all')}
             className={
               dateRange === 'all'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             <Calendar className="w-4 h-4 mr-1.5" />
@@ -241,8 +241,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('today')}
             className={
               dateRange === 'today'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             Today
@@ -253,8 +253,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('week')}
             className={
               dateRange === 'week'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             This Week
@@ -265,8 +265,8 @@ export default function WaiterTipsPage() {
             onClick={() => setDateRange('month')}
             className={
               dateRange === 'month'
-                ? 'bg-green-600 hover:bg-green-700 text-white font-medium'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-emerald-600 hover:bg-emerald-700 dark:bg-[#00e676] dark:hover:bg-[#00c853] text-white dark:text-[#032314] font-bold cursor-pointer'
+                : 'bg-white dark:bg-[#091a13] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219] cursor-pointer'
             }
           >
             This Month
@@ -275,57 +275,57 @@ export default function WaiterTipsPage() {
       </div>
 
       {/* Tips Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#091a13] rounded-xl border border-gray-200 dark:border-[#143225] overflow-hidden shadow-xs">
         {tips.length === 0 ? (
           <div className="text-center py-12">
-            <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <div className="text-gray-400 mb-2">No transfer tips yet</div>
-            <p className="text-sm text-gray-500">
+            <DollarSign className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+            <div className="text-gray-700 dark:text-gray-300 font-semibold mb-2">No transfer tips yet</div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Transfer tips from customer payments will appear here
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-left">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-[#143225] text-left">
+              <thead className="bg-gray-50 dark:bg-[#0c2219] border-b border-gray-200 dark:border-[#143225]">
                 <tr>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Table
                   </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Order Total
                   </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Payment Method
                   </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-3.5 text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Date &amp; Time
                   </th>
-                  <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Tip Amount
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-[#143225] bg-white dark:bg-[#091a13]">
                 {tips.map((tip: Tip) => (
-                  <tr key={tip.id} className="hover:bg-gray-50/80 transition-colors">
+                  <tr key={tip.id} className="hover:bg-gray-50/80 dark:hover:bg-[#0c2f21]/30 transition-colors">
                     {/* Table */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-gray-100 dark:bg-[#071a12] text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
                         {tip.order?.table?.number
                           ? (tip.order.table.number.toLowerCase().startsWith('t')
-                              ? tip.order.table.number
-                              : `Table ${tip.order.table.number}`)
+                            ? tip.order.table.number
+                            : `Table ${tip.order.table.number}`)
                           : 'Takeout'}
                       </span>
                     </td>
 
                     {/* Order Total */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-semibold text-gray-900">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
                         {(tip.order?.total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ETB
                       </span>
                     </td>
@@ -345,12 +345,12 @@ export default function WaiterTipsPage() {
                           {tip.status}
                         </span>
                         {tip.status === TipStatus.PENDING && (
-                          <span className="text-[11px] text-amber-700 font-medium">
+                          <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
                             ⏳ Waiting for payout
                           </span>
                         )}
                         {tip.status === TipStatus.PAID && tip.paidAt && (
-                          <span className="text-[11px] text-gray-500">
+                          <span className="text-[11px] text-gray-500 dark:text-gray-400">
                             Paid {format(new Date(tip.paidAt), 'MMM dd, yyyy')}
                             {tip.paidBy ? ` by ${tip.paidBy.firstName}` : ''}
                           </span>
@@ -359,21 +359,21 @@ export default function WaiterTipsPage() {
                     </td>
 
                     {/* Date & Time */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      <div className="font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                      <div className="font-medium text-gray-900 dark:text-white">
                         {format(new Date(tip.createdAt), 'MMM dd, yyyy')}
                       </div>
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-gray-400 dark:text-gray-500">
                         {format(new Date(tip.createdAt), 'HH:mm')}
                       </div>
                     </td>
 
                     {/* Tip Amount */}
                     <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="text-xl font-bold text-green-600">
+                      <div className="text-xl font-extrabold text-green-600 dark:text-[#00e676]">
                         +{tip.amount.toFixed(2)} ETB
                       </div>
-                      <div className="text-xs text-gray-400 font-medium">Tip received</div>
+                      <div className="text-xs text-gray-400 dark:text-gray-500 font-medium">Tip received</div>
                     </td>
                   </tr>
                 ))}

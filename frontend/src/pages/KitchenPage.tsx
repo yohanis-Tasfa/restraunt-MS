@@ -296,9 +296,9 @@ export default function KitchenPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100/90 font-sans select-none">
+    <div className="h-screen flex flex-col bg-gray-100/90 dark:bg-[#07130e] text-gray-900 dark:text-gray-100 font-sans select-none">
       {/* Top Header / Kitchen Control Bar */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3.5 shadow-xs shrink-0">
+      <header className="bg-white dark:bg-[#091a13] border-b border-gray-200 dark:border-[#143225] px-6 py-3.5 shadow-xs shrink-0">
         <div className="flex flex-wrap items-center justify-between gap-4">
           {/* Left: Identity & Live Orders Badge */}
           <div className="flex items-center gap-3.5">
@@ -307,10 +307,10 @@ export default function KitchenPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-black text-gray-900 tracking-tight">Kitchen Display System</h1>
+                <h1 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">Kitchen Display System</h1>
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
-                    isConnected ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'
+                    isConnected ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-[#00e676]' : 'bg-gray-100 dark:bg-[#0c2219] text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   <span
@@ -321,34 +321,34 @@ export default function KitchenPage() {
                   {isConnected ? 'Live WebSocket' : 'Connecting'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 font-medium">
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                 {user?.branch?.name || 'Main Kitchen'} • {activeOrders.length} active tickets
               </p>
             </div>
           </div>
 
           {/* Middle: Station / Order Type Filter */}
-          <div className="flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200 text-xs font-bold">
+          <div className="flex items-center bg-gray-100 dark:bg-[#071a12] p-1 rounded-lg border border-gray-200 dark:border-[#143225] text-xs font-bold">
             <button
               onClick={() => setTypeFilter('ALL')}
-              className={`px-3 py-1.5 rounded-md transition-all ${
-                typeFilter === 'ALL' ? 'bg-white text-gray-900 shadow-2xs' : 'text-gray-600 hover:text-gray-900'
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
+                typeFilter === 'ALL' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               All Tickets ({orders.filter((o) => ['PENDING', 'PREPARING', 'READY'].includes(o.status)).length})
             </button>
             <button
               onClick={() => setTypeFilter('DINE_IN')}
-              className={`px-3 py-1.5 rounded-md transition-all ${
-                typeFilter === 'DINE_IN' ? 'bg-white text-gray-900 shadow-2xs' : 'text-gray-600 hover:text-gray-900'
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
+                typeFilter === 'DINE_IN' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               🍽️ Dine-In
             </button>
             <button
               onClick={() => setTypeFilter('TAKEAWAY')}
-              className={`px-3 py-1.5 rounded-md transition-all ${
-                typeFilter === 'TAKEAWAY' ? 'bg-white text-gray-900 shadow-2xs' : 'text-gray-600 hover:text-gray-900'
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
+                typeFilter === 'TAKEAWAY' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               📦 Takeout / Delivery
@@ -358,24 +358,24 @@ export default function KitchenPage() {
           {/* Right: Controls, Audio Toggle, Fullscreen & Clock */}
           <div className="flex items-center gap-3">
             {/* Audio Toggle & Test */}
-            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-1">
+            <div className="flex items-center bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-lg p-1">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSoundEnabled(!soundEnabled)}
-                className={`h-8 px-2.5 text-xs font-semibold gap-1.5 ${
-                  soundEnabled ? 'text-emerald-700 bg-emerald-50' : 'text-gray-500'
+                className={`h-8 px-2.5 text-xs font-semibold gap-1.5 cursor-pointer ${
+                  soundEnabled ? 'text-emerald-700 dark:text-[#00e676] bg-emerald-50 dark:bg-[#123627]' : 'text-gray-500 dark:text-gray-400'
                 }`}
                 title={soundEnabled ? 'Sound is ON (Click to Mute)' : 'Sound is MUTED (Click to Enable)'}
               >
-                {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600" /> : <VolumeX className="w-4 h-4" />}
+                {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" /> : <VolumeX className="w-4 h-4" />}
                 <span>{soundEnabled ? 'Chime ON' : 'Muted'}</span>
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={playKitchenChime}
-                className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
+                className="h-8 px-2 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
                 title="Test Audio Chime"
               >
                 <Bell className="w-3.5 h-3.5" />
@@ -387,9 +387,9 @@ export default function KitchenPage() {
               variant="outline"
               size="sm"
               onClick={() => setIsHistoryOpen(true)}
-              className="h-9 px-3 text-xs font-semibold border-gray-300 text-gray-700 hover:bg-gray-100 gap-1.5 shadow-2xs"
+              className="h-9 px-3 text-xs font-semibold border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1.5 shadow-2xs cursor-pointer"
             >
-              <History className="w-4 h-4 text-gray-500" />
+              <History className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               <span>Recall History</span>
             </Button>
 
@@ -398,18 +398,18 @@ export default function KitchenPage() {
               variant="outline"
               size="sm"
               onClick={toggleFullscreen}
-              className="h-9 w-9 p-0 border-gray-300 text-gray-700 hover:bg-gray-100 shadow-2xs"
+              className="h-9 w-9 p-0 border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
               title="Toggle Fullscreen Mode"
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </Button>
 
             {/* Live Clock */}
-            <div className="text-right pl-2 border-l border-gray-200">
-              <p className="text-lg font-black text-gray-900 leading-tight">
+            <div className="text-right pl-2 border-l border-gray-200 dark:border-[#143225]">
+              <p className="text-lg font-black text-gray-900 dark:text-white leading-tight">
                 {format(currentTime, 'HH:mm:ss')}
               </p>
-              <p className="text-[11px] font-semibold text-gray-500">{format(currentTime, 'EEE, MMM d')}</p>
+              <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400">{format(currentTime, 'EEE, MMM d')}</p>
             </div>
           </div>
         </div>
@@ -426,12 +426,12 @@ export default function KitchenPage() {
           </div>
         ) : activeOrders.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-center bg-white p-12 rounded-2xl border border-gray-200 shadow-sm max-w-md">
-              <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-10 h-10 text-emerald-600" />
+            <div className="text-center bg-white dark:bg-[#091a13] p-12 rounded-2xl border border-gray-200 dark:border-[#143225] shadow-sm max-w-md">
+              <div className="w-20 h-20 rounded-full bg-emerald-50 dark:bg-[#0c2219] border border-emerald-200 dark:border-[#143225] flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-10 h-10 text-emerald-600 dark:text-[#00e676]" />
               </div>
-              <h3 className="text-2xl font-black text-gray-900 mb-1">Kitchen All Clear!</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-1">Kitchen All Clear!</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 No active tickets in queue. Incoming orders from tables, POS, and waiters will chime here instantly.
               </p>
             </div>
@@ -442,7 +442,7 @@ export default function KitchenPage() {
               const columnOrders = ordersByStatus[status as keyof typeof ordersByStatus];
 
               return (
-                <div key={status} className="flex flex-col h-full min-h-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div key={status} className="flex flex-col h-full min-h-0 bg-white dark:bg-[#091a13] rounded-xl shadow-sm border border-gray-200 dark:border-[#143225] overflow-hidden">
                   {/* Column Header */}
                   <div className={`${STATUS_HEADER_COLORS[status as keyof typeof STATUS_HEADER_COLORS]} px-4 py-3 shrink-0`}>
                     <div className="flex items-center justify-between text-white">
@@ -459,10 +459,10 @@ export default function KitchenPage() {
                   </div>
 
                   {/* Cards Scrollable Column */}
-                  <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 bg-gray-50/60 divide-y divide-gray-100">
+                  <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 bg-gray-50/60 dark:bg-[#07130e]/60 divide-y divide-gray-100 dark:divide-[#143225]">
                     {columnOrders.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-48 text-gray-400 text-xs font-semibold gap-1">
-                        <CheckCircle2 className="w-8 h-8 text-gray-300" />
+                      <div className="flex flex-col items-center justify-center h-48 text-gray-400 dark:text-gray-500 text-xs font-semibold gap-1">
+                        <CheckCircle2 className="w-8 h-8 text-gray-300 dark:text-gray-600" />
                         <span>No tickets in this station</span>
                       </div>
                     ) : (
@@ -482,24 +482,24 @@ export default function KitchenPage() {
                         return (
                           <Card
                             key={order.id}
-                            className={`bg-white border-2 rounded-xl p-3.5 shadow-sm transition-all hover:shadow-md ${
+                            className={`bg-white dark:bg-[#091a13] border-2 rounded-xl p-3.5 shadow-sm transition-all hover:shadow-md ${
                               urgency.borderClass
                             }`}
                           >
                             {/* Ticket Header */}
-                            <div className="flex items-start justify-between pb-2.5 mb-2.5 border-b border-gray-100">
+                            <div className="flex items-start justify-between pb-2.5 mb-2.5 border-b border-gray-100 dark:border-[#143225]">
                               <div>
                                 <div className="flex items-center gap-2">
                                   <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-extrabold bg-amber-500 text-white shadow-2xs">
                                     {tableText}
                                   </span>
-                                  <span className="text-xs font-bold text-gray-700">
+                                  <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
                                     #{order.orderNumber ? order.orderNumber.slice(-8) : order.id.slice(0, 8)}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mt-1">
-                                  <User className="w-3.5 h-3.5 text-gray-400" />
-                                  <span>Server: <strong className="text-gray-900">{serverName}</strong></span>
+                                <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">
+                                  <User className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                                  <span>Server: <strong className="text-gray-900 dark:text-white">{serverName}</strong></span>
                                 </div>
                               </div>
 
@@ -509,7 +509,7 @@ export default function KitchenPage() {
                                   <Clock className="w-3.5 h-3.5" />
                                   <span>{getTimeElapsed(order.createdAt)}</span>
                                 </div>
-                                <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium mt-0.5">
                                   {items.length} {items.length === 1 ? 'dish' : 'dishes'}
                                 </p>
                               </div>
@@ -517,9 +517,9 @@ export default function KitchenPage() {
 
                             {/* Special Instructions Warning Banner */}
                             {(order.specialInstructions || order.notes) && (
-                              <div className="mb-3 p-2 rounded-lg bg-amber-50 border border-amber-200/80 flex items-start gap-2">
-                                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                                <div className="text-xs font-bold text-amber-900 leading-snug">
+                              <div className="mb-3 p-2 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-700/50 flex items-start gap-2">
+                                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                                <div className="text-xs font-bold text-amber-900 dark:text-amber-200 leading-snug">
                                   {order.specialInstructions || order.notes}
                                 </div>
                               </div>
@@ -535,8 +535,8 @@ export default function KitchenPage() {
                                     onClick={() => toggleItemCheck(item.id || String(idx))}
                                     className={`p-2 rounded-lg border text-xs cursor-pointer transition-all flex items-start justify-between ${
                                       isChecked
-                                        ? 'bg-emerald-50/80 border-emerald-200 text-gray-400 line-through'
-                                        : 'bg-gray-50/80 border-gray-200/80 text-gray-900 hover:bg-gray-100'
+                                        ? 'bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40 text-gray-400 dark:text-gray-500 line-through'
+                                        : 'bg-gray-50/80 dark:bg-[#071a12] border-gray-200/80 dark:border-[#143225] text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#0c2219]'
                                     }`}
                                     title="Click to check off dish when prepped"
                                   >
@@ -545,27 +545,27 @@ export default function KitchenPage() {
                                         className={`inline-block w-5 h-5 rounded-md text-center text-xs font-black leading-5 shrink-0 ${
                                           isChecked
                                             ? 'bg-emerald-600 text-white'
-                                            : 'bg-gray-900 text-white'
+                                            : 'bg-gray-900 dark:bg-[#143225] text-white'
                                         }`}
                                       >
                                         {item.quantity}
                                       </span>
                                       <div>
                                         <div className="font-bold flex items-center gap-1.5">
-                                          <span>{item.menuItem?.name || item.name || 'Dish'}</span>
+                                          <span className="text-gray-900 dark:text-white">{item.menuItem?.name || item.name || 'Dish'}</span>
                                           {item.menuItem?.isSpicy && (
-                                            <span className="text-[10px] px-1 bg-red-100 text-red-700 font-bold rounded">
+                                            <span className="text-[10px] px-1 bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400 font-bold rounded">
                                               🌶️ Spicy
                                             </span>
                                           )}
                                           {item.menuItem?.preparationTime && (
-                                            <span className="text-[10px] text-gray-400 font-normal">
+                                            <span className="text-[10px] text-gray-400 dark:text-gray-500 font-normal">
                                               ~{item.menuItem.preparationTime}m
                                             </span>
                                           )}
                                         </div>
                                         {item.notes && (
-                                          <p className="text-[11px] text-amber-800 italic mt-0.5 font-medium">
+                                          <p className="text-[11px] text-amber-800 dark:text-amber-300 italic mt-0.5 font-medium">
                                             Note: {item.notes}
                                           </p>
                                         )}
@@ -573,9 +573,9 @@ export default function KitchenPage() {
                                     </div>
                                     <div className="shrink-0 ml-2">
                                       {isChecked ? (
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" />
                                       ) : (
-                                        <div className="w-4 h-4 rounded border border-gray-300" />
+                                        <div className="w-4 h-4 rounded border border-gray-300 dark:border-[#143225]" />
                                       )}
                                     </div>
                                   </div>
@@ -584,7 +584,7 @@ export default function KitchenPage() {
                             </div>
 
                             {/* Ticket Action Buttons Based on Status */}
-                            <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+                            <div className="pt-2 border-t border-gray-100 dark:border-[#143225] flex items-center gap-2">
                               {/* 1. New Orders Column Action */}
                               {status === OrderStatus.PENDING && (
                                 <Button
@@ -694,41 +694,41 @@ export default function KitchenPage() {
 
       {/* Recall / History Drawer Modal */}
       <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <History className="w-5 h-5 text-gray-700" />
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+              <History className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               <span>Recently Handed Over / Cleared Tickets</span>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-gray-500 dark:text-gray-400">
               Review the last cleared tickets or recall an accidentally dismissed order back to the active board.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3 mt-3">
             {historyOrders.length === 0 ? (
-              <div className="text-center py-8 text-gray-400 text-sm">
+              <div className="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
                 No recently completed orders found today
               </div>
             ) : (
               historyOrders.map((histOrder: Order) => (
                 <div
                   key={histOrder.id}
-                  className="p-3 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-between"
+                  className="p-3 rounded-lg border border-gray-200 dark:border-[#143225] bg-gray-50 dark:bg-[#071a12] flex items-center justify-between"
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded">
+                      <span className="font-bold text-xs bg-gray-200 dark:bg-[#143225] text-gray-800 dark:text-gray-200 px-2 py-0.5 rounded">
                         {histOrder.table?.number ? `Table ${histOrder.table.number}` : histOrder.type}
                       </span>
-                      <span className="text-xs font-semibold text-gray-900">
+                      <span className="text-xs font-semibold text-gray-900 dark:text-white">
                         #{histOrder.orderNumber ? histOrder.orderNumber.slice(-8) : histOrder.id.slice(0, 8)}
                       </span>
-                      <Badge className="bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                      <Badge className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-[#00e676] text-[10px] font-bold">
                         {histOrder.status}
                       </Badge>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {(histOrder.items || []).map((it: any) => `${it.quantity}x ${it.menuItem?.name || 'Dish'}`).join(', ')}
                     </p>
                   </div>
@@ -743,7 +743,7 @@ export default function KitchenPage() {
                       });
                       setIsHistoryOpen(false);
                     }}
-                    className="h-8 text-xs font-semibold text-amber-700 border-amber-300 hover:bg-amber-50 gap-1"
+                    className="h-8 text-xs font-semibold text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700/50 hover:bg-amber-50 dark:hover:bg-amber-950/30 gap-1 cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Recall to Kitchen</span>
@@ -757,22 +757,22 @@ export default function KitchenPage() {
 
       {/* Kitchen Ticket Slip Print Modal */}
       <Dialog open={!!printOrder} onOpenChange={(open) => !open && setPrintOrder(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-gray-900">
+            <DialogTitle className="text-base font-bold text-gray-900 dark:text-white">
               Kitchen Order Ticket (KOT)
             </DialogTitle>
           </DialogHeader>
 
           {printOrder && (
-            <div className="border p-4 rounded-lg bg-white font-mono text-xs space-y-3">
-              <div className="text-center border-b pb-2">
-                <h3 className="font-bold text-sm uppercase">KITCHEN ORDER TICKET</h3>
-                <p className="text-gray-500">{user?.branch?.name || 'Main Branch'}</p>
-                <p className="text-gray-400 mt-0.5">{format(new Date(printOrder.createdAt), 'MMM dd, yyyy HH:mm:ss')}</p>
+            <div className="border border-gray-200 dark:border-[#143225] p-4 rounded-lg bg-white dark:bg-[#071a12] font-mono text-xs space-y-3 text-gray-900 dark:text-gray-100">
+              <div className="text-center border-b border-gray-200 dark:border-[#143225] pb-2">
+                <h3 className="font-bold text-sm uppercase text-gray-900 dark:text-white">KITCHEN ORDER TICKET</h3>
+                <p className="text-gray-500 dark:text-gray-400">{user?.branch?.name || 'Main Branch'}</p>
+                <p className="text-gray-400 dark:text-gray-500 mt-0.5">{format(new Date(printOrder.createdAt), 'MMM dd, yyyy HH:mm:ss')}</p>
               </div>
 
-              <div className="flex justify-between border-b pb-2 font-bold text-sm">
+              <div className="flex justify-between border-b border-gray-200 dark:border-[#143225] pb-2 font-bold text-sm text-gray-900 dark:text-white">
                 <span>
                   {printOrder.table?.number ? `TABLE: ${printOrder.table.number}` : printOrder.type}
                 </span>
@@ -782,21 +782,21 @@ export default function KitchenPage() {
               <div className="space-y-1.5 py-1">
                 {(printOrder.items || []).map((it: any, i: number) => (
                   <div key={i} className="flex justify-between">
-                    <span className="font-bold">{it.quantity}x {it.menuItem?.name || it.name}</span>
-                    {it.notes && <span className="text-[10px] text-gray-500 italic block">({it.notes})</span>}
+                    <span className="font-bold text-gray-900 dark:text-white">{it.quantity}x {it.menuItem?.name || it.name}</span>
+                    {it.notes && <span className="text-[10px] text-gray-500 dark:text-gray-400 italic block">({it.notes})</span>}
                   </div>
                 ))}
               </div>
 
               {printOrder.specialInstructions && (
-                <div className="border-t pt-2 font-bold text-red-600">
+                <div className="border-t border-gray-200 dark:border-[#143225] pt-2 font-bold text-red-600 dark:text-red-400">
                   SPECIAL: {printOrder.specialInstructions}
                 </div>
               )}
 
-              <div className="pt-3 border-t flex gap-2">
+              <div className="pt-3 border-t border-gray-200 dark:border-[#143225] flex gap-2">
                 <Button
-                  className="w-full bg-gray-900 text-white font-bold"
+                  className="w-full bg-[#00e676] hover:bg-[#00c853] text-[#032314] font-bold cursor-pointer"
                   onClick={() => window.print()}
                 >
                   <Printer className="w-4 h-4 mr-1.5" />

@@ -328,18 +328,18 @@ export default function ExpensesPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
-          <p className="text-sm text-gray-600 mt-1">Every Birr out — categorised, approved and reconciled.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Expenses</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Every Birr out — categorised, approved and reconciled.</p>
           {error && <p className="text-sm text-red-600 mt-1">Error loading expenses: {error.message}</p>}
         </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
-            className="gap-2"
+            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
             onClick={() => {
               queryClient.invalidateQueries({ queryKey: ['expenses'] });
               queryClient.invalidateQueries({ queryKey: ['expense-stats'] });
@@ -349,14 +349,14 @@ export default function ExpensesPage() {
           </Button>
           <Button
             variant="outline"
-            className="gap-2"
+            className="gap-2 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline">Export</span>
           </Button>
           <Button
             onClick={() => setShowCreateModal(true)}
-            className="bg-green-600 hover:bg-green-700 gap-2"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 cursor-pointer shadow-sm"
           >
             <Plus className="w-4 h-4" />
             Record expense
@@ -366,37 +366,37 @@ export default function ExpensesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
             {dateFilter === 'month' ? 'Total this month' : 'Total all time'}
           </p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-[#00e676]">{formatCurrency(stats.totalAmount)}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Unpaid</p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.unpaidAmount)}</p>
-          <p className="text-xs text-gray-500 mt-1">{stats.unpaidCount} entries</p>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Unpaid</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-red-400">{formatCurrency(stats.unpaidAmount)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stats.unpaidCount} entries</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Largest category</p>
-          <p className="text-2xl font-bold text-gray-900">{stats.largestCategory || '-'}</p>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Largest category</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.largestCategory || '-'}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Expense ratio</p>
-          <p className="text-2xl font-bold text-gray-900">38%</p>
-          <p className="text-xs text-gray-500 mt-1">of revenue</p>
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Expense ratio</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">38%</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">of revenue</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Chart Section */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-6">
           <div className="flex items-center gap-2 mb-4">
-            <PieChartIcon className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">By category</h2>
+            <PieChartIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">By category</h2>
           </div>
           
           {chartData.length > 0 ? (
@@ -427,66 +427,66 @@ export default function ExpensesPage() {
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: item.color }}
                       />
-                      <span className="text-gray-700">{item.name}</span>
+                      <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
                     </div>
-                    <span className="font-medium text-gray-900">{formatCurrency(item.value)}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(item.value)}</span>
                   </div>
                 ))}
               </div>
             </>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               No expenses this month
             </div>
           )}
         </div>
 
         {/* Expenses List */}
-        <div className="lg:col-span-2 bg-white rounded-lg shadow">
+        <div className="lg:col-span-2 bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225]">
           {/* Search and Filters */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 dark:border-[#143225]">
             <div className="flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search expenses..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400"
+                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setDateFilter('all')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${
                       dateFilter === 'all'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-green-600 text-white font-bold'
+                        : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
                     }`}
                   >
                     All time
                   </button>
                   <button
                     onClick={() => setDateFilter('month')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${
                       dateFilter === 'month'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-green-600 text-white font-bold'
+                        : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
                     }`}
                   >
                     This month
                   </button>
                 </div>
               </div>
-              <div className="flex gap-2 overflow-x-auto">
+              <div className="flex gap-2 overflow-x-auto pb-1">
                 <button
                   onClick={() => setCategoryFilter('All')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${
                     categoryFilter === 'All'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-blue-600 text-white font-bold'
+                      : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
                   }`}
                 >
                   All
@@ -495,10 +495,10 @@ export default function ExpensesPage() {
                   <button
                     key={category}
                     onClick={() => setCategoryFilter(category)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${
                       categoryFilter === category
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-white font-bold'
+                        : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
                     }`}
                   >
                     {category}
@@ -511,73 +511,73 @@ export default function ExpensesPage() {
           {/* Expenses Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-[#07150f] border-b border-gray-200 dark:border-[#143225]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Expense
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Method
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-[#091a13] divide-y divide-gray-200 dark:divide-[#143225]">
                 {isLoading && expenses.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                       Loading expenses...
                     </td>
                   </tr>
                 ) : filteredExpenses.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                       No expenses found
                     </td>
                   </tr>
                 ) : (
                   filteredExpenses.map((expense: Expense) => (
-                    <tr key={expense.id} className="hover:bg-gray-50">
+                    <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors">
                       <td className="px-4 py-4">
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
                               {expense.description || 'No description'}
                             </p>
                             {expense.reference?.startsWith('PO') && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-[#00e676] border border-emerald-200 dark:border-emerald-800/40">
                                 PO Procurement
                               </span>
                             )}
                             {expense.reference?.startsWith('PAY') && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800 border border-orange-200">
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-orange-100 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800/40">
                                 Staff Payroll
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-500 mt-0.5">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                             {expense.reference || 'No reference'} · {formatDate(expense.date)}
                           </p>
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-sm text-gray-700">{expense.category}</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{expense.category}</span>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-sm text-gray-700">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
                           {expense.reference?.includes('Bank') ? 'Bank transfer' : 'Cash'}
                         </span>
                       </td>
                       <td className="px-4 py-4 text-right">
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-extrabold text-gray-900 dark:text-[#00e676]">
                           {formatCurrency(expense.amount)}
                         </span>
                       </td>
@@ -661,13 +661,13 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Record Expense</h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-[#091a13] rounded-2xl shadow-xl border border-gray-200 dark:border-[#143225] max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-200 dark:border-[#143225] flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Record Expense</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -676,17 +676,17 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Category *
             </label>
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             >
               {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
+                <option key={cat} value={cat} className="text-gray-900 dark:text-white bg-white dark:bg-[#091a13]">
                   {cat}
                 </option>
               ))}
@@ -695,7 +695,7 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
 
           {/* Amount */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Amount (ETB) *
             </label>
             <input
@@ -704,7 +704,7 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
               min="0"
               value={formData.amount || ''}
               onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="0.00"
               required
             />
@@ -712,13 +712,13 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Description
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               rows={3}
               placeholder="What was this expense for?"
             />
@@ -726,45 +726,45 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
 
           {/* Reference */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Reference / Payment Method
             </label>
             <input
               type="text"
               value={formData.reference}
               onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="e.g., Invoice #123, Bank transfer, Cash"
             />
           </div>
 
           {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Date *
             </label>
             <input
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             />
           </div>
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Status
             </label>
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-[#071a12] text-gray-900 dark:text-white border border-gray-300 dark:border-[#143225] rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Paid</option>
-              <option value="REJECTED">Rejected</option>
+              <option value="PENDING" className="text-gray-900 dark:text-white bg-white dark:bg-[#091a13]">Pending</option>
+              <option value="APPROVED" className="text-gray-900 dark:text-white bg-white dark:bg-[#091a13]">Paid</option>
+              <option value="REJECTED" className="text-gray-900 dark:text-white bg-white dark:bg-[#091a13]">Rejected</option>
             </select>
           </div>
 
@@ -774,14 +774,14 @@ function CreateExpenseModal({ onClose, onSuccess }: { onClose: () => void; onSuc
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 dark:border-[#143225] dark:text-gray-300 dark:hover:bg-[#0c2219] cursor-pointer"
               disabled={createMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold cursor-pointer"
               disabled={createMutation.isPending}
             >
               {createMutation.isPending ? 'Saving...' : 'Record Expense'}
