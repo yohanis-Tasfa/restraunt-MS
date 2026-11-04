@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import reportsApi from '../api/reports';
-import { 
-  TrendingUp, 
-  DollarSign, 
-  ShoppingCart, 
+import {
+  TrendingUp,
+  DollarSign,
+  ShoppingCart,
   Package,
   Calendar,
   Download,
@@ -134,11 +134,10 @@ export default function ReportsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm transition border-b-2 cursor-pointer whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'border-emerald-600 dark:border-[#00e676] text-emerald-600 dark:text-[#00e676]'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
+                className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm transition border-b-2 cursor-pointer whitespace-nowrap ${activeTab === tab.id
+                  ? 'border-emerald-600 dark:border-[#00e676] text-emerald-600 dark:text-[#00e676]'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
@@ -154,16 +153,15 @@ export default function ReportsPage() {
           <div className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-[#071a12] flex items-center justify-center text-gray-500 dark:text-gray-400 shrink-0">
             <Calendar className="w-4 h-4" />
           </div>
-          
+
           {dateRanges.map((range) => (
             <button
               key={range.id}
               onClick={() => setDateRange(range.id as DateRangeType)}
-              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer whitespace-nowrap ${
-                dateRange === range.id
-                  ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold shadow-2xs'
-                  : 'bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
-              }`}
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer whitespace-nowrap ${dateRange === range.id
+                ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] font-bold shadow-2xs'
+                : 'bg-gray-100 dark:bg-[#071a12] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#0c2219]'
+                }`}
             >
               {range.label}
             </button>
@@ -319,30 +317,18 @@ function OverviewTab({ dateParams }: { dateParams: { startDate: string; endDate:
 function MetricCard({
   title,
   value,
-  icon: Icon,
-  color,
   subtitle,
 }: {
   title: string;
   value: string;
-  icon: any;
-  color: 'green' | 'red' | 'blue' | 'purple';
+  icon?: any;
+  color?: 'green' | 'red' | 'blue' | 'purple';
   subtitle?: string;
 }) {
-  const colorClasses = {
-    green: 'bg-emerald-50 text-emerald-600 dark:bg-[#0c2219] dark:text-[#00e676]',
-    red: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400',
-    blue: 'bg-emerald-50 text-emerald-600 dark:bg-[#0c2219] dark:text-[#00e676]',
-    purple: 'bg-purple-50 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400',
-  };
-
   return (
     <div className="bg-white dark:bg-[#091a13] border border-gray-200/80 dark:border-[#143225] rounded-xl sm:rounded-2xl shadow-xs p-2.5 sm:p-4">
       <div className="flex items-center justify-between mb-1 sm:mb-2">
         <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">{title}</p>
-        <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 ${colorClasses[color]}`}>
-          <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        </div>
       </div>
       <p className="text-sm sm:text-2xl font-black text-gray-900 dark:text-white truncate">{value}</p>
       {subtitle && <p className="text-[9px] sm:text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate">{subtitle}</p>}
@@ -417,10 +403,10 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
             <YAxis stroke="#9ca3af" />
             <Tooltip formatter={(value: number) => formatCurrency(value)} />
             <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke={COLORS.primary} 
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke={COLORS.primary}
               strokeWidth={2}
               name="Revenue"
             />
@@ -479,8 +465,8 @@ function SalesTab({ dateParams }: { dateParams: { startDate: string; endDate: st
             {categoryData?.categories?.slice(0, 6).map((item: any, index: number) => (
               <div key={item.category} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                  <div
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                   />
                   <span className="text-gray-700 dark:text-gray-300">{item.category}</span>
@@ -581,8 +567,8 @@ function ExpensesTab({ dateParams }: { dateParams: { startDate: string; endDate:
                 <div key={item.category} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                       />
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-200">{item.category}</span>
@@ -593,9 +579,9 @@ function ExpensesTab({ dateParams }: { dateParams: { startDate: string; endDate:
                     </div>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-[#0c2219] rounded-full h-2">
-                    <div 
-                      className="h-2 rounded-full" 
-                      style={{ 
+                    <div
+                      className="h-2 rounded-full"
+                      style={{
                         width: `${percentage}%`,
                         backgroundColor: CHART_COLORS[index % CHART_COLORS.length]
                       }}
@@ -633,9 +619,9 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
   }
 
   const revenue = pl?.revenue || { sales: 0, tax: 0, serviceCharge: 0, totalRevenue: 0 };
-  const expenses = pl?.expenses || { 
-    ingredients: 0, utilities: 0, payroll: 0, rent: 0, 
-    marketing: 0, maintenance: 0, other: 0, totalExpenses: 0 
+  const expenses = pl?.expenses || {
+    ingredients: 0, utilities: 0, payroll: 0, rent: 0,
+    marketing: 0, maintenance: 0, other: 0, totalExpenses: 0
   };
   const profit = pl?.profit || { gross: 0, net: 0, margin: 0 };
 
@@ -668,7 +654,7 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
             {new Date(dateParams.startDate).toLocaleDateString()} - {new Date(dateParams.endDate).toLocaleDateString()}
           </p>
         </div>
-        
+
         <div className="p-6 space-y-6">
           {/* Revenue Section */}
           <div>
@@ -718,7 +704,7 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
             <CartesianGrid strokeDasharray="3 3" stroke="#2a4536" />
             <XAxis dataKey="name" stroke="#9ca3af" />
             <YAxis stroke="#9ca3af" />
-            <Tooltip 
+            <Tooltip
               formatter={(value: number) => formatCurrency(value)}
               cursor={false}
             />
@@ -730,18 +716,18 @@ function ProfitLossTab({ dateParams }: { dateParams: { startDate: string; endDat
   );
 }
 
-function PLRow({ 
-  label, 
-  amount, 
-  bold, 
-  indent, 
-  large, 
-  success, 
-  danger 
-}: { 
-  label: string; 
-  amount: number; 
-  bold?: boolean; 
+function PLRow({
+  label,
+  amount,
+  bold,
+  indent,
+  large,
+  success,
+  danger
+}: {
+  label: string;
+  amount: number;
+  bold?: boolean;
   indent?: boolean;
   large?: boolean;
   success?: boolean;

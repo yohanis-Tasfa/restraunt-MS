@@ -207,7 +207,7 @@ export default function KitchenPage() {
   const notifyWaiterMutation = useMutation({
     mutationFn: (orderId: string) => ordersApi.notifyWaiter(orderId),
     onSuccess: () => {
-      toast.success('🔔 Buzzer sent to server again!');
+      toast.success('Buzzer sent to server again!');
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to notify server');
@@ -296,127 +296,128 @@ export default function KitchenPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100/90 dark:bg-[#07130e] text-gray-900 dark:text-gray-100 font-sans select-none">
+    <div className="min-h-screen md:h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-gray-100/90 dark:bg-[#07130e] text-gray-900 dark:text-gray-100 font-sans select-none">
       {/* Top Header / Kitchen Control Bar */}
-      <header className="bg-white dark:bg-[#091a13] border-b border-gray-200 dark:border-[#143225] px-6 py-3.5 shadow-xs shrink-0">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          {/* Left: Identity & Live Orders Badge */}
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-600 to-rose-600 flex items-center justify-center text-white shadow-md shadow-rose-600/20">
-              <ChefHat className="w-6 h-6" />
-            </div>
+      <header className="bg-white dark:bg-[#091a13] border-b border-gray-200 dark:border-[#143225] px-2.5 sm:px-6 py-2 sm:py-3 shadow-xs shrink-0 w-full max-w-full overflow-x-hidden">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-3.5 w-full">
+          {/* Row 1: Identity & Live Orders Badge */}
+          <div className="flex items-center justify-between md:justify-start gap-2 w-full md:w-auto">
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">Kitchen Display System</h1>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h1 className="text-sm sm:text-lg font-black text-gray-900 dark:text-white tracking-tight">Kitchen Display</h1>
                 <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
+                  className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${
                     isConnected ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-[#00e676]' : 'bg-gray-100 dark:bg-[#0c2219] text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                    className={`w-1.5 h-1.5 rounded-full mr-1 ${
                       isConnected ? 'bg-emerald-500 animate-ping' : 'bg-gray-400'
                     }`}
                   />
                   {isConnected ? 'Live WebSocket' : 'Connecting'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium">
                 {user?.branch?.name || 'Main Kitchen'} • {activeOrders.length} active tickets
               </p>
             </div>
           </div>
 
-          {/* Middle: Station / Order Type Filter */}
-          <div className="flex items-center bg-gray-100 dark:bg-[#071a12] p-1 rounded-lg border border-gray-200 dark:border-[#143225] text-xs font-bold">
+          {/* Row 2: Station / Order Type Filter */}
+          <div className="flex items-center bg-gray-100 dark:bg-[#071a12] p-0.5 sm:p-1 rounded-lg border border-gray-200 dark:border-[#143225] text-xs font-bold w-full md:w-auto overflow-x-auto no-scrollbar">
             <button
               onClick={() => setTypeFilter('ALL')}
-              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
-                typeFilter === 'ALL' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              className={`flex-1 md:flex-initial px-2 sm:px-3 py-1 rounded-md transition-all cursor-pointer whitespace-nowrap text-[11px] sm:text-xs ${
+                typeFilter === 'ALL' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs font-extrabold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              All Tickets ({orders.filter((o) => ['PENDING', 'PREPARING', 'READY'].includes(o.status)).length})
+              All ({orders.filter((o) => ['PENDING', 'PREPARING', 'READY'].includes(o.status)).length})
             </button>
             <button
               onClick={() => setTypeFilter('DINE_IN')}
-              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
-                typeFilter === 'DINE_IN' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              className={`flex-1 md:flex-initial px-2 sm:px-3 py-1 rounded-md transition-all cursor-pointer whitespace-nowrap text-[11px] sm:text-xs ${
+                typeFilter === 'DINE_IN' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs font-extrabold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              🍽️ Dine-In
+              Dine-In
             </button>
             <button
               onClick={() => setTypeFilter('TAKEAWAY')}
-              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
-                typeFilter === 'TAKEAWAY' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              className={`flex-1 md:flex-initial px-2 sm:px-3 py-1 rounded-md transition-all cursor-pointer whitespace-nowrap text-[11px] sm:text-xs ${
+                typeFilter === 'TAKEAWAY' ? 'bg-white dark:bg-[#123627] text-gray-900 dark:text-[#00e676] shadow-2xs font-extrabold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              📦 Takeout / Delivery
+              Takeout
             </button>
           </div>
 
-          {/* Right: Controls, Audio Toggle, Fullscreen & Clock */}
-          <div className="flex items-center gap-3">
-            {/* Audio Toggle & Test */}
-            <div className="flex items-center bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-lg p-1">
+          {/* Row 3: Controls & Live Clock (Guaranteed 100% fit on mobile, no cut-off!) */}
+          <div className="flex items-center justify-between md:justify-end gap-1.5 sm:gap-2.5 w-full md:w-auto">
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              {/* Audio Toggle & Test */}
+              <div className="flex items-center bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-lg p-0.5">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  className={`h-7 sm:h-8 px-1.5 sm:px-2 text-[11px] sm:text-xs font-semibold gap-1 cursor-pointer ${
+                    soundEnabled ? 'text-emerald-700 dark:text-[#00e676] bg-emerald-50 dark:bg-[#123627]' : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                  title={soundEnabled ? 'Sound is ON (Click to Mute)' : 'Sound is MUTED (Click to Enable)'}
+                >
+                  {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00e676]" /> : <VolumeX className="w-3.5 h-3.5" />}
+                  <span className="hidden xs:inline">{soundEnabled ? 'Chime ON' : 'Muted'}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={playKitchenChime}
+                  className="h-7 sm:h-8 w-6 sm:w-7 p-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
+                  title="Test Audio Chime"
+                >
+                  <Bell className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </Button>
+              </div>
+
+              {/* Recently Completed / Recall Drawer */}
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={() => setSoundEnabled(!soundEnabled)}
-                className={`h-8 px-2.5 text-xs font-semibold gap-1.5 cursor-pointer ${
-                  soundEnabled ? 'text-emerald-700 dark:text-[#00e676] bg-emerald-50 dark:bg-[#123627]' : 'text-gray-500 dark:text-gray-400'
-                }`}
-                title={soundEnabled ? 'Sound is ON (Click to Mute)' : 'Sound is MUTED (Click to Enable)'}
+                onClick={() => setIsHistoryOpen(true)}
+                className="h-7 sm:h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1 shadow-2xs cursor-pointer"
               >
-                {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600 dark:text-[#00e676]" /> : <VolumeX className="w-4 h-4" />}
-                <span>{soundEnabled ? 'Chime ON' : 'Muted'}</span>
+                <History className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+                <span>Recall</span>
               </Button>
+
+              {/* Fullscreen Button */}
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={playKitchenChime}
-                className="h-8 px-2 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"
-                title="Test Audio Chime"
+                onClick={toggleFullscreen}
+                className="h-7 sm:h-8 w-7 sm:w-8 p-0 border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
+                title="Toggle Fullscreen Mode"
               >
-                <Bell className="w-3.5 h-3.5" />
+                {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
               </Button>
             </div>
 
-            {/* Recently Completed / Recall Drawer */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsHistoryOpen(true)}
-              className="h-9 px-3 text-xs font-semibold border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] gap-1.5 shadow-2xs cursor-pointer"
-            >
-              <History className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              <span>Recall History</span>
-            </Button>
-
-            {/* Fullscreen Button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleFullscreen}
-              className="h-9 w-9 p-0 border-gray-300 dark:border-[#143225] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0c2219] shadow-2xs cursor-pointer"
-              title="Toggle Fullscreen Mode"
-            >
-              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-            </Button>
-
-            {/* Live Clock */}
-            <div className="text-right pl-2 border-l border-gray-200 dark:border-[#143225]">
-              <p className="text-lg font-black text-gray-900 dark:text-white leading-tight">
+            {/* Live Clock: Always fits fully, compact & never cut off */}
+            <div className="text-right pl-2 border-l border-gray-200 dark:border-[#143225] shrink-0 min-w-[70px]">
+              <p className="text-xs sm:text-sm font-black text-gray-900 dark:text-white leading-tight whitespace-nowrap">
                 {format(currentTime, 'HH:mm:ss')}
               </p>
-              <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400">{format(currentTime, 'EEE, MMM d')}</p>
+              <p className="text-[9px] sm:text-[10px] font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap leading-tight mt-0.5">
+                {format(currentTime, 'EEE, MMM d')}
+              </p>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main 3-Column Kanban Board */}
-      <div className="flex-1 p-4 overflow-hidden">
+      <div className="flex-1 p-3 sm:p-4 overflow-y-auto md:overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -437,21 +438,21 @@ export default function KitchenPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full min-h-0">
+          <div className="flex flex-col md:grid md:grid-cols-3 gap-3.5 sm:gap-4 md:h-full md:min-h-0 pb-6 md:pb-0">
             {[OrderStatus.PENDING, OrderStatus.PREPARING, OrderStatus.READY].map((status) => {
               const columnOrders = ordersByStatus[status as keyof typeof ordersByStatus];
 
               return (
-                <div key={status} className="flex flex-col h-full min-h-0 bg-white dark:bg-[#091a13] rounded-xl shadow-sm border border-gray-200 dark:border-[#143225] overflow-hidden">
+                <div
+                  key={status}
+                  className="flex flex-col h-[480px] sm:h-[520px] md:h-full min-h-0 bg-white dark:bg-[#091a13] rounded-xl shadow-xs border border-gray-200 dark:border-[#143225] overflow-hidden shrink-0 md:shrink"
+                >
                   {/* Column Header */}
                   <div className={`${STATUS_HEADER_COLORS[status as keyof typeof STATUS_HEADER_COLORS]} px-4 py-3 shrink-0`}>
                     <div className="flex items-center justify-between text-white">
-                      <div className="flex items-center gap-2">
-                        <Utensils className="w-4 h-4 opacity-80" />
-                        <h2 className="text-sm font-extrabold uppercase tracking-wide">
-                          {STATUS_LABELS[status as keyof typeof STATUS_LABELS]}
-                        </h2>
-                      </div>
+                      <h2 className="text-sm font-extrabold uppercase tracking-wide">
+                        {STATUS_LABELS[status as keyof typeof STATUS_LABELS]}
+                      </h2>
                       <span className="bg-white/20 text-white font-black text-xs px-2.5 py-0.5 rounded-full border border-white/25">
                         {columnOrders.length}
                       </span>
@@ -461,7 +462,7 @@ export default function KitchenPage() {
                   {/* Cards Scrollable Column */}
                   <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 bg-gray-50/60 dark:bg-[#07130e]/60 divide-y divide-gray-100 dark:divide-[#143225]">
                     {columnOrders.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-48 text-gray-400 dark:text-gray-500 text-xs font-semibold gap-1">
+                      <div className="flex flex-col items-center justify-center h-full min-h-[140px] text-gray-400 dark:text-gray-500 text-xs font-semibold gap-1">
                         <CheckCircle2 className="w-8 h-8 text-gray-300 dark:text-gray-600" />
                         <span>No tickets in this station</span>
                       </div>
@@ -555,7 +556,7 @@ export default function KitchenPage() {
                                           <span className="text-gray-900 dark:text-white">{item.menuItem?.name || item.name || 'Dish'}</span>
                                           {item.menuItem?.isSpicy && (
                                             <span className="text-[10px] px-1 bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400 font-bold rounded">
-                                              🌶️ Spicy
+                                              Spicy
                                             </span>
                                           )}
                                           {item.menuItem?.preparationTime && (
@@ -588,7 +589,7 @@ export default function KitchenPage() {
                               {/* 1. New Orders Column Action */}
                               {status === OrderStatus.PENDING && (
                                 <Button
-                                  className="w-full h-9 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-2xs gap-1.5"
+                                  className="w-full h-9 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-2xs gap-1.5 cursor-pointer"
                                   onClick={() =>
                                     updateStatusMutation.mutate({
                                       orderId: order.id,
@@ -606,7 +607,7 @@ export default function KitchenPage() {
                               {status === OrderStatus.PREPARING && (
                                 <>
                                   <Button
-                                    className="flex-1 h-9 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs gap-1.5"
+                                    className="flex-1 h-9 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs gap-1.5 cursor-pointer"
                                     onClick={() =>
                                       updateStatusMutation.mutate({
                                         orderId: order.id,
@@ -622,7 +623,7 @@ export default function KitchenPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => setPrintOrder(order)}
-                                    className="h-9 px-2.5 text-xs text-gray-700 border-gray-300 hover:bg-gray-100"
+                                    className="h-9 px-2.5 text-xs text-gray-700 border-gray-300 hover:bg-gray-100 cursor-pointer"
                                     title="Print Kitchen Ticket Chit"
                                   >
                                     <Printer className="w-3.5 h-3.5" />
@@ -635,7 +636,7 @@ export default function KitchenPage() {
                                 <>
                                   {/* Mark Handed Over / Served: Clears the ticket! */}
                                   <Button
-                                    className="flex-1 h-9 text-xs font-extrabold bg-green-700 hover:bg-green-800 text-white shadow-2xs gap-1.5"
+                                    className="flex-1 h-9 text-xs font-extrabold bg-green-700 hover:bg-green-800 text-white shadow-2xs gap-1.5 cursor-pointer"
                                     onClick={() =>
                                       updateStatusMutation.mutate({
                                         orderId: order.id,
@@ -655,7 +656,7 @@ export default function KitchenPage() {
                                     size="sm"
                                     onClick={() => notifyWaiterMutation.mutate(order.id)}
                                     disabled={notifyWaiterMutation.isPending}
-                                    className="h-9 px-2.5 text-xs font-bold text-amber-700 border-amber-300 hover:bg-amber-50 gap-1"
+                                    className="h-9 px-2.5 text-xs font-bold text-amber-700 border-amber-300 hover:bg-amber-50 gap-1 cursor-pointer"
                                     title="Re-ring Server buzzer"
                                   >
                                     <Bell className="w-3.5 h-3.5 text-amber-600" />
@@ -672,7 +673,7 @@ export default function KitchenPage() {
                                         status: OrderStatus.PREPARING,
                                       })
                                     }
-                                    className="h-9 px-2 text-xs text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                                    className="h-9 px-2 text-xs text-gray-500 hover:text-gray-900 hover:bg-gray-100 cursor-pointer"
                                     title="Recall back to Cooking"
                                   >
                                     <RotateCcw className="w-3.5 h-3.5" />

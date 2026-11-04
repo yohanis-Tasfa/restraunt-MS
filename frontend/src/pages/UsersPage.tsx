@@ -169,8 +169,8 @@ export default function UsersPage() {
           toast.success(`User created & login credentials emailed to ${formData.email}!`);
         } else {
           toast(
-            `User created! ⚠️ Real email not sent because SMTP is unconfigured in backend/.env. Credentials were simulated in the server terminal console.`,
-            { icon: 'ℹ️', duration: 7000 }
+            `User created! Note: Real email not sent because SMTP is unconfigured in backend/.env. Credentials were simulated in the server terminal console.`,
+            { duration: 7000 }
           );
         }
       } else {
@@ -315,8 +315,8 @@ export default function UsersPage() {
       const res = await usersApi.sendCredentials(user.id);
       if (res?.simulated) {
         toast(
-          `Temporary password generated! ⚠️ Real email not sent because SMTP is unconfigured in backend/.env. Preview logged to server terminal.`,
-          { icon: 'ℹ️', duration: 7000 }
+          `Temporary password generated! Note: Real email not sent because SMTP is unconfigured in backend/.env. Preview logged to server terminal.`,
+          { duration: 7000 }
         );
       } else {
         toast.success(res.message || `Credentials successfully dispatched to ${user.email}`);
@@ -397,8 +397,7 @@ export default function UsersPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2.5">
-            <Users className="w-7 h-7 text-emerald-600 dark:text-[#00e676]" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             User & Access Management
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -578,13 +577,6 @@ export default function UsersPage() {
                       <td className="py-3.5 px-4">
                         {bankAcc ? (
                           <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-medium bg-emerald-50 dark:bg-[#072417] text-emerald-800 dark:text-[#00e676] border border-emerald-200 dark:border-emerald-800/60">
-                            {bankAcc.toLowerCase().includes('telebirr') || bankAcc.startsWith('09') || bankAcc.startsWith('07') ? (
-                              <span>📱</span>
-                            ) : bankAcc.toLowerCase().includes('cash') ? (
-                              <span>💵</span>
-                            ) : (
-                              <span>🏦</span>
-                            )}
                             <span className="truncate max-w-[170px]" title={bankAcc}>
                               {bankAcc}
                             </span>
@@ -863,7 +855,6 @@ export default function UsersPage() {
               <div className="p-3.5 bg-gray-50 dark:bg-[#071a12] rounded-xl border border-gray-200 dark:border-[#143225] space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
-                    <span>🏦</span>
                     <span>Payout & Bank Account (For Payroll Disbursal)</span>
                   </label>
                   {formData.phone && (
@@ -878,7 +869,7 @@ export default function UsersPage() {
                       }
                       className="text-[11px] text-emerald-700 dark:text-[#00e676] hover:underline font-medium flex items-center gap-1 cursor-pointer"
                     >
-                      📱 Use Phone for Telebirr
+                      Use Phone for Telebirr
                     </button>
                   )}
                 </div>
@@ -1223,7 +1214,6 @@ export default function UsersPage() {
               <div className="p-3.5 bg-gray-50 dark:bg-[#071a12] rounded-xl border border-gray-200 dark:border-[#143225] space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
-                    <span>🏦</span>
                     <span>Payout & Bank Account (For Payroll Disbursal)</span>
                   </label>
                   {editFormData.phone && (
@@ -1238,7 +1228,7 @@ export default function UsersPage() {
                       }
                       className="text-[11px] text-emerald-700 dark:text-[#00e676] hover:underline font-medium flex items-center gap-1 cursor-pointer"
                     >
-                      📱 Use Phone for Telebirr
+                      Use Phone for Telebirr
                     </button>
                   )}
                 </div>

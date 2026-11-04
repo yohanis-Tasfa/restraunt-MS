@@ -8,11 +8,17 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import PaymentCollectionDialog from './PaymentCollectionDialog';
 
-const requestTypeIcons = {
-  ASSISTANCE: '🔔',
-  ORDER_READY: '🛒',
-  BILL_REQUEST: '💳',
-  OTHER: '❓',
+const renderRequestIcon = (type: string) => {
+  switch (type) {
+    case 'ASSISTANCE':
+      return <Bell className="w-5 h-5 text-red-600 dark:text-red-400" />;
+    case 'ORDER_READY':
+      return <ShoppingCart className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
+    case 'BILL_REQUEST':
+      return <Receipt className="w-5 h-5 text-emerald-600 dark:text-[#00e676]" />;
+    default:
+      return <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />;
+  }
 };
 
 const requestTypeLabels = {
@@ -38,8 +44,8 @@ export default function FloatingCallPanel() {
     const rawItems: any[] = Array.isArray(call.selectedItems)
       ? call.selectedItems
       : Array.isArray(call.selectedItems?.items)
-      ? call.selectedItems.items
-      : [];
+        ? call.selectedItems.items
+        : [];
 
     if (rawItems.length > 0) {
       const customerCart = {
@@ -169,8 +175,8 @@ export default function FloatingCallPanel() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg">
-                              {requestTypeIcons[call.requestType]}
+                            <span className="p-1 rounded bg-red-100 flex items-center justify-center shrink-0">
+                              {renderRequestIcon(call.requestType)}
                             </span>
                             <span className="font-semibold text-gray-900">
                               Table {call.table.number}
@@ -262,8 +268,8 @@ export default function FloatingCallPanel() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg">
-                              {requestTypeIcons[call.requestType]}
+                            <span className="p-1 rounded bg-red-100 flex items-center justify-center shrink-0">
+                              {renderRequestIcon(call.requestType)}
                             </span>
                             <span className="font-semibold text-gray-900">
                               Table {call.table.number}

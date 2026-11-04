@@ -14,11 +14,17 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import PaymentCollectionDialog from './PaymentCollectionDialog';
 
-const requestTypeIcons = {
-  ASSISTANCE: '🔔',
-  ORDER_READY: '🛒',
-  BILL_REQUEST: '💳',
-  OTHER: '❓',
+const renderRequestIcon = (type: string) => {
+  switch (type) {
+    case 'ASSISTANCE':
+      return <Bell className="w-5 h-5 text-red-600 dark:text-red-400" />;
+    case 'ORDER_READY':
+      return <ShoppingCart className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
+    case 'BILL_REQUEST':
+      return <Receipt className="w-5 h-5 text-emerald-600 dark:text-[#00e676]" />;
+    default:
+      return <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />;
+  }
 };
 
 const requestTypeLabels = {
@@ -47,8 +53,8 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
     const rawItems: any[] = Array.isArray(call.selectedItems)
       ? call.selectedItems
       : Array.isArray(call.selectedItems?.items)
-      ? call.selectedItems.items
-      : [];
+        ? call.selectedItems.items
+        : [];
 
     if (rawItems.length > 0) {
       // Close the panel first
@@ -143,8 +149,8 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2.5 mb-2">
-                              <span className="text-2xl p-1.5 rounded-lg bg-red-100 dark:bg-[#2b1016] border border-red-200/50 dark:border-[#4d1f29]">
-                                {requestTypeIcons[call.requestType]}
+                              <span className="p-2 rounded-lg bg-red-100 dark:bg-[#2b1016] border border-red-200/50 dark:border-[#4d1f29] flex items-center justify-center shrink-0">
+                                {renderRequestIcon(call.requestType)}
                               </span>
                               <div>
                                 <p className="font-bold text-gray-900 dark:text-white text-base">
@@ -236,8 +242,8 @@ export default function ActiveCallsPanel({ open, onOpenChange }: ActiveCallsPane
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2.5 mb-2">
-                              <span className="text-2xl p-1.5 rounded-lg bg-blue-100 dark:bg-[#0d2238] border border-blue-200/50 dark:border-[#14395c]">
-                                {requestTypeIcons[call.requestType]}
+                              <span className="p-2 rounded-lg bg-blue-100 dark:bg-[#0d2238] border border-blue-200/50 dark:border-[#14395c] flex items-center justify-center shrink-0">
+                                {renderRequestIcon(call.requestType)}
                               </span>
                               <div>
                                 <p className="font-bold text-gray-900 dark:text-white text-base">

@@ -534,64 +534,39 @@ export default function OrdersPage() {
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 mb-6">
         <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
-              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-            </div>
+          <div>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
           </div>
         </Card>
 
         <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Pending</p>
-              <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center shrink-0">
-              <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
+          <div>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Pending</p>
+            <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{stats.pending}</p>
           </div>
         </Card>
 
         <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Unpaid</p>
-              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.unpaid}</p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
-              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" />
-            </div>
+          <div>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Unpaid</p>
+            <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats.unpaid}</p>
           </div>
         </Card>
 
         <Card className="p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Completed</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
-              <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-[#00e676]" />
-            </div>
+          <div>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Completed</p>
+            <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
           </div>
         </Card>
 
         <Card className="col-span-2 sm:col-span-1 p-3 sm:p-4 border-gray-200 dark:border-[#143225] dark:bg-[#091a13]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Revenue</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">
-                Br {stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
-              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-[#00e676]" />
-            </div>
+          <div>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Revenue</p>
+            <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">
+              Br {stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </p>
           </div>
         </Card>
       </div>
@@ -613,23 +588,23 @@ export default function OrdersPage() {
                   All Orders ({stats.total})
                 </SelectItem>
                 <SelectItem value="unpaid" className="text-xs font-medium text-red-600 dark:text-red-400">
-                  💳 Unpaid Orders ({stats.unpaid})
+                  Unpaid Orders ({stats.unpaid})
                 </SelectItem>
                 <SelectItem value="paid" className="text-xs font-medium text-emerald-600 dark:text-[#00e676]">
-                  ✓ Paid Orders ({stats.paid})
+                  Paid Orders ({stats.paid})
                 </SelectItem>
                 {isCashier && (
                   <SelectItem value="bill_requested" className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                    📄 Bill Requested ({billRequests.filter((b: any) => b.status === 'PENDING').length})
+                    Bill Requested ({billRequests.filter((b: any) => b.status === 'PENDING').length})
                   </SelectItem>
                 )}
                 {!isCashier && (
                   <>
                     <SelectItem value="pending" className="text-xs font-medium text-yellow-600 dark:text-yellow-400">
-                      ⏳ Pending ({stats.pending})
+                      Pending ({stats.pending})
                     </SelectItem>
                     <SelectItem value="ready" className="text-xs font-medium text-orange-600 dark:text-orange-400">
-                      🍽️ Ready ({stats.ready})
+                      Ready ({stats.ready})
                     </SelectItem>
                   </>
                 )}
@@ -707,7 +682,7 @@ export default function OrdersPage() {
                     : 'bg-white dark:bg-[#0c2219] text-gray-900 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#12281d]'
                 }`}
               >
-                🍽️ Ready ({stats.ready})
+                Ready ({stats.ready})
               </Button>
             </>
           )}
@@ -861,8 +836,8 @@ export default function OrdersPage() {
                             {/* Show bill status badge */}
                             {billInProgress && (
                               <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-300 dark:border-blue-800 font-normal text-xs py-0.5 px-2">
-                                {billRequest.status === 'PENDING' && '📄 Bill Req.'}
-                                {billRequest.status === 'PROCESSING' && '⏳ In Progress'}
+                                {billRequest.status === 'PENDING' && 'Bill Req.'}
+                                {billRequest.status === 'PROCESSING' && 'In Progress'}
                               </Badge>
                             )}
 
@@ -900,7 +875,7 @@ export default function OrdersPage() {
                             {/* Paid Badge if already paid */}
                             {order.paymentStatus === 'PAID' && (
                               <span className="text-xs font-medium text-emerald-600 dark:text-[#00e676] flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/40">
-                                ✓ Paid
+                                Paid
                               </span>
                             )}
 
@@ -1159,8 +1134,8 @@ export default function OrdersPage() {
                       {billInProgress && (
                         <div className="w-full mb-2 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-lg">
                           <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">
-                            {billRequest.status === 'PENDING' && '📄 Bill request sent to cashier'}
-                            {billRequest.status === 'PROCESSING' && '⏳ Cashier is processing bill request'}
+                            {billRequest.status === 'PENDING' && 'Bill request sent to cashier'}
+                            {billRequest.status === 'PROCESSING' && 'Cashier is processing bill request'}
                           </p>
                         </div>
                       )}
@@ -1168,7 +1143,7 @@ export default function OrdersPage() {
                       {billReady && (
                         <div className="w-full mb-2 p-3 bg-green-50 dark:bg-emerald-950/30 border border-green-200 dark:border-[#143225] rounded-lg">
                           <p className="text-sm text-green-800 dark:text-[#00e676] font-medium">
-                            ✅ Bill is ready! You can now collect payment from customer
+                            Bill is ready! You can now collect payment from customer
                           </p>
                         </div>
                       )}

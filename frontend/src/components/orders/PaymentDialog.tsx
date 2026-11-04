@@ -241,7 +241,7 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
               )}
               {proofImagePreview && (
                 <p className="text-sm text-green-600 dark:text-[#00e676] mt-2">
-                  ✓ Payment proof uploaded
+                  Payment proof uploaded
                 </p>
               )}
             </div>
@@ -466,7 +466,7 @@ export default function PaymentDialog({ open, onOpenChange, order }: PaymentDial
                     <X className="w-4 h-4" />
                   </button>
                   <div className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
-                    ✓ Proof uploaded
+                    Proof uploaded
                   </div>
                 </div>
               )}

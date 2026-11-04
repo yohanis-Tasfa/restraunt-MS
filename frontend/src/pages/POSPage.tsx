@@ -177,9 +177,6 @@ export default function POSPage() {
       <header className="bg-white dark:bg-[#091a13] border-b border-gray-200 dark:border-[#143225] px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm transition-colors duration-200 shrink-0">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold shadow shrink-0">
-              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
             <div>
               <h1 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-tight">POS System</h1>
               <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400">

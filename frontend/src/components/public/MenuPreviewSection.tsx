@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, X, Filter, ChevronDown } from 'lucide-react';
+import { ArrowRight, Clock, Star, TrendingUp, ChevronLeft, ChevronRight, Receipt, Search, X, Filter, ChevronDown, Utensils } from 'lucide-react';
 import { menuApi } from '../../api/menu';
 import { useSearchParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -394,7 +394,7 @@ export default function MenuPreviewSection() {
 
       // Show a message to customer
       toast.success(
-        `✅ Waiter notified!\n\n📱 Your waiter will come to Table ${tableNumber} to confirm your order.\n\n💡 After the waiter sends your order to the kitchen, you can request your bill.`,
+        `Waiter notified! Your waiter will come to Table ${tableNumber} to confirm your order. After the waiter sends your order to the kitchen, you can request your bill.`,
         { duration: 6000 }
       );
 
@@ -557,7 +557,7 @@ export default function MenuPreviewSection() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-10">
-            <div className="text-5xl mb-3">🍽️</div>
+            <Utensils className="w-12 h-12 mb-3 mx-auto text-base-content/40" />
             <p className="text-base text-base-content/70">
               No menu items available at the moment.
             </p>
@@ -624,8 +624,8 @@ export default function MenuPreviewSection() {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none select-none"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-gray-200 dark:to-black/60 flex items-center justify-center">
-                            <span className="text-3xl sm:text-4xl">🍽️</span>
+                          <div className="w-full h-full bg-gradient-to-br from-[#00e676]/20 to-gray-200 dark:to-black/60 flex items-center justify-center text-gray-400 dark:text-gray-600">
+                            <Utensils className="w-8 h-8 sm:w-10 sm:h-10" />
                           </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 dark:from-[#091712] via-transparent to-transparent opacity-60 pointer-events-none" />

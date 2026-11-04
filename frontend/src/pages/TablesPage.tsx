@@ -518,63 +518,38 @@ export default function TablesPage() {
       {/* ========================================================================= */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Tables</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-0.5 sm:mt-1">{stats.total}</p>
-            </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gray-100 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
-              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-            </div>
+          <div>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Tables</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-0.5 sm:mt-1">{stats.total}</p>
           </div>
         </Card>
 
         <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Available</p>
-              <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-0.5 sm:mt-1">{stats.available}</p>
-            </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-100/70 dark:bg-[#0c2219] flex items-center justify-center shrink-0">
-              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-[#00e676]" />
-            </div>
+          <div>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Available</p>
+            <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-0.5 sm:mt-1">{stats.available}</p>
           </div>
         </Card>
 
         <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Occupied</p>
-              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-0.5 sm:mt-1">{stats.occupied}</p>
-            </div>
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-red-100/70 dark:bg-red-950/40 flex items-center justify-center shrink-0">
-              <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />
-            </div>
+          <div>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Occupied</p>
+            <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-0.5 sm:mt-1">{stats.occupied}</p>
           </div>
         </Card>
 
         {isWaiter ? (
           <Card className="p-3 sm:p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/40 shadow-xs">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">My Assigned</p>
-                <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-200 mt-0.5 sm:mt-1">{stats.myTables}</p>
-              </div>
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
-                <UserCheck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
-              </div>
+            <div>
+              <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">My Assigned</p>
+              <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-200 mt-0.5 sm:mt-1">{stats.myTables}</p>
             </div>
           </Card>
         ) : (
           <Card className="p-3 sm:p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225] shadow-xs">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Unassigned</p>
-                <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">{stats.unassigned}</p>
-              </div>
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-100/70 dark:bg-amber-950/40 flex items-center justify-center shrink-0">
-                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 dark:text-amber-400" />
-              </div>
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Unassigned</p>
+              <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">{stats.unassigned}</p>
             </div>
           </Card>
         )}
@@ -587,11 +562,10 @@ export default function TablesPage() {
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeFilter === 'all'
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${activeFilter === 'all'
                 ? 'bg-gray-900 dark:bg-[#123627] text-white dark:text-[#00e676] shadow-xs'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
-            }`}
+              }`}
           >
             All Tables ({stats.total})
           </button>
@@ -600,11 +574,10 @@ export default function TablesPage() {
           {isWaiter && (
             <button
               onClick={() => setActiveFilter('my')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
-                activeFilter === 'my'
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeFilter === 'my'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/40'
-              }`}
+                }`}
             >
               <UserCheck className="w-3.5 h-3.5" />
               My Tables ({stats.myTables})
@@ -613,22 +586,20 @@ export default function TablesPage() {
 
           <button
             onClick={() => setActiveFilter('available')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeFilter === 'available'
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${activeFilter === 'available'
                 ? 'bg-green-600 text-white shadow-xs'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
-            }`}
+              }`}
           >
             Available ({stats.available})
           </button>
 
           <button
             onClick={() => setActiveFilter('occupied')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeFilter === 'occupied'
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${activeFilter === 'occupied'
                 ? 'bg-red-600 text-white shadow-xs'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#0c2219]'
-            }`}
+              }`}
           >
             Occupied ({stats.occupied})
           </button>
@@ -636,11 +607,10 @@ export default function TablesPage() {
           {/* Unassigned / Open Tables filter */}
           <button
             onClick={() => setActiveFilter('unassigned')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
-              activeFilter === 'unassigned'
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${activeFilter === 'unassigned'
                 ? 'bg-amber-600 text-white shadow-xs'
                 : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40 border border-amber-200 dark:border-amber-800/40'
-            }`}
+              }`}
           >
             <AlertCircle className="w-3.5 h-3.5" />
             Unassigned ({stats.unassigned})
@@ -665,8 +635,8 @@ export default function TablesPage() {
             {activeFilter === 'my'
               ? 'You do not have any tables assigned yet. Ask a manager to assign tables to you.'
               : activeFilter === 'unassigned'
-              ? 'All tables currently have an assigned waiter!'
-              : 'No tables match the current filter.'}
+                ? 'All tables currently have an assigned waiter!'
+                : 'No tables match the current filter.'}
           </p>
           {isManager && tables.length === 0 && (
             <Button onClick={() => setIsCreateModalOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer">
@@ -755,7 +725,7 @@ export default function TablesPage() {
                   {isAssignedToMe && (
                     <div className="mb-2.5">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/40">
-                        ★ Assigned to You
+                        Assigned to You
                       </span>
                     </div>
                   )}
@@ -911,8 +881,8 @@ export default function TablesPage() {
                           {clearTableMutation.isPending
                             ? 'Clearing Table...'
                             : hasActiveSession
-                            ? 'End Session & Clear Table'
-                            : 'Clear Table (Set Available)'}
+                              ? 'End Session & Clear Table'
+                              : 'Clear Table (Set Available)'}
                         </span>
                       </Button>
                     </div>

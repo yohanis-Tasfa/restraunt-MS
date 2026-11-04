@@ -198,7 +198,7 @@ export default function PaymentCollectionDialog({
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Order #{billRequest.selectedItems.orderNumber} - Table {billRequest.table.number}
             </p>
-
+            
             <div className="bg-gray-50 dark:bg-[#071a12] border border-gray-200 dark:border-[#143225] rounded-xl p-4 mb-4">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Amount Collected</p>
               <p className="text-3xl font-extrabold text-green-600 dark:text-[#00e676]">{amount} ብር</p>
@@ -253,10 +253,11 @@ export default function PaymentCollectionDialog({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('CASH')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 transition-colors cursor-pointer ${paymentMethod === 'CASH'
+                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 transition-colors cursor-pointer ${
+                  paymentMethod === 'CASH'
                     ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
                     : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#071a12] hover:border-gray-300 dark:hover:border-[#1b4b35]'
-                  }`}
+                }`}
               >
                 <Banknote className={`w-6 h-6 ${paymentMethod === 'CASH' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-600 dark:text-gray-400'}`} />
                 <span className={`text-sm font-medium ${paymentMethod === 'CASH' ? 'text-green-800 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-300'}`}>Cash</span>
@@ -264,10 +265,11 @@ export default function PaymentCollectionDialog({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('BANK_TRANSFER')}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 transition-colors cursor-pointer ${paymentMethod === 'BANK_TRANSFER'
+                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 transition-colors cursor-pointer ${
+                  paymentMethod === 'BANK_TRANSFER'
                     ? 'border-green-600 dark:border-[#00e676] bg-green-50 dark:bg-[#123627]'
                     : 'border-gray-200 dark:border-[#143225] bg-white dark:bg-[#071a12] hover:border-gray-300 dark:hover:border-[#1b4b35]'
-                  }`}
+                }`}
               >
                 <Upload className={`w-6 h-6 ${paymentMethod === 'BANK_TRANSFER' ? 'text-green-600 dark:text-[#00e676]' : 'text-gray-600 dark:text-gray-400'}`} />
                 <span className={`text-sm font-medium ${paymentMethod === 'BANK_TRANSFER' ? 'text-green-800 dark:text-[#00e676]' : 'text-gray-700 dark:text-gray-300'}`}>Transfer</span>

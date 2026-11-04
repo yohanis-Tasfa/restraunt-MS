@@ -3,6 +3,7 @@ import { useWebSocket } from '../contexts/WebSocketContext';
 import { useAuthStore } from '../store/authStore';
 import { useNotificationStore } from '../store/notificationStore';
 import toast from 'react-hot-toast';
+import { AlertTriangle, Package, CheckCircle2, XCircle, Bell, Utensils, Receipt } from 'lucide-react';
 
 export function useGlobalNotifications() {
   const { socket, isConnected } = useWebSocket();
@@ -61,12 +62,13 @@ export function useGlobalNotifications() {
               toast.dismiss(t.id);
               window.location.href = '/admin/ingredient-requests';
             }}
-            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 ${
-              isUrgent ? 'border-rose-500' : 'border-amber-500'
-            } transition-all ${t.visible ? 'animate-enter' : 'animate-leave'}`}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 ${isUrgent ? 'border-rose-500' : 'border-amber-500'
+              } transition-all ${t.visible ? 'animate-enter' : 'animate-leave'}`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-2xl">{isUrgent ? '🚨' : '📦'}</span>
+              <span className="p-2 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                {isUrgent ? <AlertTriangle className="w-5 h-5 text-rose-600" /> : <Package className="w-5 h-5 text-amber-600" />}
+              </span>
               <div>
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-bold text-gray-900">Kitchen Ingredient Requisition</p>
@@ -101,12 +103,10 @@ export function useGlobalNotifications() {
       const isApproved = req.status === 'APPROVED';
       toast.success(
         data.message ||
-          `Requisition for ${req.inventoryName} was ${
-            isApproved ? 'Approved & Issued' : 'Rejected'
-          }`,
+        `Requisition for ${req.inventoryName} was ${isApproved ? 'Approved & Issued' : 'Rejected'
+        }`,
         {
           duration: 6000,
-          icon: isApproved ? '✅' : '❌',
         }
       );
     };
@@ -148,12 +148,13 @@ export function useGlobalNotifications() {
               toast.dismiss(t.id);
               window.location.href = '/admin/waiter-calls';
             }}
-            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-amber-500 transition-all ${
-              t.visible ? 'animate-enter' : 'animate-leave'
-            }`}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-amber-500 transition-all ${t.visible ? 'animate-enter' : 'animate-leave'
+              }`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-2xl">🛎️</span>
+              <span className="p-2 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                <Bell className="w-5 h-5 text-amber-600" />
+              </span>
               <div>
                 <p className="text-sm font-bold text-gray-900">Table {tableNum} — Waiter Call</p>
                 <p className="text-xs text-gray-600 mt-0.5">
@@ -218,12 +219,13 @@ export function useGlobalNotifications() {
               toast.dismiss(t.id);
               window.location.href = '/admin/orders';
             }}
-            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-green-500 transition-all ${
-              t.visible ? 'animate-enter' : 'animate-leave'
-            }`}
+            className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-green-500 transition-all ${t.visible ? 'animate-enter' : 'animate-leave'
+              }`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-2xl">🍽️</span>
+              <span className="p-2 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
+                <Utensils className="w-5 h-5 text-green-600" />
+              </span>
               <div>
                 <p className="text-sm font-bold text-gray-900">Order Ready — Table {tableNum}</p>
                 <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">
@@ -269,7 +271,7 @@ export function useGlobalNotifications() {
 
       addNotification({
         type: 'ORDER_READY',
-        title: `🚨 URGENT: Table ${tableNum} Order Waiting 2+ Min`,
+        title: `URGENT: Table ${tableNum} Order Waiting 2+ Min`,
         message: `Kitchen order for Table ${tableNum} has been waiting uncollected for over 2 minutes!`,
         tableNumber: tableNum,
         orderNumber: order.orderNumber?.slice(-6),
@@ -333,12 +335,13 @@ export function useGlobalNotifications() {
                 toast.dismiss(t.id);
                 window.location.href = '/admin/bill-requests';
               }}
-              className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-emerald-500 transition-all ${
-                t.visible ? 'animate-enter' : 'animate-leave'
-              }`}
+              className={`cursor-pointer max-w-md w-full bg-white shadow-xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 p-3.5 border-l-4 border-emerald-500 transition-all ${t.visible ? 'animate-enter' : 'animate-leave'
+                }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🧾</span>
+                <span className="p-2 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                  <Receipt className="w-5 h-5 text-emerald-600" />
+                </span>
                 <div>
                   <p className="text-sm font-bold text-gray-900">Bill Request — Table {tableNum}</p>
                   <p className="text-xs text-gray-600 mt-0.5">Guest requested payment receipt</p>

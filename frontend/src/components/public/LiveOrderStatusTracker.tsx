@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { 
-  CheckCircle, 
-  Clock, 
-  ChefHat, 
-  UtensilsCrossed, 
-  Receipt, 
-  Bell, 
-  ChevronUp, 
-  ChevronDown, 
+import {
+  CheckCircle,
+  Clock,
+  ChefHat,
+  UtensilsCrossed,
+  Receipt,
+  Bell,
+  ChevronUp,
+  ChevronDown,
   Sparkles,
   Loader2,
   X,
@@ -225,7 +225,7 @@ export default function LiveOrderStatusTracker({
     <div className="fixed bottom-4 inset-x-3 sm:inset-x-auto sm:right-6 sm:w-[480px] z-40 transition-all duration-300">
       <div className="bg-[#042417]/95 backdrop-blur-xl border border-[#00e676]/40 rounded-2xl shadow-2xl shadow-black/80 overflow-hidden text-white transition-all">
         {/* Header Bar */}
-        <div 
+        <div
           onClick={() => setIsExpanded(!isExpanded)}
           className="p-3 sm:p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors select-none"
         >
@@ -340,10 +340,10 @@ export default function LiveOrderStatusTracker({
                       isPast
                         ? 'bg-[#00e676] text-[#032314] shadow-[0_0_8px_#00e676]'
                         : isCurrent
-                        ? isNotSentToKitchen
-                          ? 'bg-amber-400/20 border-2 border-amber-400 text-amber-400 ring-2 ring-amber-400/30 animate-pulse'
-                          : 'bg-[#00e676]/20 border-2 border-[#00e676] text-[#00e676] ring-2 ring-[#00e676]/30 animate-pulse'
-                        : 'bg-[#083a26] text-white/40 border border-[#145d3e]'
+                          ? isNotSentToKitchen
+                            ? 'bg-amber-400/20 border-2 border-amber-400 text-amber-400 ring-2 ring-amber-400/30 animate-pulse'
+                            : 'bg-[#00e676]/20 border-2 border-[#00e676] text-[#00e676] ring-2 ring-[#00e676]/30 animate-pulse'
+                          : 'bg-[#083a26] text-white/40 border border-[#145d3e]'
                     )}
                   >
                     <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -356,8 +356,8 @@ export default function LiveOrderStatusTracker({
                           ? 'text-amber-400'
                           : 'text-[#00e676]'
                         : isPast
-                        ? 'text-white'
-                        : 'text-white/40'
+                          ? 'text-white'
+                          : 'text-white/40'
                     )}
                   >
                     {st.label}
@@ -554,7 +554,7 @@ export default function LiveOrderStatusTracker({
                   </div>
 
                   <p className="text-[11px] text-[#00e676] text-center font-medium">
-                    ✓ Food delivered to your table. Enjoy your meal!
+                    Food delivered to your table. Enjoy your meal!
                   </p>
                 </div>
               )}

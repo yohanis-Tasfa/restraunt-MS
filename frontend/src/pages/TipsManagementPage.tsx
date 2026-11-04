@@ -322,12 +322,12 @@ export default function TipsManagementPage() {
       prev.map((t) =>
         t.id === targetTipId
           ? {
-              ...t,
-              status: TipStatus.PAID,
-              paidAt: new Date().toISOString(),
-              paidById: user?.id || 'mgr-1',
-              notes: noteText,
-            }
+            ...t,
+            status: TipStatus.PAID,
+            paidAt: new Date().toISOString(),
+            paidById: user?.id || 'mgr-1',
+            notes: noteText,
+          }
           : t
       )
     );
@@ -376,12 +376,12 @@ export default function TipsManagementPage() {
         prev.map((t) =>
           t.waiter?.id === waiterId && t.status === 'PENDING'
             ? {
-                ...t,
-                status: TipStatus.PAID,
-                paidAt: new Date().toISOString(),
-                paidById: user?.id || 'mgr-1',
-                notes: 'Bulk shift payout',
-              }
+              ...t,
+              status: TipStatus.PAID,
+              paidAt: new Date().toISOString(),
+              paidById: user?.id || 'mgr-1',
+              notes: 'Bulk shift payout',
+            }
             : t
         )
       );
@@ -462,20 +462,16 @@ export default function TipsManagementPage() {
         {/* Total Tips Collected */}
         <div
           onClick={() => setSelectedStatus('ALL')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            selectedStatus === 'ALL'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${selectedStatus === 'ALL'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-700 dark:text-[#00e676] shrink-0">
-              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate block">Tips Collected</span>
             {selectedStatus === 'ALL' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate block">Tips Collected</span>
+          <div className="mt-1 sm:mt-2">
             <div className="text-base sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight truncate mt-0.5">
               Br {(summary.total.amount || 0).toFixed(0)}
             </div>
@@ -486,20 +482,16 @@ export default function TipsManagementPage() {
         {/* Pending Waiter Payouts */}
         <div
           onClick={() => setSelectedStatus('PENDING')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            selectedStatus === 'PENDING'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${selectedStatus === 'PENDING'
               ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 ring-2 ring-amber-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-amber-300/80 hover:bg-amber-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-amber-800 dark:text-amber-400 truncate block">Pending Payout</span>
             {selectedStatus === 'PENDING' && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <span className="text-[10px] sm:text-xs font-semibold text-amber-800 dark:text-amber-400 truncate block">Pending Payout</span>
+          <div className="mt-1 sm:mt-2">
             <div className="text-base sm:text-2xl font-black text-amber-900 dark:text-amber-400 tracking-tight truncate mt-0.5">
               Br {(summary.pending.amount || 0).toFixed(0)}
             </div>
@@ -510,20 +502,16 @@ export default function TipsManagementPage() {
         {/* Total Disbursed */}
         <div
           onClick={() => setSelectedStatus('PAID')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            selectedStatus === 'PAID'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${selectedStatus === 'PAID'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-700 dark:text-[#00e676] shrink-0">
-              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-emerald-800 dark:text-[#00e676] truncate block">Disbursed</span>
             {selectedStatus === 'PAID' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <span className="text-[10px] sm:text-xs font-semibold text-emerald-800 dark:text-[#00e676] truncate block">Disbursed</span>
+          <div className="mt-1 sm:mt-2">
             <div className="text-base sm:text-2xl font-black text-emerald-900 dark:text-[#00e676] tracking-tight truncate mt-0.5">
               Br {(summary.paid.amount || 0).toFixed(0)}
             </div>
@@ -534,12 +522,9 @@ export default function TipsManagementPage() {
         {/* Waitstaff Pool */}
         <div className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] shadow-xs text-left">
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-purple-100 dark:bg-purple-950/40 flex items-center justify-center text-purple-700 dark:text-purple-400 shrink-0">
-              <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
-          </div>
-          <div className="mt-2 sm:mt-2.5">
             <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate block">Active Waiters</span>
+          </div>
+          <div className="mt-1 sm:mt-2">
             <div className="text-base sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight truncate mt-0.5">
               {uniqueWaiters.length}
             </div>
@@ -823,33 +808,30 @@ export default function TipsManagementPage() {
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CASH_TILL')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
-                      payoutDisbursementMethod === 'CASH_TILL'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CASH_TILL'
                         ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] border-emerald-600 dark:border-[#00e676] shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                    }`}
+                      }`}
                   >
                     Cash from Till
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('TELEBIRR_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
-                      payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                    }`}
+                      }`}
                   >
                     Telebirr
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CBE_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
-                      payoutDisbursementMethod === 'CBE_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CBE_TRANSFER'
                         ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                    }`}
+                      }`}
                   >
                     CBE Birr
                   </button>

@@ -1,4 +1,4 @@
-import { ShoppingCart, X, Plus, Minus, PhoneCall } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, PhoneCall, Utensils } from 'lucide-react';
 import { useState } from 'react';
 
 export interface CartItem {
@@ -99,7 +99,7 @@ export default function FloatingCart({ items, onUpdateQuantity, onRemoveItem, on
                       />
                     ) : (
                       <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-green-600/20 to-yellow-600/20 flex items-center justify-center">
-                        <span className="text-2xl">🍽️</span>
+                        <Utensils className="w-7 h-7 text-[#00e676]/60" />
                       </div>
                     )}
 

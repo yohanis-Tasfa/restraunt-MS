@@ -10,7 +10,7 @@ import { getStoredInventoryItems, saveStoredInventoryItems } from '../utils/mock
 export default function InventoryPage() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
@@ -234,42 +234,27 @@ export default function InventoryPage() {
       {/* Alert Cards - 2x2/3-grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4">
         <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3 sm:p-4">
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Total Items</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{baseItems.length}</p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
-              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
-            </div>
+          <div className="min-w-0 pr-1">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Total Items</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">{baseItems.length}</p>
           </div>
         </div>
 
         <div className="bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3 sm:p-4">
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Low Stock</p>
-              <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-1 truncate">
-                {lowStockCount}
-              </p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-50 dark:bg-red-950/40 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" />
-            </div>
+          <div className="min-w-0 pr-1">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Low Stock</p>
+            <p className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 mt-1 truncate">
+              {lowStockCount}
+            </p>
           </div>
         </div>
 
         <div className="col-span-2 md:col-span-1 bg-white dark:bg-[#091a13] rounded-lg shadow-sm border border-gray-200 dark:border-[#143225] p-3 sm:p-4">
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 pr-1">
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Expiring Soon</p>
-              <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1 truncate">
-                {expiringCount}
-              </p>
-            </div>
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-50 dark:bg-yellow-900/30 flex items-center justify-center shrink-0">
-              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
+          <div className="min-w-0 pr-1">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">Expiring Soon</p>
+            <p className="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1 truncate">
+              {expiringCount}
+            </p>
           </div>
         </div>
       </div>
@@ -293,32 +278,29 @@ export default function InventoryPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setView('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                view === 'all'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${view === 'all'
                   ? 'bg-green-500 text-white font-bold'
                   : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
-              }`}
+                }`}
             >
               All Items
             </button>
             <button
               onClick={() => setView('low-stock')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                view === 'low-stock'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${view === 'low-stock'
                   ? 'bg-green-500 text-white font-bold'
                   : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
-              }`}
+                }`}
             >
               Low Stock
             </button>
 
             <button
               onClick={() => setView('expiring')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                view === 'expiring'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${view === 'expiring'
                   ? 'bg-green-500 text-white font-bold'
                   : 'bg-gray-100 dark:bg-[#0c2219] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#12281d]'
-              }`}
+                }`}
             >
               Expiring
             </button>
@@ -408,7 +390,7 @@ export default function InventoryPage() {
                 {items.map((item) => {
                   const status = getStockStatus(item);
                   const StatusIcon = status.icon;
-                  
+
                   return (
                     <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-[#0c2f21]/30 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -427,9 +409,8 @@ export default function InventoryPage() {
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-2xl font-bold ${
-                          item.quantity <= item.minQuantity ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
-                        }`}>
+                        <span className={`text-2xl font-bold ${item.quantity <= item.minQuantity ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
+                          }`}>
                           {item.quantity}
                         </span>
                       </td>
@@ -553,14 +534,14 @@ function ItemModal({ isOpen, onClose, item, onSubmit, categories }: ItemModalPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const submitData = {
       ...formData,
       maxQuantity: formData.maxQuantity || undefined,
       expiryDate: formData.expiryDate || undefined,
       batchNumber: formData.batchNumber || undefined,
     };
-    
+
     onSubmit(submitData);
   };
 
@@ -751,11 +732,11 @@ interface MovementModalProps {
   isOpen: boolean;
   onClose: () => void;
   item: InventoryItem;
-  onSubmit: (data: { 
-    inventoryId: string; 
-    type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'WASTE' | 'TRANSFER'; 
-    quantity: number; 
-    reference?: string; 
+  onSubmit: (data: {
+    inventoryId: string;
+    type: 'IN' | 'OUT' | 'ADJUSTMENT' | 'WASTE' | 'TRANSFER';
+    quantity: number;
+    reference?: string;
     notes?: string;
     costPerUnit?: number;
     totalCost?: number;
@@ -859,7 +840,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
             <>
               <div className="border-t border-gray-200 dark:border-[#143225] pt-4 mt-2">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Payment Details</h3>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -926,7 +907,7 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
                 {formData.totalCost > 0 && (
                   <div className="mt-3 bg-green-50 dark:bg-[#072417] border border-green-200 dark:border-[#00e676]/30 rounded-lg p-3">
                     <p className="text-sm text-green-800 dark:text-green-300">
-                      💰 <strong>Expense will be auto-created:</strong> <span className="font-bold text-green-900 dark:text-[#00e676]">{formData.totalCost.toLocaleString()} ETB</span>
+                      <strong>Expense will be auto-created:</strong> <span className="font-bold text-green-900 dark:text-[#00e676]">{formData.totalCost.toLocaleString()} ETB</span>
                       <br />
                       <span className="text-xs text-green-700 dark:text-green-400">Category: Ingredients | Status: Paid</span>
                     </p>
@@ -965,8 +946,8 @@ function MovementModal({ isOpen, onClose, item, onSubmit }: MovementModalProps) 
                 {formData.type === 'IN'
                   ? item.quantity + formData.quantity
                   : formData.type === 'OUT' || formData.type === 'WASTE'
-                  ? item.quantity - formData.quantity
-                  : 'Adjusted'}{' '}
+                    ? item.quantity - formData.quantity
+                    : 'Adjusted'}{' '}
                 {item.unit}
               </span>
             </p>

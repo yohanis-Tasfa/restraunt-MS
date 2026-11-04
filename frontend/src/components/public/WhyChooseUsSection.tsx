@@ -72,7 +72,7 @@ export default function WhyChooseUsSection() {
             >
               {/* Gradient Background on Hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`} />
-              
+
               {/* Icon */}
               <div className="relative mb-4">
                 <div className={`inline-flex p-4 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10 text-gray-200 group-hover:scale-110 transition-all duration-300`}>
@@ -111,7 +111,7 @@ export default function WhyChooseUsSection() {
               href="#contact"
               className="inline-flex items-center justify-center px-8 py-3 bg-black/40 backdrop-blur-md text-white font-semibold rounded-xl border-2 border-green-500 hover:bg-green-600/20 transition-all duration-300"
             >
-              <span>📍 Find Us</span>
+              <span>Find Us</span>
             </a>
           </div>
         </div>

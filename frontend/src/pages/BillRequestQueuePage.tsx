@@ -72,7 +72,7 @@ export default function BillRequestQueuePage() {
   // The API returns { data: [...], pagination: {...} }
   const billRequests = data?.data || [];
   const pagination = data?.pagination;
-  
+
   console.log('Bill requests in component:', billRequests);
 
   // Process bill request mutation
@@ -248,80 +248,64 @@ export default function BillRequestQueuePage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3.5 mb-4 sm:mb-6">
         <div
           onClick={() => setStatusFilter(statusFilter === 'pending' ? 'all' : 'pending')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            statusFilter === 'pending'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'pending'
               ? 'bg-amber-50/80 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 ring-2 ring-amber-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-amber-300/80 hover:bg-amber-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-amber-100 dark:bg-amber-950/50 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Pending</span>
             {statusFilter === 'pending' && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Pending</p>
+          <div className="mt-1 sm:mt-2">
             <p className="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5">{stats.pending}</p>
           </div>
         </div>
 
         <div
           onClick={() => setStatusFilter(statusFilter === 'processing' ? 'all' : 'processing')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            statusFilter === 'processing'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'processing'
               ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 ring-2 ring-blue-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-blue-300/80 hover:bg-blue-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
-              <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Processing</span>
             {statusFilter === 'processing' && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Processing</p>
+          <div className="mt-1 sm:mt-2">
             <p className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mt-0.5">{stats.processing}</p>
           </div>
         </div>
 
         <div
           onClick={() => setStatusFilter(statusFilter === 'completed' ? 'all' : 'completed')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            statusFilter === 'completed'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'completed'
               ? 'bg-emerald-50/80 dark:bg-[#071a12] border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-emerald-300/80 hover:bg-emerald-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-[#0c2219] flex items-center justify-center text-emerald-600 dark:text-[#00e676] shrink-0">
-              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Completed</span>
             {statusFilter === 'completed' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Completed</p>
+          <div className="mt-1 sm:mt-2">
             <p className="text-lg sm:text-2xl font-bold text-emerald-600 dark:text-[#00e676] mt-0.5">{stats.completed}</p>
           </div>
         </div>
 
         <div
           onClick={() => setStatusFilter(statusFilter === 'cancelled' ? 'all' : 'cancelled')}
-          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${
-            statusFilter === 'cancelled'
+          className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer shadow-xs text-left ${statusFilter === 'cancelled'
               ? 'bg-rose-50/80 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-2 ring-rose-500/30'
               : 'bg-white dark:bg-[#091a13] border-gray-200/80 dark:border-[#143225] hover:border-rose-300/80 hover:bg-rose-50/20'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-rose-100 dark:bg-rose-950/50 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
-              <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
+            <span className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Cancelled</span>
             {statusFilter === 'cancelled' && <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />}
           </div>
-          <div className="mt-2 sm:mt-2.5">
-            <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">Cancelled</p>
+          <div className="mt-1 sm:mt-2">
             <p className="text-lg sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-0.5">{stats.cancelled}</p>
           </div>
         </div>
@@ -337,10 +321,10 @@ export default function BillRequestQueuePage() {
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-[#091a13] border-gray-200 dark:border-[#143225]">
               <SelectItem value="all">All Requests ({billRequests.length})</SelectItem>
-              <SelectItem value="pending">⏳ Pending ({stats.pending})</SelectItem>
-              <SelectItem value="processing">⚙️ Processing ({stats.processing})</SelectItem>
-              <SelectItem value="completed">✓ Completed ({stats.completed})</SelectItem>
-              <SelectItem value="cancelled">✕ Cancelled ({stats.cancelled})</SelectItem>
+              <SelectItem value="pending">Pending ({stats.pending})</SelectItem>
+              <SelectItem value="processing">Processing ({stats.processing})</SelectItem>
+              <SelectItem value="completed">Completed ({stats.completed})</SelectItem>
+              <SelectItem value="cancelled">Cancelled ({stats.cancelled})</SelectItem>
             </SelectContent>
           </Select>
         </div>

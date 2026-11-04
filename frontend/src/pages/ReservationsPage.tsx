@@ -424,50 +424,30 @@ export default function ReservationsPage() {
       {/* Statistics Cards - 2x2 grid on mobile, 4 columns on desktop */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.total}</p>
           </div>
         </Card>
 
         <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Today</p>
-              <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{stats.today}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Today</p>
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{stats.today}</p>
           </div>
         </Card>
 
         <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Upcoming</p>
-              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">{stats.upcoming}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-              <Users className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Upcoming</p>
+            <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">{stats.upcoming}</p>
           </div>
         </Card>
 
         <Card className="p-4 bg-white dark:bg-[#091a13] border border-gray-200 dark:border-[#143225]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-[#0c2219] flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600 dark:text-[#00e676]" />
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-[#00e676] mt-1">{stats.completed}</p>
           </div>
         </Card>
       </div>
@@ -685,7 +665,7 @@ export default function ReservationsPage() {
                           : 'text-red-600'
                       }`}
                     >
-                      {selectedTablesCapacity >= parseInt(formData.guests) ? '✓ Sufficient' : '✗ Insufficient'}
+                      {selectedTablesCapacity >= parseInt(formData.guests) ? 'Sufficient' : 'Insufficient'}
                     </span>
                   )}
                 </div>
@@ -703,7 +683,7 @@ export default function ReservationsPage() {
               {suggestedTables.length > 0 && formData.guests && (
                 <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-xs font-medium text-blue-900 mb-2">
-                    💡 Suggested table combinations for {formData.guests} guests:
+                    Suggested table combinations for {formData.guests} guests:
                   </p>
                   <div className="space-y-1">
                     {suggestedTables.map((suggestion, idx) => (
