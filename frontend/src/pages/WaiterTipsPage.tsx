@@ -317,8 +317,8 @@ export default function WaiterTipsPage() {
                       <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-gray-100 dark:bg-[#071a12] text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-[#143225]">
                         {tip.order?.table?.number
                           ? (tip.order.table.number.toLowerCase().startsWith('t')
-                            ? tip.order.table.number
-                            : `Table ${tip.order.table.number}`)
+                              ? tip.order.table.number
+                              : `Table ${tip.order.table.number}`)
                           : 'Takeout'}
                       </span>
                     </td>

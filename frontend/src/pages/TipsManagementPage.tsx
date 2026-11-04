@@ -322,12 +322,12 @@ export default function TipsManagementPage() {
       prev.map((t) =>
         t.id === targetTipId
           ? {
-            ...t,
-            status: TipStatus.PAID,
-            paidAt: new Date().toISOString(),
-            paidById: user?.id || 'mgr-1',
-            notes: noteText,
-          }
+              ...t,
+              status: TipStatus.PAID,
+              paidAt: new Date().toISOString(),
+              paidById: user?.id || 'mgr-1',
+              notes: noteText,
+            }
           : t
       )
     );
@@ -376,12 +376,12 @@ export default function TipsManagementPage() {
         prev.map((t) =>
           t.waiter?.id === waiterId && t.status === 'PENDING'
             ? {
-              ...t,
-              status: TipStatus.PAID,
-              paidAt: new Date().toISOString(),
-              paidById: user?.id || 'mgr-1',
-              notes: 'Bulk shift payout',
-            }
+                ...t,
+                status: TipStatus.PAID,
+                paidAt: new Date().toISOString(),
+                paidById: user?.id || 'mgr-1',
+                notes: 'Bulk shift payout',
+              }
             : t
         )
       );
@@ -795,30 +795,33 @@ export default function TipsManagementPage() {
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CASH_TILL')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CASH_TILL'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
+                      payoutDisbursementMethod === 'CASH_TILL'
                         ? 'bg-emerald-600 dark:bg-[#00e676] text-white dark:text-[#032314] border-emerald-600 dark:border-[#00e676] shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                      }`}
+                    }`}
                   >
                     Cash from Till
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('TELEBIRR_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
+                      payoutDisbursementMethod === 'TELEBIRR_TRANSFER'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                      }`}
+                    }`}
                   >
                     Telebirr
                   </button>
                   <button
                     type="button"
                     onClick={() => setPayoutDisbursementMethod('CBE_TRANSFER')}
-                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${payoutDisbursementMethod === 'CBE_TRANSFER'
+                    className={`py-2 px-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
+                      payoutDisbursementMethod === 'CBE_TRANSFER'
                         ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
                         : 'bg-white dark:bg-[#071a12] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#143225] hover:bg-gray-50 dark:hover:bg-[#0c2219]'
-                      }`}
+                    }`}
                   >
                     CBE Birr
                   </button>

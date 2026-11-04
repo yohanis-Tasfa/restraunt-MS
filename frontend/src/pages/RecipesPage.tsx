@@ -660,4 +660,9 @@ function EditIngredientModal({
             >
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
             </Button>
-          </d
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
