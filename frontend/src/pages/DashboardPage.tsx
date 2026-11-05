@@ -755,11 +755,11 @@ export default function DashboardPage() {
         {/* Sales Card */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-3.5 sm:p-5 md:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl bg-green-100 dark:bg-green-950/60 flex items-center justify-center text-green-700 dark:text-[#00e676] shrink-0">
-                <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-[10px] sm:text-xs font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium truncate">
+                Sales ({periodLabel})
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-0.5 sm:gap-1 shrink-0">
                 <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                 {statsSummary.growth}
               </span>
@@ -767,20 +767,17 @@ export default function DashboardPage() {
             <h3 className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight truncate">
               Br {statsSummary.sales.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h3>
-            <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 font-medium truncate">
-              Sales ({periodLabel})
-            </p>
           </CardContent>
         </Card>
 
         {/* Orders Card */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-3.5 sm:p-5 md:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl bg-orange-100 dark:bg-orange-950/60 flex items-center justify-center text-orange-700 dark:text-orange-400 shrink-0">
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-[10px] sm:text-xs font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium truncate">
+                Orders ({periodLabel})
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-0.5 sm:gap-1 shrink-0">
                 <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                 +8.5%
               </span>
@@ -788,20 +785,17 @@ export default function DashboardPage() {
             <h3 className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight truncate">
               {statsSummary.orders.toLocaleString()}
             </h3>
-            <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 font-medium truncate">
-              Orders ({periodLabel})
-            </p>
           </CardContent>
         </Card>
 
         {/* Profit Card */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-3.5 sm:p-5 md:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
-                <ChartUp className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-[10px] sm:text-xs font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium truncate">
+                Est. Profit ({periodLabel})
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold text-green-700 dark:text-[#00e676] bg-green-50 dark:bg-green-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-green-200 dark:border-green-800/60 flex items-center gap-0.5 sm:gap-1 shrink-0">
                 <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                 +12.4%
               </span>
@@ -809,20 +803,17 @@ export default function DashboardPage() {
             <h3 className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight truncate">
               Br {statsSummary.profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h3>
-            <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 font-medium truncate">
-              Est. Profit ({periodLabel})
-            </p>
           </CardContent>
         </Card>
 
         {/* Inventory Alerts */}
         <Card className="border-gray-200 dark:border-[#143225] shadow-2xs hover:shadow-sm transition-shadow">
           <CardContent className="p-3.5 sm:p-5 md:p-6">
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-700 dark:text-red-400 shrink-0">
-                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-              </div>
-              <span className="text-[10px] sm:text-xs font-bold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-red-200 dark:border-red-800/60 flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium truncate">
+                Inventory alerts
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-red-200 dark:border-red-800/60 flex items-center gap-0.5 sm:gap-1 shrink-0">
                 <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                 2 urgent
               </span>
@@ -830,9 +821,6 @@ export default function DashboardPage() {
             <h3 className="text-base sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight truncate">
               {lowStockItems.length} items
             </h3>
-            <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 font-medium truncate">
-              Inventory alerts
-            </p>
           </CardContent>
         </Card>
       </div>
@@ -1354,8 +1342,7 @@ export default function DashboardPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                  <AlertTriangle className="w-4 h-4 text-rose-500" />
+                <CardTitle className="text-lg font-bold text-gray-900 dark:text-white">
                   Low stock
                 </CardTitle>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Below reorder threshold</p>
