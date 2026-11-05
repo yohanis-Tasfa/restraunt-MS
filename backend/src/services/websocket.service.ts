@@ -16,7 +16,7 @@ class WebSocketService {
   initialize(httpServer: HTTPServer) {
     this.io = new Server(httpServer, {
       cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+        origin: (origin, callback) => callback(null, true),
         credentials: true,
       },
     });
