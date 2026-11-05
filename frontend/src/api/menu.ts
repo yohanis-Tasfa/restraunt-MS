@@ -94,12 +94,13 @@ export const menuApi = {
     const params = new URLSearchParams();
     if (restaurantId) params.append('restaurantId', restaurantId);
     const response = await apiClient.get(`/menu/categories?${params.toString()}`);
-    return response.data.data?.categories || response.data.data || [];
+    const res: any = response?.data?.data || response?.data || response;
+    return Array.isArray(res) ? res : (res?.categories || res?.data || []);
   },
 
   getCategory: async (id: string): Promise<MenuCategory> => {
     const response = await apiClient.get(`/menu/categories/${id}`);
-    return response.data.data;
+    return (response as any)?.data?.data || (response as any)?.data || response;
   },
 
   createCategory: async (data: CreateCategoryInput): Promise<MenuCategory> => {
@@ -132,27 +133,28 @@ export const menuApi = {
     if (filters?.isAvailable !== undefined) params.append('isAvailable', String(filters.isAvailable));
     
     const response = await apiClient.get(`/menu/items?${params.toString()}`);
-    return response.data.data?.menuItems || response.data.data || [];
+    const res: any = response?.data?.data || response?.data || response;
+    return Array.isArray(res) ? res : (res?.menuItems || res?.data || []);
   },
 
   getMenuItem: async (id: string): Promise<MenuItem> => {
     const response = await apiClient.get(`/menu/items/${id}`);
-    return response.data.data;
+    return (response as any)?.data?.data || (response as any)?.data || response;
   },
 
   createMenuItem: async (data: CreateMenuItemInput): Promise<MenuItem> => {
     const response = await apiClient.post('/menu/items', data);
-    return response.data.data;
+    return (response as any)?.data?.data || (response as any)?.data || response;
   },
 
   updateMenuItem: async (id: string, data: UpdateMenuItemInput): Promise<MenuItem> => {
     const response = await apiClient.put(`/menu/items/${id}`, data);
-    return response.data.data;
+    return (response as any)?.data?.data || (response as any)?.data || response;
   },
 
   toggleMenuItemAvailability: async (id: string, isAvailable: boolean): Promise<MenuItem> => {
     const response = await apiClient.patch(`/menu/items/${id}/availability`, { isAvailable });
-    return response.data.data;
+    return (response as any)?.data?.data || (response as any)?.data || response;
   },
 
   deleteMenuItem: async (id: string): Promise<void> => {

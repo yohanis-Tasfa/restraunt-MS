@@ -132,8 +132,8 @@ export default function CustomerMenuPage() {
     enabled: !!session,
   });
 
-  const categories = categoriesData || [];
-  const menuItems = menuItemsData || [];
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
+  const menuItems = Array.isArray(menuItemsData) ? menuItemsData : [];
 
   // Poll for active order for this table
   useEffect(() => {

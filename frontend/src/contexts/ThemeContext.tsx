@@ -20,7 +20,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore
     }
-    return 'light';
+    return 'dark';
   });
 
   const applyTheme = (currentTheme: Theme) => {

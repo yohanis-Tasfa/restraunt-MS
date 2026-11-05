@@ -103,17 +103,17 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
               onClick={toggleTheme}
               aria-label="Toggle dark and light mode"
               className="px-3 py-1.5 rounded-xl border border-[#145d3e] bg-[#083a26] hover:bg-[#0c4d33] hover:border-[#00e676] text-white transition-all duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-sm"
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              title={theme === 'dark' ? 'Dark mode enabled (click for light)' : 'Light mode enabled (click for dark)'}
             >
               {theme === 'dark' ? (
                 <>
-                  <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="hidden xl:inline text-xs text-white">Light</span>
+                  <Moon className="w-4 h-4 text-[#00e676]" />
+                  <span className="hidden xl:inline text-xs text-white">Dark</span>
                 </>
               ) : (
                 <>
-                  <Moon className="w-4 h-4 text-[#00e676]" />
-                  <span className="hidden xl:inline text-xs text-white">Dark</span>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="hidden xl:inline text-xs text-white">Light</span>
                 </>
               )}
             </button>
@@ -134,9 +134,9 @@ export default function PublicNavbar({ activeSection, onNavigate }: PublicNavbar
               className="p-2 rounded-xl bg-[#083a26] border border-[#145d3e] text-white hover:bg-[#0c4d33] transition-colors"
             >
               {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
                 <Moon className="w-4 h-4 text-[#00e676]" />
+              ) : (
+                <Sun className="w-4 h-4 text-amber-400" />
               )}
             </button>
 
